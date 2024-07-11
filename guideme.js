@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "//stagecdn.guideme.io/guideme-player/ent/";
+	guideMe.baseUrl = "//localhost:3000/assets/gm_client/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
