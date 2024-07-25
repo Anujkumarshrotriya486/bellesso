@@ -1,9 +1,9 @@
-$( document ).ready(function() {
-	$( "#load_more" ).click(function() {
-		$(this).hide();
-	$( "#last" ).slideDown("slow");
-	});
-});
+// $( document ).ready(function() {
+// 	$( "#load_more" ).click(function() {
+// 		$(this).hide();
+// 	$( "#last" ).slideDown("slow");
+// 	});
+// });
 
 window.myGuideOrgKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfa2V5IjoiMTRhYTM0MTY5MzFlYzdiZWJmYjIxMzZmZjQ1OGU3OTcifQ.z9et8GXlHRz8IqE5wre-xsJxZeTZIojrn3yC1hNPzYI";
 
