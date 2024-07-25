@@ -4678,6 +4678,10 @@ GmCXt.closeAppPanel = function() {
         mg$(".mgPlayerJSTest_panel").css("left", "initial");
         mg$(".mgPlayerJSTest_panel").css("top", "50%");
     }
+    
+    mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$("#mgPlayerJSTest_app").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$(".mgPlayerJSTest_panel").focus();
 
     GmCXt.sendMessageToApp("mgPlayerJSTest_action:app_panel_closed", {});
 };
@@ -6534,6 +6538,8 @@ GmCXt.openAppPanel = function(action, source) {
 			}
 
 			GmCXt.removePreviewTop();
+			mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':false, 'tabindex':0});
+			mg$("#mgPlayerJSTest_app").attr({'aria-hidden':false, 'tabindex':0});
 
 		}, GmCXt.t.appPanel);
 
@@ -6691,18 +6697,16 @@ GmCXt.getWidgetVisibility = function(forceShowWidget) {
 			return false;
 		}
 
-		if (s.hide_widget_if_noguide && GmCXt.isExtension() && GmCXt.isPlayer()) {
+		if (s.hide_widget_if_noguide && GmCXt.isPlayer()) {
 			if (!GmCXt.ifGuidesOnCurrentPage) {
 				GmCXt.log(8, "NO GUIDES ON CURRENT PAGE. HIDE WIDGET " + GmCXt.getAppName());
 				return false;
 			}
 		}
 
-	} else if (GmCXt.conf.showWidget) {
-		return true;
-	} else if (GmCXt.isExtension()) {
+	} else if (!GmCXt.conf.showWidget) {
 		return false;
-	}
+	} 
 
 	return true;
 };

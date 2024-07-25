@@ -3,7 +3,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.4.1";
+GmCXt.conf.version = "2024.4.1.1";
 GmCXt.conf.env = "Test";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -149,5 +149,5 @@ GmCXt.conf.appConfig = {
 	isLXP: false,
 	customer: 'myguide',
 	desktopCommunication: false,
-	iframeInjection: true
+	iframeInjection: false
 };

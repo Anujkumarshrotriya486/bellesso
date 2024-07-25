@@ -10543,6 +10543,10 @@ GmCXt.closeAppPanel = function() {
         mg$(".mgPlayerJSTest_panel").css("left", "initial");
         mg$(".mgPlayerJSTest_panel").css("top", "50%");
     }
+    
+    mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$("#mgPlayerJSTest_app").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$(".mgPlayerJSTest_panel").focus();
 
     GmCXt.sendMessageToApp("mgPlayerJSTest_action:app_panel_closed", {});
 };
@@ -29196,14 +29200,9 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
                     mg$.ajax({
                         url: GmCXt.conf.ssoConfigUrl + '' + GmCXt.getMd5(currHost) + ".json",
                         xhrFields: {
-                            withCredentials: true
+                            withCredentials: false
                         },
                         method: "GET",
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('x-mg-host', currHost);
-                            xhr.setRequestHeader('x-mg-source', GmCXt.conf.appName);
-                            xhr.setRequestHeader('x-mg-orgId', '');
-                        },
                         contentType: "application/json",
                         success: function(response) {
                             response = GmCXt.parseJSON(response);
@@ -29331,6 +29330,9 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
                 GmCXt.storage().set({
                     "lastTooltipSync": GmCXt.lastTooltipSync
                 });
+
+                $rootScope.getContextToursAfterLogin = true;
+
                 $rootScope.initializeApp().then(function() {
 
                     $rootScope.initPlayerMode();
@@ -29466,7 +29468,10 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
 
                 function retrySso() {
 
-                    if (GmCXt.user) closeTabForSso();
+                    if (GmCXt.user) {
+                        closeTabForSso();
+                        return;
+                    }
 
                     $rootScope.shouldOpenSsoTab().then(function(flag) {
                         if (flag) {
@@ -30512,6 +30517,14 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
                 var pubTours = $rootScope.filterGuideByEnv(allTours);
 
                 $rootScope.publishedTours = pubTours;
+
+                if($rootScope.getContextToursAfterLogin) {
+
+                    GmCXt.sendToParentWindow({
+                      action: "mgPlayerJSTest_action:get_context_guides",
+                    });
+                    $rootScope.getContextToursAfterLogin = false;
+                }
 
                 GmCXt.log(21, "ALL PUBLISHED guides", pubTours);
             };
