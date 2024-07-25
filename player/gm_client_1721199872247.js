@@ -43504,7 +43504,7 @@ GmCXt.getStepCreatorIframe = function() {
 };
 
 GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/src/index_1721195935511.html") + "?domainName=" + GmCXt.getPageDomain();
+	var u = GmCXt.getBaseUrl("side_panel/src/index_1721199872247.html") + "?domainName=" + GmCXt.getPageDomain();
 
 	var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel mgPlayerJSTest_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSTest_panel-micro' : '') + ((GmCXt.isMicroPlayer()) ? 'mgPlayerJSTest_theme-mplayer' : '') + "'>";
 
@@ -61859,7 +61859,7 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1721195935511.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1721199872247.css');
 })();
 (function() {
 	function load(cssId, path) {
@@ -61875,5 +61875,5 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1721195935511.css');
+	load('guideme-clientjs-css', 'content_script/worker/css/style_1721199872247.css');
 })();

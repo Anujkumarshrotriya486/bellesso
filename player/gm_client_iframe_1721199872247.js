@@ -126,7 +126,7 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "//stagecdn.guideme.io/guideme-player/ent/";
+	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
@@ -41419,5 +41419,5 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1721195935511.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1721199872247.css');
 })();
