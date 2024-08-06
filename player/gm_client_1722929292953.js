@@ -2940,10 +2940,10 @@ GmCXt.isGmElement = function(el) {
     isGmElement = (
         el &&
         (
-            el.parent('wmgPlayerJSTest_').length ||
-            el.parent('.mgPlayerJSTest_beacon-icon').length ||
-            el.parent('.mgPlayerJSTest_smarttip-icon').length ||
-            el.parents('wmgPlayerJSTest_').length
+            el.parent('wmgPlayerJSTest2_').length ||
+            el.parent('.mgPlayerJSTest2_beacon-icon').length ||
+            el.parent('.mgPlayerJSTest2_smarttip-icon').length ||
+            el.parents('wmgPlayerJSTest2_').length
         )
     );
 
@@ -2951,7 +2951,7 @@ GmCXt.isGmElement = function(el) {
         var className = el.attr('class');
         var parentClassName = el.parent().attr('class');
 
-        if ((className && className.indexOf('mgPlayerJSTest_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSTest_') !== -1))
+        if ((className && className.indexOf('mgPlayerJSTest2_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSTest2_') !== -1))
             isGmElement = true;
     }
 
@@ -2960,7 +2960,7 @@ GmCXt.isGmElement = function(el) {
 
 GmCXt.onImageLoadError = function(obj) {
 
-    var isCDNCheck = obj.hasClass('mgPlayerJSTest_cdnChecked');
+    var isCDNCheck = obj.hasClass('mgPlayerJSTest2_cdnChecked');
     var cn, isMyGuideImage, isSrcEmpty, src;
 
     var updateSign = function() {
@@ -2972,18 +2972,18 @@ GmCXt.onImageLoadError = function(obj) {
                 GmCXt.getCdnSignature(true);
             } else {
                 var m = {
-                    action: 'mgPlayerJSTest_action:get_cdn_signature',
+                    action: 'mgPlayerJSTest2_action:get_cdn_signature',
                 };
                 GmCXt.sendToParentWindow(m);
             }
-        } else if (obj.hasClass('mgPlayerJSTest_dap-card-image')) {
+        } else if (obj.hasClass('mgPlayerJSTest2_dap-card-image')) {
             obj.attr('src', GmCXt.conf.staticContentPath + 'technology.jpg');
         }
     };
 
     if (obj && obj.length && (obj[0].tagName === 'IMG' || GmCXt.isGmElement(obj)) && !isCDNCheck) {
 
-        cn = 'mgPlayerJSTest_custom-image'; // Never do this 'gss'
+        cn = 'mgPlayerJSTest2_custom-image'; // Never do this 'gss'
         isMyGuideImage = obj.hasClass(cn);
         if (GmCXt.isGmElement(obj) && obj[0].tagName === 'SOURCE') {
             isMyGuideImage = true;
@@ -2993,7 +2993,7 @@ GmCXt.onImageLoadError = function(obj) {
 
         src = obj.attr('src');
 
-        obj.addClass('mgPlayerJSTest_cdnChecked');
+        obj.addClass('mgPlayerJSTest2_cdnChecked');
         updateSign();
     }
 };
@@ -3352,11 +3352,11 @@ GmCXt.getStepInfoLog = function(step) {
 };
 
 GmCXt.isAnonymousUser = function() {
-    if (GmCXt.user && GmCXt.organization && !GmCXt.isEmpty(GmCXt.organization)) {
-        var anonymous = 'anonymous-' + GmCXt.organization.organization_id + '@guideme.io';
+    if (GmCXt.user && !GmCXt.isEmpty(GmCXt.organization)) {
+        var anonymous = 'anonymous-' + GmCXt.organization.organization_id;
         var userEmail = GmCXt.user.user_email;
 
-        if (userEmail === anonymous || userEmail === 'End+user@edcast.com')
+        if ((userEmail.indexOf(anonymous) !== -1 || userEmail === 'End+user@edcast.com') && !GmCXt.user.signin_user_email) 
             return true;
         else
             return false;
@@ -3497,16 +3497,16 @@ GmCXt.sendToParentWindow = function(m) {
             m.data.fromSidePanel = GmCXt.isSidePanelApp;
         }
 
-        if (m.action !== "mgPlayerJSTest_action:update_custom_labels" &&
-            m.action !== "mgPlayerJSTest_action:set_lang_content_script" &&
-            m.action !== "mgPlayerJSTest_action:update:player_mode" &&
-            m.action !== "mgPlayerJSTest_action:save_user_info" &&
-            m.action !== "mgPlayerJSTest_action:payload_event_call"
+        if (m.action !== "mgPlayerJSTest2_action:update_custom_labels" &&
+            m.action !== "mgPlayerJSTest2_action:set_lang_content_script" &&
+            m.action !== "mgPlayerJSTest2_action:update:player_mode" &&
+            m.action !== "mgPlayerJSTest2_action:save_user_info" &&
+            m.action !== "mgPlayerJSTest2_action:payload_event_call"
         ) {
             m.data.user = GmCXt.user;
         }
 
-        if (m.action === "mgPlayerJSTest_action:payload_event_call") {
+        if (m.action === "mgPlayerJSTest2_action:payload_event_call") {
             delete m.data.fromSidePanel;
         }
     }
@@ -3557,7 +3557,7 @@ GmCXt.getPopupLogo = function() {
         brandLogo = logo + GmCXt.getCdnSign();
     }
 
-    return "<img class='mgPlayerJSTest_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
+    return "<img class='mgPlayerJSTest2_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
 };
 
 GmCXt.seggregateRules = function(ruleGroup) {
@@ -3656,7 +3656,7 @@ GmCXt.reloadFailedImages = function() {
     }
 
     if (window.self === window.top) {
-        var msg = "mgPlayerJSTest_action:reload_images";
+        var msg = "mgPlayerJSTest2_action:reload_images";
         GmCXt.sendMessageToApp(msg);
         GmCXt.sendMessageToStepFrame(msg);
     }
@@ -3942,9 +3942,9 @@ GmCXt.redirect = function(to) {
 
 GmCXt.getPosition = function(cssPos) {
     if (cssPos) {
-        return 'mgPlayerJSTest_fixed-position';
+        return 'mgPlayerJSTest2_fixed-position';
     } else {
-        return 'mgPlayerJSTest_absolute-position';
+        return 'mgPlayerJSTest2_absolute-position';
     }
 };
 
@@ -4234,9 +4234,9 @@ GmCXt.initPlayerModeFeatures = function(showPlayer, isMiniPlayer, isPlayerMode) 
     }
 
     if (GmCXt.isMicroPlayer()) {
-        mg$(".mgPlayerJSTest_panel").addClass('mgPlayerJSTest_theme-mplayer');
+        mg$(".mgPlayerJSTest2_panel").addClass('mgPlayerJSTest2_theme-mplayer');
     } else {
-        mg$(".mgPlayerJSTest_panel").removeClass('mgPlayerJSTest_theme-mplayer');
+        mg$(".mgPlayerJSTest2_panel").removeClass('mgPlayerJSTest2_theme-mplayer');
     }
 };
 
@@ -4821,13 +4821,13 @@ GmCXt.cleanPlayer = function() {
 
     GmCXt.cleanPlayerI();
 
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:clean_tour_player");
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:clean_tour_player");
 
     GmCXt.storage().set({
-        'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': null
+        'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': null
     });
 
-    GmCXt.storage().remove(['mgPlayerJSTest_GM_PLAYER_STORAGE_KEY']);
+    GmCXt.storage().remove(['mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY']);
 };
 
 GmCXt.compareAttributes = function(el, topEl) {
@@ -4846,17 +4846,17 @@ GmCXt.filterParentNodes = function(nodes, text) {
 
     nodes = nodes.filter(function(index, node) {
         if (node.innerText && node.innerText.trim().toLowerCase() === text) {
-            mg$(node).parents().addClass('mgPlayerJSTest_dummy-class');
+            mg$(node).parents().addClass('mgPlayerJSTest2_dummy-class');
             return true;
         }
         return false;
     });
 
     var childNodes = nodes.filter(function(index, node) {
-        return !mg$(node).hasClass('mgPlayerJSTest_dummy-class');
+        return !mg$(node).hasClass('mgPlayerJSTest2_dummy-class');
     });
 
-    mg$('.mgPlayerJSTest_dummy-class').removeClass('mgPlayerJSTest_dummy-class');
+    mg$('.mgPlayerJSTest2_dummy-class').removeClass('mgPlayerJSTest2_dummy-class');
 
     if (childNodes.length === 1) {
         GmCXt.l.add('All nodes resulting from the query are hierachichally linked (parent-child)');
@@ -4925,14 +4925,14 @@ GmCXt.getErrObj = function(msg, data, isAnalytics) {
     return eObj;
 };
 
-// Elements might have classes like 'mgPlayerJSTest_select-outline' or 'mgPlayerJSTest_dummy-class'
+// Elements might have classes like 'mgPlayerJSTest2_select-outline' or 'mgPlayerJSTest2_dummy-class'
 GmCXt.checkMyGuideClass = function(className) {
 
     var mgClass = false;
     if (className && typeof className === 'string') {
         var arrClass = className.split(/\s+/).filter(Boolean);
         mgClass = arrClass.filter(function(cls) {
-            return cls.indexOf('mgPlayerJSTest_') === 0;
+            return cls.indexOf('mgPlayerJSTest2_') === 0;
         })[0];
     }
     return mgClass;
@@ -5101,11 +5101,11 @@ GmCXt.getFontFile = function() {
 };
 
 GmCXt.getCustomFontStyle = function() {
-    var styleElem = document.getElementById('mgPlayerJSTest_nunito-font-style');
+    var styleElem = document.getElementById('mgPlayerJSTest2_nunito-font-style');
     if (!GmCXt.isEmpty(styleElem)) styleElem.remove();
 
     var newStyle = document.createElement('style');
-    newStyle.id = "mgPlayerJSTest_nunito-font-style";
+    newStyle.id = "mgPlayerJSTest2_nunito-font-style";
     var FontName = "Nunito";
     var FontUrl = GmCXt.getFontFile() + "Nunito-Regular.woff";
     newStyle.appendChild(document.createTextNode("@font-face { font-family: '" + FontName + "'; src: url('" + FontUrl + "') format('woff');}"));
@@ -5242,11 +5242,11 @@ GmCXt.getTitleEditor = function(identifier, flag) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSTest_char_count mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSTest2_char_count mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem2 = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest_title-tool-text-color');
-            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest_title-tool-bg-color');
+            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest2_title-tool-text-color');
+            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest2_title-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -5293,15 +5293,15 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
         content_css: "../../common/lib/tinymce/skins/ui/oxide/content.min.css",
         image_class_list: [{
             title: 'Custom Class',
-            value: 'mgPlayerJSTest_custom-image'
+            value: 'mgPlayerJSTest2_custom-image'
         }],
         file_picker_types: "image media",
         file_picker_callback: function(callback, value, meta) {
             if (meta.filetype == 'image') {
-                mg$('#mgPlayerJSTest_upload-image').val('');
-                mg$('#mgPlayerJSTest_upload-image').trigger('click');
-                mg$('#mgPlayerJSTest_upload-image').off('change');
-                mg$('#mgPlayerJSTest_upload-image').on('change', function() {
+                mg$('#mgPlayerJSTest2_upload-image').val('');
+                mg$('#mgPlayerJSTest2_upload-image').trigger('click');
+                mg$('#mgPlayerJSTest2_upload-image').off('change');
+                mg$('#mgPlayerJSTest2_upload-image').on('change', function() {
                     var file = this.files[0];
 
                     if (file) {
@@ -5328,7 +5328,7 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                                         alt: ''
                                     });
                                 }
-                                mg$(".mgPlayerJSTest_spinner-wrapper").remove();
+                                mg$(".mgPlayerJSTest2_spinner-wrapper").remove();
                             }).catch(function(error) {
                                 throw new Error(error);
                             });
@@ -5337,10 +5337,10 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                     }
                 });
             } else if (meta.filetype == 'media') {
-                mg$('#mgPlayerJSTest_upload-video').val('');
-                mg$('#mgPlayerJSTest_upload-video').trigger('click');
-                mg$('#mgPlayerJSTest_upload-video').off('change');
-                mg$('#mgPlayerJSTest_upload-video').on('change', function() {
+                mg$('#mgPlayerJSTest2_upload-video').val('');
+                mg$('#mgPlayerJSTest2_upload-video').trigger('click');
+                mg$('#mgPlayerJSTest2_upload-video').off('change');
+                mg$('#mgPlayerJSTest2_upload-video').on('change', function() {
                     var file = this.files[0];
                     if (file) {
                         var reader = new FileReader();
@@ -5357,11 +5357,11 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSTest_char_count mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSTest2_char_count mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest_desc-tool-text-color');
-            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest_desc-tool-bg-color');
+            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest2_desc-tool-text-color');
+            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest2_desc-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -5399,12 +5399,12 @@ GmCXt.tinymce_getContentLength = function() {
 };
 
 GmCXt.tinymce_updateCharCounter = function(el, len) {
-    mg$('#' + el.id).next().find('.mgPlayerJSTest_char_count').html('<div id="mgPlayerJSTest_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
+    mg$('#' + el.id).next().find('.mgPlayerJSTest2_char_count').html('<div id="mgPlayerJSTest2_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
 
     if (len > el.settings.max_chars) {
-        mg$('#mgPlayerJSTest_text_count-' + el.id).css('color', 'red');
+        mg$('#mgPlayerJSTest2_text_count-' + el.id).css('color', 'red');
     } else {
-        mg$('#mgPlayerJSTest_text_count-' + el.id).css('color', '');
+        mg$('#mgPlayerJSTest2_text_count-' + el.id).css('color', '');
     }
 };
 
@@ -5437,16 +5437,16 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         resetDragEvents();
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSTest_micro_player_drag .mgPlayerJSTest_title-tooltip-wrapper").removeAttr("style");
+            mg$("#mgPlayerJSTest2_micro_player_drag .mgPlayerJSTest2_title-tooltip-wrapper").removeAttr("style");
         }
     }
 
     function dragOutEvent(e) {
         GmCXt.timeout(function() {
-            mg$('.mgPlayerJSTest_slideshow_drag_over').hide();
+            mg$('.mgPlayerJSTest2_slideshow_drag_over').hide();
         }, GmCXt.t.drag);
 
-        if (dragEl.id === 'mgPlayerJSTest_mPlayer-drag') {
+        if (dragEl.id === 'mgPlayerJSTest2_mPlayer-drag') {
             resetDragEvents();
         }
     }
@@ -5474,12 +5474,12 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         }
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSTest_micro_player_drag .mgPlayerJSTest_title-tooltip-wrapper").css("display", "none");
+            mg$("#mgPlayerJSTest2_micro_player_drag .mgPlayerJSTest2_title-tooltip-wrapper").css("display", "none");
         }
     }
 
     function elementDrag(e) {
-        mg$('.mgPlayerJSTest_slideshow_drag_over').show();
+        mg$('.mgPlayerJSTest2_slideshow_drag_over').show();
         e = e || window.event;
         // calculate the new cursor position:
         var wWdth = mg$(window).width();
@@ -5527,7 +5527,7 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         /* stop moving when mouse button is released:*/
         resetDragEvents();
 
-        mg$('.mgPlayerJSTest_slideshow_drag_over').hide();
+        mg$('.mgPlayerJSTest2_slideshow_drag_over').hide();
     }
 };
 
@@ -5676,21 +5676,21 @@ GmCXt.isDefaultIcon = function(str) {
 };
 
 GmCXt.syncPlayerInst = function(m) {
-    if (m === "mgPlayerJSTest_action:started;task:select_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSTest_action:started;task:select_dom_element_tooltips" ||
-        m === "mgPlayerJSTest_action:task:init_new_iframe" ||
-        m === "mgPlayerJSTest_action:update_player_instance" ||
-        m === "mgPlayerJSTest_action:play_slideshow" ||
-        m === "mgPlayerJSTest_action:play_video_step" ||
-        m === "mgPlayerJSTest_action:play_image_step" ||
-        m === "mgPlayerJSTest_action:click; on:mgPlayerJSTest_slideshow-close" ||
-        m === "mgPlayerJSTest_action:mark_auto_tour_donotshow" ||
-        m === "mgPlayerJSTest_action:update_player_instance_app" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_off" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_on" ||
-        m === "mgPlayerJSTest_action:close_guide" ||
-        m === "mgPlayerJSTest_action:set_style_audio_icon_response") {
+    if (m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_tooltips" ||
+        m === "mgPlayerJSTest2_action:task:init_new_iframe" ||
+        m === "mgPlayerJSTest2_action:update_player_instance" ||
+        m === "mgPlayerJSTest2_action:play_slideshow" ||
+        m === "mgPlayerJSTest2_action:play_video_step" ||
+        m === "mgPlayerJSTest2_action:play_image_step" ||
+        m === "mgPlayerJSTest2_action:click; on:mgPlayerJSTest2_slideshow-close" ||
+        m === "mgPlayerJSTest2_action:mark_auto_tour_donotshow" ||
+        m === "mgPlayerJSTest2_action:update_player_instance_app" ||
+        m === "mgPlayerJSTest2_action:set_audio_mode_off" ||
+        m === "mgPlayerJSTest2_action:set_audio_mode_on" ||
+        m === "mgPlayerJSTest2_action:close_guide" ||
+        m === "mgPlayerJSTest2_action:set_style_audio_icon_response") {
         return true;
     } else {
         return false;
@@ -5698,45 +5698,45 @@ GmCXt.syncPlayerInst = function(m) {
 };
 
 GmCXt.syncCreateInst = function(m) {
-    if (m === "mgPlayerJSTest_action:started;task:highlight_element" ||
-        m === "mgPlayerJSTest_action:started;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:completed;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSTest_action:started;task:select_new_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:select_new_dom_element_for_edit_step" ||
-        m === "mgPlayerJSTest_action:narrow_element_selection" ||
-        m === "mgPlayerJSTest_action:started;task:narrow_element_selection" ||
-        m === "mgPlayerJSTest_action:expand_element_selection" ||
-        m === "mgPlayerJSTest_action:started;task:expand_element_selection" ||
-        m === "mgPlayerJSTest_action:started;task:select_element_for_message_step" ||
-        m === "mgPlayerJSTest_action:started;task:select_element_for_branching_step" ||
-        m === "mgPlayerJSTest_action:started;task:select_new_element_for_dom_select_rule" ||
-        m === "mgPlayerJSTest_action:started;task:select_new_table_for_dom_select_rule" ||
-        m === "mgPlayerJSTest_action:started;task:delete_element_for_message_step" ||
-        m === "mgPlayerJSTest_action:started;task:select_dom_element_for_beacon" ||
-        m === "mgPlayerJSTest_action:started;task:blackout_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:edit_message_step_select_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:step_blackout_area_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element" ||
-        m === "mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSTest_action:started:select_new_dom_element_for_smart_tip" ||
-        m === "mgPlayerJSTest_action:find_element_to_get_precision" ||
-        m === "mgPlayerJSTest_action:find_element_to_get_precision_for_rules" ||
-        m === "mgPlayerJSTest_action:started;task:select_dom_element_for_matching_in_rules" ||
-        m === "mgPlayerJSTest_action:do;task:enable_jQuery_selector" ||
-        m === "mgPlayerJSTest_action:save_step" ||
-        m === "mgPlayerJSTest_action:click;on:save-beacon-settings" ||
-        m === "mgPlayerJSTest_action:reselect_beacon_element" ||
-        m === "mgPlayerJSTest_action:reselect_element" ||
-        m === "mgPlayerJSTest_action:select_element" ||
-        m === "mgPlayerJSTest_action:blackout_element" ||
-        m === "mgPlayerJSTest_action:delete_step_element" ||
-        m === "mgPlayerJSTest_action:find_element_precision" ||
-        m === "mgPlayerJSTest_action:find_element_precision_for_rules" ||
-        m === "mgPlayerJSTest_action:save_elem" ||
-        m === "mgPlayerJSTest_action:update_elem_tag" ||
-        m === "mgPlayerJSTest_action:select_element_tag" ||
-        m === "mgPlayerJSTest_action:started;task:edit_tag_select_existing_dom_element") {
+    if (m === "mgPlayerJSTest2_action:started;task:highlight_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:completed;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step" ||
+        m === "mgPlayerJSTest2_action:narrow_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:narrow_element_selection" ||
+        m === "mgPlayerJSTest2_action:expand_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:expand_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:select_element_for_message_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_element_for_branching_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_element_for_dom_select_rule" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_table_for_dom_select_rule" ||
+        m === "mgPlayerJSTest2_action:started;task:delete_element_for_message_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_for_beacon" ||
+        m === "mgPlayerJSTest2_action:started;task:blackout_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_message_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:step_blackout_area_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started:select_new_dom_element_for_smart_tip" ||
+        m === "mgPlayerJSTest2_action:find_element_to_get_precision" ||
+        m === "mgPlayerJSTest2_action:find_element_to_get_precision_for_rules" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_for_matching_in_rules" ||
+        m === "mgPlayerJSTest2_action:do;task:enable_jQuery_selector" ||
+        m === "mgPlayerJSTest2_action:save_step" ||
+        m === "mgPlayerJSTest2_action:click;on:save-beacon-settings" ||
+        m === "mgPlayerJSTest2_action:reselect_beacon_element" ||
+        m === "mgPlayerJSTest2_action:reselect_element" ||
+        m === "mgPlayerJSTest2_action:select_element" ||
+        m === "mgPlayerJSTest2_action:blackout_element" ||
+        m === "mgPlayerJSTest2_action:delete_step_element" ||
+        m === "mgPlayerJSTest2_action:find_element_precision" ||
+        m === "mgPlayerJSTest2_action:find_element_precision_for_rules" ||
+        m === "mgPlayerJSTest2_action:save_elem" ||
+        m === "mgPlayerJSTest2_action:update_elem_tag" ||
+        m === "mgPlayerJSTest2_action:select_element_tag" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_tag_select_existing_dom_element") {
         return true;
     } else {
         return false;
@@ -5752,12 +5752,12 @@ GmCXt.setAutoTour = function(id) {
         };
         if (GmCXt.isSidePanelApp) {
             var m = {
-                action: "mgPlayerJSTest_action:set_auto_tour"
+                action: "mgPlayerJSTest2_action:set_auto_tour"
             };
             m.data = data;
             GmCXt.sendToParentWindow(m);
         } else {
-            GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:set_auto_tour', data);
+            GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:set_auto_tour', data);
         }
     }
 };
@@ -6066,7 +6066,7 @@ GmCXt.verifyMsg = function(event) {
     var valid = false;
     var data = message.data;
 
-    var fromSelf = (action.indexOf('mgPlayerJSTest_action:') !== -1);
+    var fromSelf = (action.indexOf('mgPlayerJSTest2_action:') !== -1);
 
     // for salesforce and service now app backword compatibility 
     if (action === "gmPlayerXt_action:init_sfdc_env" ||
@@ -6158,20 +6158,20 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         step.step_type === 'smartTip' ||
         step.step_type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION) {
 
-        message.action = "mgPlayerJSTest_action:edit_step,type:inline";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:inline";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (GmCXt.isAutomationStep(step)) {
-        message.action = "mgPlayerJSTest_action:edit_step,type:automation";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:automation";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (step.step_type === 'message') {
 
-        message.action = "mgPlayerJSTest_action:edit_step,type:message";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:message";
 
         var domElems = step.step_settings.domElems;
         for (var index in domElems) {
@@ -6179,7 +6179,7 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         }
 
     } else if (step.step_type === 'image') {
-        message.action = "mgPlayerJSTest_action:edit_step,type:image";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:image";
     }
 
     GmCXt.sendToParentWindow(message);
@@ -6193,53 +6193,53 @@ GmCXt.toastMsg = function(message) {
 
     return {
         show: function() {
-            mg$("#mgPlayerJSTest_toast-msg").remove();
+            mg$("#mgPlayerJSTest2_toast-msg").remove();
 
-            var html = "<wmgPlayerJSTest_ id='mgPlayerJSTest_toast-msg'></wmgPlayerJSTest_>";
+            var html = "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_toast-msg'></wmgPlayerJSTest2_>";
             if (GmCXt.browserApp === 'ie') {
                 mg$("body").append(html);
             } else {
                 mg$("html").append(html);
             }
 
-            mg$("#mgPlayerJSTest_toast-msg").html(self.message);
-            mg$("#mgPlayerJSTest_toast-msg").fadeIn();
+            mg$("#mgPlayerJSTest2_toast-msg").html(self.message);
+            mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
             GmCXt.timeout(function() {
-                mg$('#mgPlayerJSTest_toast-msg').fadeOut(500);
+                mg$('#mgPlayerJSTest2_toast-msg').fadeOut(500);
             }, GmCXt.t.toastMsg);
         }
     };
 };
 
 GmCXt.showToastMsg = function(message) {
-    mg$("#mgPlayerJSTest_toast-msg").html(message);
-    mg$("#mgPlayerJSTest_toast-msg").fadeIn();
+    mg$("#mgPlayerJSTest2_toast-msg").html(message);
+    mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
 };
 
 GmCXt.hideToastMsg = function() {
-    mg$('#mgPlayerJSTest_toast-msg').fadeOut(100);
+    mg$('#mgPlayerJSTest2_toast-msg').fadeOut(100);
 };
 
 GmCXt.toastMsgPersistent = function(message) {
     return {
         show: function() {
-            var htmlstr = "<div class='mgPlayerJSTest_toast-msg-wrapper'><div id='mgPlayerJSTest_toast-msg-close' >x</div>";
-            htmlstr += "<div id='mgPlayerJSTest_toast-msg-text' >" + message + "</div></div>";
-            mg$("#mgPlayerJSTest_toast-msg").html(htmlstr);
-            mg$("#mgPlayerJSTest_toast-msg").fadeIn();
+            var htmlstr = "<div class='mgPlayerJSTest2_toast-msg-wrapper'><div id='mgPlayerJSTest2_toast-msg-close' >x</div>";
+            htmlstr += "<div id='mgPlayerJSTest2_toast-msg-text' >" + message + "</div></div>";
+            mg$("#mgPlayerJSTest2_toast-msg").html(htmlstr);
+            mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
 
-            mg$("#mgPlayerJSTest_toast-msg-close").click(function() {
+            mg$("#mgPlayerJSTest2_toast-msg-close").click(function() {
                 GmCXt.toastMsgPersistent().hide();
             });
         },
         hide: function() {
-            mg$('#mgPlayerJSTest_toast-msg').fadeOut(500);
+            mg$('#mgPlayerJSTest2_toast-msg').fadeOut(500);
         }
     };
 };
 
 GmCXt.clearScreen = function() {
-    mg$('.mgPlayerJSTest_inline-step-capture-screen').remove();
+    mg$('.mgPlayerJSTest2_inline-step-capture-screen').remove();
 };
 
 GmCXt.unlockScroll = function() {
@@ -6261,7 +6261,7 @@ GmCXt.getNewGroup = function() {
 
 GmCXt.showAlertToastMsg = function(msg) {
     var obj = {
-        action: "mgPlayerJSTest_action:show_toast_message",
+        action: "mgPlayerJSTest2_action:show_toast_message",
         data: msg
     };
     GmCXt.sendToParentWindow(obj);
@@ -6328,34 +6328,34 @@ GmCXt.tinyMcePasteSetup = function(ed) {
         if (GmCXt.tinymce_getContentLength() === 0) {
             var scope = angular.element('.step-create-section-container').scope();
             if (scope) {
-                if (this.name === "#mgPlayerJSTest_step_title") {
+                if (this.name === "#mgPlayerJSTest2_step_title") {
                     scope.step.step_title = "";
-                    mg$("#mgPlayerJSTest_title-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSTest2_title-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSTest_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSTest2_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
-                if (this.name === "#mgPlayerJSTest_step_description") {
+                if (this.name === "#mgPlayerJSTest2_step_description") {
                     scope.step.step_description = "";
-                    mg$("#mgPlayerJSTest_desc-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSTest2_desc-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSTest_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSTest2_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
 
-                if (this.name === "#mgPlayerJSTest_smart_textarea")
+                if (this.name === "#mgPlayerJSTest2_smart_textarea")
                     scope.step.step_settings.smartTip.guidanceMessage = "";
-                if (this.name === "#mgPlayerJSTest_step_tooltip") {
+                if (this.name === "#mgPlayerJSTest2_step_tooltip") {
                     if (scope.stepDomElms) {
                         scope.stepDomElms[scope.elemSelectedIndex].title = "";
                     }
@@ -6395,7 +6395,7 @@ GmCXt.videoReturnListener = function(callback) {
         event = GmCXt.parseJSON(event);
         event = GmCXt.convertMgdata(event);
 
-        if (event.action === "mgPlayerJSTest_action:save_video_in_background;task:upload_video;completed") {
+        if (event.action === "mgPlayerJSTest2_action:save_video_in_background;task:upload_video;completed") {
             GmCXt.removeVidImageLoader();
             callback(event.data.videoUrl + GmCXt.user.cdn_signature, {
                 alt: ''
@@ -6417,7 +6417,7 @@ GmCXt.sendVideoUploadMessage = function(url, cb) {
         data: {
             videoUrl: url,
         },
-        action: "mgPlayerJSTest_action:save_video_in_background;task:upload_video"
+        action: "mgPlayerJSTest2_action:save_video_in_background;task:upload_video"
     };
     GmCXt.videoReturnListener(cb);
     GmCXt.sendMessageToBackgroundService(m);
@@ -6438,19 +6438,19 @@ GmCXt.readFile = function(file, cb) {
             return;
         }
         mg$(".disabledSaveBtn").prop("disabled", true);
-        mg$(".disabledSaveBtn").addClass("mgPlayerJSTest_disabled");
+        mg$(".disabledSaveBtn").addClass("mgPlayerJSTest2_disabled");
         var url = window.URL.createObjectURL(file);
-        var vid = document.getElementById('mgPlayerJSTest_video-container-currupt-file-test');
+        var vid = document.getElementById('mgPlayerJSTest2_video-container-currupt-file-test');
         vid.src = url;
         var promise = vid.play();
         if (promise !== undefined) {
             promise.then(function() {
-                mg$('.mgPlayerJSTest_screen-container').show();
+                mg$('.mgPlayerJSTest2_screen-container').show();
                 GmCXt.vidImageLoader();
                 GmCXt.sendVideoUploadMessage(url, cb);
                 vid.pause();
             }).catch(function() {
-                mg$('.mgPlayerJSTest_screen-container').hide();
+                mg$('.mgPlayerJSTest2_screen-container').hide();
                 GmCXt.showAlertToastMsg(GmCXt.label.curruptVideoFileMsg);
                 return;
             });
@@ -6460,17 +6460,17 @@ GmCXt.readFile = function(file, cb) {
 
 GmCXt.vidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", true);
-    mg$(".disabledSaveBtn").addClass("mgPlayerJSTest_disabled");
-    mg$(".tox-button").addClass("mgPlayerJSTest_disabled");
-    var spinner = "<div class='mgPlayerJSTest_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
+    mg$(".disabledSaveBtn").addClass("mgPlayerJSTest2_disabled");
+    mg$(".tox-button").addClass("mgPlayerJSTest2_disabled");
+    var spinner = "<div class='mgPlayerJSTest2_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
     mg$('.tox-dialog').append(spinner);
 };
 
 GmCXt.removeVidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", false);
-    mg$(".disabledSaveBtn").removeClass("mgPlayerJSTest_disabled");
-    mg$(".tox-button").removeClass("mgPlayerJSTest_disabled");
-    mg$('.mgPlayerJSTest_spinner-wrapper').remove();
+    mg$(".disabledSaveBtn").removeClass("mgPlayerJSTest2_disabled");
+    mg$(".tox-button").removeClass("mgPlayerJSTest2_disabled");
+    mg$('.mgPlayerJSTest2_spinner-wrapper').remove();
 };
 
 GmCXt.getStepSortedByPS = function(PS, stepId) {
@@ -6606,8 +6606,8 @@ GmCXt.escapeHtml = function(str) {
 };
 
 GmCXt.removeNotif = function() {
-    mg$(".mgPlayerJSTest_overlay-tours-popup").remove();
-    mg$(".mgPlayerJSTest_overlay-container").remove();
+    mg$(".mgPlayerJSTest2_overlay-tours-popup").remove();
+    mg$(".mgPlayerJSTest2_overlay-container").remove();
 };
 
 GmCXt.getObjectSize = function(obj) {
@@ -6624,17 +6624,17 @@ GmCXt.updateUserProfileSettings = function(userSettings) {
     var user = GmCXt.user;
     user.settings = userSettings;
 
-    GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_user_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_user_data', {
         user: user
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_organization_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_organization_data', {
         organization: GmCXt.organization
     });
 };
 
 GmCXt.updatePlayedSteps = function(step) {
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_played_step", {
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_played_step", {
         playedStep: step
     });
 };
@@ -6778,7 +6778,7 @@ GmCXt.updatePlayStructureLinkGuide = function(tour, playerInstance, cb) {
     } else if (playerInstance && !GmCXt.playerI) {
         if (cb) cb(finalPS);
     } else {
-        GmCXt.sendMessageToParentWindow("mgPlayerJSTest_action:update_PI_PS", finalPS);
+        GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:update_PI_PS", finalPS);
     }
 };
 
@@ -6828,7 +6828,7 @@ GmCXt.concatLinkGuideSteps = function(newSteps, tour, step_id, cb) {
         if (GmCXt.playerI.type === GmCXt.TOUR_PLAYER_SLIDESHOW) {
             GmCXt.playerI.tour.steps = steps;
         } else {
-            GmCXt.sendMessageToParentWindow("mgPlayerJSTest_action:update_PI_steps", steps);
+            GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:update_PI_steps", steps);
         }
         GmCXt.playerI.totalStepCount = steps.length;
         GmCXt.playerI.tour.step_count = steps.length;
@@ -6844,19 +6844,19 @@ GmCXt.stopNotification = function(isPreview) {
     if (!GmCXt.isPlayer() && !isPreview) {
         reason = "app is not a player";
         flag = true;
-    } else if (mg$('.mgPlayerJSTest_image-step-screen').is(':visible') || mg$('.mgPlayerJSTest_preview-step-popup-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_image-step-screen').is(':visible') || mg$('.mgPlayerJSTest2_preview-step-popup-container').is(':visible')) {
         reason = "step is playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSTest_user-guide-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_user-guide-container').is(':visible')) {
         reason = "survey is open";
         flag = true;
-    } else if (mg$('.mgPlayerJSTest_notifcation-popup').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_notifcation-popup').is(':visible')) {
         reason = "org notification";
         flag = true;
-    } else if (mg$('.mgPlayerJSTest_slideshow-panel').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_slideshow-panel').is(':visible')) {
         reason = "slideshow playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSTest_play-pause-toolbar').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_play-pause-toolbar').is(':visible')) {
         reason = "pause guide";
         flag = true;
     } else if (GmCXt.APP_PANEL_OPEN && !GmCXt.getAppSetting('keep_player_panel_open')) {
@@ -7150,13 +7150,13 @@ GmCXt.checkLangExist = function(lArr, lang) {
 
 GmCXt.removePreviewFrame = function() {
 
-    mg$('.mgPlayerJSTest_preview-beacon').remove();
-    mg$('.mgPlayerJSTest_preview-smarttip').remove();
-    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSTest_form-submit-preview gssSmarttip-form-submit');
-    mg$('.mgPlayerJSTest_duct-tape-invisible-preview').removeClass('mgPlayerJSTest_duct-tape-invisible-preview');
+    mg$('.mgPlayerJSTest2_preview-beacon').remove();
+    mg$('.mgPlayerJSTest2_preview-smarttip').remove();
+    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSTest2_form-submit-preview gssSmarttip-form-submit');
+    mg$('.mgPlayerJSTest2_duct-tape-invisible-preview').removeClass('mgPlayerJSTest2_duct-tape-invisible-preview');
 
-    if (mg$('.mgPlayerJSTest_preview-smarttip-pwr-html').length)
-        mg$('.mgPlayerJSTest_preview-smarttip-pwr-html').val('');
+    if (mg$('.mgPlayerJSTest2_preview-smarttip-pwr-html').length)
+        mg$('.mgPlayerJSTest2_preview-smarttip-pwr-html').val('');
 };
 
 GmCXt.clearSession = function() {
@@ -7171,8 +7171,8 @@ GmCXt.clearSession = function() {
     GmCXt.playedTour = [];
     GmCXt.storage().remove(['playedTour', 'stepsPlayed']);
 
-    if (mg$('.mgPlayerJSTest_task-list-button').length > 0) {
-        mg$('.mgPlayerJSTest_task-list-button').remove();
+    if (mg$('.mgPlayerJSTest2_task-list-button').length > 0) {
+        mg$('.mgPlayerJSTest2_task-list-button').remove();
     }
 };
 
@@ -7183,8 +7183,8 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         if (idList.length) {
             for (var i = 0; i < idList.length; i++) {
                 GmCXt.log(43, 'Clearing tooltips for tour: ' + idList[i]);
-                mg$('.mgPlayerJSTest_smarttip-tour-' + idList[i]).remove();
-                mg$('.mgPlayerJSTest_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSTest_duct-tape-invisible');
+                mg$('.mgPlayerJSTest2_smarttip-tour-' + idList[i]).remove();
+                mg$('.mgPlayerJSTest2_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSTest2_duct-tape-invisible');
                 delete GmCXt.onScreenTooltipGuideInfo['tour_' + idList[i]];
             }
 
@@ -7198,28 +7198,28 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         }
     } else {
         // Clear all
-        mg$('.mgPlayerJSTest_smarttip-icon').remove();
+        mg$('.mgPlayerJSTest2_smarttip-icon').remove();
         mg$('.smarttip-guidance-msg').remove();
-        mg$('.mgPlayerJSTest_smarttip').remove();
-        mg$('.mgPlayerJSTest_smarttip-valid').remove();
-        mg$('.mgPlayerJSTest_duct-tape').remove();
-        mg$('.mgPlayerJSTest_duct-tape-invisible').removeClass('mgPlayerJSTest_duct-tape-invisible');
+        mg$('.mgPlayerJSTest2_smarttip').remove();
+        mg$('.mgPlayerJSTest2_smarttip-valid').remove();
+        mg$('.mgPlayerJSTest2_duct-tape').remove();
+        mg$('.mgPlayerJSTest2_duct-tape-invisible').removeClass('mgPlayerJSTest2_duct-tape-invisible');
     }
 
-    mg$(".mgPlayerJSTest_beacon-icon").remove();
+    mg$(".mgPlayerJSTest2_beacon-icon").remove();
     GmCXt.beaconsOnScreen = [];
 
     if (!isLogout) {
         GmCXt.closePowerForm();
     }
 
-    GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:forward;remove_active_smarttip_beacon', {
+    GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:forward;remove_active_smarttip_beacon', {
         idList: idList
     });
 };
 
 GmCXt.closePowerForm = function() {
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_power_form", {});
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:close_power_form", {});
 };
 
 GmCXt.closeAppPanel = function() {
@@ -7227,22 +7227,22 @@ GmCXt.closeAppPanel = function() {
     GmCXt.displayWidget();
     GmCXt.displayChatIcon();
     var alignment = GmCXt.getWidgetAlignment();
-    mg$(".mgPlayerJSTest_panel .mgPlayerJSTest_app").css(alignment, "-9550px");
-    mg$(".mgPlayerJSTest_panel").css(alignment, "-9550px");
+    mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css(alignment, "-9550px");
+    mg$(".mgPlayerJSTest2_panel").css(alignment, "-9550px");
     if (alignment === 'right') {
-        mg$(".mgPlayerJSTest_panel").css('left', "initial");
+        mg$(".mgPlayerJSTest2_panel").css('left', "initial");
     }
 
     if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-        mg$(".mgPlayerJSTest_panel").css("left", "initial");
-        mg$(".mgPlayerJSTest_panel").css("top", "50%");
+        mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+        mg$(".mgPlayerJSTest2_panel").css("top", "50%");
     }
     
-    mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$("#mgPlayerJSTest_app").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$(".mgPlayerJSTest_panel").focus();
+    mg$(".mgPlayerJSTest2_panel").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$("#mgPlayerJSTest2_app").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$(".mgPlayerJSTest2_panel").focus();
 
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:app_panel_closed", {});
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:app_panel_closed", {});
 };
 
 GmCXt.legacyWildChar = function(v) {
@@ -7384,7 +7384,7 @@ GmCXt.sendMessageToDesktopApp = function(msg, d) {
         cb(GmCXt.trackerUtil.tabId);
     } else {
         GmCXt.sendMessageToBackgroundService({
-            action: "mgPlayerJSTest_action:get_current_tab_id"
+            action: "mgPlayerJSTest2_action:get_current_tab_id"
         }, cb);
     }
 };
@@ -7466,25 +7466,25 @@ GmCXt.checkInsightEnabled = function() {
 
 GmCXt.toggleStepSelectionToolbar = function(show, showDone, inlineStepReq) {
     if (show) {
-        mg$('.mgPlayerJSTest_toolbar-panel').show();
+        mg$('.mgPlayerJSTest2_toolbar-panel').show();
 
         if (showDone) {
-            GmCXt.sendMessageToolbar("mgPlayerJSTest_action:show_done_button", {
+            GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:show_done_button", {
                 isQuick: inlineStepReq
             });
         } else {
-            GmCXt.sendMessageToolbar("mgPlayerJSTest_action:hide_done_button");
+            GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:hide_done_button");
         }
 
         var u = GmCXt.user.settings || {};
         if (u.showToolbarTooltip) {
-            mg$('.mgPlayerJSTest_toolbar-tooltip').show();
+            mg$('.mgPlayerJSTest2_toolbar-tooltip').show();
         }
 
     } else {
-        mg$('.mgPlayerJSTest_toolbar-panel').hide();
-        mg$('.mgPlayerJSTest_toolbar-tooltip').hide();
-        GmCXt.sendMessageToolbar("mgPlayerJSTest_action:hide_done_button");
+        mg$('.mgPlayerJSTest2_toolbar-panel').hide();
+        mg$('.mgPlayerJSTest2_toolbar-tooltip').hide();
+        GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:hide_done_button");
         // disable_mouse_hover
         window.removeEventListener('mouseover', stopEventPropagation, true);
     }
@@ -7897,7 +7897,7 @@ GmCXt.takeScreenshot = function() {
             });
         } else if (GmCXt.isExtension()) {
             var m = {
-                action: "mgPlayerJSTest_action:capture_browser_screen"
+                action: "mgPlayerJSTest2_action:capture_browser_screen"
             };
             GmCXt.sendMessageToBackgroundService(m, function(resp) {
                 resolve(resp.imgSrc);
@@ -7911,16 +7911,16 @@ GmCXt.takeScreenshot = function() {
 
 GmCXt.triggerForOtherFunctions = function(id, ev) {
     switch (id) {
-        case "mgPlayerJSTest_play_step_popup_drag":
-        case "mgPlayerJSTest_play-step-popup-drag-icon":
+        case "mgPlayerJSTest2_play_step_popup_drag":
+        case "mgPlayerJSTest2_play-step-popup-drag-icon":
 
             break;
-        case "mgPlayerJSTest_play-step-audio-off":
+        case "mgPlayerJSTest2_play-step-audio-off":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOnAudioMode();
             }
             break;
-        case "mgPlayerJSTest_play-step-audio-on":
+        case "mgPlayerJSTest2_play-step-audio-on":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOffAudioMode();
             }
@@ -7961,8 +7961,8 @@ GmCXt.registerClickListner = function(e) {
 
 GmCXt.isIDinOtherList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSTest_play_step_popup_drag", "mgPlayerJSTest_play-step-popup-drag-icon", "mgPlayerJSTest_play-step-audio-off",
-        "mgPlayerJSTest_play-step-audio-on"
+    var idList = ["mgPlayerJSTest2_play_step_popup_drag", "mgPlayerJSTest2_play-step-popup-drag-icon", "mgPlayerJSTest2_play-step-audio-off",
+        "mgPlayerJSTest2_play-step-audio-on"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -7974,12 +7974,12 @@ GmCXt.isIDinOtherList = function(id) {
 
 GmCXt.isIDinGuidePlayList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSTest_play_step_pause_classic", "mgPlayerJSTest_play_step_next", "mgPlayerJSTest_play_step_next_classic",
-        "mgPlayerJSTest_play_step_prev", "mgPlayerJSTest_play_step_prev_classic", "mgPlayerJSTest_play_step_popup_close",
-        "mgPlayerJSTest_play_step_pause", "mgPlayerJSTest_play_step_next_done", "mgPlayerJSTest_play_step_next_done_classic",
-        "mgPlayerJSTest_play_step_popup_edit",
-        "mgPlayerJSTest_play-step-popup-close-svg", "mgPlayerJSTest_play-step-popup-edit-icon",
-        "mgPlayerJSTest_play-step-pause-svg"
+    var idList = ["mgPlayerJSTest2_play_step_pause_classic", "mgPlayerJSTest2_play_step_next", "mgPlayerJSTest2_play_step_next_classic",
+        "mgPlayerJSTest2_play_step_prev", "mgPlayerJSTest2_play_step_prev_classic", "mgPlayerJSTest2_play_step_popup_close",
+        "mgPlayerJSTest2_play_step_pause", "mgPlayerJSTest2_play_step_next_done", "mgPlayerJSTest2_play_step_next_done_classic",
+        "mgPlayerJSTest2_play_step_popup_edit",
+        "mgPlayerJSTest2_play-step-popup-close-svg", "mgPlayerJSTest2_play-step-popup-edit-icon",
+        "mgPlayerJSTest2_play-step-pause-svg"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -7990,7 +7990,7 @@ GmCXt.isIDinGuidePlayList = function(id) {
 };
 
 GmCXt.tooltipTitle = function(os, pEle) {
-    var tTitleCss = "<div class='mgPlayerJSTest_tooltip-title-css'><style type='text/css'>" +
+    var tTitleCss = "<div class='mgPlayerJSTest2_tooltip-title-css'><style type='text/css'>" +
         "." + pEle + " p:first-child {" + "color: " + os.popupDesign.current.stepTitleColor + " !important; " +
         "font-family: " + os.popupDesign.current.stepTitleFontFamily + " !important; " +
         "font-size: " + os.popupDesign.current.stepTitleFontSize + " !important; " +
@@ -8003,7 +8003,7 @@ GmCXt.tooltipTitle = function(os, pEle) {
 };
 
 GmCXt.tooltipPopupCss = function(os, customEle) {
-    var popUpCSS = "<div class='mgPlayerJSTest_tooltip-popup-css'><style type='text/css'>" +
+    var popUpCSS = "<div class='mgPlayerJSTest2_tooltip-popup-css'><style type='text/css'>" +
         customEle + ".smarttip-guidance-msg-top:before {" +
         "border-top-color:" + os.popupDesign.current.bgColor + " !important;" +
         "}" +
@@ -8078,8 +8078,8 @@ GmCXt.tooltipTheme = function(os, customEle) {
     } else {
         tObj.tooltipBorderC = "border-color:" + os.tooltipColor + " !important; ";
 
-        mg$(".mgPlayerJSTest_tooltip-popup-css").remove();
-        mg$(".mgPlayerJSTest_tooltip-title-css").remove();
+        mg$(".mgPlayerJSTest2_tooltip-popup-css").remove();
+        mg$(".mgPlayerJSTest2_tooltip-title-css").remove();
     }
 
     return tObj;
@@ -8208,7 +8208,7 @@ GmCXt.storeVariableValue = function(varIndex) {
             varTitle: variable.name,
             timeout: Date.now() + GmCXt.t.findElTimeout
         };
-        GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:find_element_for_variable', data);
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:find_element_for_variable', data);
     }
 };
 
@@ -8277,11 +8277,11 @@ GmCXt.requestHandler.updateVariableValues = function(message) {
         }
     });
 
-    GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:set_variables', {
+    GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:set_variables', {
         data: GmCXt.variables
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_variables', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:set_variables', {
         variables: GmCXt.variables
     });
 };
@@ -8411,12 +8411,12 @@ GmCXt.trackElNotFound = function(d) {
     // if (window.self === window.top) {
     //     GmCXt.trackerV1.trackElNotFound(d);
     // } else {
-    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:track_element_not_found', d);
+    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:track_element_not_found', d);
     // }
 };
 
 GmCXt.onPopupRerender = function() {
-    if (mg$('#mgPlayerJSTest_popup-reload').length > 0) {
+    if (mg$('#mgPlayerJSTest2_popup-reload').length > 0) {
         var forceClose = !GmCXt.playerI.testAutomation;
         GmCXt.confirmTourClose(forceClose);
     }
@@ -8450,7 +8450,7 @@ GmCXt.getSurveyCompletedData = function(isNotif) {
 
 GmCXt.resetElTracker = function() {
     if (window.self === window.top) {
-        GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:reset_dom_tracker');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:reset_dom_tracker');
     }
 };
 
@@ -8464,7 +8464,7 @@ GmCXt.resetElTrackerVariable = function() {
 GmCXt.logElTracker = function() {
     if (window.self === window.top) {
         GmCXt.logTrackerData = false;
-        GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:request_dom_tracker_info');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:request_dom_tracker_info');
     }
 };
 
@@ -8473,7 +8473,7 @@ GmCXt.shareDomTrackerInfo = function() {
         if (GmCXt.isEmpty(GmCXt.domSelectorTracker)) {
             GmCXt.domSelectorTracker[GmCXt.id] = {};
         }
-        GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
+        GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
     } else {
         GmCXt.combineDomTrackerData();
     }
@@ -8530,9 +8530,9 @@ GmCXt.handleLinkClickEvent = function(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
         if (mediaType === "pdf") {
-            GmCXt.sendMessageToApp("mgPlayerJSTest_action:open_pdf", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_pdf", e.target.href);
         } else {
-            GmCXt.sendMessageToApp("mgPlayerJSTest_action:open_video_player", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_video_player", e.target.href);
         }
     } else if (GmCXt.isElectron()) {
         e.preventDefault();
@@ -8589,12 +8589,12 @@ GmCXt.captureScreenForFeedback = function(mailTo) {
     GmCXt.takeScreenshot().then(function(imageSrc) {
 
         if (GmCXt.isEmpty(imageSrc)) {
-            mg$(".mgPlayerJSTest_feedback-overlay-svg-error").show();
-            mg$(".mgPlayerJSTest_feedback-re-edit-btn").hide();
+            mg$(".mgPlayerJSTest2_feedback-overlay-svg-error").show();
+            mg$(".mgPlayerJSTest2_feedback-re-edit-btn").hide();
             mg$("#mg-feedback-screenshot-check").removeAttr("checked");
         } else {
-            mg$(".mgPlayerJSTest_feedback-overlay-svg-error").hide();
-            mg$(".mgPlayerJSTest_feedback-re-edit-btn").show();
+            mg$(".mgPlayerJSTest2_feedback-overlay-svg-error").hide();
+            mg$(".mgPlayerJSTest2_feedback-re-edit-btn").show();
         }
 
         var img = mg$("#mg-feedback-screenshot-image");
@@ -8624,12 +8624,12 @@ GmCXt.onEditScreenshotClick = function() {
 };
 
 GmCXt.onClickFeedbackHighlightArea = function() {
-    var div = document.getElementById('mgPlayerJSTest_highlight');
+    var div = document.getElementById('mgPlayerJSTest2_highlight');
     GmCXt.feedbackMarkArea(div);
 };
 
 GmCXt.onClickFeedbackHideArea = function() {
-    var div = document.getElementById('mgPlayerJSTest_blackout');
+    var div = document.getElementById('mgPlayerJSTest2_blackout');
     GmCXt.feedbackMarkArea(div, true);
 };
 
@@ -8721,13 +8721,13 @@ GmCXt.feedbackMarkArea = function(div, hide) {
 
 GmCXt.drawArea = function(arr, className) {
     var elems = arr;
-    mg$('DIV.mgPlayerJSTest_selector-' + className).remove();
+    mg$('DIV.mgPlayerJSTest2_selector-' + className).remove();
 
     for (var i = 0; i < elems.length && elems[i].id; i++) {
         var el = elems[i].element.position;
 
-        var closeBtn = '<div class="mgPlayerJSTest_close-area mgPlayerJSTest_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
-        var blackoutEl = mg$('<div class="mgPlayerJSTest_selector-' + className + '" id="mgPlayerJSTest_selector-' + className + '-' + elems[i].id + '">' +
+        var closeBtn = '<div class="mgPlayerJSTest2_close-area mgPlayerJSTest2_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
+        var blackoutEl = mg$('<div class="mgPlayerJSTest2_selector-' + className + '" id="mgPlayerJSTest2_selector-' + className + '-' + elems[i].id + '">' +
                 closeBtn +
                 '</div>')
             .appendTo('#mg-feedback-flex-container')
@@ -8739,13 +8739,13 @@ GmCXt.drawArea = function(arr, className) {
             });
     }
 
-    mg$("DIV.mgPlayerJSTest_" + className + "-close").on('click', function(e) {
+    mg$("DIV.mgPlayerJSTest2_" + className + "-close").on('click', function(e) {
         var oArr = [];
         arr.forEach(function(el, i) {
             if (el.id !== e.currentTarget.id) oArr.push(el);
         });
         arr = oArr;
-        mg$("#mgPlayerJSTest_selector-" + className + "-" + e.currentTarget.id).remove();
+        mg$("#mgPlayerJSTest2_selector-" + className + "-" + e.currentTarget.id).remove();
     });
 };
 
@@ -8788,9 +8788,9 @@ GmCXt.sendFeedback = function() {
 
 GmCXt.clearFeedBackView = function() {
     mg$("#mg-feedback-container-wrapper").remove();
-    mg$('.mgPlayerJSTest_selector-highlight').remove();
+    mg$('.mgPlayerJSTest2_selector-highlight').remove();
     GmCXt.sfMarkElements = [];
-    mg$('.mgPlayerJSTest_selector-blackout-feedback').remove();
+    mg$('.mgPlayerJSTest2_selector-blackout-feedback').remove();
     GmCXt.sfHideElements = [];
     GmCXt.mailTo = '';
     GmCXt.openAppPanel();
@@ -9060,12 +9060,12 @@ GmCXt.openAppPanel = function(action, source) {
 
 		if (GmCXt.editStepTout) {
 			clearTimeout(GmCXt.editStepTout);
-			mg$('.mgPlayerJSTest_edit-step-loader').hide();
+			mg$('.mgPlayerJSTest2_edit-step-loader').hide();
 		}
 
 		var byPassRoute = (action === "byPassRoute" || action === "playSlideShow") ? true : false;
 		if (!byPassRoute) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:open_side_panel", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_side_panel", {
 				action: action
 			});
 		}
@@ -9083,22 +9083,22 @@ GmCXt.openAppPanel = function(action, source) {
 
 		GmCXt.timeout(function() {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSTest_panel .mgPlayerJSTest_app").css(alignment, "0px");
-			mg$(".mgPlayerJSTest_panel").css(alignment, "0px");
+			mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css(alignment, "0px");
+			mg$(".mgPlayerJSTest2_panel").css(alignment, "0px");
 			
 			if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-				mg$(".mgPlayerJSTest_panel .mgPlayerJSTest_app").css("right", "50px");
-				mg$(".mgPlayerJSTest_panel").css("right", "50px");
+				mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css("right", "50px");
+				mg$(".mgPlayerJSTest2_panel").css("right", "50px");
 				GmCXt.taskListOpen = false;
 			} else {
-				mg$(".mgPlayerJSTest_panel").removeClass('mgPlayerJSTest_theme-mplayer');
-				mg$(".mgPlayerJSTest_panel").css("top", "0");
+				mg$(".mgPlayerJSTest2_panel").removeClass('mgPlayerJSTest2_theme-mplayer');
+				mg$(".mgPlayerJSTest2_panel").css("top", "0");
 				GmCXt.showPanelCloseBtn();
 			}
 
 			GmCXt.removePreviewTop();
-			mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':false, 'tabindex':0});
-			mg$("#mgPlayerJSTest_app").attr({'aria-hidden':false, 'tabindex':0});
+			mg$(".mgPlayerJSTest2_panel").attr({'aria-hidden':false, 'tabindex':0});
+			mg$("#mgPlayerJSTest2_app").attr({'aria-hidden':false, 'tabindex':0});
 
 		}, GmCXt.t.appPanel);
 
@@ -9113,7 +9113,7 @@ GmCXt.openAppPanel = function(action, source) {
 GmCXt.showPanelDisabledPopup = function() {
 	if (GmCXt.isExtension()) {
 		var m = {
-			action: 'mgPlayerJSTest_action:to_background;task:show_panel_disabled_popup'
+			action: 'mgPlayerJSTest2_action:to_background;task:show_panel_disabled_popup'
 		};
 		GmCXt.sendMessageToBackgroundService(m);
 	}
@@ -9329,57 +9329,57 @@ GmCXt.alert = function(options) {
 	};
 
 	pub.show = function() {
-		var popupType = 'mgPlayerJSTest_popup-info';
+		var popupType = 'mgPlayerJSTest2_popup-info';
 		var popupDescription = "";
 
 		if (self.description) {
-			popupDescription = "<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-info'>" + self.description + "</wmgPlayerJSTest_>";
+			popupDescription = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-info'>" + self.description + "</wmgPlayerJSTest2_>";
 		}
 
 		var cancelButton = "";
-		var okButton = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-ok mgPlayerJSTest_btn-default mgPlayerJSTest_ok-btn mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSTest_>";
+		var okButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-ok mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSTest2_>";
 
 		if (self.type === "confirm") {
-			cancelButton = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-cancel mgPlayerJSTest_btn-default mgPlayerJSTest_btn-neutral mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSTest_>";
+			cancelButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-cancel mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSTest2_>";
 
 		} else if (self.type === "onboarding") {
-			okButton = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-ok mgPlayerJSTest_btn-default mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSTest_>";
-			cancelButton = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-cancel mgPlayerJSTest_btn-default mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSTest_>";
+			okButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-ok mgPlayerJSTest2_btn-default mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSTest2_>";
+			cancelButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-cancel mgPlayerJSTest2_btn-default mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSTest2_>";
 		}
 
-		var html = " <wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-outer'></wmgPlayerJSTest_>" +
-			" <wmgPlayerJSTest_ class='mgPlayerJSTest_popup " + popupType + "'>" +
-			"    <div class='mgPlayerJSTest_popup-header-wrapper'>" +
-			"	    <div class='mgPlayerJSTest_popup-header-icon-wrapper'><div class='mgPlayerJSTest_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-outer'></wmgPlayerJSTest2_>" +
+			" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+			"    <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+			"	    <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 			"     </div>" +
-			" 	  <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'>" + self.title + "</wmgPlayerJSTest_>" +
+			" 	  <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + self.title + "</wmgPlayerJSTest2_>" +
 			popupDescription +
-			"     <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-btn-wrapper'>" +
+			"     <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
 			okButton +
 			cancelButton +
-			"    </wmgPlayerJSTest_>" +
-			" </wmgPlayerJSTest_>";
+			"    </wmgPlayerJSTest2_>" +
+			" </wmgPlayerJSTest2_>";
 
 		mg$("body").append(html);
 
-		mg$(".mgPlayerJSTest_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 
-		mg$(".mgPlayerJSTest_panel-popup-outer").css('height', mg$(document).height());
+		mg$(".mgPlayerJSTest2_panel-popup-outer").css('height', mg$(document).height());
 
-		mg$(".mgPlayerJSTest_panel-popup-ok").on("click", function() {
+		mg$(".mgPlayerJSTest2_panel-popup-ok").on("click", function() {
 			if (mg$.isFunction(self.callback))
 				self.callback();
 			pub.close();
 		});
 
-		mg$(".mgPlayerJSTest_panel-popup-cancel").on("click", function() {
+		mg$(".mgPlayerJSTest2_panel-popup-cancel").on("click", function() {
 			pub.close();
 		});
 	};
 
 	pub.close = function() {
-		mg$(".mgPlayerJSTest_popup").remove();
-		mg$(".mgPlayerJSTest_panel-popup-outer").remove();
+		mg$(".mgPlayerJSTest2_popup").remove();
+		mg$(".mgPlayerJSTest2_panel-popup-outer").remove();
 	};
 
 	return pub;
@@ -9437,52 +9437,52 @@ GmCXt.alertV2 = function(options) {
 	pub.show = function() {
 		var alt = GmCXt.getAutoLaunchTourId();
 		var pi = GmCXt.playerI;
-		var popupType = 'mgPlayerJSTest_popup-info';
+		var popupType = 'mgPlayerJSTest2_popup-info';
 
-		var html = " <wmgPlayerJSTest_ class='mgPlayerJSTest_overlay-container'></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup " + popupType + "'>" +
-			"   <div class='mgPlayerJSTest_popup-header-wrapper'>" +
-			"	   <div class='mgPlayerJSTest_popup-header-icon-wrapper'><div class='mgPlayerJSTest_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+			"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+			"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 			"   </div>" +
-			"<wmgPlayerJSTest_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSTest_popup-input-field' maxlength='1000' /></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'>" + self.description + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-btn-wrapper'>";
+			"<wmgPlayerJSTest2_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSTest2_popup-input-field' maxlength='1000' /></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + self.description + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>";
 
 		if (self.button1) {
-			html += "<wmgPlayerJSTest_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSTest_popup-ok-btn mgPlayerJSTest_btn-default mgPlayerJSTest_ok-btn mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt'>" + self.button1 + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSTest2_popup-ok-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button1 + "</wmgPlayerJSTest2_>";
 		}
 
 		if (self.button3) {
-			html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-play-inapp mgPlayerJSTest_btn-default mgPlayerJSTest_ok-btn mgPlayerJSTest_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-play-inapp mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSTest2_>";
 		}
 
 		if (self.button2) {
-			html += "<wmgPlayerJSTest_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSTest_popup-cancel-btn mgPlayerJSTest_btn-default mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt'>" + self.button2 + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSTest2_popup-cancel-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button2 + "</wmgPlayerJSTest2_>";
 		}
 
-		html += "</wmgPlayerJSTest_>";
+		html += "</wmgPlayerJSTest2_>";
 
 		if (pi && alt && alt === pi.tour.tour_id)
-			html += "<wmgPlayerJSTest_><input type='checkbox' class='mgPlayerJSTest_popup-checkbox mgPlayerJSTest_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_><input type='checkbox' class='mgPlayerJSTest2_popup-checkbox mgPlayerJSTest2_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 
 		mg$("html").append(html);
 
-		mg$(".mgPlayerJSTest_popup-header-icon").html(GmCXt.svgs.popup_info);
-		mg$(".mgPlayerJSTest_popup").on("mousedown", function(e) {
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSTest_overlay-container").on("mousedown", function(e) {
+		mg$(".mgPlayerJSTest2_overlay-container").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSTest_popup-ok-btn").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-ok-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
-			var popupInputFieldValue = mg$('.mgPlayerJSTest_popup-input-field').val();
+			var popupInputFieldValue = mg$('.mgPlayerJSTest2_popup-input-field').val();
 			if (pi && alt && alt === pi.tour.tour_id) {
 
-				var checked = mg$('.mgPlayerJSTest_popup-checkbox:checkbox:checked').length > 0;
+				var checked = mg$('.mgPlayerJSTest2_popup-checkbox:checkbox:checked').length > 0;
 
 				if (checked)
 					GmCXt.setDoNotShowTours(pi.tour);
@@ -9495,21 +9495,21 @@ GmCXt.alertV2 = function(options) {
 				self.button1Callback(popupInputFieldValue);
 		});
 
-		mg$(".mgPlayerJSTest_popup-play-inapp").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-play-inapp").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close();
 			if (mg$.isFunction(self.button3Callback))
 				self.button3Callback();
 		});
 
-		mg$(".mgPlayerJSTest_popup-cancel-btn").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-cancel-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 			if (mg$.isFunction(self.button2Callback))
 				self.button2Callback();
 		});
 
-		mg$(".mgPlayerJSTest_popup-close-button").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-close-button").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 		});
@@ -9530,31 +9530,31 @@ GmCXt.alertV2 = function(options) {
 
 GmCXt.showForceMode = function() {
 	GmCXt.closePopup();
-	var popupType = 'mgPlayerJSTest_popup-info';
+	var popupType = 'mgPlayerJSTest2_popup-info';
 	var html =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_overlay-container'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup " + popupType + "'>" +
-		"   <div class='mgPlayerJSTest_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSTest_popup-header-icon-wrapper'><div class='mgPlayerJSTest_popup-header-icon'></div></div>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+		"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 		"   </div>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-btn-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_btn-default mgPlayerJSTest_btn-continue-guide mgPlayerJSTest_ok-btn mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_btn-default mgPlayerJSTest_btn-neutral mgPlayerJSTest_btn-exit-guide mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-continue-guide mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_btn-exit-guide mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	mg$("html").append(html);
 
 	GmCXt.stopAudioTrack();
 
-	mg$(".mgPlayerJSTest_popup-header-icon").html(GmCXt.svgs.popup_info);
+	mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 	GmCXt.enforceGuideMePopup = true;
 	GmCXt.pauseAutomation();
 
 	var windowHeight = mg$(window).height();
-	var popupTop = (windowHeight - mg$('.mgPlayerJSTest_popup').height()) / 2;
-	mg$('.mgPlayerJSTest_popup').css("top", popupTop);
+	var popupTop = (windowHeight - mg$('.mgPlayerJSTest2_popup').height()) / 2;
+	mg$('.mgPlayerJSTest2_popup').css("top", popupTop);
 
 	function close(e) {
 		GmCXt.stopPropagation(e);
@@ -9563,9 +9563,9 @@ GmCXt.showForceMode = function() {
 		if (GmCXt.playerI) GmCXt.resumeAutomation();
 	}
 
-	mg$(".mgPlayerJSTest_btn-continue-guide").on("click", close);
+	mg$(".mgPlayerJSTest2_btn-continue-guide").on("click", close);
 
-	mg$(".mgPlayerJSTest_btn-exit-guide").on("click", function(e) {
+	mg$(".mgPlayerJSTest2_btn-exit-guide").on("click", function(e) {
 		if (GmCXt.isExitSurvey()) {
 			GmCXt.showExitSurvey();
 		}
@@ -9575,7 +9575,7 @@ GmCXt.showForceMode = function() {
 		close(e);
 	});
 
-	mg$(".mgPlayerJSTest_popup-close-button").on("click", close);
+	mg$(".mgPlayerJSTest2_popup-close-button").on("click", close);
 };
 
 GmCXt.firstStepAutoLaunch = function() {
@@ -9624,7 +9624,7 @@ GmCXt.resumeAutomation = function() {
 };
 
 GmCXt.sendMessageToSyncPlayerI = function() {
-	var msg = "mgPlayerJSTest_action:sync_playerinstance_for_automation";
+	var msg = "mgPlayerJSTest2_action:sync_playerinstance_for_automation";
 	var data = {};
 	data.playerInstance = GmCXt.playerI;
 	GmCXt.sendMessageToAllWindows(msg, data);
@@ -9684,7 +9684,7 @@ GmCXt.hideTooltipDelay = function(step, options) {
 			stepId: step.step_id,
 			options: options
 		};
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:hide_smarttip_delay', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_smarttip_delay', data);
 	}
 };
 
@@ -9693,7 +9693,7 @@ GmCXt.clearTooltipTimeout = function() {
 	if (window.self === window.top) {
 		clearTimeout(GmCXt.hideTooltipTimeout);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:clear_smarttip_delay_timeout');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:clear_smarttip_delay_timeout');
 	}
 };
 
@@ -9705,10 +9705,10 @@ GmCXt.hideValidationTooltip = function(step, showGuidanceTooltip) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideValidationSmarttip(data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:hide_validation_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_validation_smarttip', data);
 	}
 
-	mg$("#mgPlayerJSTest_smarttip-valid-" + step.step_id).hide();
+	mg$("#mgPlayerJSTest2_smarttip-valid-" + step.step_id).hide();
 };
 
 GmCXt.hideTooltip = function(step, options) {
@@ -9719,7 +9719,7 @@ GmCXt.hideTooltip = function(step, options) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideSmartTip(data, options);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:hide_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_smarttip', data);
 	}
 };
 
@@ -9944,14 +9944,14 @@ GmCXt.alignMessagePreview = function($popup, $container, alignment, stepSettings
 };
 
 GmCXt.closeNotificationPopup = function(isSidePanelOpen) {
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:close_notification_popup', {
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:close_notification_popup', {
 		isSidePanelOpen: isSidePanelOpen
 	});
 };
 
 GmCXt.removePreviewTop = function() {
 	GmCXt.removePreviewFrame();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:remove_preview");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:remove_preview");
 };
 
 GmCXt.hideSmartTipsIfOptionON = function() {
@@ -9963,37 +9963,37 @@ GmCXt.hideSmartTipsIfOptionON = function() {
 };
 
 GmCXt.hideSmartTips = function() {
-	mg$('.mgPlayerJSTest_smarttip-icon').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSTest_smarttip').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSTest_smarttip-valid').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-valid').addClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:hide_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:hide_all_smarttip");
 };
 
 GmCXt.showSmartTips = function(forceShow) {
 
 	if ((GmCXt.tourPlayerI && !forceShow) || GmCXt.isSurveyVisible) return;
 
-	mg$('.mgPlayerJSTest_smarttip-icon').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSTest_smarttip').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSTest_smarttip-valid').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-valid').removeClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:show_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_all_smarttip");
 };
 
 GmCXt.previewSmartTips = function(id) {
-	mg$('.mgPlayerJSTest_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSTest_smarttip-icon-wrapper-' + id).show();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:show_preview_smarttip", {
+	mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + id).show();
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_preview_smarttip", {
 		id: id
 	});
 };
 
 GmCXt.hideBeacons = function() {
-	mg$('.mgPlayerJSTest_beacon-icon').addClass('mgPlayerJSTest_hidden');
-	mg$('#mgPlayerJSTest_beacon-icon-pos-select').show();
+	mg$('.mgPlayerJSTest2_beacon-icon').addClass('mgPlayerJSTest2_hidden');
+	mg$('#mgPlayerJSTest2_beacon-icon-pos-select').show();
 	GmCXt.beaconsAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:hide_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:hide_beacons");
 };
 
 GmCXt.showBeacons = function(forceShow) {
@@ -10003,15 +10003,15 @@ GmCXt.showBeacons = function(forceShow) {
 		return;
 	}
 
-	mg$('.mgPlayerJSTest_beacon-icon').removeClass('mgPlayerJSTest_hidden');
-	mg$('#mgPlayerJSTest_beacon-icon-pos-select').hide();
+	mg$('.mgPlayerJSTest2_beacon-icon').removeClass('mgPlayerJSTest2_hidden');
+	mg$('#mgPlayerJSTest2_beacon-icon-pos-select').hide();
 	GmCXt.beaconsAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:show_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_beacons");
 };
 
 GmCXt.previewBeacons = function(id) {
-	mg$('.mgPlayerJSTest_beacon-icon-tour-' + id).removeClass('mgPlayerJSTest_hidden');
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:show_preview_beacons", {
+	mg$('.mgPlayerJSTest2_beacon-icon-tour-' + id).removeClass('mgPlayerJSTest2_hidden');
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_preview_beacons", {
 		id: id
 	});
 };
@@ -10040,9 +10040,9 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	// Check for image exist if yes then add popup js
 	var imgSrc = '';
 	GmCXt.setImagePopUp();
-	var fsBtn = "<div class='mgPlayerJSTest_full-screen-icon-cont'><button class='mgPlayerJSTest_full-screen-icon'>&#x26F6;</button></div>";
+	var fsBtn = "<div class='mgPlayerJSTest2_full-screen-icon-cont'><button class='mgPlayerJSTest2_full-screen-icon'>&#x26F6;</button></div>";
 
-	mg$(parentClassName).addClass('mgPlayerJSTest_play-step-popup-loader');
+	mg$(parentClassName).addClass('mgPlayerJSTest2_play-step-popup-loader');
 
 	var stepPopupImgList = mg$(parentClassName + ' img');
 
@@ -10051,24 +10051,24 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	stepPopupImgList.each(function(e) {
 		var stepPopupContent = mg$(parentClassName)[0].innerHTML;
 		var stepImgVar = stepPopupImgList[e].outerHTML;
-		var stepImgOverlay = "<div class='mgPlayerJSTest_step-img-popup-overlay'></div>";
-		var newStepImgVar = "<div class='mgPlayerJSTest_display-inline-block mgPlayerJSTest_position-relative mgPlayerJSTest_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
+		var stepImgOverlay = "<div class='mgPlayerJSTest2_step-img-popup-overlay'></div>";
+		var newStepImgVar = "<div class='mgPlayerJSTest2_display-inline-block mgPlayerJSTest2_position-relative mgPlayerJSTest2_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
 		finalStepPopupContent = stepPopupContent.replace(stepImgVar, newStepImgVar);
 		mg$(parentClassName)[0].innerHTML = finalStepPopupContent;
-	}).addClass('mgPlayerJSTest_custom-image');
+	}).addClass('mgPlayerJSTest2_custom-image');
 
-	mg$(".mgPlayerJSTest_full-screen-icon").html(GmCXt.svgs.fullscreen);
+	mg$(".mgPlayerJSTest2_full-screen-icon").html(GmCXt.svgs.fullscreen);
 
-	mg$('.mgPlayerJSTest_full-screen-icon').on("click", function(e) {
-		var modalImg = document.getElementById("mgPlayerJSTest_img_desc");
-		var container = this.closest('.mgPlayerJSTest_step-img-popup-cont');
+	mg$('.mgPlayerJSTest2_full-screen-icon').on("click", function(e) {
+		var modalImg = document.getElementById("mgPlayerJSTest2_img_desc");
+		var container = this.closest('.mgPlayerJSTest2_step-img-popup-cont');
 		var imgElem = container.getElementsByTagName('img')[0];
 		imgSrc = imgElem.src;
-		var imgWrp = document.getElementsByClassName('mgPlayerJSTest_image-popup')[0];
+		var imgWrp = document.getElementsByClassName('mgPlayerJSTest2_image-popup')[0];
 		GmCXt.stopPropagation(e);
 		imgWrp.style.display = "block";
 		modalImg.src = imgSrc;
-		mg$('.mgPlayerJSTest_preview-step-popup-container').css({
+		mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 			'z-index': '2147483646'
 		});
 	});
@@ -10077,7 +10077,7 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 
 	mg$(parentClassName + ' img').on("load", function() {
 		if (GmCXt.alignPopupI) GmCXt.alignPopupI.redo();
-		mg$(parentClassName).removeClass('mgPlayerJSTest_play-step-popup-loader');
+		mg$(parentClassName).removeClass('mgPlayerJSTest2_play-step-popup-loader');
 	});
 };
 
@@ -10090,7 +10090,7 @@ GmCXt.getText = function(s) {
 
 GmCXt.singleLineTitle = function(t) {
 	var c = '';
-	if (t && t.length < 28) c = 'mgPlayerJSTest_nowrap-div';
+	if (t && t.length < 28) c = 'mgPlayerJSTest2_nowrap-div';
 	return c;
 };
 
@@ -10129,27 +10129,27 @@ GmCXt.reportPresence = function() {
 };
 
 GmCXt.setOnAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_audio_mode_on');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_audio_mode_on');
 };
 
 GmCXt.setOffAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_audio_mode_off');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_audio_mode_off');
 };
 
 GmCXt.setOnOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSTest_tooltip-title-mute').show();
-	mg$('.mgPlayerJSTest_tooltip-title-unmute').hide();
-	mg$('.mgPlayerJSTest_onboarding-audio-off').hide();
-	mg$('.mgPlayerJSTest_onboarding-audio-on').show();
-	mg$('.mgPlayerJSTest_onboarding-audio').addClass('playing-audio');
+	mg$('.mgPlayerJSTest2_tooltip-title-mute').show();
+	mg$('.mgPlayerJSTest2_tooltip-title-unmute').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-off').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-on').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio').addClass('playing-audio');
 };
 
 GmCXt.setOffOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSTest_tooltip-title-mute').hide();
-	mg$('.mgPlayerJSTest_tooltip-title-unmute').show();
-	mg$('.mgPlayerJSTest_onboarding-audio-on').hide();
-	mg$('.mgPlayerJSTest_onboarding-audio-off').show();
-	mg$('.mgPlayerJSTest_onboarding-audio').removeClass('playing-audio');
+	mg$('.mgPlayerJSTest2_tooltip-title-mute').hide();
+	mg$('.mgPlayerJSTest2_tooltip-title-unmute').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio-on').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-off').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio').removeClass('playing-audio');
 };
 
 GmCXt.getBoundingRect = function(he) {
@@ -10188,8 +10188,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			yPosMid = (pos.top + pos.height) / 2;
 		}
 
-		disable('.mgPlayerJSTest_smarttip-icon');
-		disable('.mgPlayerJSTest_beacon-icon');
+		disable('.mgPlayerJSTest2_smarttip-icon');
+		disable('.mgPlayerJSTest2_beacon-icon');
 
 		var topEl = document.elementFromPoint(xPosMid, yPosMid);
 
@@ -10197,8 +10197,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			return 'hidden';
 		}
 
-		enable('.mgPlayerJSTest_smarttip-icon');
-		enable('.mgPlayerJSTest_beacon-icon');
+		enable('.mgPlayerJSTest2_smarttip-icon');
+		enable('.mgPlayerJSTest2_beacon-icon');
 
 		if (topEl === null) {
 			topEl = document.elementFromPoint(pos.left, pos.top);
@@ -10516,9 +10516,9 @@ GmCXt.isCurrentHost = function(host) {
 GmCXt.openPowerForm = function(data) {
 
 	if (window.self === window.top) {
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:show_power_form', data);
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:show_power_form', data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:open_power_form', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:open_power_form', data);
 	}
 };
 
@@ -10526,8 +10526,8 @@ GmCXt.rotateGear = function() {
 	var c = 1;
 	var i = null;
 
-	var id = '#mgPlayerJSTest_auto-progress-';
-	var cls = 'mgPlayerJSTest_active-progress';
+	var id = '#mgPlayerJSTest2_auto-progress-';
+	var cls = 'mgPlayerJSTest2_active-progress';
 
 	i = setInterval(function() {
 		if (c === 1 || mg$(id + (c - 1)).hasClass(cls)) { // check for the previous gear
@@ -10552,11 +10552,11 @@ GmCXt.removeTooltips = function(t) {
 		if (GmCXt.inTopWindow(step.step_settings)) {
 			GmCXt.requestHandler.removeToolip(data);
 		} else {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:remove_tooltip", data);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:remove_tooltip", data);
 		}
 
 		if (t.steps[j].step_settings.smartTip.type === 'injector') {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:remove_power_form", data);
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:remove_power_form", data);
 		}
 
 	}
@@ -10582,7 +10582,7 @@ GmCXt.updateBeaconsOnScreen = function(tourId, isValid) {
 			jobId: tourId,
 			isValid: isValid
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest_action:update_beacons_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:update_beacons_on_screen", data);
 	}
 };
 
@@ -10698,7 +10698,7 @@ GmCXt.updateOnScreenTooltipGuideInfo = function(tour, tourId, stepId, isValid, s
 			smartTip: smartTip,
 			url: url
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest_action:update_smarttip_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:update_smarttip_on_screen", data);
 	}
 };
 
@@ -10764,7 +10764,7 @@ GmCXt.clearDataOnLogout = function(d) {
 	GmCXt.organization = false;
 
 	GmCXt.clearSession();
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:clear_session');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_session');
 };
 
 GmCXt.startReloginInterval = function() {
@@ -10834,12 +10834,12 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 
 		if (isExitSurvey) {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:exit_survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:exit_survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else if (data.type === "stepPlay") {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else {
@@ -10850,7 +10850,7 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 			GmCXt.checkIfSurveySubmitted(playerInstance, data, isExitSurvey, function(f) {
 				if (f) {
 					GmCXt.isSurveyVisible = true;
-					GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:survey_start;task:show_survey', data);
+					GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:survey_start;task:show_survey', data);
 				}
 				resolve(GmCXt.isSurveyVisible);
 			});
@@ -11000,23 +11000,23 @@ GmCXt.recordGuideEvents = function() {
 
 	if (GmCXt.isLastStep(PI.currentStepId, PI.playStructure) && GmCXt.tourActivity['t:' + PI.tour.tour_id]) {
 		delete GmCXt.tourActivity['t:' + PI.tour.tour_id];
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_tour_activity", {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_tour_activity", {
 			tourActivity: GmCXt.tourActivity
 		});
 	}
 };
 
 GmCXt.isClickInStepPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSTest_preview-step-popup-container').length ||
-		mg$(e.target).hasClass('mgPlayerJSTest_image-popup') ||
-		mg$(e.target).parents('.mgPlayerJSTest_image-popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSTest_icon-image-prev-button') ||
-		mg$(e.target).parents('.mgPlayerJSTest_icon-image-prev-button').length ||
-		mg$(e.target).hasClass('mgPlayerJSTest_image-step-prev') ||
-		mg$(e.target).parents('.mgPlayerJSTest_play-pause-toolbar').length ||
-		mg$(e.target).hasClass('mgPlayerJSTest_popup') ||
-		mg$(e.target).parents('.mgPlayerJSTest_popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSTest_overlay-container')
+	if (mg$(e.target).parents('.mgPlayerJSTest2_preview-step-popup-container').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_image-popup') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_image-popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_icon-image-prev-button') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_icon-image-prev-button').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_image-step-prev') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_play-pause-toolbar').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_popup') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_overlay-container')
 	) {
 		return true;
 	} else {
@@ -11025,7 +11025,7 @@ GmCXt.isClickInStepPopup = function(e) {
 };
 
 GmCXt.isClickInSurveyPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSTest_survey-popup-wrapper').length) {
+	if (mg$(e.target).parents('.mgPlayerJSTest2_survey-popup-wrapper').length) {
 		return true;
 	} else {
 		return false;
@@ -11076,18 +11076,18 @@ GmCXt.requiredWidth = function() {
 };
 
 GmCXt.getPopupHtml = function(msg, ok, cancel) {
-	var popupType = 'mgPlayerJSTest_popup-info';
-	var html = " <wmgPlayerJSTest_ class='mgPlayerJSTest_overlay-container'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup " + popupType + "' id='mgPlayerJSTest_popup-reload'>" +
-		"   <div class='mgPlayerJSTest_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSTest_popup-header-icon-wrapper'><div class='mgPlayerJSTest_popup-header-icon'></div></div>" +
+	var popupType = 'mgPlayerJSTest2_popup-info';
+	var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "' id='mgPlayerJSTest2_popup-reload'>" +
+		"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 		"   </div>" +
-		" <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'>" + msg + "</wmgPlayerJSTest_>" +
-		" <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-btn-wrapper'>" +
-		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSTest_popup-ok-btn mgPlayerJSTest_btn-default mgPlayerJSTest_ok-btn mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt mgPlayerJSTest_lbl-btn'>" + ok + "</button>" +
-		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSTest_popup-cancel-btn mgPlayerJSTest_btn-default mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt mgPlayerJSTest_lbl-btn'>" + cancel + "</button>" +
-		" </wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + msg + "</wmgPlayerJSTest2_>" +
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
+		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSTest2_popup-ok-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + ok + "</button>" +
+		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSTest2_popup-cancel-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + cancel + "</button>" +
+		" </wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	return html;
 };
 
@@ -11095,26 +11095,26 @@ GmCXt.getKeyShortPopupHtml = function(tourList) {
 	var tourListStr = "";
 	if (tourList && tourList.length) {
 		for (var i = 0; i < tourList.length; i++) {
-			tourListStr = tourListStr + "<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-row-content-wrapper'><wmgPlayerJSTest_ class='mgPlayerJSTest_popup-colmn-content-wrapper mgPlayerJSTest_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSTest_>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-colmn-content-wrapper mgPlayerJSTest_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSTest_></wmgPlayerJSTest_>";
+			tourListStr = tourListStr + "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-row-content-wrapper'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper mgPlayerJSTest2_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSTest2_>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper mgPlayerJSTest2_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSTest2_></wmgPlayerJSTest2_>";
 		}
 	} else {
-		tourListStr = "<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-row-content-wrapper'><wmgPlayerJSTest_ class='mgPlayerJSTest_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSTest_> " +
-			"</wmgPlayerJSTest_>";
+		tourListStr = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-row-content-wrapper'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSTest2_> " +
+			"</wmgPlayerJSTest2_>";
 	}
 
 
-	var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_popup mgPlayerJSTest_popup-info mgPlayerJSTest_popup-keyshort' id='mgPlayerJSTest_popup-reload'>" +
-		"   <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-header-wrapper'>" +
-		"	   <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSTest_>" +
-		"	   <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-		"   </wmgPlayerJSTest_>" +
-		" <wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'> " +
-		" 	<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-main-content-wrapper'>" +
+	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup mgPlayerJSTest2_popup-info mgPlayerJSTest2_popup-keyshort' id='mgPlayerJSTest2_popup-reload'>" +
+		"   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSTest2_>" +
+		"	   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+		"   </wmgPlayerJSTest2_>" +
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'> " +
+		" 	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-main-content-wrapper'>" +
 		tourListStr +
-		" 	</wmgPlayerJSTest_>" +
-		" </wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		" 	</wmgPlayerJSTest2_>" +
+		" </wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	return html;
 };
 
@@ -11124,13 +11124,13 @@ GmCXt.stopPropagation = function(e) {
 
 GmCXt.addPopupEvents = function(onOK, onCancel, onClose) {
 
-	mg$(".mgPlayerJSTest_popup").on("mousedown", GmCXt.stopPropagation);
-	mg$(".mgPlayerJSTest_overlay-container").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSTest2_popup").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSTest2_overlay-container").on("mousedown", GmCXt.stopPropagation);
 
-	mg$(".mgPlayerJSTest_popup-ok-btn").on("click", onOK);
-	mg$(".mgPlayerJSTest_popup-cancel-btn").on("click", onCancel);
-	mg$(".mgPlayerJSTest_popup-close-button").on("click", onClose);
-	mg$(".mgPlayerJSTest_popup-keyshort-close").on("click", onOK);
+	mg$(".mgPlayerJSTest2_popup-ok-btn").on("click", onOK);
+	mg$(".mgPlayerJSTest2_popup-cancel-btn").on("click", onCancel);
+	mg$(".mgPlayerJSTest2_popup-close-button").on("click", onClose);
+	mg$(".mgPlayerJSTest2_popup-keyshort-close").on("click", onOK);
 };
 
 GmCXt.showPushOptions = function(opts) {
@@ -11147,11 +11147,11 @@ GmCXt.showPushOptions = function(opts) {
 
 		mg$("html").append(GmCXt.getPopupHtml(msg, ok, cancel));
 
-		mg$(".mgPlayerJSTest_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 
 		function closeGuide() {
 			if (opts.slideshow) {
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:stop_slideshow');
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:stop_slideshow');
 				GmCXt.cleanPlayer();
 			} else if (opts.isTour) {
 				var pi = GmCXt.playerI;
@@ -11194,15 +11194,15 @@ GmCXt.showPushOptions = function(opts) {
 };
 
 GmCXt.closePopup = function() {
-	mg$(".mgPlayerJSTest_popup").remove();
-	mg$(".mgPlayerJSTest_overlay-container").remove();
+	mg$(".mgPlayerJSTest2_popup").remove();
+	mg$(".mgPlayerJSTest2_overlay-container").remove();
 };
 
 GmCXt.showExitSurvey = function(opts) {
 
 	var pi = GmCXt.playerI;
 	GmCXt.unlockScroll();
-	mg$(".mgPlayerJSTest_popup").remove();
+	mg$(".mgPlayerJSTest2_popup").remove();
 	GmCXt.getSurveyScreen(pi, true);
 };
 
@@ -11253,7 +11253,7 @@ GmCXt.setLinkGuidePlay = function(text, popClass) {
 							tourId: tourId,
 							initiator: initiator
 						};
-						GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:play_guide_from_link', data);
+						GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:play_guide_from_link', data);
 					}
 				}
 			});
@@ -11352,21 +11352,22 @@ GmCXt.updNotifDataSidePanel = function(toursClosed, tourIdArray) {
 	if (GmCXt.isAnonymousUser()) {
 		data.tourIdArray = tourIdArray;
 	}
-	GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_notification_info", data);
+	GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_notification_info", data);
 };
 
 GmCXt.updateNotification = function(tours) {
 	GmCXt.storage().get(['toursClosed']).then(function(st) {
 		var userSettings = GmCXt.user.settings || {};
-
+		userSettings.viewed_guide_notifications = tours;
+		
 		if (GmCXt.isAnonymousUser()) {
 			GmCXt.storage().set({
 				'tourIdArray': tours
 			});
 		} else {
-			userSettings.viewed_guide_notifications = tours;
 			GmCXt.updateUserProfileSettings(userSettings);
 		}
+
 		GmCXt.updNotifDataSidePanel(GmCXt.parseJSON(st.toursClosed), tours);
 	});
 };
@@ -11487,19 +11488,19 @@ GmCXt.setZoomImageFromIframe = function(desc, parentClassName) {
 };
 
 GmCXt.initialiseImagePopUp = function() {
-	GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:initialize_image_iframe_popup', {});
+	GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:initialize_image_iframe_popup', {});
 };
 
 GmCXt.openModalFromTopWindow = function(src) {
 	var data = {};
 	data.imageSrc = src;
-	GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:open_image_iframe_popup', data);
+	GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:open_image_iframe_popup', data);
 };
 
 GmCXt.setImagePopUp = function() {
-	mg$('#mgPlayerJSTest_image_popup').remove();
+	mg$('#mgPlayerJSTest2_image_popup').remove();
 	GmCXt.addImagePopHtml();
-	var modal = document.getElementById('mgPlayerJSTest_image_popup');
+	var modal = document.getElementById('mgPlayerJSTest2_image_popup');
 
 	if (modal) {
 		modal.style.display = "none";
@@ -11507,12 +11508,12 @@ GmCXt.setImagePopUp = function() {
 			GmCXt.stopPropagation(e);
 		};
 	}
-	var closeBtn = document.getElementsByClassName("mgPlayerJSTest_close-img-popup")[0];
+	var closeBtn = document.getElementsByClassName("mgPlayerJSTest2_close-img-popup")[0];
 	if (closeBtn) {
 		closeBtn.onclick = function(e) {
 			GmCXt.stopPropagation(e);
 			modal.style.display = "none";
-			mg$('.mgPlayerJSTest_preview-step-popup-container').css({
+			mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 				'z-index': '2147483647'
 			});
 		};
@@ -11520,8 +11521,8 @@ GmCXt.setImagePopUp = function() {
 };
 
 GmCXt.openImagePopup = function(data) {
-	var modal = document.getElementById('mgPlayerJSTest_image_popup');
-	var modalImg = document.getElementById("mgPlayerJSTest_img_desc");
+	var modal = document.getElementById('mgPlayerJSTest2_image_popup');
+	var modalImg = document.getElementById("mgPlayerJSTest2_img_desc");
 	modal.style.display = "block";
 	modalImg.src = data.imageSrc;
 };
@@ -11531,7 +11532,7 @@ GmCXt.addEventOnTooltip = function(req) {
 	clearTimeout(GmCXt.tooltipTimeout);
 
 	GmCXt.tooltipTimeout = GmCXt.timeout(function() {
-		var el = mg$('#mgPlayerJSTest_smarttip-' + req.step.step_id);
+		var el = mg$('#mgPlayerJSTest2_smarttip-' + req.step.step_id);
 
 		el.off("click").on('click', function(e) {
 			if (!req.isPreview) {
@@ -11548,29 +11549,29 @@ GmCXt.isEventToolTip = function(event, stepId) {
 	var isSmartipEvent = false;
 
 	switch (targetId) {
-		case 'mgPlayerJSTest_smarttip-icon-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSTest_smarttip-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 	}
 
 	switch (cTargetId) {
-		case 'mgPlayerJSTest_smarttip-icon-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSTest_smarttip-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 			break;
 	}
 
-	if (mg$(event.currentTarget).hasClass("mgPlayerJSTest_smarttip-icon-wrapper-" + stepId)) {
+	if (mg$(event.currentTarget).hasClass("mgPlayerJSTest2_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
-	} else if (mg$(event.target).hasClass("mgPlayerJSTest_smarttip-icon-wrapper-" + stepId)) {
+	} else if (mg$(event.target).hasClass("mgPlayerJSTest2_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
 	}
 
@@ -11590,7 +11591,7 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 		if (window.self === window.top) {
 			GmCXt.openAppPanel('currentPage');
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSTest_action:open_app_panel");
+			GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:open_app_panel");
 		}
 
 	} else if (tooltip.clickAction === 'openUrl') {
@@ -11613,9 +11614,9 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 			stepId: step.step_id
 		};
 		if (window.self === window.top) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:get_survey_detail_tooltip", data);
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:get_survey_detail_tooltip", data);
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSTest_action:get_survey_data_from_sidepanel", data);
+			GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:get_survey_data_from_sidepanel", data);
 		}
 
 	}
@@ -11642,12 +11643,12 @@ GmCXt.isLastStepPlayed = function() {
 };
 
 GmCXt.getNextBtnElem = function() {
-	var nxtBtn = document.getElementById("mgPlayerJSTest_play_step_next");
-	var doneBtn = document.getElementById("mgPlayerJSTest_play_step_next_done");
-	var nxtClassic = document.getElementById("mgPlayerJSTest_play_step_next_classic");
-	var doneClassic = document.getElementById("mgPlayerJSTest_play_step_next_done_classic");
-	var pauseBtn = document.getElementById("mgPlayerJSTest_play_step_pause");
-	var pauseClassic = document.getElementById("mgPlayerJSTest_play_step_pause_classic");
+	var nxtBtn = document.getElementById("mgPlayerJSTest2_play_step_next");
+	var doneBtn = document.getElementById("mgPlayerJSTest2_play_step_next_done");
+	var nxtClassic = document.getElementById("mgPlayerJSTest2_play_step_next_classic");
+	var doneClassic = document.getElementById("mgPlayerJSTest2_play_step_next_done_classic");
+	var pauseBtn = document.getElementById("mgPlayerJSTest2_play_step_pause");
+	var pauseClassic = document.getElementById("mgPlayerJSTest2_play_step_pause_classic");
 	var btn;
 
 	if (mg$(nxtBtn).is(':visible'))
@@ -11866,23 +11867,23 @@ GmCXt.checkProceedToPlay = function(step, tour) {
 
 GmCXt.setPanelTopLeft = function(isClose) {
 	if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-		mg$(".mgPlayerJSTest_panel").css("left", "initial");
-		mg$(".mgPlayerJSTest_panel").css("top", "50%");
+		mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+		mg$(".mgPlayerJSTest2_panel").css("top", "50%");
 		if (GmCXt.APP_PANEL_OPEN) {
-			mg$(".mgPlayerJSTest_panel").css("right", "50px");
+			mg$(".mgPlayerJSTest2_panel").css("right", "50px");
 		}
 	} else {
-		mg$(".mgPlayerJSTest_panel").css("left", "initial");
-		mg$(".mgPlayerJSTest_panel").css("top", "0");
+		mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+		mg$(".mgPlayerJSTest2_panel").css("top", "0");
 		if (GmCXt.APP_PANEL_OPEN) {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSTest_panel").css(alignment, "0");
+			mg$(".mgPlayerJSTest2_panel").css(alignment, "0");
 		}
 	}
 };
 
 GmCXt.myGuideLogout = function() {
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:logout_user');
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:logout_user');
 };
 
 GmCXt.reloadElectronApp = function() {
@@ -11919,16 +11920,16 @@ GmCXt.getContainerOffSet = function(container) {
 
 GmCXt.removeScreenOverlay = function() {
 	GmCXt.screenOverlayI = undefined;
-	mg$('.mgPlayerJSTest_screen-blackout').hide();
-	mg$('.mgPlayerJSTest_screen-blackout').html('');
+	mg$('.mgPlayerJSTest2_screen-blackout').hide();
+	mg$('.mgPlayerJSTest2_screen-blackout').html('');
 };
 
 GmCXt.getWidgetInstance = function() {
-	return mg$('.mgPlayerJSTest_start-button');
+	return mg$('.mgPlayerJSTest2_start-button');
 };
 
 GmCXt.getChatIconInstance = function() {
-	return mg$('#mgPlayerJSTest_btn-chat-button');
+	return mg$('#mgPlayerJSTest2_btn-chat-button');
 };
 
 GmCXt.hideWidgetIcon = function() {
@@ -12021,8 +12022,8 @@ GmCXt.updateSurveyCompletedData = function(data) {
 };
 
 GmCXt.resetMplayerPos = function() {
-	mg$('.mgPlayerJSTest_panel').removeAttr("style");
-	mg$('.mgPlayerJSTest_panel').css({
+	mg$('.mgPlayerJSTest2_panel').removeAttr("style");
+	mg$('.mgPlayerJSTest2_panel').css({
 		'left': 'initial',
 		'top': '50%',
 		'right': '50px'
@@ -12031,11 +12032,11 @@ GmCXt.resetMplayerPos = function() {
 
 GmCXt.isMyGuideEl = function(el) {
 
-	if (el.nodeName.toLowerCase() === 'wmgPlayerJSTest_over' ||
-		mg$(el).closest('wmgPlayerJSTest_').length > 0 ||
+	if (el.nodeName.toLowerCase() === 'wmgPlayerJSTest2_over' ||
+		mg$(el).closest('wmgPlayerJSTest2_').length > 0 ||
 		(el.name && el.name.includes('guideme-iframe')) ||
-		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSTest_") === 0 || el.className.indexOf(" mgPlayerJSTest_") > 0)) ||
-		(el.id && el.id.indexOf("mgPlayerJSTest_beacon-icon-") === 0)
+		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSTest2_") === 0 || el.className.indexOf(" mgPlayerJSTest2_") > 0)) ||
+		(el.id && el.id.indexOf("mgPlayerJSTest2_beacon-icon-") === 0)
 	) {
 		return true;
 	}
@@ -12117,6 +12118,7 @@ GmCXt.t_ = {
 	sec10: 10000,
 	sec5: 5000,
 	sec4: 4000,
+	sec3: 3000,
 	sec2: 2000,
 	sec1: 1000,
 	ms25: 2500,
@@ -12178,6 +12180,7 @@ GmCXt.t = {
 	branchDecision_domRule_quickBranch: GmCXt.t_.sec4,
 
 	branchDecision: GmCXt.t_.sec2,
+	branchDecision_errorHandler: GmCXt.t_.sec1,
 	stepComplition: GmCXt.t_.sec4,
 
 	drag: GmCXt.t_.sec2,
@@ -12308,9 +12311,9 @@ GmCXt.playerIntervalValidator = function(boxUrl) {
 		if (lastRefresh != GmCXt.refreshTime ) {
 			GmCXt.log(70, "START PLAYER DATA REFRESH");
 
-			GmCXt.msgToApp('mgPlayerJSTest_action:refresh_player', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSTest2_action:refresh_player', r, senderTabId);
 		} else {
-			GmCXt.msgToApp('mgPlayerJSTest_action:update_timestamp_sync_time', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSTest2_action:update_timestamp_sync_time', r, senderTabId);
 			GmCXt.log(70, "NO UPDATE FOUND " + new Date());
 		}
 
@@ -12324,7 +12327,7 @@ GmCXt.creatorIntervalValidator = function(boxUrl) {
 
 	GmCXt.getModifiedObjects().then(function(updates) {
 		if (updates.length) {
-			GmCXt.msgToApp('mgPlayerJSTest_action:creator_updates', {
+			GmCXt.msgToApp('mgPlayerJSTest2_action:creator_updates', {
 				updates: updates,
 				refreshTime: GmCXt.creatorRefreshTime
 			}, senderTabId);
@@ -12361,7 +12364,7 @@ GmCXt.startCreatorUpdateInterval = function() {
 	var callSync = function() {
 		GmCXt.getModifiedObjects().then(function(updates) {
 			if (updates.length) {
-				GmCXt.msgToApp('mgPlayerJSTest_action:creator_updates', {
+				GmCXt.msgToApp('mgPlayerJSTest2_action:creator_updates', {
 					updates: updates,
 					refreshTime: GmCXt.creatorRefreshTime
 				}, senderTabId);
@@ -12398,7 +12401,7 @@ GmCXt.sendMessageToApp = function(type, data) {
 };
 
 GmCXt.sendMessageToAppIn = function(type, data) {
-	var appWindow = mg$(".mgPlayerJSTest_app");
+	var appWindow = mg$(".mgPlayerJSTest2_app");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -12484,7 +12487,7 @@ GmCXt.getCdnSignature = function(sendMessage) {
 
 	if (sendMessage) {
 
-		GmCXt.msgToApp('mgPlayerJSTest_action:get_cdn_signature_from_app');
+		GmCXt.msgToApp('mgPlayerJSTest2_action:get_cdn_signature_from_app');
 
 	} else { //this is used in Background.js for player and cretor sync
 		GmCXt.callGetCdnSignature({
@@ -12545,7 +12548,7 @@ GmCXt.getModifiedObjects = function(boxUrl) {
 							GmCXt.creatorRefreshTime = timestamp;
 
 							if (result.code === 1003 || result.code === 2004) {
-								GmCXt.msgToApp('mgPlayerJSTest_action:logout_user');
+								GmCXt.msgToApp('mgPlayerJSTest2_action:logout_user');
 							} else if (result.code === 1007) {
 								GmCXt.getAccessToken().then(function(r) {
 									GmCXt.saveToken(r);
@@ -12736,6 +12739,10 @@ GmCXt.isAutomationRunning = function() {
 	return (GmCXt.auto && GmCXt.auto.isAutomationRunning());
 };
 
+GmCXt.getAutomatedCurrentTour = function() {
+	return (GmCXt.auto && GmCXt.auto.getAutomatedCurrentTour());
+};
+
 GmCXt.isAutomationStepRunning = function() {
 	if (GmCXt.playerI) {
 		var step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
@@ -12752,7 +12759,7 @@ GmCXt.callApi = function(data, api) {
 
 		function sendResponse(m) {
 
-			if (m && m.action === 'mgPlayerJSTest_action:call_api_response') {
+			if (m && m.action === 'mgPlayerJSTest2_action:call_api_response') {
 
 				if (m.data && m.data.id === mid) {
 					window.removeEventListener('message', winListener);
@@ -12786,16 +12793,16 @@ GmCXt.callApi = function(data, api) {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSTest_action:call_api', d, senderTabId);
+			GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:call_api', d, senderTabId);
 
 		} else if (GmCXt.isSidePanelApp) {
 			GmCXt.msgToThisWin({
-				action: 'mgPlayerJSTest_action:call_api',
+				action: 'mgPlayerJSTest2_action:call_api',
 				data: d
 			});
 		} else {
 			window.addEventListener('message', winListener);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:call_api', d);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:call_api', d);
 		}
 	});
 };
@@ -12880,11 +12887,11 @@ GmCXt.saveToken = function(r) {
 		if (!GmCXt.isBackgroundPage) {
 
 			GmCXt.getWidgetIcon().then(function(wUrl) {
-				mg$(".mgPlayerJSTest_start-button img").attr('src', wUrl);
+				mg$(".mgPlayerJSTest2_start-button img").attr('src', wUrl);
 			});
 		}
 
-		GmCXt.msgToApp('mgPlayerJSTest_action:update_access_token', data, senderTabId);
+		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', data, senderTabId);
 	}
 };
 
@@ -13186,7 +13193,7 @@ GmCXt.getDatafromPanel = function() {
 	return new Promise(function(resolve, reject) {
 
 		function sendResponse(m) {
-			if (m && m.action === 'mgPlayerJSTest_action:get_data_from_panel_response') {
+			if (m && m.action === 'mgPlayerJSTest2_action:get_data_from_panel_response') {
 				removeEventListener('message', chromeListener);
 				resolve(m.data);
 			}
@@ -13202,7 +13209,7 @@ GmCXt.getDatafromPanel = function() {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSTest_action:get_data_from_panel');
+			GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:get_data_from_panel');
 		} else {
 			resolve(false);
 		}
@@ -13314,7 +13321,7 @@ GmCXt.updateTooltipActionInfo = function(tid, sid, smartTip, actionName) {
 			actionName: actionName,
 			tour: tour
 		};
-		var msg = "mgPlayerJSTest_action:update_tooltip_action_info";
+		var msg = "mgPlayerJSTest2_action:update_tooltip_action_info";
 
 		if (GmCXt.isSidePanelApp) {
 
@@ -14056,20 +14063,20 @@ GmCXt.updateDebugMode = function(mode) {
 		};
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToAllWindows)) {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:update_debug_mode", m);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:update_debug_mode", m);
 		}
 
 		if (!GmCXt.isSidePanelApp) {
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_debug_mode', m);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_debug_mode', m);
 		}
 
 		GmCXt.sendMessageToBackgroundService({
-			action: 'mgPlayerJSTest_action:update_debug_mode',
+			action: 'mgPlayerJSTest2_action:update_debug_mode',
 			data: m
 		});
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToStepFrame)) {
-			GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:update_debug_mode', m);
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:update_debug_mode', m);
 		}
 	}
 };
@@ -14172,7 +14179,7 @@ GmCXt.log = function(mode, str, opt) {
 
 GmCXt.sendMessageToPrintLog = function(m, s, o) {
 	var message = {
-		action: "mgPlayerJSTest_action:print_debug_log",
+		action: "mgPlayerJSTest2_action:print_debug_log",
 		data: {
 			mode: m,
 			str: s,
@@ -14257,7 +14264,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if(type !== "mgPlayerJSTest_action:clear_rule_jobs" || type !== "mgPlayerJSTest_action:remove_tooltip"){
+	if(type !== "mgPlayerJSTest2_action:clear_rule_jobs" || type !== "mgPlayerJSTest2_action:remove_tooltip"){
 		data.user = GmCXt.user;
 		data.organization = GmCXt.organization;
 	}
@@ -14274,45 +14281,45 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 
 	if (GmCXt.inTopWindow(data.settings)) {
 
-		if (type === "mgPlayerJSTest_action:started;task:select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:select_existing_dom_element") {
 			GmCXt.requestHandler.selectExistingDomElement(message.data);
 			return;
 		}
 
-		if (type === "mgPlayerJSTest_action:started;task:edit_step_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditStep(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSTest_action:started;task:edit_tag_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_tag_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditTag(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSTest_action:started;task:select_dom_element_tooltips") {
+		if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_tooltips") {
 			GmCXt.requestHandler.selectDomElement(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element") {
 			GmCXt.selectorTool = null;
 			GmCXt.requestHandler.selectDomElementBeaconEdit(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSTest_action:started;task:search_next_step") {
+		if (type === "mgPlayerJSTest2_action:started;task:search_next_step") {
 			GmCXt.requestHandler.searchDomElement(message.data);
 			return;
 		}
 
 	} else if (GmCXt.inTopWindow(data.beaconSettings)) {
-		if (type === "mgPlayerJSTest_action:show_beacon_on_dom_element") {
+		if (type === "mgPlayerJSTest2_action:show_beacon_on_dom_element") {
 			GmCXt.highlighter.queueBeacon(message);
 			return;
 		}
 	}
 
-	if (type === "mgPlayerJSTest_action:started;task:select_dom_element_for_rules") {
+	if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_for_rules") {
 
 		if (data.rule && data.rule.element && data.rule.element.meta) {
 			var el = data.rule.element;
@@ -14326,7 +14333,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSTest_action:started;task:select_dom_element_for_matching_in_rules") {
+	if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_for_matching_in_rules") {
 		if (data.element && data.element.meta) {
 			var el = data.element;
 			if (el.meta.inTopWindow === true) {
@@ -14336,7 +14343,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSTest_action:update_session_info") {
+	if (type === "mgPlayerJSTest2_action:update_session_info") {
 		GmCXt.sessionInfo = data.sessionInfo;
 	}
 
@@ -14463,7 +14470,7 @@ GmCXt.sendMessageToolbar = function(type, data) {
 };
 
 GmCXt.sendMessageToolbarIn = function(type, data) {
-	var appWindow = mg$("#mgPlayerJSTest_toolbar-iframe");
+	var appWindow = mg$("#mgPlayerJSTest2_toolbar-iframe");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -14478,8 +14485,8 @@ GmCXt.sendMessageToStepFrame = function(type, data) {
 
 	var sent = false;
 
-	if (mg$("#mgPlayerJSTest_step-iframe").length) {
-		var newStepFrame = mg$("#mgPlayerJSTest_step-iframe").get(0).contentWindow;
+	if (mg$("#mgPlayerJSTest2_step-iframe").length) {
+		var newStepFrame = mg$("#mgPlayerJSTest2_step-iframe").get(0).contentWindow;
 
 		data = data || {};
 		data.config = GmCXt.conf;
@@ -14545,7 +14552,7 @@ GmCXt.getAppStorage = function(keys) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
 				if (message.data && (mid === message.data.id)) {
-					if (message.action && (message.action === 'mgPlayerJSTest_action:get_local_storage_response')) {
+					if (message.action && (message.action === 'mgPlayerJSTest2_action:get_local_storage_response')) {
 						window.removeEventListener('message', listen);
 						resolve(message.data.items);
 					}
@@ -14557,7 +14564,7 @@ GmCXt.getAppStorage = function(keys) {
 				id: mid,
 				keys: keys
 			};
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:get_local_storage', d);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:get_local_storage', d);
 		});
 	}
 };
@@ -14580,14 +14587,14 @@ GmCXt.setAppStorage = function(data) {
 			function listen(event) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:set_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSTest2_action:set_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_local_storage', data);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:set_local_storage', data);
 		});
 	}
 };
@@ -14611,14 +14618,14 @@ GmCXt.removeAppStorage = function(keys) {
 
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:remove_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSTest2_action:remove_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:remove_local_storage', keys);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:remove_local_storage', keys);
 		});
 	}
 };
@@ -15797,7 +15804,8 @@ GmCXt.creatorLbls.en_US = {
 	featuresTags: "Features Tags",
 	btnAddOnBoardingTour: "Tutorial Guide",
 	labelVariableName: "Variable Name",
-	labelCurrentValue: "Current Value"
+	labelCurrentValue: "Current Value",
+	guide: "Guide"
 };
 if (GmCXt === undefined) var GmCXt = {};
 if (GmCXt.creatorLbls === undefined) GmCXt.creatorLbls = {};
@@ -26293,7 +26301,7 @@ GmCXt.svgs = {
 		'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.0755 15.5729C10.1334 15.613 10.2007 15.6333 10.2682 15.6333C10.3235 15.6333 10.3789 15.6197 10.4295 15.5922C10.542 15.5312 10.6122 15.4116 10.6122 15.2815V0.985114C10.6122 0.852045 10.5388 0.730341 10.4224 0.670632C10.3062 0.611029 10.1669 0.623485 10.0625 0.703072C10.0229 0.733296 6.12166 3.70627 3.79778 5.31987H1.34404C1.15403 5.31987 1 5.47743 1 5.67172V10.5949C1 10.7892 1.15403 10.9467 1.34404 10.9467H3.79765C4.92723 11.7312 5.91912 12.4876 6.87919 13.2197L6.87993 13.2202C7.87115 13.976 8.89613 14.7576 10.0755 15.5729ZM3.90323 10.2431H1.68808V6.02361H3.90333C3.97204 6.02361 4.03916 6.00256 4.09603 5.96323C5.90625 4.7116 8.7392 2.58106 9.92413 1.68434V14.6139C8.97669 13.9413 8.12158 13.2893 7.29049 12.6555C6.29956 11.8999 5.27491 11.1186 4.09593 10.3034C4.03902 10.2641 3.9719 10.2431 3.90323 10.2431ZM17.9084 6.53378L15.9422 8.50005L17.9084 10.4662C18.0305 10.5883 18.0305 10.7863 17.9084 10.9084C17.8473 10.9695 17.7673 11 17.6873 11C17.6074 11 17.5273 10.9695 17.4662 10.9084L15.5001 8.94211L13.5338 10.9084C13.4727 10.9695 13.3926 11 13.3127 11C13.2327 11 13.1527 10.9695 13.0916 10.9085C12.9695 10.7864 12.9695 10.5884 13.0916 10.4663L15.0579 8.50005L13.0916 6.53378C12.9695 6.41172 12.9695 6.21368 13.0916 6.09162C13.2138 5.96946 13.4116 5.96946 13.5338 6.09162L15.5001 8.05789L17.4662 6.09162C17.5884 5.96946 17.7862 5.96946 17.9084 6.09162C18.0305 6.21368 18.0305 6.41172 17.9084 6.53378Z" fill="#757575" />' +
 		'<path d="M10.0755 15.5729L10.36 15.1617L10.3598 15.1616L10.0755 15.5729ZM10.4295 15.5922L10.1909 15.1528L10.1908 15.1529L10.4295 15.5922ZM10.4224 0.670632L10.6508 0.225813L10.6505 0.225677L10.4224 0.670632ZM10.0625 0.703072L10.3657 1.10066L10.3657 1.10063L10.0625 0.703072ZM3.79778 5.31987V5.81987H3.95435L4.08296 5.73058L3.79778 5.31987ZM3.79765 10.9467L4.08287 10.5361L3.95424 10.4467H3.79765V10.9467ZM6.87919 13.2197L6.57601 13.6173L6.57612 13.6173L6.87919 13.2197ZM6.87993 13.2202L7.1831 12.8226L7.183 12.8225L6.87993 13.2202ZM1.68808 10.2431H1.18808V10.7431H1.68808V10.2431ZM1.68808 6.02361V5.52361H1.18808V6.02361H1.68808ZM4.09603 5.96323L3.81167 5.55196L3.8116 5.55201L4.09603 5.96323ZM9.92413 1.68434H10.4241V0.678921L9.62241 1.28564L9.92413 1.68434ZM9.92413 14.6139L9.6347 15.0216L10.4241 15.582V14.6139H9.92413ZM7.29049 12.6555L7.59367 12.258L7.59367 12.258L7.29049 12.6555ZM4.09593 10.3034L4.38028 9.89217L4.38025 9.89215L4.09593 10.3034ZM15.9422 8.50005L15.5886 8.14651L15.2351 8.50006L15.5886 8.85361L15.9422 8.50005ZM17.9084 6.53378L17.555 6.18009L17.5548 6.18024L17.9084 6.53378ZM17.9084 10.4662L17.5548 10.8198L17.555 10.8199L17.9084 10.4662ZM17.9084 10.9084L17.555 10.5547L17.5548 10.5548L17.9084 10.9084ZM17.4662 10.9084L17.8198 10.5548L17.8198 10.5548L17.4662 10.9084ZM15.5001 8.94211L15.8536 8.58856L15.5001 8.235L15.1465 8.58855L15.5001 8.94211ZM13.5338 10.9084L13.1802 10.5548L13.1802 10.5548L13.5338 10.9084ZM13.0916 10.9085L12.7382 11.2622L12.7384 11.2623L13.0916 10.9085ZM13.0916 10.4663L13.445 10.82L13.4452 10.8199L13.0916 10.4663ZM15.0579 8.50005L15.4115 8.85361L15.765 8.50005L15.4115 8.1465L15.0579 8.50005ZM13.0916 6.53378L13.4452 6.18023L13.445 6.18009L13.0916 6.53378ZM13.0916 6.09162L13.445 6.44532L13.4452 6.44517L13.0916 6.09162ZM13.5338 6.09162L13.1802 6.44517L13.1802 6.44518L13.5338 6.09162ZM15.5001 8.05789L15.1465 8.41145L15.5001 8.765L15.8536 8.41144L15.5001 8.05789ZM17.4662 6.09162L17.1127 5.73807L17.1127 5.73808L17.4662 6.09162ZM17.9084 6.09162L17.5548 6.44517L17.555 6.44532L17.9084 6.09162ZM10.2682 15.1333C10.3011 15.1333 10.3333 15.1433 10.36 15.1617L9.79098 15.9841C9.93362 16.0828 10.1004 16.1333 10.2682 16.1333V15.1333ZM10.1908 15.1529C10.2145 15.14 10.2413 15.1333 10.2682 15.1333V16.1333C10.4056 16.1333 10.5433 16.0994 10.6682 16.0315L10.1908 15.1529ZM10.1122 15.2815C10.1122 15.2324 10.1387 15.1812 10.1909 15.1528L10.6681 16.0316C10.9452 15.8811 11.1122 15.5908 11.1122 15.2815H10.1122ZM10.1122 0.985114V15.2815H11.1122V0.985114H10.1122ZM10.1941 1.11545C10.14 1.08766 10.1122 1.03536 10.1122 0.985114H11.1122C11.1122 0.668733 10.9376 0.373023 10.6508 0.225813L10.1941 1.11545ZM10.3657 1.10063C10.3173 1.13753 10.25 1.14412 10.1944 1.11559L10.6505 0.225677C10.3623 0.0779435 10.0164 0.109434 9.75928 0.305513L10.3657 1.10063ZM4.08296 5.73058C6.41776 4.10938 10.3283 1.12917 10.3657 1.10066L9.75931 0.305489C9.71744 0.337422 5.82555 3.30316 3.51261 4.90917L4.08296 5.73058ZM1.34404 5.81987H3.79778V4.81987H1.34404V5.81987ZM1.5 5.67172C1.5 5.7429 1.44072 5.81987 1.34404 5.81987V4.81987C0.86733 4.81987 0.5 5.21196 0.5 5.67172H1.5ZM1.5 10.5949V5.67172H0.5V10.5949H1.5ZM1.34404 10.4467C1.44072 10.4467 1.5 10.5237 1.5 10.5949H0.5C0.5 11.0546 0.86733 11.4467 1.34404 11.4467V10.4467ZM3.79765 10.4467H1.34404V11.4467H3.79765V10.4467ZM7.18237 12.8221C6.22304 12.0905 5.22283 11.3278 4.08287 10.5361L3.51243 11.3574C4.63163 12.1347 5.6152 12.8846 6.57601 13.6173L7.18237 12.8221ZM7.183 12.8225L7.18226 12.822L6.57612 13.6173L6.57686 13.6179L7.183 12.8225ZM10.3598 15.1616C9.19134 14.3538 8.17504 13.579 7.1831 12.8226L6.57676 13.6178C7.56726 14.3731 8.60092 15.1613 9.79114 15.9842L10.3598 15.1616ZM1.68808 10.7431H3.90323V9.74307H1.68808V10.7431ZM1.18808 6.02361V10.2431H2.18808V6.02361H1.18808ZM3.90333 5.52361H1.68808V6.52361H3.90333V5.52361ZM3.8116 5.55201C3.83767 5.53398 3.86963 5.52361 3.90333 5.52361V6.52361C4.07444 6.52361 4.24065 6.47115 4.38046 6.37444L3.8116 5.55201ZM9.62241 1.28564C8.43606 2.18343 5.61161 4.30744 3.81167 5.55196L4.38039 6.37449C6.2009 5.11576 9.04234 2.97869 10.2259 2.08304L9.62241 1.28564ZM10.4241 14.6139V1.68434H9.42413V14.6139H10.4241ZM6.98731 13.0531C7.81773 13.6864 8.6793 14.3434 9.6347 15.0216L10.2136 14.2062C9.27408 13.5392 8.42544 12.8922 7.59367 12.258L6.98731 13.0531ZM3.81157 10.7147C4.97969 11.5224 5.99566 12.297 6.98731 13.0531L7.59367 12.258C6.60345 11.5029 5.57013 10.7148 4.38028 9.89217L3.81157 10.7147ZM3.90323 10.7431C3.86945 10.7431 3.83755 10.7327 3.8116 10.7147L4.38025 9.89215C4.2405 9.79554 4.07435 9.74307 3.90323 9.74307V10.7431ZM16.2958 8.8536L18.2619 6.88733L17.5548 6.18024L15.5886 8.14651L16.2958 8.8536ZM18.2619 10.1127L16.2957 8.1465L15.5886 8.85361L17.5548 10.8198L18.2619 10.1127ZM18.2618 11.2621C18.5794 10.9447 18.5794 10.4299 18.2618 10.1125L17.555 10.8199C17.4817 10.7467 17.4817 10.6279 17.555 10.5547L18.2618 11.2621ZM17.6873 11.5C17.8946 11.5 18.1034 11.4205 18.2619 11.2619L17.5548 10.5548C17.5912 10.5184 17.64 10.5 17.6873 10.5V11.5ZM17.1127 11.2619C17.2712 11.4205 17.4801 11.5 17.6873 11.5V10.5C17.7347 10.5 17.7834 10.5184 17.8198 10.5548L17.1127 11.2619ZM15.1465 9.29565L17.1127 11.2619L17.8198 10.5548L15.8536 8.58856L15.1465 9.29565ZM13.8873 11.2619L15.8536 9.29566L15.1465 8.58855L13.1802 10.5548L13.8873 11.2619ZM13.3127 11.5C13.5199 11.5 13.7288 11.4205 13.8873 11.2619L13.1802 10.5548C13.2166 10.5184 13.2653 10.5 13.3127 10.5V11.5ZM12.7384 11.2623C12.8968 11.4205 13.1055 11.5 13.3127 11.5V10.5C13.36 10.5 13.4086 10.5184 13.4449 10.5546L12.7384 11.2623ZM12.7382 10.1126C12.4206 10.43 12.4206 10.9448 12.7382 11.2622L13.445 10.5548C13.5183 10.628 13.5183 10.7468 13.445 10.82L12.7382 10.1126ZM14.7044 8.1465L12.7381 10.1128L13.4452 10.8199L15.4115 8.85361L14.7044 8.1465ZM12.7381 6.88734L14.7044 8.85361L15.4115 8.1465L13.4452 6.18023L12.7381 6.88734ZM12.7382 5.73792C12.4206 6.05528 12.4206 6.57013 12.7382 6.88748L13.445 6.18009C13.5183 6.25332 13.5183 6.37208 13.445 6.44532L12.7382 5.73792ZM13.8873 5.73808C13.5699 5.42064 13.0555 5.42064 12.7381 5.73808L13.4452 6.44517C13.3721 6.51828 13.2533 6.51828 13.1802 6.44517L13.8873 5.73808ZM15.8536 7.70434L13.8873 5.73807L13.1802 6.44518L15.1465 8.41145L15.8536 7.70434ZM17.1127 5.73808L15.1465 7.70435L15.8536 8.41144L17.8198 6.44517L17.1127 5.73808ZM18.2619 5.73807C17.9445 5.42064 17.4301 5.42064 17.1127 5.73807L17.8198 6.44517C17.7467 6.51828 17.6279 6.51828 17.5548 6.44517L18.2619 5.73807ZM18.2618 6.88748C18.5794 6.57013 18.5794 6.05528 18.2618 5.73793L17.555 6.44532C17.4817 6.37208 17.4817 6.25332 17.555 6.18009L18.2618 6.88748Z" fill="#757575" mask="url(#path-1-outside-1)" />' +
 		'</svg>',
-	insights_popup_desktop: '<svg version="1.1" id="Layer_1" class="mgPlayerJSTest_position-center mgPlayerJSTest_width-height-100" x="0px" y="0px" viewBox="0 0 146.65 139.91" style="enable-background:new 0 0 146.65 139.91;" xml:space="preserve">' +
+	insights_popup_desktop: '<svg version="1.1" id="Layer_1" class="mgPlayerJSTest2_position-center mgPlayerJSTest2_width-height-100" x="0px" y="0px" viewBox="0 0 146.65 139.91" style="enable-background:new 0 0 146.65 139.91;" xml:space="preserve">' +
         '<style type="text/css">' +
         '.st0 { fill: #A3FEFE; } .st1 { fill: #FFFFFF; } .st2 { fill: #1F37DD; } .st3 { fill: url(#SVGID_1_); }' +
         '</style>' +
@@ -26472,7 +26480,7 @@ GmCXt.svgs = {
 		'<path d="M0.9 10.9997C0.9 16.5696 5.43042 21.1 10.9997 21.1C16.5689 21.1 21.1 16.5696 21.0994 10.9997C21.0994 5.43108 16.5689 0.9 10.9997 0.9C5.43042 0.9 0.9 5.43108 0.9 10.9997ZM2.24299 10.9997C2.24299 6.1713 6.1713 2.24299 10.9997 2.24299C15.8287 2.24299 19.757 6.1713 19.7564 10.9997C19.7564 15.8287 15.8281 19.757 10.9997 19.757C6.1713 19.757 2.24299 15.8287 2.24299 10.9997Z" fill="#666666" stroke="#666666" stroke-width="0.2"/>' +
 		'<path d="M13.5916 14.5418C13.7232 14.6733 13.8945 14.7385 14.0667 14.7385C14.2376 14.7385 14.4096 14.6733 14.5412 14.5418C14.8038 14.2798 14.8036 13.8546 14.5412 13.5922L11.6715 10.7225V4.51258C11.6715 4.1411 11.371 3.84141 11.0003 3.84141C10.629 3.84141 10.3285 4.14175 10.3285 4.51258V11.0002C10.3285 11.1787 10.3989 11.349 10.5252 11.4753L13.5916 14.5418Z" fill="#666666" stroke="#666666" stroke-width="0.2"/>' +
 		'</svg>',
-	tick: '<svg class="mgPlayerJSTest_position-center mgPlayerJSTest_width-height-100" viewBox="0 0 14 14" fill="none" >' +
+	tick: '<svg class="mgPlayerJSTest2_position-center mgPlayerJSTest2_width-height-100" viewBox="0 0 14 14" fill="none" >' +
 		'<circle cx="7" cy="7" r="7" fill="#38b6a0"/>' +
 		'<path d="M6.06335 10.8651C5.98699 10.9517 5.8828 11 5.77457 11C5.66634 11 5.56215 10.9517 5.48579 10.8651L3.17951 8.26584C2.94016 7.99613 2.94016 7.55879 3.17951 7.28959L3.46829 6.96408C3.7077 6.69438 4.09536 6.69438 4.3347 6.96408L5.77457 8.58671L9.6653 4.20228C9.90471 3.93257 10.2927 3.93257 10.5317 4.20228L10.8205 4.52778C11.0598 4.79749 11.0598 5.23475 10.8205 5.50404L6.06335 10.8651Z" fill="white"/>' +
 		'</svg>',
@@ -26508,7 +26516,7 @@ GmCXt.svgs = {
 		'<path d="M2.95457 12.3647H8.34838C8.57787 12.3647 8.79796 12.2735 8.96023 12.1112C9.1225 11.949 9.21367 11.7289 9.21367 11.4994C9.21367 11.2699 9.1225 11.0498 8.96023 10.8875C8.79796 10.7253 8.57787 10.6341 8.34838 10.6341H2.95457L4.91634 8.67234C5.07391 8.50911 5.16106 8.29051 5.15903 8.06363C5.15699 7.83676 5.06593 7.61976 4.90545 7.45938C4.74498 7.29899 4.52793 7.20805 4.30106 7.20615C4.07418 7.20424 3.85564 7.29152 3.69249 7.44918L0.253515 10.8882C0.173142 10.9685 0.109385 11.0639 0.0658863 11.1689C0.0223876 11.2739 0 11.3864 0 11.5001C0 11.6137 0.0223876 11.7263 0.0658863 11.8313C0.109385 11.9363 0.173142 12.0317 0.253515 12.112L3.69249 15.5517C3.77285 15.632 3.86825 15.6958 3.97324 15.7393C4.07823 15.7828 4.19077 15.8051 4.30441 15.8051C4.41806 15.8051 4.53059 15.7828 4.63558 15.7393C4.74058 15.6958 4.83598 15.632 4.91634 15.5517C4.9967 15.4713 5.06044 15.3759 5.10393 15.2709C5.14742 15.1659 5.16981 15.0534 5.16981 14.9397C5.16981 14.8261 5.14742 14.7136 5.10393 14.6086C5.06044 14.5036 4.9967 14.4082 4.91634 14.3278L2.95457 12.3647Z" fill="white" />' +
 		'<path d="M22.9999 11.4994C22.9999 11.3858 22.9775 11.2732 22.9341 11.1682C22.8906 11.0632 22.8269 10.9678 22.7465 10.8875L19.3069 7.44851C19.1431 7.29412 18.9256 7.20961 18.7006 7.21292C18.4755 7.21624 18.2606 7.30711 18.1015 7.46627C17.9423 7.62542 17.8514 7.84032 17.8481 8.06537C17.8448 8.29042 17.9293 8.5079 18.0837 8.67167L20.0462 10.6334H14.6517C14.4222 10.6334 14.2021 10.7246 14.0398 10.8869C13.8775 11.0491 13.7864 11.2692 13.7864 11.4987C13.7864 11.7282 13.8775 11.9483 14.0398 12.1106C14.2021 12.2728 14.4222 12.364 14.6517 12.364H20.0455L18.083 14.3265C18.0003 14.4062 17.9344 14.5017 17.889 14.6073C17.8436 14.7128 17.8197 14.8264 17.8187 14.9412C17.8177 15.0561 17.8395 15.1701 17.883 15.2764C17.9265 15.3828 17.9907 15.4794 18.0719 15.5607C18.1532 15.6419 18.2498 15.7062 18.3561 15.7498C18.4624 15.7933 18.5763 15.8152 18.6912 15.8143C18.8061 15.8133 18.9197 15.7895 19.0253 15.7441C19.1308 15.6988 19.2263 15.6329 19.3062 15.5503L22.7458 12.1106C22.9082 11.9486 22.9996 11.7288 22.9999 11.4994Z" fill="white" />' +
 		'</svg>',
-	mplayer_close: '<svg class="mgPlayerJSTest_position-center mgPlayerJSTest_width-height-100" viewBox="0 0 22 22" fill="none" >' +
+	mplayer_close: '<svg class="mgPlayerJSTest2_position-center mgPlayerJSTest2_width-height-100" viewBox="0 0 22 22" fill="none" >' +
 		'<path d="M3.32401 3.32414C7.55657 -0.908416 14.4435 -0.908 18.6756 3.32414C22.9077 7.55627 22.9077 14.4432 18.6756 18.6757C14.443 22.9083 7.55615 22.9083 3.32402 18.6757C-0.908127 14.4432 -0.908535 7.55669 3.32401 3.32414ZM14.0365 15.4458C14.4257 15.835 15.0565 15.835 15.4457 15.4458C15.8348 15.0567 15.8348 14.4258 15.4457 14.0367L12.409 10.9999L15.2958 8.11304C15.685 7.72388 15.685 7.09305 15.2958 6.70389C14.9067 6.31474 14.2759 6.31474 13.8867 6.70389L10.9998 9.59079L7.96308 6.55405C7.57392 6.1649 6.94309 6.1649 6.55393 6.55405C6.16472 6.94284 6.16484 7.57411 6.55393 7.9632L9.59066 10.9999L6.40452 14.1861C6.01536 14.5752 6.01536 15.2061 6.40452 15.5952C6.79367 15.9844 7.42451 15.9844 7.81366 15.5952L10.9998 12.4091L14.0365 15.4458Z" fill="white" stroke="#7BA827" stroke-width="0.3" />' +
 		'</svg>',
 	close: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
@@ -26544,7 +26552,7 @@ GmCXt.svgs = {
 	close_popup: '<svg width="12" height="12" viewBox="0 0 12 13" fill="none" >' +
 		'<path d="M6.90481 6.67981L11.5191 1.96076C11.8058 1.66783 11.8058 1.19252 11.5191 0.89958C11.2324 0.60639 10.7682 0.60639 10.4815 0.89958L5.86718 5.61863L1.25264 0.89958C0.965959 0.60639 0.501692 0.60639 0.215011 0.89958C-0.0716703 1.19252 -0.0716703 1.66783 0.215011 1.96076L4.82955 6.67981L0.215011 11.3989C-0.0716703 11.6918 -0.0716703 12.1671 0.215011 12.46C0.358352 12.6064 0.546211 12.6797 0.733826 12.6797C0.92144 12.6797 1.1093 12.6064 1.25264 12.4598L5.86718 7.74075L10.4815 12.4598C10.6248 12.6064 10.8127 12.6797 11.0003 12.6797C11.1879 12.6797 11.3758 12.6064 11.5191 12.4598C11.8058 12.1669 11.8058 11.6915 11.5191 11.3986L6.90481 6.67981Z" fill="#666666" fill-opacity="0.9" />' +
 		'</svg>',
-	external_link: '<svg class="mgPlayerJSTest_position-center mgPlayerJSTest_width-height-100" viewBox="0 0 17 18" fill="none" >' +
+	external_link: '<svg class="mgPlayerJSTest2_position-center mgPlayerJSTest2_width-height-100" viewBox="0 0 17 18" fill="none" >' +
 		'<g clip-path="url(#clip)">' +
 		'<path d="M13.0266 5.10103C13.1992 5.13132 13.3496 5.22781 13.4505 5.37282C13.5517 5.51647 13.5909 5.69066 13.5604 5.86336L13.4619 5.84599C13.4877 5.69966 13.4547 5.55242 13.3687 5.4304L13.3684 5.42995C13.2825 5.30656 13.1554 5.22515 13.0094 5.19952L13.0093 5.19951L6.98281 4.13688C6.98279 4.13688 6.98278 4.13687 6.98277 4.13687C6.8371 4.11126 6.69018 4.14394 6.56783 4.22962C6.44567 4.31515 6.36472 4.44211 6.33891 4.58775C6.33891 4.58776 6.33891 4.58777 6.3389 4.58778L6.24258 5.13487L6.24255 5.13501C6.21672 5.28049 6.24947 5.4274 6.33513 5.54973C6.4199 5.6708 6.54116 5.74565 6.68823 5.77146L10.2384 6.39115L10.4768 6.43276L10.2786 6.57157L3.68558 11.1881C3.43578 11.363 3.37455 11.7299 3.55106 11.982L3.86985 12.4372C4.0391 12.679 4.38546 12.7337 4.63939 12.568L4.63756 12.5646L11.2152 7.9589L11.4127 7.82064L11.3711 8.05807L10.7544 11.5783L10.7543 11.5784C10.7287 11.7237 10.7626 11.8729 10.8485 11.9955C10.9343 12.118 11.0621 12.2002 11.2079 12.226L11.755 12.3226C11.755 12.3226 11.755 12.3226 11.755 12.3226C11.9009 12.3483 12.048 12.3158 12.17 12.2304C12.2923 12.1447 12.3734 12.0178 12.3991 11.8722L12.3991 11.8722L13.4619 5.84599L13.0266 5.10103ZM13.0266 5.10103L7.00013 4.03839L13.0266 5.10103Z" fill="#666666" stroke="white" stroke-width="0.2" />' +
 		'</g>' +
@@ -27996,12 +28004,12 @@ GmCXt.ruleEngine = (function() {
 		// From top window, sends to the same window
 
 		if (GmCXt.isSidePanelApp) {
-			message.action = 'mgPlayerJSTest_action:init;task:select_dom_element_for_rules';
+			message.action = 'mgPlayerJSTest2_action:init;task:select_dom_element_for_rules';
 			GmCXt.sendToParentWindow(message);
 
 		} else {
 			GmCXt.sendMessageToAllWindows(
-				'mgPlayerJSTest_action:started;task:select_dom_element_for_rules',
+				'mgPlayerJSTest2_action:started;task:select_dom_element_for_rules',
 				message.data);
 		}
 	};
@@ -28343,7 +28351,7 @@ GmCXt.trackerV1 = {
 		if (!GmCXt.user) {
 
 			if (GmCXt.isBackgroundPage) {
-				GmCXt.sendMessageToPanel('mgPlayerJSTest_action:fetch_user');
+				GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:fetch_user');
 			}
 			GmCXt.log(45, "Events not Sent, User not found");
 			return;
@@ -28363,7 +28371,7 @@ GmCXt.trackerV1 = {
 				}
 
 			} else {
-				var msg = 'mgPlayerJSTest_action:update_registration_secret';
+				var msg = 'mgPlayerJSTest2_action:update_registration_secret';
 				if (GmCXt.isBackgroundPage) {
 					GmCXt.sendMessageToPanel(msg);
 				} else {
@@ -28594,7 +28602,7 @@ GmCXt.trackerV1 = {
 	sendGuideAutomationEvent: function(data) {
 
 		var onSave = function() {
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:myBot_report_saved');
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:myBot_report_saved');
 			GmCXt.log(37, "Automation Report saved. Init the tracker again.");
 			GmCXt.storage().get(['desktopReq']).then(function(st) {
 				if (st.desktopReq) {
@@ -28683,7 +28691,7 @@ GmCXt.trackerV1 = {
 		if (!payload) return;
 		if (GmCXt.isClientJs() || GmCXt.isCreatorJS()) {
 			var message = {
-				action: "mgPlayerJSTest_action:payload_event_call",
+				action: "mgPlayerJSTest2_action:payload_event_call",
 				data: payload
 			};
 			GmCXt.sendToParentWindow(message);
@@ -28691,7 +28699,7 @@ GmCXt.trackerV1 = {
 
 		} else {
 			var m = {
-				action: "mgPlayerJSTest_action:payload_event_call",
+				action: "mgPlayerJSTest2_action:payload_event_call",
 				data: payload
 			};
 			GmCXt.sendToParentWindow(m);
@@ -29577,6 +29585,13 @@ GmCXt.auto = (function() {
 		return false;
 	};
 
+	pub.getAutomatedCurrentTour = function() {
+		if (self && self.tours.length > 0) {
+			return self.tours[self.current];
+		}
+		return false;
+	};
+
 	pub.fail = function(step, message) {
 		if (!step) {
 			step = {};
@@ -29609,7 +29624,7 @@ GmCXt.auto = (function() {
 	pub.newTabStepFound = function(option, isNextStep) {
 		if (option === "new_tab") {
 			isTourPlayingOnAnotherTab = true;
-			mg$('.mgPlayerJSTest_auto-prog-wrapper').remove();
+			mg$('.mgPlayerJSTest2_auto-prog-wrapper').remove();
 		} else {
 			isTourPlayingOnAnotherTab = false;
 			pub.showProgress();
@@ -29617,7 +29632,7 @@ GmCXt.auto = (function() {
 				GmCXt.playerI.isPageReloadByLastStep = true;
 
 				GmCXt.storage().set({
-					'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+					'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 					'guide_play_event': GmCXt.guidePlayTracker
 				});
 			}
@@ -30271,17 +30286,17 @@ GmCXt.auto = (function() {
 
 	pub.getDetailedProgressBar = function() {
 		var html =
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-prog-wrapper mgPlayerJSTest_inline-block-vm'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-prog-wrapper mgPlayerJSTest2_inline-block-vm'>" +
 			getProgressBarHeader() +
-			"  	<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-prog-container-label'>" + GmCXt.label.active + "</wmgPlayerJSTest_>" +
-			" 	<wmgPlayerJSTest_ class='mgPlayerJSTest_active-progress-bar-container'>" +
-			"   	<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-progress-bar-loader'></wmgPlayerJSTest_>" +
+			"  	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-prog-container-label'>" + GmCXt.label.active + "</wmgPlayerJSTest2_>" +
+			" 	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_active-progress-bar-container'>" +
+			"   	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-progress-bar-loader'></wmgPlayerJSTest2_>" +
 			" 		<span style='padding-left: 10px; margin-top:5px;'>" + GmCXt.label.guide + (self.current + 1) + " : " + self.tours[self.current].tour_title + "</span>" +
-			"	</wmgPlayerJSTest_>" +
-			"  	<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-prog-container-label'>" + GmCXt.label.completed + "</wmgPlayerJSTest_>" +
-			"  	<wmgPlayerJSTest_ class='mgPlayerJSTest_completed-progress-bar-container' style='max-height: 250px'>";
+			"	</wmgPlayerJSTest2_>" +
+			"  	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-prog-container-label'>" + GmCXt.label.completed + "</wmgPlayerJSTest2_>" +
+			"  	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_completed-progress-bar-container' style='max-height: 250px'>";
 		for (var i = 1; i < self.current + 1; i++) {
-			html += "<div class='mgPlayerJSTest_progr-bar-guide-item' style='padding: 5px;'>";
+			html += "<div class='mgPlayerJSTest2_progr-bar-guide-item' style='padding: 5px;'>";
 			if (self.tours[i - 1].test.status === "Passed") {
 				html += "<span>&#9989;</span>";
 			} else {
@@ -30290,40 +30305,40 @@ GmCXt.auto = (function() {
 			html += "<span style='padding-left: 10px;'>" + GmCXt.label.guide + i + " : " + self.tours[i - 1].tour_title + "</span> ";
 			html += "</div>";
 		}
-		html += "</wmgPlayerJSTest_>" +
+		html += "</wmgPlayerJSTest2_>" +
 			getProgressBarFooter(true) +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>";
 
 		return html;
 	};
 
 	pub.getShortProgressBar = function() {
-		return "<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-prog-wrapper mgPlayerJSTest_inline-block-vm' style='height:90px;'>" +
+		return "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-prog-wrapper mgPlayerJSTest2_inline-block-vm' style='height:90px;'>" +
 			getProgressBarHeader() +
 			getProgressBarFooter(false) +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>";
 	};
 
 	var getProgressBarHeader = function() {
 		return "" +
-			"  <wmgPlayerJSTest_ class='mgPlayerJSTest_auto-progress-bar-container'>" +
-			"	 <wmgPlayerJSTest_ class='mgPlayerJSTest_prog-count mgPlayerJSTest_inline-block-vm'>" +
+			"  <wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-progress-bar-container'>" +
+			"	 <wmgPlayerJSTest2_ class='mgPlayerJSTest2_prog-count mgPlayerJSTest2_inline-block-vm'>" +
 			GmCXt.label.running + " " + (self.current + 1) + "/" + self.totalTours +
-			"	 </wmgPlayerJSTest_>" +
-			"    <wmgPlayerJSTest_ class='mgPlayerJSTest_auto-progress-bar-loader'></wmgPlayerJSTest_>" +
-			"  </wmgPlayerJSTest_>";
+			"	 </wmgPlayerJSTest2_>" +
+			"    <wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-progress-bar-loader'></wmgPlayerJSTest2_>" +
+			"  </wmgPlayerJSTest2_>";
 	};
 
 	var getProgressBarFooter = function(showLess) {
 		var html = "" +
-			"  <wmgPlayerJSTest_ style='display:flex; flex-direction:row; justify-content:space-between; height:38px; margin-top:5px; padding:10px; '>";
+			"  <wmgPlayerJSTest2_ style='display:flex; flex-direction:row; justify-content:space-between; height:38px; margin-top:5px; padding:10px; '>";
 
 		if (showLess) {
-			html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_btn-showless' class='mgPlayerJSTest_auto-prog-expand-options'><a>" + GmCXt.label.lessDetails + "</a></wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_btn-showless' class='mgPlayerJSTest2_auto-prog-expand-options'><a>" + GmCXt.label.lessDetails + "</a></wmgPlayerJSTest2_>";
 		} else {
-			html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_btn-showmore' class='mgPlayerJSTest_auto-prog-expand-options'><a>" + GmCXt.label.viewMoreDetails + "</a></wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_btn-showmore' class='mgPlayerJSTest2_auto-prog-expand-options'><a>" + GmCXt.label.viewMoreDetails + "</a></wmgPlayerJSTest2_>";
 		}
-		html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_btn-default' class='action-btn mgPlayerJSTest_auto-prog-btn'>" + GmCXt.label.stop + "</wmgPlayerJSTest_></wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_btn-default' class='action-btn mgPlayerJSTest2_auto-prog-btn'>" + GmCXt.label.stop + "</wmgPlayerJSTest2_></wmgPlayerJSTest2_>";
 		return html;
 	};
 
@@ -30334,13 +30349,13 @@ GmCXt.auto = (function() {
 		}
 
 		// First remove any previously existing element
-		mg$(".mgPlayerJSTest_auto-prog-wrapper").remove();
+		mg$(".mgPlayerJSTest2_auto-prog-wrapper").remove();
 
 		if (self.showDetailedProgressbar) {
 			var progressBar = pub.getDetailedProgressBar();
 
 			mg$("body").append(progressBar);
-			document.getElementById("mgPlayerJSTest_btn-showless").onmouseup = function() {
+			document.getElementById("mgPlayerJSTest2_btn-showless").onmouseup = function() {
 				self.showDetailedProgressbar = false;
 				pub.showProgress();
 			};
@@ -30349,15 +30364,15 @@ GmCXt.auto = (function() {
 			progressBar = pub.getShortProgressBar();
 
 			mg$("body").append(progressBar);
-			document.getElementById("mgPlayerJSTest_btn-showmore").onmouseup = function() {
+			document.getElementById("mgPlayerJSTest2_btn-showmore").onmouseup = function() {
 				self.showDetailedProgressbar = true;
 				pub.showProgress();
 			};
 		}
 		pub.set();
 
-		document.getElementById("mgPlayerJSTest_btn-default").onmouseup = function() {
-			mg$('.mgPlayerJSTest_auto-prog-wrapper').remove();
+		document.getElementById("mgPlayerJSTest2_btn-default").onmouseup = function() {
+			mg$('.mgPlayerJSTest2_auto-prog-wrapper').remove();
 			pub.set();
 			if (GmCXt.tourPlayerI) {
 				GmCXt.tourPlayerI.closeGuide(true);
@@ -30368,7 +30383,7 @@ GmCXt.auto = (function() {
 	};
 
 	var onCloseResultPopup = function(e) {
-		mg$('.mgPlayerJSTest_auto-results-wrapper').remove();
+		mg$('.mgPlayerJSTest2_auto-results-wrapper').remove();
 		pub.destroyAutomation();
 	};
 
@@ -30385,12 +30400,12 @@ GmCXt.auto = (function() {
 		if (GmCXt.testResultsFromCreator && GmCXt.testResultsFromCreator.show) {
 
 			var showLoader = function() {
-				mg$('#mgPlayerJSTest_auto-results-loader').show();
+				mg$('#mgPlayerJSTest2_auto-results-loader').show();
 				mg$('#insights_link').hide();
 			};
 
 			var hideLoader = function() {
-				mg$('#mgPlayerJSTest_auto-results-loader').hide();
+				mg$('#mgPlayerJSTest2_auto-results-loader').hide();
 			};
 
 			var onClickInsightsLink = function() {
@@ -30420,42 +30435,42 @@ GmCXt.auto = (function() {
 			};
 
 			// Remove if already exists
-			mg$('.mgPlayerJSTest_auto-results-wrapper').remove();
-			mg$('.mgPlayerJSTest_auto-prog-wrapper').remove();
+			mg$('.mgPlayerJSTest2_auto-results-wrapper').remove();
+			mg$('.mgPlayerJSTest2_auto-prog-wrapper').remove();
 
 			var resultMessage = (data.testResultsDataArray[0].status === 'fail') ? GmCXt.label.automationFail : GmCXt.label.automationSuccess;
 
 			var html =
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_auto-results-wrapper mgPlayerJSTest_inline-block-vm'>" +
-				"	<wmgPlayerJSTest_ class='mgPlayerJSTest_inline-block-vm mgPlayerJSTest_auto-results-header'>" +
-				"      <wmgPlayerJSTest_ class='mgPlayerJSTest_auto-results-header-title'>" + GmCXt.label.testResults + "</wmgPlayerJSTest_>" +
-				"	   <wmgPlayerJSTest_ class='mgPlayerJSTest_auto-results-close-btn'>" +
-				"         <wmgPlayerJSTest_ id='mgPlayerJSTest_auto-test-result-close-btn'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-				"      </wmgPlayerJSTest_>" +
-				"   </wmgPlayerJSTest_>" +
-				"   <wmgPlayerJSTest_ id='mgPlayerJSTest_auto-results-loader' class='mgPlayerJSTest_auto-insights-link-loader-wrapper'>" +
-				"       <wmgPlayerJSTest_ class='mgPlayerJSTest_auto-progress-bar-loader mgPlayerJSTest_auto-insights-link-loader'></wmgPlayerJSTest_>" +
-				"   </wmgPlayerJSTest_>" +
-				"   <wmgPlayerJSTest_ id='insights_link' class='mgPlayerJSTest_insights-link-wrapper'>" +
-				"       <wmgPlayerJSTest_ class='mgPlayerJSTest_automation-success-img-wrapper'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-results-wrapper mgPlayerJSTest2_inline-block-vm'>" +
+				"	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_auto-results-header'>" +
+				"      <wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-results-header-title'>" + GmCXt.label.testResults + "</wmgPlayerJSTest2_>" +
+				"	   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-results-close-btn'>" +
+				"         <wmgPlayerJSTest2_ id='mgPlayerJSTest2_auto-test-result-close-btn'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+				"      </wmgPlayerJSTest2_>" +
+				"   </wmgPlayerJSTest2_>" +
+				"   <wmgPlayerJSTest2_ id='mgPlayerJSTest2_auto-results-loader' class='mgPlayerJSTest2_auto-insights-link-loader-wrapper'>" +
+				"       <wmgPlayerJSTest2_ class='mgPlayerJSTest2_auto-progress-bar-loader mgPlayerJSTest2_auto-insights-link-loader'></wmgPlayerJSTest2_>" +
+				"   </wmgPlayerJSTest2_>" +
+				"   <wmgPlayerJSTest2_ id='insights_link' class='mgPlayerJSTest2_insights-link-wrapper'>" +
+				"       <wmgPlayerJSTest2_ class='mgPlayerJSTest2_automation-success-img-wrapper'>" +
 				"           <img src='" + GmCXt.getExtUrl('common/img/test-success.png') + "' alt='success'/>" +
-				"       </wmgPlayerJSTest_>" +
-				"       <wmgPlayerJSTest_ class='mgPlayerJSTest_automation-success-link-wrapper'>" +
+				"       </wmgPlayerJSTest2_>" +
+				"       <wmgPlayerJSTest2_ class='mgPlayerJSTest2_automation-success-link-wrapper'>" +
 				"           <div>" + resultMessage + "</div>" +
 				"           <div>" + GmCXt.label.viewResult + "</div>" +
 				"           <a>" + GmCXt.label.autoTestResult + "</a>" +
-				"       </wmgPlayerJSTest_>" +
-				"   </wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>";
+				"       </wmgPlayerJSTest2_>" +
+				"   </wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>";
 
 			// Remove any previously existing element
-			mg$(".mgPlayerJSTest_auto-results-wrapper").remove();
+			mg$(".mgPlayerJSTest2_auto-results-wrapper").remove();
 			mg$("body").append(html);
-			mg$('.mgPlayerJSTest_result-table-wrapper').hide();
-			mg$('#mgPlayerJSTest_auto-export').hide();
+			mg$('.mgPlayerJSTest2_result-table-wrapper').hide();
+			mg$('#mgPlayerJSTest2_auto-export').hide();
 			hideLoader();
 			mg$('#insights_link').on('click', 'a', onClickInsightsLink);
-			document.getElementById("mgPlayerJSTest_auto-test-result-close-btn").onmouseup = onCloseResultPopup;
+			document.getElementById("mgPlayerJSTest2_auto-test-result-close-btn").onmouseup = onCloseResultPopup;
 		}
 	};
 
@@ -30546,7 +30561,7 @@ GmCXt.auto = (function() {
 			console.dir("-----------------End of test results---------------------");
 
 			// Hide the progress bar
-			mg$('.mgPlayerJSTest_auto-prog-wrapper').remove();
+			mg$('.mgPlayerJSTest2_auto-prog-wrapper').remove();
 
 			if (GmCXt.isEmpty(GmCXt.conf.analyticsPath)) {
 				GmCXt.log(36, "Analytic Path is not configured.");
@@ -30558,7 +30573,7 @@ GmCXt.auto = (function() {
 
 			var eventStartTime = formatDateObjForInsights(new Date());
 			var testCode = GmCXt.getUUID();
-			var msg = "mgPlayerJSTest_action:mybot_results";
+			var msg = "mgPlayerJSTest2_action:mybot_results";
 			var data = {
 				resultSequence: categoryInsights,
 				url: window.location.protocol + "//" + window.location.hostname,
@@ -30744,7 +30759,7 @@ GmCXt.auto = (function() {
 
 		// After page refresh extension doesn't redirect to route in extension
 		// Application needs to be on home route while guide rules are running
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:go_to_route");
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:go_to_route");
 	};
 
 	pub.destroyAutomation = function() {
@@ -34039,11 +34054,11 @@ GmCXt.screenOverlay = function(options) {
 				rect.left += myContainer.left;
 			}
 
-			var windowScrollTop = mg$('.mgPlayerJSTest_screen').scrollTop();
+			var windowScrollTop = mg$('.mgPlayerJSTest2_screen').scrollTop();
 			if (windowScrollTop > 0) {
 				rect.top -= windowScrollTop;
 			}
-			var windowScrollLeft = mg$('.mgPlayerJSTest_screen').scrollLeft();
+			var windowScrollLeft = mg$('.mgPlayerJSTest2_screen').scrollLeft();
 			if (windowScrollLeft > 0) {
 				rect.left -= windowScrollLeft;
 			}
@@ -34138,16 +34153,16 @@ GmCXt.screenOverlay = function(options) {
 			multipleAreaHighlight(); 
 		}
 
-		var overlayObj = mg$('.mgPlayerJSTest_screen-blackout');
+		var overlayObj = mg$('.mgPlayerJSTest2_screen-blackout');
 		var html = '';
-		var wmgPlayerJSTest_OverPosition = '';
+		var wmgPlayerJSTest2_OverPosition = '';
 		if (stepType === GmCXt.STEP_TYPE_IMAGE) {
-			wmgPlayerJSTest_OverPosition = 'fixed';
+			wmgPlayerJSTest2_OverPosition = 'fixed';
 		}
 		for (var i = 0; i < rectangles.length; i++) {
-			html = html + "<wmgPlayerJSTest_over style='position:" + wmgPlayerJSTest_OverPosition + ";top: " + rectangles[i].top + "px;" +
+			html = html + "<wmgPlayerJSTest2_over style='position:" + wmgPlayerJSTest2_OverPosition + ";top: " + rectangles[i].top + "px;" +
 				"left: " + rectangles[i].left + "px; width: " + rectangles[i].width + "px;" +
-				" height: " + rectangles[i].height + "px;'></wmgPlayerJSTest_over>";
+				" height: " + rectangles[i].height + "px;'></wmgPlayerJSTest2_over>";
 		}
 		overlayObj.html(html);
 
@@ -34156,15 +34171,15 @@ GmCXt.screenOverlay = function(options) {
 			cssPosition = "fixed";
 		}
 
-		mg$('.mgPlayerJSTest_screen-blackout').css({
+		mg$('.mgPlayerJSTest2_screen-blackout').css({
 			'top': 0,
 			'left': 0,
 			'position': cssPosition
 		});
-		mg$('.mgPlayerJSTest_screen-blackout').show();
+		mg$('.mgPlayerJSTest2_screen-blackout').show();
 
 		if (myContainer !== undefined) {
-			mg$('.mgPlayerJSTest_screen-blackout').css({
+			mg$('.mgPlayerJSTest2_screen-blackout').css({
 				'top': myContainer.top,
 				'left': myContainer.left
 			});
@@ -34181,7 +34196,7 @@ GmCXt.screenOverlay = function(options) {
 				if (GmCXt.isNumeric(stepSettings.overlayOpacity)) {
 					overlayOpacity = parseInt(stepSettings.overlayOpacity);
 					overlayOpacity = (overlayOpacity * 10) / 100;
-					mg$('wmgPlayerJSTest_over').css('opacity', overlayOpacity);
+					mg$('wmgPlayerJSTest2_over').css('opacity', overlayOpacity);
 				}
 			}
 		}
@@ -34359,7 +34374,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkLeftMiddle()) {
 			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
 			self.top = (self.highlightedArea.top + self.highlightedArea.height / 2) - (self.popupHeight / 2);
-			self.arrowClass = 'mgPlayerJSTest_arrow-right';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-right';
 			self.arrowLeft = self.highlightedArea.left - 12;
 			self.arrowTop = self.top + (self.popupHeight / 2) - 10;
 			self.isSet = true;
@@ -34384,7 +34399,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkLeftTop()) {
 			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
 			self.top = self.highlightedArea.top;
-			self.arrowClass = 'mgPlayerJSTest_arrow-right';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-right';
 			self.arrowLeft = self.highlightedArea.left - 12;
 			self.arrowTop = self.top + 7;
 			self.isSet = true;
@@ -34408,7 +34423,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkLeftBottom()) {
 			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
 			self.top = (self.highlightedArea.top + self.highlightedArea.height) - self.popupHeight;
-			self.arrowClass = 'mgPlayerJSTest_arrow-right';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-right';
 			self.arrowLeft = self.highlightedArea.left - 12;
 			self.arrowTop = self.top + (self.popupHeight - 30);
 			self.isSet = true;
@@ -34440,7 +34455,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkRightMiddle()) {
 			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
 			self.top = (self.highlightedArea.top + self.highlightedArea.height / 2) - (self.popupHeight / 2);
-			self.arrowClass = 'mgPlayerJSTest_arrow-left';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-left';
 			self.arrowLeft = self.left - 10;
 			self.arrowTop = self.top + (self.popupHeight / 2) - 10;
 			self.isSet = true;
@@ -34465,7 +34480,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkRightTop()) {
 			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
 			self.top = self.highlightedArea.top;
-			self.arrowClass = 'mgPlayerJSTest_arrow-left';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-left';
 			self.arrowLeft = self.left - 10;
 			self.arrowTop = self.top + 7;
 			self.isSet = true;
@@ -34490,7 +34505,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkRightBottom()) {
 			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
 			self.top = (self.highlightedArea.top + self.highlightedArea.height) - self.popupHeight;
-			self.arrowClass = 'mgPlayerJSTest_arrow-left';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-left';
 			self.arrowLeft = self.left - 10;
 			self.arrowTop = self.top + (self.popupHeight - 30);
 			self.isSet = true;
@@ -34522,7 +34537,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkTopMiddle()) {
 			self.left = (self.highlightedArea.left + self.highlightedArea.width / 2) - self.popupWidth / 2;
 			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-down';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-down';
 			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width / 2) - 8;
 			self.arrowTop = self.highlightedArea.top - 12;
 			self.isSet = true;
@@ -34547,7 +34562,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkTopLeft()) {
 			self.left = self.highlightedArea.left;
 			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-down';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-down';
 			self.arrowLeft = self.highlightedArea.left + 7;
 			self.arrowTop = self.highlightedArea.top - 12;
 			self.isSet = true;
@@ -34572,7 +34587,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkTopRight()) {
 			self.left = (self.highlightedArea.left + self.highlightedArea.width) - self.popupWidth;
 			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-down';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-down';
 			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width) - (20 + 7); // 20 is arrow width
 			self.arrowTop = self.highlightedArea.top - 12;
 			self.isSet = true;
@@ -34604,7 +34619,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkBottomMiddle()) {
 			self.left = (self.highlightedArea.left + self.highlightedArea.width / 2) - self.popupWidth / 2;
 			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-up';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-up';
 			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width / 2) - 8;
 			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
 			self.isSet = true;
@@ -34629,7 +34644,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkBottomLeft()) {
 			self.left = self.highlightedArea.left;
 			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-up';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-up';
 			self.arrowLeft = self.highlightedArea.left + 7;
 			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
 			self.isSet = true;
@@ -34654,7 +34669,7 @@ GmCXt.alignPopup = function(options) {
 		if (checkBottomRight()) {
 			self.left = (self.highlightedArea.left + self.highlightedArea.width) - self.popupWidth;
 			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSTest_arrow-up';
+			self.arrowClass = 'mgPlayerJSTest2_arrow-up';
 			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width) - (20 + 7); // 20 is arrow width
 			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
 			self.isSet = true;
@@ -34677,12 +34692,18 @@ GmCXt.alignPopup = function(options) {
 		if(self.customPos.left_pos === "px") {
 			self.left = self.highlightedArea.left + self.customPos.left;
 		} else if(self.customPos.left_pos === "%") {
-			self.left = (self.highlightedArea.left + ((self.highlightedArea.width * self.customPos.left) / 100)) - (self.popupWidth/2);
+			self.left = (self.highlightedArea.left + ((self.highlightedArea.width * self.customPos.left) / 100));
+			if(self.isBeacon) {
+				self.left = self.left - (self.popupWidth/2);
+			}
 		}
 		if(self.customPos.top_pos === "px") {
 			self.top = self.highlightedArea.top + self.customPos.top;
 		} else if(self.customPos.top_pos === "%") {
-			self.top = (self.highlightedArea.top + ((self.highlightedArea.height * self.customPos.top) / 100)) - (self.popupHeight/2);
+			self.top = (self.highlightedArea.top + ((self.highlightedArea.height * self.customPos.top) / 100));
+			if(self.isBeacon) {
+				self.top = self.top - (self.popupHeight/2);
+			}
 		}
 
 		self.isSet = true;
@@ -34836,11 +34857,11 @@ GmCXt.alignPopup = function(options) {
 
 			if (self.top < 0) self.top = 10;
 
-			var windowScrollTop = mg$('.mgPlayerJSTest_screen').scrollTop();
+			var windowScrollTop = mg$('.mgPlayerJSTest2_screen').scrollTop();
 			if (windowScrollTop > 0) {
 				self.top -= windowScrollTop;
 			}
-			var windowScrollLeft = mg$('.mgPlayerJSTest_screen').scrollLeft();
+			var windowScrollLeft = mg$('.mgPlayerJSTest2_screen').scrollLeft();
 			if (windowScrollLeft > 0) {
 				self.left -= windowScrollLeft;
 			}
@@ -34852,13 +34873,13 @@ GmCXt.alignPopup = function(options) {
 		}
 
 		if (self.arrowId) {
-			self.arrowClass = self.arrowClass + " mgPlayerJSTest_tooltip-arrow";
+			self.arrowClass = self.arrowClass + " mgPlayerJSTest2_tooltip-arrow";
 		}
 
-		mg$(".mgPlayerJSTest_arrow-down").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-up").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-left").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-right").not(".mgPlayerJSTest_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-down").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-up").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-left").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-right").not(".mgPlayerJSTest2_tooltip-arrow").remove();
 
 		self.arrowLeft += self.containerOffset.left;
 		self.arrowLeft += mg$(window).scrollLeft();
@@ -34893,10 +34914,10 @@ GmCXt.alignPopup = function(options) {
 	pub.clear = function() {
 
 		GmCXt.clearPreviewPopupAlignment(self.popup);
-		mg$(".mgPlayerJSTest_arrow-down").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-up").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-left").not(".mgPlayerJSTest_tooltip-arrow").remove();
-		mg$(".mgPlayerJSTest_arrow-right").not(".mgPlayerJSTest_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-down").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-up").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-left").not(".mgPlayerJSTest2_tooltip-arrow").remove();
+		mg$(".mgPlayerJSTest2_arrow-right").not(".mgPlayerJSTest2_tooltip-arrow").remove();
 
 		self.popup.css({
 			'left': 0,
@@ -34943,7 +34964,7 @@ GmCXt.previewStepPopup = function(options) {
 		GmCXt.addStepPreviewHtml(self);
 
 		if (GmCXt.isMediaPlayerOn) {
-			mg$(".mgPlayerJSTest_preview-step-popup-container").addClass("mgPlayerJSTest_preview-step-popup-container-mp");
+			mg$(".mgPlayerJSTest2_preview-step-popup-container").addClass("mgPlayerJSTest2_preview-step-popup-container-mp");
 		}
 
 		GmCXt.addDragPopUpFunction();
@@ -34972,33 +34993,33 @@ GmCXt.previewStepPopup = function(options) {
 					mg$('.preview-step-popup-navigation-wrapper').css({
 						'display': 'none'
 					});
-					mg$('.mgPlayerJSTest_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
-					mg$('.mgPlayerJSTest_play-step-popup-logo').css({
+					mg$('.mgPlayerJSTest2_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
+					mg$('.mgPlayerJSTest2_play-step-popup-logo').css({
 						'display': ''
 					});
-					mg$('.mgPlayerJSTest_play-total-step-cont').css({
+					mg$('.mgPlayerJSTest2_play-total-step-cont').css({
 						'display': ''
 					});
-					mg$('.mgPlayerJSTest_play-step-navigation').css({
+					mg$('.mgPlayerJSTest2_play-step-navigation').css({
 						'display': ''
 					});
-					mg$(".mgPlayerJSTest_play-step-popup-footer").css("height", "auto");
+					mg$(".mgPlayerJSTest2_play-step-popup-footer").css("height", "auto");
 
 				} else if (popupDesign.type === 'classic') {
 					mg$('.preview-step-popup-navigation-wrapper').css({
 						'display': ''
 					});
-					mg$('.mgPlayerJSTest_preview-step-popup-container').addClass('preview-step-popup-classic-design');
-					mg$('.mgPlayerJSTest_play-step-popup-logo').css({
+					mg$('.mgPlayerJSTest2_preview-step-popup-container').addClass('preview-step-popup-classic-design');
+					mg$('.mgPlayerJSTest2_play-step-popup-logo').css({
 						'display': 'none'
 					});
-					mg$('.mgPlayerJSTest_play-total-step-cont').css({
+					mg$('.mgPlayerJSTest2_play-total-step-cont').css({
 						'display': 'none'
 					});
-					mg$('.mgPlayerJSTest_play-step-navigation').css({
+					mg$('.mgPlayerJSTest2_play-step-navigation').css({
 						'display': 'none'
 					});
-					mg$(".mgPlayerJSTest_play-step-popup-footer").css("height", "42px");
+					mg$(".mgPlayerJSTest2_play-step-popup-footer").css("height", "42px");
 				}
 
 				// For backward compatibility
@@ -35025,37 +35046,37 @@ GmCXt.previewStepPopup = function(options) {
 					closeIconColor = '#26273B';
 					stepDescColor = '#a6a6a6';
 
-					mg$(".mgPlayerJSTest_play-step-navigation").addClass("mgPlayerJSTest_accessibility-theme");
-					mg$('.mgPlayerJSTest_play-step-prev').addClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_play-step-next').addClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_play-step-pause').addClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.popup-classic-design-navigation-prev').addClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_popup-classic-navigation-next').addClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_popup-classic-navigation-pause').addClass("mgPlayerJSTest_ass-default-btn");
+					mg$(".mgPlayerJSTest2_play-step-navigation").addClass("mgPlayerJSTest2_accessibility-theme");
+					mg$('.mgPlayerJSTest2_play-step-prev').addClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_play-step-next').addClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_play-step-pause').addClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.popup-classic-design-navigation-prev').addClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-next').addClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-pause').addClass("mgPlayerJSTest2_ass-default-btn");
 
 				} else {
 
-					mg$(".mgPlayerJSTest_play-step-navigation").removeClass("mgPlayerJSTest_accessibility-theme");
-					mg$('.mgPlayerJSTest_play-step-prev').removeClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_play-step-next').removeClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_play-step-pause').removeClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.popup-classic-design-navigation-prev').removeClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_popup-classic-navigation-next').removeClass("mgPlayerJSTest_ass-default-btn");
-					mg$('.mgPlayerJSTest_popup-classic-navigation-pause').removeClass("mgPlayerJSTest_ass-default-btn");
+					mg$(".mgPlayerJSTest2_play-step-navigation").removeClass("mgPlayerJSTest2_accessibility-theme");
+					mg$('.mgPlayerJSTest2_play-step-prev').removeClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_play-step-next').removeClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_play-step-pause').removeClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.popup-classic-design-navigation-prev').removeClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-next').removeClass("mgPlayerJSTest2_ass-default-btn");
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-pause').removeClass("mgPlayerJSTest2_ass-default-btn");
 
-					mg$('.mgPlayerJSTest_play-step-prev').css({
+					mg$('.mgPlayerJSTest2_play-step-prev').css({
 						"background-color": popupDesign.current.prevBtnBackground,
 						"color": popupDesign.current.prevBtnColor,
 						"border-color": popupDesign.current.prevBtnColor
 					});
 
-					mg$('.mgPlayerJSTest_play-step-next').css({
+					mg$('.mgPlayerJSTest2_play-step-next').css({
 						"background-color": popupDesign.current.nextBtnBackground,
 						"color": popupDesign.current.nextBtnColor,
 						"border-color": popupDesign.current.nextBtnColor
 					});
 
-					mg$('.mgPlayerJSTest_play-step-pause').css({
+					mg$('.mgPlayerJSTest2_play-step-pause').css({
 						"background-color": popupDesign.current.nextBtnBackground,
 						"color": popupDesign.current.nextBtnColor,
 						"border-color": popupDesign.current.nextBtnColor
@@ -35071,18 +35092,18 @@ GmCXt.previewStepPopup = function(options) {
 						"color": popupDesign.current.prevBtnColor
 					});
 
-					mg$('.mgPlayerJSTest_popup-classic-navigation-next').css({
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-next').css({
 						"background-color": popupDesign.current.nextBtnBackground,
 						"color": popupDesign.current.nextBtnColor
 					});
 
-					mg$('.mgPlayerJSTest_popup-classic-navigation-pause').css({
+					mg$('.mgPlayerJSTest2_popup-classic-navigation-pause').css({
 						"background-color": popupDesign.current.nextBtnBackground,
 						"color": popupDesign.current.nextBtnColor
 					});
 				}
 
-				mg$('.mgPlayerJSTest_preview-step-popup-container').css({
+				mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 					"background-color": bgColor,
 					"border-radius": popupDesign.current.borderRadius,
 					"border-color": borderColor,
@@ -35093,105 +35114,105 @@ GmCXt.previewStepPopup = function(options) {
 					"padding-left": popupDesign.current.padding.left,
 					"padding-right": popupDesign.current.padding.right
 				});
-				mg$('.mgPlayerJSTest_play-step-popup').css({
+				mg$('.mgPlayerJSTest2_play-step-popup').css({
 					"border-radius": popupDesign.current.borderRadius
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-s-title').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-s-title').css({
 					"color": stepTitleColor
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-s-title').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-s-title').css({
 					"font-size": popupDesign.current.stepTitleFontSize
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-s-title').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-s-title').css({
 					"font-family": popupDesign.current.stepTitleFontFamily
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-s-title').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-s-title').css({
 					"font-weight": popupDesign.current.stepTitleFontWeight
 				});
 
-				mg$('.mgPlayerJSTest_play-step-popup-description').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-description').css({
 					"color": stepDescColor
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-description').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-description').css({
 					"font-size": popupDesign.current.stepDesFontSize
 				});
-				mg$('.mgPlayerJSTest_play-step-popup-description').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-description').css({
 					"font-family": popupDesign.current.stepDesFontFamily
 				});
-				mg$('.mgPlayerJSTest_play-total-step-cont').css({
+				mg$('.mgPlayerJSTest2_play-total-step-cont').css({
 					"background-color": bgColor,
 					"color": stepTitleColor
 				});
-				mg$('.mgPlayerJSTest_play-total-step').css({
+				mg$('.mgPlayerJSTest2_play-total-step').css({
 					"color": popupDesign.current.stepCountColor
 				});
 
-				if (mg$('#mgPlayerJSTest_popup-arrow').length) {
-					mg$('#mgPlayerJSTest_popup-arrow').remove();
+				if (mg$('#mgPlayerJSTest2_popup-arrow').length) {
+					mg$('#mgPlayerJSTest2_popup-arrow').remove();
 				}
 
-				var popUpCSS = "<style id='mgPlayerJSTest_popup-arrow' type='text/css'>" +
-					".mgPlayerJSTest_preview-step-popup-container.right-top:after,.mgPlayerJSTest_preview-step-popup-container.right-middle:after,.mgPlayerJSTest_preview-step-popup-container.right-bottom:after {" +
+				var popUpCSS = "<style id='mgPlayerJSTest2_popup-arrow' type='text/css'>" +
+					".mgPlayerJSTest2_preview-step-popup-container.right-top:after,.mgPlayerJSTest2_preview-step-popup-container.right-middle:after,.mgPlayerJSTest2_preview-step-popup-container.right-bottom:after {" +
 					"border-right-color:" + bgColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.right-top:before,.mgPlayerJSTest_preview-step-popup-container.right-middle:before, .mgPlayerJSTest_preview-step-popup-container.right-bottom:before {" +
+					".mgPlayerJSTest2_preview-step-popup-container.right-top:before,.mgPlayerJSTest2_preview-step-popup-container.right-middle:before, .mgPlayerJSTest2_preview-step-popup-container.right-bottom:before {" +
 					"border-right-color:" + borderColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.left-top:after,.mgPlayerJSTest_preview-step-popup-container.left-middle:after,.mgPlayerJSTest_preview-step-popup-container.left-bottom:after {" +
+					".mgPlayerJSTest2_preview-step-popup-container.left-top:after,.mgPlayerJSTest2_preview-step-popup-container.left-middle:after,.mgPlayerJSTest2_preview-step-popup-container.left-bottom:after {" +
 					"border-left-color:" + bgColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.left-top:before,.mgPlayerJSTest_preview-step-popup-container.left-middle:before, .mgPlayerJSTest_preview-step-popup-container.left-bottom:before {" +
+					".mgPlayerJSTest2_preview-step-popup-container.left-top:before,.mgPlayerJSTest2_preview-step-popup-container.left-middle:before, .mgPlayerJSTest2_preview-step-popup-container.left-bottom:before {" +
 					"border-left-color:" + borderColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.top-left:after,.mgPlayerJSTest_preview-step-popup-container.top-middle:after,.mgPlayerJSTest_preview-step-popup-container.top-right:after {" +
+					".mgPlayerJSTest2_preview-step-popup-container.top-left:after,.mgPlayerJSTest2_preview-step-popup-container.top-middle:after,.mgPlayerJSTest2_preview-step-popup-container.top-right:after {" +
 					"border-top-color:" + bgColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.top-left:before,.mgPlayerJSTest_preview-step-popup-container.top-middle:before, .mgPlayerJSTest_preview-step-popup-container.top-right:before {" +
+					".mgPlayerJSTest2_preview-step-popup-container.top-left:before,.mgPlayerJSTest2_preview-step-popup-container.top-middle:before, .mgPlayerJSTest2_preview-step-popup-container.top-right:before {" +
 					"border-top-color:" + borderColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.bottom-left:after,.mgPlayerJSTest_preview-step-popup-container.bottom-middle:after,.mgPlayerJSTest_preview-step-popup-container.bottom-right:after {" +
+					".mgPlayerJSTest2_preview-step-popup-container.bottom-left:after,.mgPlayerJSTest2_preview-step-popup-container.bottom-middle:after,.mgPlayerJSTest2_preview-step-popup-container.bottom-right:after {" +
 					"border-bottom-color:" + bgColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_preview-step-popup-container.bottom-left:before,.mgPlayerJSTest_preview-step-popup-container.bottom-middle:before, .mgPlayerJSTest_preview-step-popup-container.bottom-right:before {" +
+					".mgPlayerJSTest2_preview-step-popup-container.bottom-left:before,.mgPlayerJSTest2_preview-step-popup-container.bottom-middle:before, .mgPlayerJSTest2_preview-step-popup-container.bottom-right:before {" +
 					"border-bottom-color:" + borderColor + " !important;" +
 					"} " +
-					".mgPlayerJSTest_play-step-audio i {" +
+					".mgPlayerJSTest2_play-step-audio i {" +
 					"color:" + closeIconColor + " !important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-audio svg path {" +
+					".mgPlayerJSTest2_play-step-audio svg path {" +
 					"fill:" + closeIconColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-popup-close i {" +
+					".mgPlayerJSTest2_play-step-popup-close i {" +
 					"color:" + closeIconColor + "!important;" +
 					"-webkit-text-stroke-color:" + bgColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-popup-close svg path {" +
+					".mgPlayerJSTest2_play-step-popup-close svg path {" +
 					"fill:" + closeIconColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-popup-drag svg path {" +
-					"fill:" + closeIconColor + "!important;" +
-					"stroke:" + closeIconColor + "!important;" +
-					"}" +
-					".mgPlayerJSTest_play-step-popup-edit svg path{" +
+					".mgPlayerJSTest2_play-step-popup-drag svg path {" +
 					"fill:" + closeIconColor + "!important;" +
 					"stroke:" + closeIconColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-prev svg path {" +
+					".mgPlayerJSTest2_play-step-popup-edit svg path{" +
+					"fill:" + closeIconColor + "!important;" +
+					"stroke:" + closeIconColor + "!important;" +
+					"}" +
+					".mgPlayerJSTest2_play-step-prev svg path {" +
 					"fill:" + prevBtnColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-next svg path {" +
+					".mgPlayerJSTest2_play-step-next svg path {" +
 					"fill:" + nextBtnColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_play-step-pause svg path{" +
+					".mgPlayerJSTest2_play-step-pause svg path{" +
 					"fill:" + nextBtnColor + "!important;" +
 					"}" +
 					".popup-classic-design-navigation-prev svg path {" +
 					"fill:" + prevBtnColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_popup-classic-navigation-next svg path {" +
+					".mgPlayerJSTest2_popup-classic-navigation-next svg path {" +
 					"fill:" + nextBtnColor + "!important;" +
 					"}" +
-					".mgPlayerJSTest_popup-classic-navigation-pause svg path {" +
+					".mgPlayerJSTest2_popup-classic-navigation-pause svg path {" +
 					"fill:" + nextBtnColor + "!important;" +
 					"}" +
 					"</style>";
@@ -35201,14 +35222,14 @@ GmCXt.previewStepPopup = function(options) {
 				mg$('.preview-step-popup-navigation-wrapper').css({
 					'display': 'none'
 				});
-				mg$('.mgPlayerJSTest_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
-				mg$('.mgPlayerJSTest_play-step-popup-logo').css({
+				mg$('.mgPlayerJSTest2_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
+				mg$('.mgPlayerJSTest2_play-step-popup-logo').css({
 					'display': ''
 				});
-				mg$('.mgPlayerJSTest_play-total-step-cont').css({
+				mg$('.mgPlayerJSTest2_play-total-step-cont').css({
 					'display': ''
 				});
-				mg$('.mgPlayerJSTest_play-step-navigation').css({
+				mg$('.mgPlayerJSTest2_play-step-navigation').css({
 					'display': ''
 				});
 			}
@@ -35218,43 +35239,43 @@ GmCXt.previewStepPopup = function(options) {
 				var tipPosition = "fixed";
 			}
 
-			mg$('.mgPlayerJSTest_preview-step-popup-container, wmgPlayerJSTest_over').css({
+			mg$('.mgPlayerJSTest2_preview-step-popup-container, wmgPlayerJSTest2_over').css({
 				'position': tipPosition
 			});
 			
-			mg$(".mgPlayerJSTest_preview-step-popup-container").show();
+			mg$(".mgPlayerJSTest2_preview-step-popup-container").show();
 			
-			mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-s-num').html(self.serialNumber);
+			mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-s-num').html(self.serialNumber);
 
 			self.title = GmCXt.updateOrgAndAddSignature(self.title);	
 			
-			mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_step-title').html(self.title);
+			mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_step-title').html(self.title);
 
 			if (!GmCXt.replaceVariableInText(self.title).trim()) {
-				mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_step-title').remove();
+				mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_step-title').remove();
 			}
 
 			self.description = GmCXt.updateOrgAndAddSignature(self.description);
 
-			mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description').html(self.description);
-			mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-curr-step').html(self.serialNumber);
-			mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-total-step').html(self.totalStepCount);
+			mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description').html(self.description);
+			mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-curr-step').html(self.serialNumber);
+			mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-total-step').html(self.totalStepCount);
 
-			var brandLogoEl = mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-logo img');
+			var brandLogoEl = mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-logo img');
 			brandLogoEl.attr('src', GmCXt.brandLogo());
-			var len = mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description img').length;
+			var len = mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description img').length;
 			if (len) {
 				for (var i = 0; i < len; i++) {
-					var imgW = mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description img')[i].getAttribute('width');
-					var imgH = mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description img')[i].getAttribute('height');
+					var imgW = mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description img')[i].getAttribute('width');
+					var imgH = mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description img')[i].getAttribute('height');
 
-					mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description img')[i].style.setProperty('width', imgW + 'px', 'important');
-					mg$('.mgPlayerJSTest_preview-step-popup-container .mgPlayerJSTest_play-step-popup-description img')[i].style.setProperty('height', imgH + 'px', 'important');
+					mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description img')[i].style.setProperty('width', imgW + 'px', 'important');
+					mg$('.mgPlayerJSTest2_preview-step-popup-container .mgPlayerJSTest2_play-step-popup-description img')[i].style.setProperty('height', imgH + 'px', 'important');
 				}
 			}
 
 			//GmCXt.timeout(function(){
-			mg$(".mgPlayerJSTest_play-step-popup-drag").focus();
+			mg$(".mgPlayerJSTest2_play-step-popup-drag").focus();
 			//},500);
 
 			var os = GmCXt.getOrgSettings();
@@ -35267,21 +35288,21 @@ GmCXt.previewStepPopup = function(options) {
 			}
 
 			if (GmCXt.enforceGuideMePopup) {
-				mg$('.mgPlayerJSTest_preview-step-popup-container').css({
+				mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 					'z-index': '2147483646'
 				});
 			}
 
-			GmCXt.zoomImage(self.description, ".mgPlayerJSTest_play-step-popup-description");
+			GmCXt.zoomImage(self.description, ".mgPlayerJSTest2_play-step-popup-description");
 
-			GmCXt.setLinkClickhandler(self.title, ".mgPlayerJSTest_step-title");
-			GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSTest_play-step-popup-description");
+			GmCXt.setLinkClickhandler(self.title, ".mgPlayerJSTest2_step-title");
+			GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSTest2_play-step-popup-description");
 
 			if (self.description.indexOf('target = "gssPlayGuide"' !== -1)) {
-				GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSTest_play-step-popup-description");
+				GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSTest2_play-step-popup-description");
 			}
 			if (self.title.indexOf('target = "gssPlayGuide"' !== -1)) {
-				GmCXt.setLinkGuidePlay(self.title, ".mgPlayerJSTest_step-title");
+				GmCXt.setLinkGuidePlay(self.title, ".mgPlayerJSTest2_step-title");
 			}
 
 			if (!hideStepIcon) {
@@ -35290,7 +35311,7 @@ GmCXt.previewStepPopup = function(options) {
 				brandLogoEl.hide();
 			}
 
-			var popupWrapper = mg$('.mgPlayerJSTest_play-step-popup-content-wrapper');
+			var popupWrapper = mg$('.mgPlayerJSTest2_play-step-popup-content-wrapper');
 
 			if (self.settings.stepPopupWidth) {
 				popupWrapper.css({
@@ -35314,16 +35335,16 @@ GmCXt.previewStepPopup = function(options) {
 			attachDOMEvents();
 
 			if (!self.playingTour) {
-				mg$('.mgPlayerJSTest_play-step-popup-description').css({
+				mg$('.mgPlayerJSTest2_play-step-popup-description').css({
 					'font-size': '16px',
 					'line-height': '19px;'
 				});
 
-				mg$('.mgPlayerJSTest_play-step-prev').css({
+				mg$('.mgPlayerJSTest2_play-step-prev').css({
 					'font-size': '15px'
 				});
 
-				mg$('.mgPlayerJSTest_play-step-next').css({
+				mg$('.mgPlayerJSTest2_play-step-next').css({
 					'font-size': '15px'
 				});
 			}
@@ -35357,7 +35378,7 @@ GmCXt.previewStepPopup = function(options) {
 
 					if (self.type == GmCXt.STEP_TYPE_IMAGE) {
 
-						opts.containerOffset = GmCXt.getContainerOffSet(mg$('#mgPlayerJSTest_image-canvas'));
+						opts.containerOffset = GmCXt.getContainerOffSet(mg$('#mgPlayerJSTest2_image-canvas'));
 
 						if (self.container) {
 							opts.container = self.container;
@@ -35419,23 +35440,23 @@ GmCXt.previewStepPopup = function(options) {
 				*/
 
 			if (self.playingTour === true) {
-				mg$('.mgPlayerJSTest_play-step-popup-s-title').show();
+				mg$('.mgPlayerJSTest2_play-step-popup-s-title').show();
 			} else {
-				mg$('#mgPlayerJSTest_play_step_audio').hide();
-				mg$('.mgPlayerJSTest_play-total-step-cont').hide();
-				mg$('.mgPlayerJSTest_play-step-popup-s-num').hide();
-				mg$('.mgPlayerJSTest_play-step-navigation').hide();
-				mg$('.mgPlayerJSTest_play-step-popup-close').hide();
-				mg$('.mgPlayerJSTest_play-step-audio-loader').hide();
+				mg$('#mgPlayerJSTest2_play_step_audio').hide();
+				mg$('.mgPlayerJSTest2_play-total-step-cont').hide();
+				mg$('.mgPlayerJSTest2_play-step-popup-s-num').hide();
+				mg$('.mgPlayerJSTest2_play-step-navigation').hide();
+				mg$('.mgPlayerJSTest2_play-step-popup-close').hide();
+				mg$('.mgPlayerJSTest2_play-step-audio-loader').hide();
 				mg$('.popup-classic-design-navigation').hide();
-				/*mg$('.mgPlayerJSTest_play-step-popup-description').css({'font-size': '18px', 'line-height': '21px;'});
-				//mg$('.mgPlayerJSTest_play-step-popup-s-title').css({'font-size': '22px'});
-				mg$('.mgPlayerJSTest_play-step-prev').css({'font-size': '18px'});
-				mg$('.mgPlayerJSTest_play-step-next').css({'font-size': '18px'});*/
+				/*mg$('.mgPlayerJSTest2_play-step-popup-description').css({'font-size': '18px', 'line-height': '21px;'});
+				//mg$('.mgPlayerJSTest2_play-step-popup-s-title').css({'font-size': '22px'});
+				mg$('.mgPlayerJSTest2_play-step-prev').css({'font-size': '18px'});
+				mg$('.mgPlayerJSTest2_play-step-next').css({'font-size': '18px'});*/
 			}
 
 			// Align popup
-			var $popup = mg$(".mgPlayerJSTest_step-popup");
+			var $popup = mg$(".mgPlayerJSTest2_step-popup");
 			var doAlign = false;
 
 			if (self.type === GmCXt.STEP_TYPE_INLINE || self.type === GmCXt.STEP_TYPE_WEB_INLINE ||
@@ -35519,13 +35540,13 @@ GmCXt.previewStepPopup = function(options) {
 		GmCXt.previewStepPopupInstance = null;
 
 		window.removeEventListener('mouseout', stopEventPropagation, true);
-		mg$('.mgPlayerJSTest_play-step-audio-iframe').remove();
-		mg$('.mgPlayerJSTest_preview-step-popup-container').remove();
+		mg$('.mgPlayerJSTest2_play-step-audio-iframe').remove();
+		mg$('.mgPlayerJSTest2_preview-step-popup-container').remove();
 
-		mg$('.mgPlayerJSTest_play-step-audio').show();
-		mg$('.mgPlayerJSTest_play-step-popup-close').show();
-		mg$('.mgPlayerJSTest_play-total-step-cont').show();
-		mg$('.mgPlayerJSTest_play-step-popup-s-num').show();
+		mg$('.mgPlayerJSTest2_play-step-audio').show();
+		mg$('.mgPlayerJSTest2_play-step-popup-close').show();
+		mg$('.mgPlayerJSTest2_play-total-step-cont').show();
+		mg$('.mgPlayerJSTest2_play-step-popup-s-num').show();
 
 		//show start button
 		GmCXt.displayWidget();
@@ -35538,20 +35559,20 @@ GmCXt.previewStepPopup = function(options) {
 
 	var attachDOMEvents = function() {
 		if (self.playingTour === true) {
-			if (document.getElementById('mgPlayerJSTest_play_step_popup_drag')) {
-				document.getElementById('mgPlayerJSTest_play_step_popup_drag').addEventListener('touchmove', dragElementOnTouch);
+			if (document.getElementById('mgPlayerJSTest2_play_step_popup_drag')) {
+				document.getElementById('mgPlayerJSTest2_play_step_popup_drag').addEventListener('touchmove', dragElementOnTouch);
 			}
 		}
 	};
 
 	var dragElementOnTouch = function(e) {
-		var elmnt = document.getElementById("mgPlayerJSTest_preview-step-popup-container");
+		var elmnt = document.getElementById("mgPlayerJSTest2_preview-step-popup-container");
 
 		var touch = event.targetTouches[0];
 
 		// set the element's new position:
 		elmnt.style.top = (touch.pageY - 24) + 'px';
-		elmnt.style.left = (touch.pageX - (document.getElementById("mgPlayerJSTest_preview-step-popup-container").offsetWidth - 76)) + 'px';
+		elmnt.style.left = (touch.pageX - (document.getElementById("mgPlayerJSTest2_preview-step-popup-container").offsetWidth - 76)) + 'px';
 		mg$(elmnt)
 			.removeClass('top-left')
 			.removeClass('top-middle')
@@ -35576,38 +35597,38 @@ GmCXt.previewStepPopup = function(options) {
 			cssPosition = "fixed";
 		}
 
-		var overlayObj = mg$('.mgPlayerJSTest_screen-blackout');
+		var overlayObj = mg$('.mgPlayerJSTest2_screen-blackout');
 
-		var html = "<wmgPlayerJSTest_over style='top:0px; " +
+		var html = "<wmgPlayerJSTest2_over style='top:0px; " +
 			"left:0px;" +
 			"width:100%;" +
 			"height: " + rect[0].top + "px;'>" +
-			"</wmgPlayerJSTest_over>" +
-			"<wmgPlayerJSTest_over style='top:" + rect[0].top + "px;" +
+			"</wmgPlayerJSTest2_over>" +
+			"<wmgPlayerJSTest2_over style='top:" + rect[0].top + "px;" +
 			"left: 0px;" +
 			"width: " + rect[0].left + "px;" +
 			"height: " + rect[0].height + "px;'>" +
-			"</wmgPlayerJSTest_over>" +
-			"<wmgPlayerJSTest_over style='top:" + rect[0].top + "px;" +
+			"</wmgPlayerJSTest2_over>" +
+			"<wmgPlayerJSTest2_over style='top:" + rect[0].top + "px;" +
 			"left: " + (rect[0].left + rect[0].width) + "px;" +
 			"width: " + (mg$(window).width() - (rect[0].left + rect[0].width)) + "px;" +
 			"height: " + rect[0].height + "px;'>" +
-			"</wmgPlayerJSTest_over>" +
-			"<wmgPlayerJSTest_over style='top:" + (rect[0].top + rect[0].height) + "px;" +
+			"</wmgPlayerJSTest2_over>" +
+			"<wmgPlayerJSTest2_over style='top:" + (rect[0].top + rect[0].height) + "px;" +
 			"left:0px;" +
 			"width:100%;" +
 			"height: " + (mg$(document).height() - (rect[0].height + rect[0].top)) + "px;'>" +
-			"</wmgPlayerJSTest_over>";
+			"</wmgPlayerJSTest2_over>";
 
 		overlayObj.html(html);
 
-		mg$('.mgPlayerJSTest_screen-blackout').css({
+		mg$('.mgPlayerJSTest2_screen-blackout').css({
 			'top': 0,
 			'left': 0,
 			'width': '100%',
 			'position': cssPosition
 		}).show();
-		mg$('wmgPlayerJSTest_over').css('opacity', opacity);
+		mg$('wmgPlayerJSTest2_over').css('opacity', opacity);
 	};
 
 	var setOnAudioMode = function() {
@@ -35658,7 +35679,7 @@ GmCXt.userGuide = function(options) {
 	};
 
 	function stepNotFound(stepTitle, stepImage, processedImage) {
-		var popupType = 'mgPlayerJSTest_popup-info';
+		var popupType = 'mgPlayerJSTest2_popup-info';
 		var popupHeaderIcon = '<svg  width="24" height="24" viewBox="0 0 24 24" fill="none">' +
 			'<circle cx="12" cy="12" r="11.1" stroke="white" stroke-width="1.8"/>' +
 			'<rect x="11" y="11" width="2" height="9" rx="1" fill="white"/>' +
@@ -35666,27 +35687,27 @@ GmCXt.userGuide = function(options) {
 			'</svg>';
 
 		var popupTitle = GmCXt.label.elmNotFound;
-		var info = "<div class='mgPlayerJSTest_popup-content-info'>" + GmCXt.label.elmNotFoundInfo + "</div>";
+		var info = "<div class='mgPlayerJSTest2_popup-content-info'>" + GmCXt.label.elmNotFoundInfo + "</div>";
 
 		if (GmCXt.isWestpac()) {
 			stepTitle = null;
 			popupTitle = GmCXt.label.elmNotFoundWestpac;
 			info = (processedImage) ?
-				"<img class='mgPlayerJSTest_step-not-found-image' src='" + stepImage.split(".png")[0] + "_cropped.png" + GmCXt.getCdnSign() + "'>" :
-				"<img class='mgPlayerJSTest_step-not-found-image' src='" + stepImage + "'>";
+				"<img class='mgPlayerJSTest2_step-not-found-image' src='" + stepImage.split(".png")[0] + "_cropped.png" + GmCXt.getCdnSign() + "'>" :
+				"<img class='mgPlayerJSTest2_step-not-found-image' src='" + stepImage + "'>";
 		}
 		var str =
-			"<div class='mgPlayerJSTest_step-not-found-notification mgPlayerJSTest_popup " + popupType + "'> " +
-			"       <div class='mgPlayerJSTest_popup-header-wrapper'>" +
-			"	       	<div class='mgPlayerJSTest_popup-header-icon-wrapper'><div class='mgPlayerJSTest_popup-header-icon'>" + popupHeaderIcon +
+			"<div class='mgPlayerJSTest2_step-not-found-notification mgPlayerJSTest2_popup " + popupType + "'> " +
+			"       <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+			"	       	<div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'>" + popupHeaderIcon +
 			"		   	</div>" +
 			"			</div>" +
 			"       </div>" +
-			"		<div class='mgPlayerJSTest_popup-content-wrapper mgPlayerJSTest_font-size-17'>" + popupTitle + "</div>" +
-			(stepTitle ? ('   <wmgPlayerJSTest_ class="mgPlayerJSTest_no-element-guide-title">' + stepTitle + '</wmgPlayerJSTest_>') : '') + info +
-			"		<div class='mgPlayerJSTest_popup-btn-wrapper mgPlayerJSTest_step-not-found-close-btn'>" +
-			"			<wmgPlayerJSTest_ class='mgPlayerJSTest_btn-default mgPlayerJSTest_no-element-guide-ok mgPlayerJSTest_ok-btn mgPlayerJSTest_inline-block-vt'>" + GmCXt.label.close +
-			"			</wmgPlayerJSTest_>" +
+			"		<div class='mgPlayerJSTest2_popup-content-wrapper mgPlayerJSTest2_font-size-17'>" + popupTitle + "</div>" +
+			(stepTitle ? ('   <wmgPlayerJSTest2_ class="mgPlayerJSTest2_no-element-guide-title">' + stepTitle + '</wmgPlayerJSTest2_>') : '') + info +
+			"		<div class='mgPlayerJSTest2_popup-btn-wrapper mgPlayerJSTest2_step-not-found-close-btn'>" +
+			"			<wmgPlayerJSTest2_ class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_no-element-guide-ok mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.close +
+			"			</wmgPlayerJSTest2_>" +
 			"		</div>" +
 			" </div> ";
 
@@ -35694,17 +35715,17 @@ GmCXt.userGuide = function(options) {
 	}
 
 	function attachDOMEvents() {
-		mg$('.mgPlayerJSTest_no-element-guide-ok').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_no-element-guide-ok').on('click', function(e) {
 			pub.close();
 			e.stopPropagation();
 		});
 
-		mg$('.mgPlayerJSTest_overlay-container').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_overlay-container').on('click', function(e) {
 			pub.close();
 			e.stopPropagation();
 		});
 
-		mg$('.mgPlayerJSTest_step-not-found-notification').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_step-not-found-notification').on('click', function(e) {
 			e.stopPropagation();
 		});
 	}
@@ -35725,37 +35746,37 @@ GmCXt.userGuide = function(options) {
 
 	pub.open = function(stepTitle, stepImage, processedImage, number, stepId, rca, elAttributes) {
 		if (self.type === 'step_not_found') {
-			if (mg$("body").find('.mgPlayerJSTest_overlay-container').length === 0) {
-				mg$("<wmgPlayerJSTest_></wmgPlayerJSTest_>").addClass('mgPlayerJSTest_overlay-container').appendTo('body');
+			if (mg$("body").find('.mgPlayerJSTest2_overlay-container').length === 0) {
+				mg$("<wmgPlayerJSTest2_></wmgPlayerJSTest2_>").addClass('mgPlayerJSTest2_overlay-container').appendTo('body');
 			}
-			var overlay = mg$(".mgPlayerJSTest_overlay-container").empty();
+			var overlay = mg$(".mgPlayerJSTest2_overlay-container").empty();
 			overlay.append(stepNotFound(stepTitle, stepImage, processedImage)).show();
 
 		} else if (self.type === 'hoverTipEditStepGuide') {
-			if (mg$("body").find('.mgPlayerJSTest_user-tip-guide-container').length === 0) {
-				mg$("<wmgPlayerJSTest_></wmgPlayerJSTest_>").addClass('mgPlayerJSTest_user-tip-guide-container').appendTo('body');
+			if (mg$("body").find('.mgPlayerJSTest2_user-tip-guide-container').length === 0) {
+				mg$("<wmgPlayerJSTest2_></wmgPlayerJSTest2_>").addClass('mgPlayerJSTest2_user-tip-guide-container').appendTo('body');
 			}
-			mg$(".mgPlayerJSTest_user-tip-guide-container").empty().append(hoverTipEditStepGuide()).show();
+			mg$(".mgPlayerJSTest2_user-tip-guide-container").empty().append(hoverTipEditStepGuide()).show();
 
 			/**
 			 * Align popup
 			 */
 			GmCXt.alignPopup({
-				popup: mg$(".mgPlayerJSTest_user-tip-guide-container"),
+				popup: mg$(".mgPlayerJSTest2_user-tip-guide-container"),
 				highlightedArea: self.highlightedArea[0]
 			}).start();
 
 		} else if (self.type === 'hoverTipPlayStepGuide') {
-			if (mg$("body").find('.mgPlayerJSTest_user-tip-guide-container').length === 0) {
-				mg$("<wmgPlayerJSTest_></wmgPlayerJSTest_>").addClass('mgPlayerJSTest_user-tip-guide-container').appendTo('body');
+			if (mg$("body").find('.mgPlayerJSTest2_user-tip-guide-container').length === 0) {
+				mg$("<wmgPlayerJSTest2_></wmgPlayerJSTest2_>").addClass('mgPlayerJSTest2_user-tip-guide-container').appendTo('body');
 			}
-			mg$(".mgPlayerJSTest_user-tip-guide-container").empty().append(hoverTipPlayStepGuide()).show();
+			mg$(".mgPlayerJSTest2_user-tip-guide-container").empty().append(hoverTipPlayStepGuide()).show();
 
 			/**
 			 * Align popup
 			 */
 			GmCXt.alignPopup({
-				popup: mg$(".mgPlayerJSTest_user-tip-guide-container"),
+				popup: mg$(".mgPlayerJSTest2_user-tip-guide-container"),
 				highlightedArea: self.highlightedArea[0]
 			}).start();
 		}
@@ -35764,11 +35785,11 @@ GmCXt.userGuide = function(options) {
 	};
 
 	pub.close = function() {
-		mg$('.mgPlayerJSTest_overlay-container').hide().empty();
-		mg$('.mgPlayerJSTest_user-guide-container').hide().empty();
-		mg$('.mgPlayerJSTest_user-tip-guide-container').hide().empty();
+		mg$('.mgPlayerJSTest2_overlay-container').hide().empty();
+		mg$('.mgPlayerJSTest2_user-guide-container').hide().empty();
+		mg$('.mgPlayerJSTest2_user-tip-guide-container').hide().empty();
 		if (self.type === 'hoverTipPlayStepGuide') {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:stop_dom_highlighter", {});
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:stop_dom_highlighter", {});
 		}
 	};
 
@@ -35844,31 +35865,31 @@ GmCXt.tourPlayer = function(data) {
 	pub.triggerMyGuideClick = function(idName, ev) {
 		ev.stopPropagation();
 		switch (idName) {
-			case 'mgPlayerJSTest_play_step_pause_classic':
-			case 'mgPlayerJSTest_play_step_pause':
-			case 'mgPlayerJSTest_play-step-pause-svg':
+			case 'mgPlayerJSTest2_play_step_pause_classic':
+			case 'mgPlayerJSTest2_play_step_pause':
+			case 'mgPlayerJSTest2_play-step-pause-svg':
 				stopAutomation();
 				break;
 
-			case 'mgPlayerJSTest_play_step_next':
-			case 'mgPlayerJSTest_play_step_next_classic':
+			case 'mgPlayerJSTest2_play_step_next':
+			case 'mgPlayerJSTest2_play_step_next_classic':
 				playNxtStep(ev);
 				break;
 
-			case 'mgPlayerJSTest_play_step_prev':
-			case 'mgPlayerJSTest_play_step_prev_classic':
+			case 'mgPlayerJSTest2_play_step_prev':
+			case 'mgPlayerJSTest2_play_step_prev_classic':
 				pub.playPreviousStep(ev);
 				break;
 
-			case 'mgPlayerJSTest_play_step_popup_close':
-			case 'mgPlayerJSTest_play_step_next_done':
-			case 'mgPlayerJSTest_play_step_next_done_classic':
-			case 'mgPlayerJSTest_play-step-popup-close-svg':
+			case 'mgPlayerJSTest2_play_step_popup_close':
+			case 'mgPlayerJSTest2_play_step_next_done':
+			case 'mgPlayerJSTest2_play_step_next_done_classic':
+			case 'mgPlayerJSTest2_play-step-popup-close-svg':
 				playStepPopupCloseButtonClickEvent();
 				break;
 
-			case 'mgPlayerJSTest_play_step_popup_edit':
-			case 'mgPlayerJSTest_play-step-popup-edit-icon':
+			case 'mgPlayerJSTest2_play_step_popup_edit':
+			case 'mgPlayerJSTest2_play-step-popup-edit-icon':
 				editStepFromPopUp();
 				break;
 		}
@@ -36002,7 +36023,7 @@ GmCXt.tourPlayer = function(data) {
 			}
 			
 			if (step && (step.step_type === "video" || step.step_type === "image")) {
-				GmCXt.sendMessageToApp("mgPlayerJSTest_action:remove_video_player");
+				GmCXt.sendMessageToApp("mgPlayerJSTest2_action:remove_video_player");
 			}
 		}
 
@@ -36019,7 +36040,7 @@ GmCXt.tourPlayer = function(data) {
 					GmCXt.playerI.playNextBranch = true;
 
 					GmCXt.storage().set({
-						'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+						'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 						'guide_play_event': GmCXt.guidePlayTracker
 					});
 
@@ -36117,7 +36138,7 @@ GmCXt.tourPlayer = function(data) {
 				'playedTour': GmCXt.playedTour
 			});
 		}
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_played_tour", {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_played_tour", {
 			playedTour: GmCXt.playedTour
 		});
 	}
@@ -36142,7 +36163,7 @@ GmCXt.tourPlayer = function(data) {
 
 			GmCXt.tourActivity['t:' + pi.tour.tour_id] = pi.lastPlayedStepId;
 
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_tour_activity", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_tour_activity", {
 				tourActivity: GmCXt.tourActivity
 			});
 		}
@@ -36179,7 +36200,7 @@ GmCXt.tourPlayer = function(data) {
 
 		if (pi.taskObj && pi.completeEventTracked && !pi.taskObj.isComplete) {
 			//Guide Played from Task List
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:mark_task_guide_complete", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:mark_task_guide_complete", {
 				taskListId: pi.taskObj.taskId,
 				tourId: pi.tour.tour_id,
 				complete_count: pi.taskObj.complete_count,
@@ -36187,22 +36208,22 @@ GmCXt.tourPlayer = function(data) {
 			});
 		} else if (GmCXt.isPlayer() && pi.completeEventTracked && GmCXt.taskListCount > 0) {
 			// Guide played outside task list, but it should be marked complete in task list
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:mark_task_guide_complete_played_outside", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:mark_task_guide_complete_played_outside", {
 				tourId: tour.tour_id
 			});
 		}
 
 		ti.stop(forceClose);
 
-		mg$('.mgPlayerJSTest_image-step-prev').remove();
-		mg$('.mgPlayerJSTest_image-step-next').remove();
-		mg$('.mgPlayerJSTest_image-step-done').remove();
+		mg$('.mgPlayerJSTest2_image-step-prev').remove();
+		mg$('.mgPlayerJSTest2_image-step-next').remove();
+		mg$('.mgPlayerJSTest2_image-step-done').remove();
 
 		if (step.step_type === "video" || step.step_type === "image") {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:remove_video_player");
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:remove_video_player");
 		}
 		if (!GmCXt.isAutomationRunning()) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_media_player", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:close_media_player", {
 				terminate: true
 			});
 		}
@@ -36211,7 +36232,7 @@ GmCXt.tourPlayer = function(data) {
 	function redirectTour(tourSetting) {
 
 		GmCXt.storage().set({
-			'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+			'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 			'guide_play_event': GmCXt.guidePlayTracker
 		}).then(function() {
 			if (GmCXt.playerI.testAutomation) {
@@ -36293,8 +36314,8 @@ GmCXt.tourPlayer = function(data) {
 			}
 		}
 
-		mg$('.mgPlayerJSTest_highlighter-span').remove();
-		mg$('.mgPlayerJSTest_image-step-screen').remove();
+		mg$('.mgPlayerJSTest2_highlighter-span').remove();
+		mg$('.mgPlayerJSTest2_image-step-screen').remove();
 	}
 
 	pub.playNextStep = function(isAutomationSuccess) {
@@ -36314,7 +36335,7 @@ GmCXt.tourPlayer = function(data) {
 			step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
 		}
 
-		GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:stop_dom_highlighter", {
+		GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:stop_dom_highlighter", {
 			jobId: jobId
 		});
 		GmCXt.stopAudioTrack();
@@ -36333,8 +36354,8 @@ GmCXt.tourPlayer = function(data) {
 		}
 
 		GmCXt.removeScreenOverlay();
-		mg$('.mgPlayerJSTest_step-tooltips').remove();
-		mg$('.mgPlayerJSTest_highlighter-span').remove();
+		mg$('.mgPlayerJSTest2_step-tooltips').remove();
+		mg$('.mgPlayerJSTest2_highlighter-span').remove();
 		var currStepData = false;
 
 		if (self.prevEvent) {
@@ -36344,18 +36365,18 @@ GmCXt.tourPlayer = function(data) {
 		}
 
 		if (currStepData && currStepData.step_type !== 'image') {
-			mg$('.mgPlayerJSTest_image-step-screen').remove();
+			mg$('.mgPlayerJSTest2_image-step-screen').remove();
 		}
-		mg$('#mgPlayerJSTest_image_popup').hide();
-		mg$('.mgPlayerJSTest_image-step-prev').remove();
-		mg$('.mgPlayerJSTest_image-step-next').remove();
-		mg$('.mgPlayerJSTest_image-step-done').remove();
+		mg$('#mgPlayerJSTest2_image_popup').hide();
+		mg$('.mgPlayerJSTest2_image-step-prev').remove();
+		mg$('.mgPlayerJSTest2_image-step-next').remove();
+		mg$('.mgPlayerJSTest2_image-step-done').remove();
 
 		if (step && (step.step_type === "video" || step.step_type === "image")) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:remove_video_player");
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:remove_video_player");
 		}
 		if (!GmCXt.isAutomationRunning) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_media_player", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:close_media_player", {
 				terminate: GmCXt.playerI ? false : true
 			});
 		}
@@ -36380,8 +36401,8 @@ GmCXt.tourPlayer = function(data) {
 
 			if (closeTimeout) {
 				self.completionTimeout = GmCXt.timeout(function() {
-					if (mg$('.mgPlayerJSTest_popup').length === 0 &&
-						mg$('.mgPlayerJSTest_survey-popup-container').length === 0) {
+					if (mg$('.mgPlayerJSTest2_popup').length === 0 &&
+						mg$('.mgPlayerJSTest2_survey-popup-container').length === 0) {
 						playNxtStep();
 					} else {
 						pub.setStepCompletionTimeout(step);
@@ -36439,7 +36460,7 @@ GmCXt.tourPlayer = function(data) {
 			desktopPlaySteps(reqType);
 		}
 
-		if (mg$('.mgPlayerJSTest_popup-info') && mg$('.mgPlayerJSTest_popup-info').length) return true;
+		if (mg$('.mgPlayerJSTest2_popup-info') && mg$('.mgPlayerJSTest2_popup-info').length) return true;
 		self.prevEvent = false;
 
 		var pi = GmCXt.playerI;
@@ -36485,7 +36506,7 @@ GmCXt.tourPlayer = function(data) {
 
 				if (pi.loops) {
 					GmCXt.log(33, 'Tour Loop: ' + (pi.currentLoop + 1) + ' completed.');
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:tour_loop_completed');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:tour_loop_completed');
 
 				} else {
 					GmCXt.tourPlayerI.closeGuide();
@@ -36493,9 +36514,9 @@ GmCXt.tourPlayer = function(data) {
 			}
 		}
 
-		mg$('.mgPlayerJSTest_image-step-prev').remove();
-		mg$('.mgPlayerJSTest_image-step-next').remove();
-		mg$('.mgPlayerJSTest_image-step-done').remove();
+		mg$('.mgPlayerJSTest2_image-step-prev').remove();
+		mg$('.mgPlayerJSTest2_image-step-next').remove();
+		mg$('.mgPlayerJSTest2_image-step-done').remove();
 	}
 
 	pub.playPreviousStep = function(e) {
@@ -36528,9 +36549,9 @@ GmCXt.tourPlayer = function(data) {
 				}, self.maxWait);
 			}
 
-			mg$('.mgPlayerJSTest_image-step-prev').remove();
-			mg$('.mgPlayerJSTest_image-step-next').remove();
-			mg$('.mgPlayerJSTest_image-step-done').remove();
+			mg$('.mgPlayerJSTest2_image-step-prev').remove();
+			mg$('.mgPlayerJSTest2_image-step-next').remove();
+			mg$('.mgPlayerJSTest2_image-step-done').remove();
 		}
 	};
 
@@ -36538,7 +36559,7 @@ GmCXt.tourPlayer = function(data) {
 		if (GmCXt.playerI) {
 			GmCXt.playerI.automate = false;
 			GmCXt.playerI.pauseAutomate = true;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:update_player_instance_app');
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:update_player_instance_app');
 		}
 		hideAutoIndicator();
 		hideStopButton();
@@ -36568,16 +36589,16 @@ GmCXt.tourPlayer = function(data) {
 
 			mg$.each(opt.branch, function(index, branch) {
 				html +=
-					'<div branchIndex="' + index + '" class="mgPlayerJSTest_branching-decision-step">' +
-					'<div branchIndex="' + index + '"  class="mgPlayerJSTest_tour-details-small-thumbnails-wrapper mgPlayerJSTest_inline-block-vm" ' +
-					'class="mgPlayerJSTest_branching-decision-step-value">' +
-					'<div branchIndex="' + index + '"  class="mgPlayerJSTest_tour-title-small-thumbnails mgPlayerJSTest_font-size-16">' + GmCXt.escapeHtml(branch.branchName) + '</div>' +
+					'<div branchIndex="' + index + '" class="mgPlayerJSTest2_branching-decision-step">' +
+					'<div branchIndex="' + index + '"  class="mgPlayerJSTest2_tour-details-small-thumbnails-wrapper mgPlayerJSTest2_inline-block-vm" ' +
+					'class="mgPlayerJSTest2_branching-decision-step-value">' +
+					'<div branchIndex="' + index + '"  class="mgPlayerJSTest2_tour-title-small-thumbnails mgPlayerJSTest2_font-size-16">' + GmCXt.escapeHtml(branch.branchName) + '</div>' +
 					'</div>';
 
 				if (branch.branchDesc) {
-					html += '<div class="mgPlayerJSTest_position-relative mgPlayerJSTest_show-text-tooltip">' + '<div branchIndex="' + index + '"  class="mgPlayerJSTest_branching-decision-branch-desc mgPlayerJSTest_font-size-12">' + GmCXt.escapeHtml(branch.branchDesc) + '</div>' +
-						'<div class="mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-left">' +
-						'<div class="mgPlayerJSTest_tooltip-title">' + branch.branchDesc + '</div>' +
+					html += '<div class="mgPlayerJSTest2_position-relative mgPlayerJSTest2_show-text-tooltip">' + '<div branchIndex="' + index + '"  class="mgPlayerJSTest2_branching-decision-branch-desc mgPlayerJSTest2_font-size-12">' + GmCXt.escapeHtml(branch.branchDesc) + '</div>' +
+						'<div class="mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-left">' +
+						'<div class="mgPlayerJSTest2_tooltip-title">' + branch.branchDesc + '</div>' +
 						'</div>' + '</div>';
 				}
 				html += '</div>' +
@@ -36595,48 +36616,48 @@ GmCXt.tourPlayer = function(data) {
 			}
 
 			var html =
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-outer'></wmgPlayerJSTest_>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup mgPlayerJSTest_branching-decision-popup'>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-title '>" +
-				"<span class='mgPlayerJSTest_branching-decision-title'>" + title + "<span>" +
-				"<span id='mgPlayerJSTest_play-step-popup-drag-icon' class='mgPlayerJSTest_branching-drag'></span>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_branching-decision-close mgPlayerJSTest_inline-block-vm'>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_inline-block-vm'>" +
-				"<span id='mgPlayerJSTest_branching-decision-close-svg'></span>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-bottom-left'>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-popup-content mgPlayerJSTest_branching-decision-content mgPlayerJSTest_no-padding'>" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_branching-decision-content-wrapper'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-outer'></wmgPlayerJSTest2_>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup mgPlayerJSTest2_branching-decision-popup'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-title '>" +
+				"<span class='mgPlayerJSTest2_branching-decision-title'>" + title + "<span>" +
+				"<span id='mgPlayerJSTest2_play-step-popup-drag-icon' class='mgPlayerJSTest2_branching-drag'></span>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_branching-decision-close mgPlayerJSTest2_inline-block-vm'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_inline-block-vm'>" +
+				"<span id='mgPlayerJSTest2_branching-decision-close-svg'></span>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-bottom-left'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-content mgPlayerJSTest2_branching-decision-content mgPlayerJSTest2_no-padding'>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_branching-decision-content-wrapper'>" +
 				selectBranchType() +
-				"</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>";
+				"</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>";
 
 			mg$("body").append(html);
 			if (opt.branch.length > 5) {
-				mg$('.mgPlayerJSTest_branching-decision-content-wrapper').css({
+				mg$('.mgPlayerJSTest2_branching-decision-content-wrapper').css({
 					'overflow-y': 'auto'
 				});
 			}
 
-			mg$(".mgPlayerJSTest_panel-popup-outer").css('height', mg$(document).height());
+			mg$(".mgPlayerJSTest2_panel-popup-outer").css('height', mg$(document).height());
 			if (!isOpacity) {
-				mg$(".mgPlayerJSTest_panel-popup-outer").css('display', 'none');
+				mg$(".mgPlayerJSTest2_panel-popup-outer").css('display', 'none');
 			}
 
-			mg$("#mgPlayerJSTest_branching-decision-close-svg").html(GmCXt.svgs.popup_close);
-			mg$("#mgPlayerJSTest_play-step-popup-drag-icon").html(GmCXt.svgs.popup_drag);
+			mg$("#mgPlayerJSTest2_branching-decision-close-svg").html(GmCXt.svgs.popup_close);
+			mg$("#mgPlayerJSTest2_play-step-popup-drag-icon").html(GmCXt.svgs.popup_drag);
 
-			mg$(".mgPlayerJSTest_branching-decision-step").on("click", function(e) {
+			mg$(".mgPlayerJSTest2_branching-decision-step").on("click", function(e) {
 				if (mg$.isFunction(opt.callback))
 					opt.callback(e);
 			});
 
-			mg$(".mgPlayerJSTest_branching-decision-close").on("click", function() {
+			mg$(".mgPlayerJSTest2_branching-decision-close").on("click", function() {
 				ob.close();
 				if (GmCXt.firstStepAutoLaunch()) {
 					GmCXt.showAutoLaunchCloseOptions(GmCXt.playerI.tour);
@@ -36644,15 +36665,15 @@ GmCXt.tourPlayer = function(data) {
 				pub.stop();
 			});
 
-			var elmnt = document.getElementsByClassName('mgPlayerJSTest_branching-decision-popup')[0];
-			var dragEl = document.getElementById('mgPlayerJSTest_play-step-popup-drag-icon');
+			var elmnt = document.getElementsByClassName('mgPlayerJSTest2_branching-decision-popup')[0];
+			var dragEl = document.getElementById('mgPlayerJSTest2_play-step-popup-drag-icon');
 
 			GmCXt.attachDragEvents(elmnt, dragEl);
 		};
 
 		ob.close = function() {
-			mg$(".mgPlayerJSTest_panel-popup").remove();
-			mg$(".mgPlayerJSTest_panel-popup-outer").remove();
+			mg$(".mgPlayerJSTest2_panel-popup").remove();
+			mg$(".mgPlayerJSTest2_panel-popup-outer").remove();
 		};
 
 		return ob;
@@ -36888,6 +36909,8 @@ GmCXt.tourPlayer = function(data) {
 				intervalTimer = GmCXt.t.branchDecisionInterval_domRule;
 				if (step.step_settings.branch_type === 'Quick Branch') {
 					intervalEndTime = currentTime + GmCXt.t.branchDecision_domRule_quickBranch;
+				}else if(step.step_settings.branch_type === 'errorHandler'){
+					intervalEndTime = currentTime +  GmCXt.t.branchDecision_errorHandler;
 				} else {
 					intervalEndTime = currentTime + GmCXt.t.branchDecision_domRule;
 				}
@@ -36932,15 +36955,15 @@ GmCXt.tourPlayer = function(data) {
 			var message = GmCXt.parseMsg(event);
 
 			if (!message) return;
-			if (!message.action || message.action.indexOf('mgPlayerJSTest_action:') !== 0) return;
+			if (!message.action || message.action.indexOf('mgPlayerJSTest2_action:') !== 0) return;
 			message = GmCXt.convertMgdata(message);
 
-			if (message.action === 'mgPlayerJSTest_action:update_PI_steps_done') {
+			if (message.action === 'mgPlayerJSTest2_action:update_PI_steps_done') {
 				playStep(GmCXt.playerI.linkGuideFS);
 				window.removeEventListener('message', listen);
 			}
 
-			if (message.action === 'mgPlayerJSTest_action:update_PI_PS_done') {
+			if (message.action === 'mgPlayerJSTest2_action:update_PI_PS_done') {
 				cb(ts);
 			}
 
@@ -37002,9 +37025,9 @@ GmCXt.tourPlayer = function(data) {
 					if (!GmCXt.isEmpty(tour.media_files) && tour.media_files[0].pdf) {
 
 						GmCXt.playerI.linkGuidePdfUrl = tour.media_files[0].pdf;
-						GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_player_instance_app');
+						GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_player_instance_app');
 
-						GmCXt.sendMessageToApp("mgPlayerJSTest_action:open_pdf_link_step", {
+						GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_pdf_link_step", {
 							data: GmCXt.playerI.linkGuidePdfUrl
 						});
 						return;
@@ -37039,7 +37062,7 @@ GmCXt.tourPlayer = function(data) {
 		GmCXt.playerI.currentStepId = stepId;
 		GmCXt.log(33, "Current Step ID Updated(Fn: PlayStep):" + GmCXt.playerI.currentStepId);
 
-		GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_iframe_id:do', {
+		GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_iframe_id:do', {
 			currentIframeId: null
 		});
 
@@ -37435,14 +37458,14 @@ GmCXt.tourPlayer = function(data) {
 
 		GmCXt.playedPreviousSteps.push(GmCXt.playerI.currentStepId);
 
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_slideshow');
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_slideshow');
 
 		GmCXt.nextStepPlayEventReceived = false;
 
 		GmCXt.timeout(function() {
 			self.ready = true;
 			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_player_instance_app');
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_player_instance_app');
 		}, 100);
 	}
 
@@ -37585,10 +37608,10 @@ GmCXt.tourPlayer = function(data) {
 
 		if (!self.id) {
 			self.id = id;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_iframe_id:do', {
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_iframe_id:do', {
 				currentIframeId: self.id
 			});
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:clear_outline;action:do', {
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_outline;action:do', {
 				scriptId: self.id
 			});
 		} else if (self.id !== id) {
@@ -37671,19 +37694,19 @@ GmCXt.tourPlayer = function(data) {
 
 		return {
 			show: function() {
-				var htmlstr = "<div class='mgPlayerJSTest_toast-msg-wrapper'><div id='mgPlayerJSTest_toast-msg-close' >x</div>";
-				htmlstr += "<div id='mgPlayerJSTest_toast-msg-text' >" + message + "</div></div>";
+				var htmlstr = "<div class='mgPlayerJSTest2_toast-msg-wrapper'><div id='mgPlayerJSTest2_toast-msg-close' >x</div>";
+				htmlstr += "<div id='mgPlayerJSTest2_toast-msg-text' >" + message + "</div></div>";
 
-				mg$("#mgPlayerJSTest_toast-msg").html(htmlstr);
-				mg$("#mgPlayerJSTest_toast-msg").fadeIn();
+				mg$("#mgPlayerJSTest2_toast-msg").html(htmlstr);
+				mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
 
-				mg$("#mgPlayerJSTest_toast-msg-close").click(function(e) {
+				mg$("#mgPlayerJSTest2_toast-msg-close").click(function(e) {
 					showFindingToastMsg().hide(e);
 				});
 			},
 			hide: function(e) {
-				mg$('#mgPlayerJSTest_toast-msg').fadeOut(500);
-				if (GmCXt.playerI && e && e.currentTarget.id === 'mgPlayerJSTest_toast-msg-close') {
+				mg$('#mgPlayerJSTest2_toast-msg').fadeOut(500);
+				if (GmCXt.playerI && e && e.currentTarget.id === 'mgPlayerJSTest2_toast-msg-close') {
 					pub.stop();
 				}
 			}
@@ -37691,7 +37714,7 @@ GmCXt.tourPlayer = function(data) {
 	}
 
 	function getCountSpan(t) {
-		return "<span class='mgPlayerJSTest_toast-timer'>" + t + "</span>";
+		return "<span class='mgPlayerJSTest2_toast-timer'>" + t + "</span>";
 	}
 
 	function showPleaseWaitMessage(timeout) {
@@ -37795,7 +37818,7 @@ GmCXt.tourPlayer = function(data) {
 		GmCXt.tourPlayerI.currentStepReq = mg$.extend(true, {}, data);
 
 		if (data.settings.pageReloadOption === "new_tab" && checkRestartInParent(step)) {
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:keep_watching_step:inform');
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:keep_watching_step:inform');
 		}
 
 		GmCXt.log(33, 'Find element: ' + GmCXt.stepLog(step.step_id, GmCXt.playerI.tour.tour_id));
@@ -37811,21 +37834,21 @@ GmCXt.tourPlayer = function(data) {
 				data.timeout = Date.now() + findInIframe;
 
 				GmCXt.log(33, "FINDING STEP ELEMENT only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_existing_dom_element:target_frame_only', data);
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_existing_dom_element:target_frame_only', data);
 
 				GmCXt.findStepTimeout = GmCXt.timeout(function() {
 					if (!GmCXt.currentIframeId) {
 						GmCXt.log(33, "TIMED OUT in Target Frame..\nFINDING STEP ELEMENT in all frames");
 						data.timeout = Date.now() + parseInt(waitFor) - findInIframe;
 						data.checkIframe = true;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_existing_dom_element', data);
+						GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_existing_dom_element', data);
 					}
 				}, findInIframe + 250);
 			} else {
 				var tm = 0;
 				GmCXt.timeout(function() {
 					GmCXt.log(33, "FINDING STEP ELEMENT in all frames");
-					GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_existing_dom_element', data);
+					GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_existing_dom_element', data);
 				}, tm);
 			}
 		}
@@ -38002,7 +38025,7 @@ GmCXt.tourPlayer = function(data) {
 				if (GmCXt.playerI.automate)
 					data.triggerEvent = automationTriggerEvent(step);
 
-				var action = 'mgPlayerJSTest_action:started;task:select_dom_element_tooltips';
+				var action = 'mgPlayerJSTest2_action:started;task:select_dom_element_tooltips';
 				GmCXt.sendMessageToAllWindows(action, data);
 			}
 		}
@@ -38012,7 +38035,7 @@ GmCXt.tourPlayer = function(data) {
 				var scrollTopAfter = mg$(window).scrollTop();
 				if (scrollTopAfter !== scrollTopBefore) {
 
-					var $popup = mg$(".mgPlayerJSTest_step-popup");
+					var $popup = mg$(".mgPlayerJSTest2_step-popup");
 					GmCXt.alignMessagePreview($popup,
 						mg$(window),
 						stepSettings.alignment,
@@ -38102,11 +38125,11 @@ GmCXt.tourPlayer = function(data) {
 			msgToDesktop(step);
 		}
 
-		GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:update_player_instance");
+		GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:update_player_instance");
 
 		GmCXt.storage().remove(['linkClickOnStep']);
 		GmCXt.storage().set({
-			'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': PI,
+			'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': PI,
 			'guide_play_event': GmCXt.guidePlayTracker
 		});
 	}
@@ -38160,7 +38183,7 @@ GmCXt.tourPlayer = function(data) {
 					return;
 				}
 				GmCXt.log(33, "KILLED guide after " + wait);
-				if (!mg$(".mgPlayerJSTest_slideshow-panel").visible()) {
+				if (!mg$(".mgPlayerJSTest2_slideshow-panel").visible()) {
 					GmCXt.recordGuideEvents();
 					GmCXt.trackStepEvent(step, "Stop current guide due to timeout");
 					pub.stop();
@@ -38191,26 +38214,26 @@ GmCXt.tourPlayer = function(data) {
 				next_btn: self.next_button
 			};
 
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_image_step', data);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_image_step', data);
 
 			GmCXt.nextStepPlayEventReceived = false;
 
 			self.ready = true;
 			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_player_instance_app');
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_player_instance_app');
 		} else {
 			GmCXt.lockScroll();
 
-			if (mg$("body").find('.mgPlayerJSTest_image-step-screen').length === 0) {
-				mg$("<wmgPlayerJSTest_ class='mgPlayerJSTest_image-step-screen'><img id='mgPlayerJSTest_img-step-div' class='mgPlayerJSTest_custom-image' src='' ></wmgPlayerJSTest_>").appendTo('body');
+			if (mg$("body").find('.mgPlayerJSTest2_image-step-screen').length === 0) {
+				mg$("<wmgPlayerJSTest2_ class='mgPlayerJSTest2_image-step-screen'><img id='mgPlayerJSTest2_img-step-div' class='mgPlayerJSTest2_custom-image' src='' ></wmgPlayerJSTest2_>").appendTo('body');
 			}
 
-			var container = mg$('#mgPlayerJSTest_img-step-div');
+			var container = mg$('#mgPlayerJSTest2_img-step-div');
 
 			container.attr('src', (step.image_url)).one('load', function(e) {
 
-				mg$('.mgPlayerJSTest_image-step-screen').show();
-				mg$('.mgPlayerJSTest_highlighter-span').remove();
+				mg$('.mgPlayerJSTest2_image-step-screen').show();
+				mg$('.mgPlayerJSTest2_highlighter-span').remove();
 				var windowWidth = mg$(window).width();
 				var windowHeight = mg$(window).height();
 				var containerWidth = container.width();
@@ -38229,7 +38252,7 @@ GmCXt.tourPlayer = function(data) {
 					* Select highlighted areas on image canvas
 					*/
 				step.highlightedArea.forEach(function(val, ind) {
-					var offset = mg$("#mgPlayerJSTest_img-step-div").offset();
+					var offset = mg$("#mgPlayerJSTest2_img-step-div").offset();
 					var bordWidth = "1";
 					var borderColor = "red";
 					if (step.step_settings.highlightedArea) {
@@ -38246,14 +38269,14 @@ GmCXt.tourPlayer = function(data) {
 							bordWidth = 1;
 						}
 					}
-					var highlighterHtml = '<wmgPlayerJSTest_ class="mgPlayerJSTest_highlighter-span highliter_' + ind + '" style="' +
+					var highlighterHtml = '<wmgPlayerJSTest2_ class="mgPlayerJSTest2_highlighter-span highliter_' + ind + '" style="' +
 						'    width:' + val.width + 'px; ' +
 						'    height:' + val.height + 'px;' +
 						'    top:' + (val.top + offset.top) + 'px;' +
 						'    left:' + (val.left + offset.left) + 'px;' +
 						'    border: ' + bordWidth + 'px solid ' + borderColor + '!important; position: absolute;box-sizing: border-box">' +
-						'</wmgPlayerJSTest_>';
-					mg$('.mgPlayerJSTest_image-step-screen').append(highlighterHtml);
+						'</wmgPlayerJSTest2_>';
+					mg$('.mgPlayerJSTest2_image-step-screen').append(highlighterHtml);
 				});
 
 				window.scrollTo(0, 0);
@@ -38287,7 +38310,7 @@ GmCXt.tourPlayer = function(data) {
 					for (var i = 0; i < step.step_settings.highlightedArea.length; i++) {
 
 						var highLightArr = [];
-						var offset = mg$("#mgPlayerJSTest_img-step-div").offset();
+						var offset = mg$("#mgPlayerJSTest2_img-step-div").offset();
 
 						highlightedAreaScaled[i].left = highlightedAreaScaled[i].left + offset.left;
 						highlightedAreaScaled[i].top = highlightedAreaScaled[i].top + offset.top;
@@ -38307,23 +38330,23 @@ GmCXt.tourPlayer = function(data) {
 					}
 				}
 
-				mg$("<div class='mgPlayerJSTest_image-step-done' ><wmgPlayerJSTest_ class='mgPlayerJSTest_icon-image-close mgPlayerJSTest_inline-block-vm'></wmgPlayerJSTest_></div>").appendTo('html');
-				mg$(".mgPlayerJSTest_image-step-done").html(GmCXt.svgs.close_slideshow);
-				mg$(".mgPlayerJSTest_image-step-done").off("click").on("click", playStepPopupCloseButtonClickEvent);
+				mg$("<div class='mgPlayerJSTest2_image-step-done' ><wmgPlayerJSTest2_ class='mgPlayerJSTest2_icon-image-close mgPlayerJSTest2_inline-block-vm'></wmgPlayerJSTest2_></div>").appendTo('html');
+				mg$(".mgPlayerJSTest2_image-step-done").html(GmCXt.svgs.close_slideshow);
+				mg$(".mgPlayerJSTest2_image-step-done").off("click").on("click", playStepPopupCloseButtonClickEvent);
 
 				if (GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure)) {
-					mg$("<div class='mgPlayerJSTest_image-step-nav-button mgPlayerJSTest_image-step-next'><wmgPlayerJSTest_ class='mgPlayerJSTest_img-step-next-icon mgPlayerJSTest_inline-block-vm'></wmgPlayerJSTest_></div>").appendTo('html');
-					mg$(".mgPlayerJSTest_img-step-next-icon").html(GmCXt.svgs.slideshow_next_button);
-					mg$(".mgPlayerJSTest_image-step-next").off("click").on("click", playNxtStep);
+					mg$("<div class='mgPlayerJSTest2_image-step-nav-button mgPlayerJSTest2_image-step-next'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_img-step-next-icon mgPlayerJSTest2_inline-block-vm'></wmgPlayerJSTest2_></div>").appendTo('html');
+					mg$(".mgPlayerJSTest2_img-step-next-icon").html(GmCXt.svgs.slideshow_next_button);
+					mg$(".mgPlayerJSTest2_image-step-next").off("click").on("click", playNxtStep);
 				}
 
 				var prevStep = GmCXt.getPreviousStep();
 
 				if (prevStep !== null && showPrevBtnCond(prevStep) && !tourStepSetting.hidePrevBtn) {
 
-					mg$("<div class='mgPlayerJSTest_image-step-nav-button mgPlayerJSTest_image-step-prev'><wmgPlayerJSTest_ class='mgPlayerJSTest_img-step-prev-icon mgPlayerJSTest_inline-block-vm'></wmgPlayerJSTest_></div>").appendTo('html');
-					mg$(".mgPlayerJSTest_img-step-prev-icon").html(GmCXt.svgs.slideshow_prev_button);
-					mg$(".mgPlayerJSTest_image-step-prev").off("click").on("click", pub.playPreviousStep);
+					mg$("<div class='mgPlayerJSTest2_image-step-nav-button mgPlayerJSTest2_image-step-prev'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_img-step-prev-icon mgPlayerJSTest2_inline-block-vm'></wmgPlayerJSTest2_></div>").appendTo('html');
+					mg$(".mgPlayerJSTest2_img-step-prev-icon").html(GmCXt.svgs.slideshow_prev_button);
+					mg$(".mgPlayerJSTest2_image-step-prev").off("click").on("click", pub.playPreviousStep);
 				}
 				self.ready = true;
 			});
@@ -38348,22 +38371,22 @@ GmCXt.tourPlayer = function(data) {
 			next_btn: self.next_button
 		};
 
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_video_step', data);
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_video_step', data);
 
 		GmCXt.nextStepPlayEventReceived = false;
 
 		GmCXt.timeout(function() {
 			self.ready = true;
 			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:update_player_instance_app');
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_player_instance_app');
 		}, 100);
 
 	}
 
 	function scaleHighlightedArea(step) {
 
-		var containerWidth = mg$('#mgPlayerJSTest_img-step-div').width();
-		var containerHeight = mg$('#mgPlayerJSTest_img-step-div').height();
+		var containerWidth = mg$('#mgPlayerJSTest2_img-step-div').width();
+		var containerHeight = mg$('#mgPlayerJSTest2_img-step-div').height();
 
 		var imageRatio = step.step_settings.imageDimension.width / step.step_settings.imageDimension.height;
 		var containerRatio = containerWidth / containerHeight;
@@ -38404,8 +38427,8 @@ GmCXt.tourPlayer = function(data) {
 			return;
 		}
 
-		mg$('.mgPlayerJSTest_play-step-audio-loader').show();
-		mg$(".mgPlayerJSTest_play-step-audio").css("opacity", ".5");
+		mg$('.mgPlayerJSTest2_play-step-audio-loader').show();
+		mg$(".mgPlayerJSTest2_play-step-audio").css("opacity", ".5");
 
 		GmCXt.storage().get(['stepAudioRunningStatus']).then(function(items) {
 
@@ -38447,8 +38470,8 @@ GmCXt.tourPlayer = function(data) {
 		});
 
 		function showAudioIcon() {
-			mg$('.mgPlayerJSTest_play-step-audio-loader').hide();
-			mg$(".mgPlayerJSTest_play-step-audio").css("opacity", "1");
+			mg$('.mgPlayerJSTest2_play-step-audio-loader').hide();
+			mg$(".mgPlayerJSTest2_play-step-audio").css("opacity", "1");
 		}
 	}
 
@@ -38465,17 +38488,17 @@ GmCXt.tourPlayer = function(data) {
 	}
 
 	function isClassicSetting() {
-		return mg$('.mgPlayerJSTest_preview-step-popup-container').hasClass('preview-step-popup-classic-design');
+		return mg$('.mgPlayerJSTest2_preview-step-popup-container').hasClass('preview-step-popup-classic-design');
 	}
 
 	function showPrevButton() {
 		if (isClassicSetting()) {
 			mg$(".popup-classic-design-navigation-prev").show();
 		} else {
-			mg$(".mgPlayerJSTest_play-step-prev").show();
+			mg$(".mgPlayerJSTest2_play-step-prev").show();
 		}
 		self.prev_button = true;
-		mg$(".mgPlayerJSTest_play-step-prev").css({
+		mg$(".mgPlayerJSTest2_play-step-prev").css({
 			"opacity": "1",
 			"pointer-events": "initial"
 		});
@@ -38486,17 +38509,17 @@ GmCXt.tourPlayer = function(data) {
 
 		if (onChangeNextStep()) {
 			if (isClassicSetting()) {
-				mg$("#mgPlayerJSTest_play_step_next_classic").find('span.mgPlayerJSTest_text-span').text(GmCXt.label.btnSkip);
+				mg$("#mgPlayerJSTest2_play_step_next_classic").find('span.mgPlayerJSTest2_text-span').text(GmCXt.label.btnSkip);
 			} else {
-				mg$(".mgPlayerJSTest_play-step-next").find('span').text(GmCXt.label.btnSkip);
+				mg$(".mgPlayerJSTest2_play-step-next").find('span').text(GmCXt.label.btnSkip);
 			}
 		}
 
 		if (!onChangeNextStep() || !currStep.step_settings.hideSkip) {
 			if (isClassicSetting()) {
-				mg$(".mgPlayerJSTest_popup-classic-navigation-next").show();
+				mg$(".mgPlayerJSTest2_popup-classic-navigation-next").show();
 			} else {
-				mg$(".mgPlayerJSTest_play-step-next").show();
+				mg$(".mgPlayerJSTest2_play-step-next").show();
 			}
 		}
 
@@ -38507,71 +38530,71 @@ GmCXt.tourPlayer = function(data) {
 		if (isClassicSetting()) {
 			mg$(".popup-classic-design-navigation-prev").hide();
 		} else {
-			mg$(".mgPlayerJSTest_play-step-prev").hide();
+			mg$(".mgPlayerJSTest2_play-step-prev").hide();
 		}
 
-		mg$(".mgPlayerJSTest_image-step-prev").hide();
+		mg$(".mgPlayerJSTest2_image-step-prev").hide();
 	}
 
 	function hideNextButton() {
 		if (isClassicSetting())
-			mg$(".mgPlayerJSTest_popup-classic-navigation-next").hide();
+			mg$(".mgPlayerJSTest2_popup-classic-navigation-next").hide();
 		else
-			mg$(".mgPlayerJSTest_play-step-next").hide();
+			mg$(".mgPlayerJSTest2_play-step-next").hide();
 
-		mg$(".mgPlayerJSTest_image-step-next").remove();
+		mg$(".mgPlayerJSTest2_image-step-next").remove();
 	}
 
 	function showDoneButton() {
 		var currStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
 		var ss = currStep.step_settings;
 
-		mg$(".mgPlayerJSTest_play-step").css({
+		mg$(".mgPlayerJSTest2_play-step").css({
 			"display": "inline-block"
 		});
 
 		if (ss.automation && ss.automation.hasHumanInteraction) {
-			mg$(".mgPlayerJSTest_play-step").removeClass("mgPlayerJSTest_hide");
+			mg$(".mgPlayerJSTest2_play-step").removeClass("mgPlayerJSTest2_hide");
 		}
 		if (isClassicSetting()) {
-			document.getElementsByClassName("mgPlayerJSTest_play-step-classic-done")[0].style.display = "block";
-			mg$(".mgPlayerJSTest_play-step").css({
+			document.getElementsByClassName("mgPlayerJSTest2_play-step-classic-done")[0].style.display = "block";
+			mg$(".mgPlayerJSTest2_play-step").css({
 				"width": "28% !important"
 			});
 		} else {
-			mg$(".mgPlayerJSTest_play-step").html(GmCXt.label.close);
-			mg$(".mgPlayerJSTest_play-step").css({
+			mg$(".mgPlayerJSTest2_play-step").html(GmCXt.label.close);
+			mg$(".mgPlayerJSTest2_play-step").css({
 				"min-width": "50px"
 			});
 		}
 	}
 
 	function hideDoneButton() {
-		mg$(".mgPlayerJSTest_play-step").hide();
-		mg$(".mgPlayerJSTest_image-step-done").hide();
+		mg$(".mgPlayerJSTest2_play-step").hide();
+		mg$(".mgPlayerJSTest2_image-step-done").hide();
 	}
 
 	function showAutoIndicator() {
-		mg$('#mgPlayerJSTest_play-step-automation-indicator-wrapper').show();
+		mg$('#mgPlayerJSTest2_play-step-automation-indicator-wrapper').show();
 	}
 
 	function hideAutoIndicator() {
-		mg$('#mgPlayerJSTest_play-step-automation-indicator-wrapper').hide();
+		mg$('#mgPlayerJSTest2_play-step-automation-indicator-wrapper').hide();
 	}
 
 	function showStopButton() {
 		if (isClassicSetting()) {
-			mg$(".mgPlayerJSTest_play-step-pause-classic").show();
+			mg$(".mgPlayerJSTest2_play-step-pause-classic").show();
 		} else {
-			mg$(".mgPlayerJSTest_play-step-pause").show();
+			mg$(".mgPlayerJSTest2_play-step-pause").show();
 		}
 	}
 
 	function hideStopButton() {
 		if (isClassicSetting())
-			mg$(".mgPlayerJSTest_play-step-pause-classic").hide();
+			mg$(".mgPlayerJSTest2_play-step-pause-classic").hide();
 		else
-			mg$(".mgPlayerJSTest_play-step-pause").hide();
+			mg$(".mgPlayerJSTest2_play-step-pause").hide();
 	}
 
 	function resetNavigationButton() {
@@ -38583,7 +38606,7 @@ GmCXt.tourPlayer = function(data) {
 
 	function showNagivation() {
 		var pi = GmCXt.playerI;
-		mg$(".mgPlayerJSTest_hide").removeClass("mgPlayerJSTest_hide");
+		mg$(".mgPlayerJSTest2_hide").removeClass("mgPlayerJSTest2_hide");
 		mg$(".preview-step-popup-navigation-wrapper").css("width", "calc(100% - 35px)");
 
 		if (GmCXt.isLastStep(pi.currentStepId, pi.playStructure)) {
@@ -38592,16 +38615,16 @@ GmCXt.tourPlayer = function(data) {
 	}
 
 	function hideButton(selector) {
-		mg$(selector).addClass("mgPlayerJSTest_hide");
+		mg$(selector).addClass("mgPlayerJSTest2_hide");
 	}
 
 	function hideNavigation() {
-		hideButton(".mgPlayerJSTest_play-step-prev");
+		hideButton(".mgPlayerJSTest2_play-step-prev");
 		hideButton(".popup-classic-design-navigation-prev");
-		hideButton(".mgPlayerJSTest_image-step-prev");
-		hideButton(".mgPlayerJSTest_image-step-next");
-		hideButton(".mgPlayerJSTest_play-step");
-		hideButton(".mgPlayerJSTest_image-step-done");
+		hideButton(".mgPlayerJSTest2_image-step-prev");
+		hideButton(".mgPlayerJSTest2_image-step-next");
+		hideButton(".mgPlayerJSTest2_play-step");
+		hideButton(".mgPlayerJSTest2_image-step-done");
 		mg$(".preview-step-popup-navigation-wrapper").css("width", "100%");
 	}
 
@@ -38748,34 +38771,34 @@ GmCXt.tourPlayer = function(data) {
 
 	function toggle() {
 		if (isClassicSetting()) {
-			var next = mg$(".mgPlayerJSTest_popup-classic-navigation-next");
-			mg$(".mgPlayerJSTest_popup-classic-navigation-next").hide();
+			var next = mg$(".mgPlayerJSTest2_popup-classic-navigation-next");
+			mg$(".mgPlayerJSTest2_popup-classic-navigation-next").hide();
 			if (next.length > 1) {
 				next[1].style.display = "block";
 			} else {
-				mg$(".mgPlayerJSTest_popup-classic-navigation-next:first").show();
+				mg$(".mgPlayerJSTest2_popup-classic-navigation-next:first").show();
 			}
 		} else {
-			var next = mg$(".mgPlayerJSTest_play-step-next-done:visible").hide().next();
+			var next = mg$(".mgPlayerJSTest2_play-step-next-done:visible").hide().next();
 			if (next.length > 1)
 				next[1].style.display = "block";
 			else
-				mg$(".mgPlayerJSTest_play-step-next-done:first").show();
+				mg$(".mgPlayerJSTest2_play-step-next-done:first").show();
 		}
 	}
 
 	function doneButtonConfiguration() {
 		if (isClassicSetting()) {
-			mg$(".mgPlayerJSTest_play-step").html(GmCXt.label.close);
-			mg$(".mgPlayerJSTest_play-step").css({
+			mg$(".mgPlayerJSTest2_play-step").html(GmCXt.label.close);
+			mg$(".mgPlayerJSTest2_play-step").css({
 				"width": "50px"
 			});
 		} else {
-			mg$(".mgPlayerJSTest_play-step").css({
+			mg$(".mgPlayerJSTest2_play-step").css({
 				"width": "49%"
 			});
 		}
-		mg$(".mgPlayerJSTest_play-step").off("click").on("click", playStepPopupCloseButtonClickEvent);
+		mg$(".mgPlayerJSTest2_play-step").off("click").on("click", playStepPopupCloseButtonClickEvent);
 	}
 
 	window.onresize = function() {
@@ -38833,7 +38856,7 @@ GmCXt.tourPlayer = function(data) {
 
 				var options = {
 					data: ob.highlightedArea,
-					containerOffset: GmCXt.getContainerOffSet(mg$('#mgPlayerJSTest_image-canvas')),
+					containerOffset: GmCXt.getContainerOffSet(mg$('#mgPlayerJSTest2_image-canvas')),
 					stepType: GmCXt.STEP_TYPE_IMAGE,
 					overlay: true,
 					tour: ob.tour,
@@ -38872,7 +38895,7 @@ GmCXt.tourPlayer = function(data) {
 			requestId: step.step_id
 		};
 
-		GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:command; task:trigger_step_click', data);
+		GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:command; task:trigger_step_click', data);
 	}
 
 	function autoModePlay(stepType) {
@@ -39032,39 +39055,39 @@ GmCXt.showTooltip = function(options) {
 			position = GmCXt.tourPlayerI.cssPosition;
 		}
 		var html =
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_preview-step-popup-container mgPlayerJSTest_step-tooltips " +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_preview-step-popup-container mgPlayerJSTest2_step-tooltips " +
 			self.tipClass + " " + GmCXt.getPosition(position) + "' style='zIndex:'2147483647'>" +
-			"	<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup'>" +
-			"  		<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-tooltip-ctrls-wrapper'>";
+			"	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup'>" +
+			"  		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-tooltip-ctrls-wrapper'>";
 
 		if (options.stepType === GmCXt.STEP_TYPE_MESSAGE) {
 			html +=
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-close mgPlayerJSTest_tooltip-popup-close' id='" + self.tipId + "'>" +
-				"	<span class='mgPlayerJSTest_tooltip-popup-close-svg'></span>" +
-				"</wmgPlayerJSTest_>";
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-close mgPlayerJSTest2_tooltip-popup-close' id='" + self.tipId + "'>" +
+				"	<span class='mgPlayerJSTest2_tooltip-popup-close-svg'></span>" +
+				"</wmgPlayerJSTest2_>";
 		}
 
-		html += "</wmgPlayerJSTest_>" +
-			"		<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-header'>" +
-			"			<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-wrapper'>";
+		html += "</wmgPlayerJSTest2_>" +
+			"		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-header'>" +
+			"			<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-wrapper'>";
 
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_msg-tooltip-description mgPlayerJSTest_play-step-popup-s-title'>" +
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_msg-tooltip-description mgPlayerJSTest2_play-step-popup-s-title'>" +
 			self.description +
-			"</wmgPlayerJSTest_></wmgPlayerJSTest_></wmgPlayerJSTest_>" +
+			"</wmgPlayerJSTest2_></wmgPlayerJSTest2_></wmgPlayerJSTest2_>" +
 
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-footer'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_brand-logo mgPlayerJSTest_play-step-popup-logo mgPlayerJSTest_inline-block-vm'>" +
-			"<img src='" + brandLogo + "' class='mgPlayerJSTest_custom-image' />" +
-			"</wmgPlayerJSTest_></wmgPlayerJSTest_></wmgPlayerJSTest_></wmgPlayerJSTest_>";
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-footer'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_brand-logo mgPlayerJSTest2_play-step-popup-logo mgPlayerJSTest2_inline-block-vm'>" +
+			"<img src='" + brandLogo + "' class='mgPlayerJSTest2_custom-image' />" +
+			"</wmgPlayerJSTest2_></wmgPlayerJSTest2_></wmgPlayerJSTest2_></wmgPlayerJSTest2_>";
 
 		mg$("html").append(html);
 
-		mg$(".mgPlayerJSTest_tooltip-popup-close-svg").html(GmCXt.svgs.close_popup);
+		mg$(".mgPlayerJSTest2_tooltip-popup-close-svg").html(GmCXt.svgs.close_popup);
 
-		GmCXt.zoomImage(self.description, ".mgPlayerJSTest_msg-tooltip-description");
-		GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSTest_msg-tooltip-description");
+		GmCXt.zoomImage(self.description, ".mgPlayerJSTest2_msg-tooltip-description");
+		GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSTest2_msg-tooltip-description");
 		if (self.description.indexOf('target = "gssPlayGuide"' !== -1)) {
-			GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSTest_msg-tooltip-description");
+			GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSTest2_msg-tooltip-description");
 		}
 
 		GmCXt.onPopupRerender();
@@ -39092,11 +39115,11 @@ GmCXt.showTooltip = function(options) {
 	function setDesign() {
 		var popupDesign = GmCXt.getStepSettings().popupDesign;
 
-		mg$('.mgPlayerJSTest_tooltip-wrapper').css('max-height', '400px');
+		mg$('.mgPlayerJSTest2_tooltip-wrapper').css('max-height', '400px');
 
 		if (popupDesign.type === 'classic') {
-			mg$('.mgPlayerJSTest_preview-step-popup-container').addClass('preview-step-popup-classic-design');
-			mg$('.mgPlayerJSTest_brand-logo').css({
+			mg$('.mgPlayerJSTest2_preview-step-popup-container').addClass('preview-step-popup-classic-design');
+			mg$('.mgPlayerJSTest2_brand-logo').css({
 				'display': 'none'
 			});
 		}
@@ -39119,24 +39142,24 @@ GmCXt.showTooltip = function(options) {
 			"padding-right": popupDesign.current.padding.right
 		});
 
-		mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description').css({
+		mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description').css({
 			"color": popupDesign.current.stepTitleColor
 		});
-		var len = mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description img').length;
+		var len = mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description img').length;
 		if (len) {
 			for (var i = 0; i < len; i++) {
-				var imgW = mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description img')[i].getAttribute('width');
-				var imgH = mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description img')[i].getAttribute('height');
+				var imgW = mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description img')[i].getAttribute('width');
+				var imgH = mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description img')[i].getAttribute('height');
 
-				mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description img')[i].style.setProperty('width', imgW + 'px', 'important');
-				mg$('.' + self.tipClass + ' .mgPlayerJSTest_msg-tooltip-description img')[i].style.setProperty('height', imgH + 'px', 'important');
+				mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description img')[i].style.setProperty('width', imgW + 'px', 'important');
+				mg$('.' + self.tipClass + ' .mgPlayerJSTest2_msg-tooltip-description img')[i].style.setProperty('height', imgH + 'px', 'important');
 			}
 		}
 
 		if (GmCXt.getOrgLevelBrandLogoSetting()) {
-			mg$("." + self.tipClass + " .mgPlayerJSTest_brand-logo img").hide();
+			mg$("." + self.tipClass + " .mgPlayerJSTest2_brand-logo img").hide();
 		} else {
-			mg$("." + self.tipClass + " .mgPlayerJSTest_brand-logo img").show();
+			mg$("." + self.tipClass + " .mgPlayerJSTest2_brand-logo img").show();
 		}
 
 		mg$("." + self.tipClass).css({
@@ -39148,10 +39171,10 @@ GmCXt.showTooltip = function(options) {
 		var currentTip = e.currentTarget.id;
 
 		mg$(".gm-tip-" + currentTip).remove();
-		GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:clear_dom_outline", {
+		GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:clear_dom_outline", {
 			id: currentTip
 		});
-		GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:clear_message_tooltip", {
+		GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:clear_message_tooltip", {
 			id: GmCXt.playerI.currentStepId + '_' + currentTip
 		});
 		changeOpacity(currentTip);
@@ -39171,7 +39194,7 @@ GmCXt.showTooltip = function(options) {
 	mg$("." + self.tipClass).remove();
 	add();
 	mg$("." + self.tipClass).show();
-	mg$('.mgPlayerJSTest_tooltip-popup-close').off('click').on('click', onClose);
+	mg$('.mgPlayerJSTest2_tooltip-popup-close').off('click').on('click', onClose);
 
 	setDesign();
 	align();
@@ -39185,19 +39208,19 @@ GmCXt.listenerBackgroud = function(request, sender, sendResponse) {
 	request = GmCXt.parseJSON(request);
 	request = GmCXt.convertMgdata(request);
 
-	if (request.action === 'mgPlayerJSTest_action:browser_action_icon_click' && GmCXt.initialization && GmCXt.initialization.sidePanel) {
+	if (request.action === 'mgPlayerJSTest2_action:browser_action_icon_click' && GmCXt.initialization && GmCXt.initialization.sidePanel) {
 		if (GmCXt.isInspectToolON()) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:stop_inline_step_selection_mode');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:stop_inline_step_selection_mode');
 		}
 
 		GmCXt.openAppPanel(null, 'extension');
-	} else if (request.action === 'mgPlayerJSTest_action:browser_action_icon_click' && GmCXt.isExcludeDomain()) {
+	} else if (request.action === 'mgPlayerJSTest2_action:browser_action_icon_click' && GmCXt.isExcludeDomain()) {
 		GmCXt.showPanelDisabledPopup();
 		return true;
 	}
 
-	if (request.action === 'mgPlayerJSTest_action:user_logged_out') {
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:user_logged_out");
+	if (request.action === 'mgPlayerJSTest2_action:user_logged_out') {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:user_logged_out");
 	}
 
 	return true;
@@ -39217,15 +39240,18 @@ GmCXt.processTopWinPlayer = function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSTest_action:payload_event_call':
+		case 'mgPlayerJSTest2_action:payload_event_call':
 			GmCXt.eventApiCall(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:automation_check_reload':
+		case 'mgPlayerJSTest2_action:automation_check_reload':
+			if(!GmCXt.playerI) {
+				GmCXt.playerI = message.data.playerInstance;
+			}
 			GmCXt.auto.newTabStepFound(message.data.pageReloadOption, message.data.isNextStep);
 			break;
 
-		case 'mgPlayerJSTest_action:automation_waiting_for_human_interaction':
+		case 'mgPlayerJSTest2_action:automation_waiting_for_human_interaction':
 			if (GmCXt.isAutomationRunning()) {
 				GmCXt.auto.fail(GmCXt.getCurrentStep(GmCXt.playerI.currentStepId), {
 					errorMessage: "Failed as Human Interaction is not automated"
@@ -39233,150 +39259,150 @@ GmCXt.processTopWinPlayer = function(event) {
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:new_iframe_found':
+		case 'mgPlayerJSTest2_action:new_iframe_found':
 			GmCXt.requestHandler.newIframeFound(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:set_iframe_id':
+		case 'mgPlayerJSTest2_action:set_iframe_id':
 			GmCXt.currentIframeId = message.data.currentIframeId;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_iframe_id:do', message.data);
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_iframe_id:do', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:set_iframe_id:beacon':
+		case 'mgPlayerJSTest2_action:set_iframe_id:beacon':
 			GmCXt.beaconIframe[message.data.tour_id].frameId = message.data.frameId;
 			break;
 
-		case 'mgPlayerJSTest_action:set_iframe_id:tooltip':
+		case 'mgPlayerJSTest2_action:set_iframe_id:tooltip':
 			GmCXt.smartTipIframe[message.data.step_id].frameId = message.data.frameId;
 			break;
 
-		case 'mgPlayerJSTest_action:set_iframe_id:tag':
+		case 'mgPlayerJSTest2_action:set_iframe_id:tag':
 			GmCXt.tagIframe[message.data.step_id].frameId = message.data.frameId;
 			break;
 
-		case 'mgPlayerJSTest_action:initialization:side_panel_loaded':
+		case 'mgPlayerJSTest2_action:initialization:side_panel_loaded':
 			GmCXt.handleAppInit(event);
 			break;
 
-		case 'mgPlayerJSTest_action:position_play_pause_toolbar':
+		case 'mgPlayerJSTest2_action:position_play_pause_toolbar':
 			GmCXt.handlePositionToolbar(event);
 			break;
 
-		case 'mgPlayerJSTest_action:update_widget_icon':
+		case 'mgPlayerJSTest2_action:update_widget_icon':
 			GmCXt.showWidget();
 			break;
 
-		case 'mgPlayerJSTest_action:update_chat_icon':
+		case 'mgPlayerJSTest2_action:update_chat_icon':
 			GmCXt.showChatIcon();
 			break;
 
-		case 'mgPlayerJSTest_action:update_cdn_signature':
+		case 'mgPlayerJSTest2_action:update_cdn_signature':
 			GmCXt.handleUpdateCdnSign(event);
 			break;
 
-		case 'mgPlayerJSTest_action:get_cdn_signature':
+		case 'mgPlayerJSTest2_action:get_cdn_signature':
 			GmCXt.getCdnSignature(true);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_outline;action:inform':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:clear_outline;action:do', message.data);
+		case 'mgPlayerJSTest2_action:clear_outline;action:inform':
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_outline;action:do', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:enable_next_button':
+		case 'mgPlayerJSTest2_action:enable_next_button':
 			GmCXt.requestHandler.enableNextButton();
 			break;
 
-		case 'mgPlayerJSTest_action:close_app_panel':
+		case 'mgPlayerJSTest2_action:close_app_panel':
 			GmCXt.closeAppPanel();
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'width': '500px'
 			});
 
 			if (window.matchMedia("(max-width: 480px)").matches && !GmCXt.isMiniPlayer) {
-				mg$('.mgPlayerJSTest_panel').css({
+				mg$('.mgPlayerJSTest2_panel').css({
 					'width': '85%'
 				});
 			}
 
 			if (message.data && message.data.resetPanel) {
-				GmCXt.sendMessageToApp("mgPlayerJSTest_action:reset_panel_right");
+				GmCXt.sendMessageToApp("mgPlayerJSTest2_action:reset_panel_right");
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:show_beacon_smarttip':
+		case 'mgPlayerJSTest2_action:show_beacon_smarttip':
 			GmCXt.showBeacons();
 			GmCXt.showSmartTips();
 			break;
 
-		case 'mgPlayerJSTest_action:open_app_panel':
+		case 'mgPlayerJSTest2_action:open_app_panel':
 			GmCXt.handleOpenApp(event);
 			break;
 
-		case 'mgPlayerJSTest_action:set_beacon_position':
+		case 'mgPlayerJSTest2_action:set_beacon_position':
 			GmCXt.handleBeaconPosition(event);
 			break;
 
-		case 'mgPlayerJSTest_action:play_linked_tour':
+		case 'mgPlayerJSTest2_action:play_linked_tour':
 			GmCXt.requestHandler.playLinkedGuide(message.data);
 			break;
 
-		case "mgPlayerJSTest_action:play_tour":
+		case "mgPlayerJSTest2_action:play_tour":
 			GmCXt.requestHandler.playGuide(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:play_tour;event:beacon_click':
+		case 'mgPlayerJSTest2_action:play_tour;event:beacon_click':
 			GmCXt.handleEventBeaconClick(event);
 			break;
 
-		case 'mgPlayerJSTest_action:play_video_lms':
+		case 'mgPlayerJSTest2_action:play_video_lms':
 			GmCXt.requestHandler.playVideo(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:lms_video_assignment_played':
+		case 'mgPlayerJSTest2_action:lms_video_assignment_played':
 			GmCXt.requestHandler.videoAssignmentPlayed();
 			break;
 
-		case 'mgPlayerJSTest_action:close_step':
+		case 'mgPlayerJSTest2_action:close_step':
 			GmCXt.requestHandler.closeStep();
 			break;
 
-		case 'mgPlayerJSTest_action:click; on:mgPlayerJSTest_slideshow-close':
-			mg$('.mgPlayerJSTest_panel').removeAttr('style');
+		case 'mgPlayerJSTest2_action:click; on:mgPlayerJSTest2_slideshow-close':
+			mg$('.mgPlayerJSTest2_panel').removeAttr('style');
 			GmCXt.closeAppPanel();
 			GmCXt.requestHandler.closeSlideshow();
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:select_dom_element_tooltips':
+		case 'mgPlayerJSTest2_action:completed;task:select_dom_element_tooltips':
 			GmCXt.timeout(function() {
 				GmCXt.requestHandler.handleEventSelectDOMElTooltip(event, message.data);
 			}, 500);
 			break;
 
-		case 'mgPlayerJSTest_action:find_other_msg_step_tooltips':
+		case 'mgPlayerJSTest2_action:find_other_msg_step_tooltips':
 			GmCXt.requestHandler.findOtherTooltips(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:select_existing_dom_element':
 
 			GmCXt.timeout(function() {
 				GmCXt.requestHandler.handleEventSelectDOMElement(event, message.data);
 			}, 500);
 			break;
 
-		case 'mgPlayerJSTest_action:hide_widget':
+		case 'mgPlayerJSTest2_action:hide_widget':
 			GmCXt.hideWidgetIcon();
 			break;
 
-		case 'mgPlayerJSTest_action:hide-panel-close-btn':
+		case 'mgPlayerJSTest2_action:hide-panel-close-btn':
 			GmCXt.hidePanelCloseBtn();
 			break;
 
-		case 'mgPlayerJSTest_action:show_current_page_guide_indicator':
+		case 'mgPlayerJSTest2_action:show_current_page_guide_indicator':
 
 			GmCXt.ifGuidesOnCurrentPage = true;
 
 			if (message.data.clearRulesJobs) {
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:clear_rule_jobs', {
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_rule_jobs', {
 					initiator: 'currentPageIndicator',
 					trigger: 'guide_indicator'
 				});
@@ -39385,71 +39411,71 @@ GmCXt.processTopWinPlayer = function(event) {
 			GmCXt.showWidget();
 			break;
 
-		case 'mgPlayerJSTest_action:hide_current_page_guide_indicator':
+		case 'mgPlayerJSTest2_action:hide_current_page_guide_indicator':
 			GmCXt.ifGuidesOnCurrentPage = false;
 			GmCXt.hideCurrentPageGuidesIndicator();
 			break;
 
-		case 'mgPlayerJSTest_action:inform_task_list_guide_count':
+		case 'mgPlayerJSTest2_action:inform_task_list_guide_count':
 			GmCXt.taskListCount = message.data;
 			break;
 
-		case 'mgPlayerJSTest_action:show_widget':
+		case 'mgPlayerJSTest2_action:show_widget':
 			GmCXt.showWidget();
 			break;
 
-		case 'mgPlayerJSTest_action:show_chat_icon':
+		case 'mgPlayerJSTest2_action:show_chat_icon':
 			GmCXt.showChatIcon();
 			break;
 
-		case 'mgPlayerJSTest_action:remove_chat_icon':
+		case 'mgPlayerJSTest2_action:remove_chat_icon':
 			GmCXt.removeChatIcon();
 			break;
 
-		case 'mgPlayerJSTest_action:show-panel-close-btn':
+		case 'mgPlayerJSTest2_action:show-panel-close-btn':
 			GmCXt.showPanelCloseBtn();
 			break;
 
-		case 'mgPlayerJSTest_action:get_page_url':
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:get_page_url_response', GmCXt.getCurrentURL());
+		case 'mgPlayerJSTest2_action:get_page_url':
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:get_page_url_response', GmCXt.getCurrentURL());
 			break;
 
-		case 'mgPlayerJSTest_action:go_to_web_tour':
+		case 'mgPlayerJSTest2_action:go_to_web_tour':
 			var webUrl = (message.data && message.data.webUrl) ? message.data && message.data.webUrl : false;
 			if (webUrl) {
 				window.open(webUrl, "_blank");
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:save_user_info':
+		case 'mgPlayerJSTest2_action:save_user_info':
 			GmCXt.updateGlobalUser(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:save_org':
+		case 'mgPlayerJSTest2_action:save_org':
 			GmCXt.updateGlobalOrg(message.data);
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:save_org_in_iframes", {
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:save_org_in_iframes", {
 				org: message.data
 			});
 			GmCXt.updateGmConfig();
 
 			break;
 
-		case 'mgPlayerJSTest_action:on_side_panel_init':
+		case 'mgPlayerJSTest2_action:on_side_panel_init':
 			GmCXt.onSidePanelInit(message);
 			break;
 
-		case 'mgPlayerJSTest_action:update_access_token':
+		case 'mgPlayerJSTest2_action:update_access_token':
 			GmCXt.updateGlobalUser(message.data.user);
 			GmCXt.updateGmConfig();
 			break;
 
-		case 'mgPlayerJSTest_action:start_step_completion_timeout':
+		case 'mgPlayerJSTest2_action:start_step_completion_timeout':
 			if (GmCXt.tourPlayerI && message.data && message.data.step) {
 				GmCXt.tourPlayerI.setStepCompletionTimeout(message.data.step);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:set_audio_storage':
+		case 'mgPlayerJSTest2_action:set_audio_storage':
 			if (message.data && GmCXt.playerI.playAudio) {
 				GmCXt.stepAudioRunningStatus = message.data.stepAudioRunningStatus;
 				GmCXt.storage().set(message.data);
@@ -39459,18 +39485,18 @@ GmCXt.processTopWinPlayer = function(event) {
 
 			break;
 
-		case 'mgPlayerJSTest_action:set_style_audio_icon':
+		case 'mgPlayerJSTest2_action:set_style_audio_icon':
 			var os = GmCXt.getStepSettings();
 			if (os) {
 				var popupDesign = os.popupDesign;
 
 				if (popupDesign) {
 
-					var popUpCSS = "<style id='mgPlayerJSTest_popup-arrow' type='text/css'>" +
-						".mgPlayerJSTest_play-step-audio-on svg path {" +
+					var popUpCSS = "<style id='mgPlayerJSTest2_popup-arrow' type='text/css'>" +
+						".mgPlayerJSTest2_play-step-audio-on svg path {" +
 						"fill:" + popupDesign.current.closeIconColor + "!important;" +
 						"}" +
-						".mgPlayerJSTest_play-step-audio-off svg path {" +
+						".mgPlayerJSTest2_play-step-audio-off svg path {" +
 						"fill:" + popupDesign.current.closeIconColor + "!important;" +
 						"}" +
 						"html, body {" +
@@ -39478,20 +39504,20 @@ GmCXt.processTopWinPlayer = function(event) {
 						"}" +
 						"</style>";
 
-					GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_style_audio_icon_response', {
+					GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_style_audio_icon_response', {
 						data: popUpCSS
 					});
 
 				}
 			}
 			break;
-		case 'mgPlayerJSTest_action:hide_pop_audio_ctrl':
-			mg$('.mgPlayerJSTest_audio-pop-icons').hide();
+		case 'mgPlayerJSTest2_action:hide_pop_audio_ctrl':
+			mg$('.mgPlayerJSTest2_audio-pop-icons').hide();
 			break;
 
-		case 'mgPlayerJSTest_action:increase_side_panel_width':
+		case 'mgPlayerJSTest2_action:increase_side_panel_width':
 			GmCXt.toggleSidePanel(true);
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'width': '100%',
 				'left': '0px',
 				'right': 'initial'
@@ -39500,44 +39526,44 @@ GmCXt.processTopWinPlayer = function(event) {
 			if (!GmCXt.isMicroPlayer()) GmCXt.hidePanelCloseBtn();
 			break;
 
-		case 'mgPlayerJSTest_action:close_notification_popup':
+		case 'mgPlayerJSTest2_action:close_notification_popup':
 			GmCXt.closeNotificationPopup();
 			break;
 
-		case 'mgPlayerJSTest_action:update_custom_labels':
+		case 'mgPlayerJSTest2_action:update_custom_labels':
 			GmCXt.updateCustomLabels(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:reduce_side_panel_width':
+		case 'mgPlayerJSTest2_action:reduce_side_panel_width':
 			GmCXt.toggleSidePanel(false);
 			if (!GmCXt.isMicroPlayer()) GmCXt.showPanelCloseBtn();
 			break;
 
-		case 'mgPlayerJSTest_action:toggle_sidepanel_fullscreen':
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:toggle_sidepanel", message.data);
+		case 'mgPlayerJSTest2_action:toggle_sidepanel_fullscreen':
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:toggle_sidepanel", message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:survey_start;task:show_survey':
+		case 'mgPlayerJSTest2_action:survey_start;task:show_survey':
 			mg$(window).focus();
 			GmCXt.isSurveyVisible = true;
 			GmCXt.surveyStart(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:exit_survey_start;task:show_survey':
+		case 'mgPlayerJSTest2_action:exit_survey_start;task:show_survey':
 			mg$(window).focus();
 			GmCXt.isSurveyVisible = true;
 			GmCXt.surveyStart(message.data, true);
 			break;
 
-		case "mgPlayerJSTest_action:start_tool;testMe":
+		case "mgPlayerJSTest2_action:start_tool;testMe":
 			GmCXt.handleStartTest(event);
 			break;
 
-		case "mgPlayerJSTest_action:record_event;testMe":
+		case "mgPlayerJSTest2_action:record_event;testMe":
 			GmCXt.requestHandler.recordEventTestMe(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:redirectTestMe':
+		case 'mgPlayerJSTest2_action:redirectTestMe':
 			GmCXt.storage().set({
 				'testMe': message.data.data
 			}).then(function() {
@@ -39545,127 +39571,127 @@ GmCXt.processTopWinPlayer = function(event) {
 			});
 			break;
 
-		case 'mgPlayerJSTest_action:show_toast_message':
+		case 'mgPlayerJSTest2_action:show_toast_message':
 			GmCXt.toastMsg(message.data).show();
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:select_dom_element_for_rules':
+		case 'mgPlayerJSTest2_action:completed;task:select_dom_element_for_rules':
 			GmCXt.requestHandler.onElementFoundForDomSelectRule(message);
 			break;
 
-		case 'mgPlayerJSTest_action:play_next_step':
+		case 'mgPlayerJSTest2_action:play_next_step':
 			GmCXt.requestHandler.playTourNextStep();
 			break;
 
-		case 'mgPlayerJSTest_action:play_prev_step':
+		case 'mgPlayerJSTest2_action:play_prev_step':
 			GmCXt.requestHandler.playTourPrevStep();
 			break;
 
-		case 'mgPlayerJSTest_action:click_event_for_guide':
+		case 'mgPlayerJSTest2_action:click_event_for_guide':
 			GmCXt.requestHandler.pageClickForGuide(message);
 			break;
 
-		case 'mgPlayerJSTest_action:select_element_for_branching':
+		case 'mgPlayerJSTest2_action:select_element_for_branching':
 			GmCXt.requestHandler.selectElementForBranching();
 			break;
 
-		case 'mgPlayerJSTest_action:select_new_element_for_dom_rule_from_side_panel':
+		case 'mgPlayerJSTest2_action:select_new_element_for_dom_rule_from_side_panel':
 			GmCXt.requestHandler.sendRequestForDomSelectRule(message);
 			break;
 
-		case 'mgPlayerJSTest_action:select_new_table_for_dom_rule_from_side_panel':
+		case 'mgPlayerJSTest2_action:select_new_table_for_dom_rule_from_side_panel':
 			GmCXt.requestHandler.sendRequestForDomSelectTableRule(message);
 			break;
 
-		case 'mgPlayerJSTest_action:user_logout':
+		case 'mgPlayerJSTest2_action:user_logout':
 			GmCXt.clearDataOnLogout(message.data);
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:empty_user_on_logout_in_iframes", {});
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:empty_user_on_logout_in_iframes", {});
 			break;
 
-		case 'mgPlayerJSTest_action:set_audio_icon_off':
+		case 'mgPlayerJSTest2_action:set_audio_icon_off':
 			GmCXt.setOffAudioMode();
 			break;
 
-		case 'mgPlayerJSTest_action:set_audio_icon_off_onboar':
+		case 'mgPlayerJSTest2_action:set_audio_icon_off_onboar':
 			GmCXt.setOffOnBoarAudioMode();
 			break;
 
-		case 'mgPlayerJSTest_action:set_audio_icon_on_onboar':
+		case 'mgPlayerJSTest2_action:set_audio_icon_on_onboar':
 			GmCXt.setOnOnBoarAudioMode();
 			break;
 
-		case 'mgPlayerJSTest_action:page_clicked':
+		case 'mgPlayerJSTest2_action:page_clicked':
 			GmCXt.changeEvent("page_click");
 			break;
 
-		case 'mgPlayerJSTest_action:track_feature_click':
+		case 'mgPlayerJSTest2_action:track_feature_click':
 			GmCXt.trackerV1.trackFeatureClick(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:start_point_found':
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:start_point_found_app', message.data);
+		case 'mgPlayerJSTest2_action:start_point_found':
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:start_point_found_app', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:next_step_found':
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:next_step_found_app');
+		case 'mgPlayerJSTest2_action:next_step_found':
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:next_step_found_app');
 			break;
 
-		case 'mgPlayerJSTest_action:update_variables':
+		case 'mgPlayerJSTest2_action:update_variables':
 			GmCXt.getVariables();
 			break;
 
-		case 'mgPlayerJSTest_action:get_survey_data_from_sidepanel':
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:get_survey_detail_tooltip", message.data);
+		case 'mgPlayerJSTest2_action:get_survey_data_from_sidepanel':
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:get_survey_detail_tooltip", message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:init;task:select_dom_element_for_rules':
+		case 'mgPlayerJSTest2_action:init;task:select_dom_element_for_rules':
 			GmCXt.sendMessageToAllWindows(
-				'mgPlayerJSTest_action:started;task:select_dom_element_for_rules',
+				'mgPlayerJSTest2_action:started;task:select_dom_element_for_rules',
 				message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:preview_smarttip':
+		case 'mgPlayerJSTest2_action:preview_smarttip':
 			GmCXt.handlePreviewTooltip(event);
 			break;
 
-		case 'mgPlayerJSTest_action:preview_beacon':
+		case 'mgPlayerJSTest2_action:preview_beacon':
 			GmCXt.handlePreviewBeacon(event);
 			break;
 
-		case 'mgPlayerJSTest_action:set_lang_content_script':
+		case 'mgPlayerJSTest2_action:set_lang_content_script':
 			GmCXt.setLangPref(message.data.lang);
 			break;
 
-		case 'mgPlayerJSTest_action:init_app_id':
+		case 'mgPlayerJSTest2_action:init_app_id':
 			GmCXt.activeAppId = message.data.activeAppId;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:init_app_id_frame', message.data);
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:init_app_id_frame', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:tour_loop_completed':
+		case 'mgPlayerJSTest2_action:tour_loop_completed':
 			GmCXt.requestHandler.playAutoTour();
 			break;
 
-		case 'mgPlayerJSTest_action:close_guide':
+		case 'mgPlayerJSTest2_action:close_guide':
 			if (GmCXt.tourPlayerI) {
 				var fromShowme = message.data.fromShowme;
 				GmCXt.tourPlayerI.closeGuide(false, fromShowme);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:update_tracking_info':
+		case 'mgPlayerJSTest2_action:update_tracking_info':
 			GmCXt.trackerUtil.enableTracking = message.data.enableTracking;
 			GmCXt.trackerUtil.trackPI = message.data.trackPI;
 			GmCXt.trackerUtil.featureTracking = message.data.featureTracking;
 			GmCXt.trackerUtil.pageTracking = message.data.pageTracking;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:update_tracking_info:frames', message.data);
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:update_tracking_info:frames', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:get_lxp_storage':
+		case 'mgPlayerJSTest2_action:get_lxp_storage':
 			GmCXt.storage().get(message.data.key).then(function(result) {
 				GmCXt.sendStorageResponseToApp(result, message.data.id);
 			});
 			break;
-		case 'mgPlayerJSTest_action:set_lxp_storage':
+		case 'mgPlayerJSTest2_action:set_lxp_storage':
 			var d = message.data;
 			var key = d.key;
 			var data = d.data;
@@ -39674,72 +39700,72 @@ GmCXt.processTopWinPlayer = function(event) {
 			GmCXt.storage().set(obj);
 			break;
 
-		case 'mgPlayerJSTest_action:remove_lxp_storage':
+		case 'mgPlayerJSTest2_action:remove_lxp_storage':
 			GmCXt.storage().remove(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:reset_lxp_storage':
+		case 'mgPlayerJSTest2_action:reset_lxp_storage':
 			GmCXt.removeLxpStorageAll();
 			break;
 
 		case 'gmPlayerXt_action:init_sfdc_env': // for backward compatibility
-		case 'mgPlayerJSTest_action:init_sfdc_env':
+		case 'mgPlayerJSTest2_action:init_sfdc_env':
 			GmCXt.initSfdc(message.data);
 			break;
 
 		case 'gmPlayerXt_action:sfdc_play_tour': // for backward compatibility
-		case 'mgPlayerJSTest_action:sfdc_play_tour':
+		case 'mgPlayerJSTest2_action:sfdc_play_tour':
 			GmCXt.playSfdcTour(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:process_active_requests':
+		case 'mgPlayerJSTest2_action:process_active_requests':
 			GmCXt.processActiveReq();
 			break;
 
 		case 'gmPlayerXt_action:init_snow': // for backward compatibility
-		case 'mgPlayerJSTest_action:init_snow':
+		case 'mgPlayerJSTest2_action:init_snow':
 			GmCXt.initSnow(message.data);
 			break;
 
 		case 'gmPlayerXt_action:snow_panel_open': // for backward compatibility
-		case "mgPlayerJSTest_action:snow_panel_open":
+		case "mgPlayerJSTest2_action:snow_panel_open":
 			if (GmCXt.isPlayer() && GmCXt.serviceNow())
 				GmCXt.openAppPanel();
 			break;
 
-		case 'mgPlayerJSTest_action:start_test_automation':
+		case 'mgPlayerJSTest2_action:start_test_automation':
 			GmCXt.startAuto(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:myBot_report_saved':
+		case 'mgPlayerJSTest2_action:myBot_report_saved':
 			GmCXt.auto.reportSaved();
 			break;
 
-		case 'mgPlayerJSTest_action:update_noti_watch_later':
+		case 'mgPlayerJSTest2_action:update_noti_watch_later':
 			GmCXt.updateNotiWatchLater(message.data.tour_id);
 			break;
 
-		case 'mgPlayerJSTest_action:update_noti_do_not_show':
+		case 'mgPlayerJSTest2_action:update_noti_do_not_show':
 			GmCXt.updateNotiDoNotShow(message.data.tour_id);
 			break;
 
-		case 'mgPlayerJSTest_action:show_ducttape_alert':
+		case 'mgPlayerJSTest2_action:show_ducttape_alert':
 			GmCXt.showDuctTapeAlert(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:show_smarttip':
+		case 'mgPlayerJSTest2_action:show_smarttip':
 			GmCXt.requestHandler.showSmarttip(message.data, event);
 			break;
 
-		case 'mgPlayerJSTest_action:show_beacon':
+		case 'mgPlayerJSTest2_action:show_beacon':
 			GmCXt.requestHandler.setBeaconPosition(message, event);
 			break;
 
-		case 'mgPlayerJSTest_action:toggle_beacon_visibility':
+		case 'mgPlayerJSTest2_action:toggle_beacon_visibility':
 			GmCXt.requestHandler.toggleBeacon(message);
 			break;
 
-		case 'mgPlayerJSTest_action:trigger_next_click':
+		case 'mgPlayerJSTest2_action:trigger_next_click':
 			if (GmCXt.playerI && GmCXt.playerI.testAutomation) {
 				GmCXt.tourPlayerI.playNextStep();
 				return;
@@ -39748,133 +39774,133 @@ GmCXt.processTopWinPlayer = function(event) {
 			GmCXt.triggerClick(btn);
 			break;
 
-		case 'mgPlayerJSTest_action:play_next_step_automator':
+		case 'mgPlayerJSTest2_action:play_next_step_automator':
 			GmCXt.tourPlayerI.playNextStep();
 			break;
 
-		case 'mgPlayerJSTest_action:rotate_gear':
+		case 'mgPlayerJSTest2_action:rotate_gear':
 			GmCXt.rotateGear();
 			break;
 
-		case 'mgPlayerJSTest_action:complete:get_cards':
+		case 'mgPlayerJSTest2_action:complete:get_cards':
 			GmCXt.successCallbackCards(message);
 			break;
 
-		case 'mgPlayerJSTest_action:open_power_form':
+		case 'mgPlayerJSTest2_action:open_power_form':
 			GmCXt.openPowerForm(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:insert_power_html_i':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:insert_power_html', message.data);
+		case 'mgPlayerJSTest2_action:insert_power_html_i':
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:insert_power_html', message.data);
 			GmCXt.closePowerForm();
 			break;
 
-		case 'mgPlayerJSTest_action:error:get_cards':
+		case 'mgPlayerJSTest2_action:error:get_cards':
 			GmCXt.errorCallbackCards(message);
 			break;
 
-		case 'mgPlayerJSTest_action:hide_smarttip_delay':
+		case 'mgPlayerJSTest2_action:hide_smarttip_delay':
 			GmCXt.requestHandler.hideSmarttipDelay(message.data, message.data.options);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_smarttip_delay_timeout':
+		case 'mgPlayerJSTest2_action:clear_smarttip_delay_timeout':
 			GmCXt.clearTooltipTimeout();
 			break;
 
-		case 'mgPlayerJSTest_action:hide_validation_smarttip':
+		case 'mgPlayerJSTest2_action:hide_validation_smarttip':
 			GmCXt.requestHandler.hideValidationSmarttip(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:hide_smarttip':
+		case 'mgPlayerJSTest2_action:hide_smarttip':
 			GmCXt.requestHandler.hideSmartTip(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:initialize_image_iframe_popup':
+		case 'mgPlayerJSTest2_action:initialize_image_iframe_popup':
 			GmCXt.setImagePopUp();
 			break;
 
-		case 'mgPlayerJSTest_action:open_image_iframe_popup':
+		case 'mgPlayerJSTest2_action:open_image_iframe_popup':
 			GmCXt.openImagePopup(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:play_guide_from_link':
+		case 'mgPlayerJSTest2_action:play_guide_from_link':
 			GmCXt.getTourAndPlay(message.data.tourId, message.data.initiator);
 			break;
 
-		case 'mgPlayerJSTest_action:play_guide_from_notification':
+		case 'mgPlayerJSTest2_action:play_guide_from_notification':
 			GmCXt.playLiveTour(message.data.tour, 0, 'overlayTourPopup', message.data.isAutolaunchTriggered, 'live');
 			break;
 
-		case 'mgPlayerJSTest_action:mark_auto_tour_donotshow':
+		case 'mgPlayerJSTest2_action:mark_auto_tour_donotshow':
 			GmCXt.markAutoLaunchTourDoNotShow(message.data.tour);
 			break;
 
-		case 'mgPlayerJSTest_action:update_beacons_on_screen':
+		case 'mgPlayerJSTest2_action:update_beacons_on_screen':
 			GmCXt.updateBeaconsOnScreen(message.data.jobId, message.data.isValid);
 			break;
 
-		case 'mgPlayerJSTest_action:update_smarttip_on_screen':
+		case 'mgPlayerJSTest2_action:update_smarttip_on_screen':
 			GmCXt.updateOnScreenTooltipGuideInfo(message.data.tour, message.data.tourId, message.data.stepId, message.data.isValid, message.data.smartTip, message.data.url);
 			break;
 
-		case 'mgPlayerJSTest_action:update_tooltip_action_info':
+		case 'mgPlayerJSTest2_action:update_tooltip_action_info':
 			var d = message.data;
 			GmCXt.updateTooltipActionInfo(d.tourId, d.stepId, d.smartTip, d.actionName);
 			break;
 
-		case 'mgPlayerJSTest_action:set_auto_tour':
+		case 'mgPlayerJSTest2_action:set_auto_tour':
 			GmCXt.setAutoTour(message.data.tourId);
 			break;
 
-		case 'mgPlayerJSTest_action:search_next_step':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:search_next_step', message.data);
+		case 'mgPlayerJSTest2_action:search_next_step':
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:search_next_step', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:search_start_point':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:search_start_point', message.data);
+		case 'mgPlayerJSTest2_action:search_start_point':
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:search_start_point', message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_player_instance':
+		case 'mgPlayerJSTest2_action:clear_player_instance':
 			GmCXt.cleanPlayer();
 			break;
 
-		case 'mgPlayerJSTest_action:update:player_mode':
+		case 'mgPlayerJSTest2_action:update:player_mode':
 			GmCXt.handleUpdatePlayerMode(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:sync_app_list':
+		case 'mgPlayerJSTest2_action:sync_app_list':
 			GmCXt.appList = message.data.appList;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:init_app_list_frame', message.data);
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:init_app_list_frame', message.data);
 			GmCXt.updateAppListSettingsInAllFrames(message);
 			break;
 
-		case 'mgPlayerJSTest_action:print_debug_log':
+		case 'mgPlayerJSTest2_action:print_debug_log':
 			GmCXt.requestHandler.printDebugLog(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:keep_watching_step:inform':
+		case 'mgPlayerJSTest2_action:keep_watching_step:inform':
 			GmCXt.handleRestartInParent();
 			break;
 
-		case 'mgPlayerJSTest_action:update_PI_PS':
+		case 'mgPlayerJSTest2_action:update_PI_PS':
 			GmCXt.requestHandler.updatePIPS(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_PI_steps':
+		case 'mgPlayerJSTest2_action:update_PI_steps':
 			GmCXt.requestHandler.updatePISteps(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_tooltip_tracking':
+		case 'mgPlayerJSTest2_action:update_tooltip_tracking':
 			GmCXt.tooltipTrackingList = message.data.trackingInfo;
 			break;
 
-		case 'mgPlayerJSTest_action:hide_inline_step_popup':
-			mg$('.mgPlayerJSTest_preview-step-popup-container').css({
+		case 'mgPlayerJSTest2_action:hide_inline_step_popup':
+			mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 				'display': 'none'
 			});
-			mg$('.mgPlayerJSTest_screen-blackout').hide();
+			mg$('.mgPlayerJSTest2_screen-blackout').hide();
 			GmCXt.stopAudioTrack();
-			var iframe = document.getElementById('mgPlayerJSTest_play-step-audio-iframe');
+			var iframe = document.getElementById('mgPlayerJSTest2_play-step-audio-iframe');
 			if (iframe && iframe.src) {
 				iframe.src = iframe.src;
 			}
@@ -39882,131 +39908,131 @@ GmCXt.processTopWinPlayer = function(event) {
 			GmCXt.displayWidget();
 			break;
 
-		case 'mgPlayerJSTest_action:hide_inline_step_popup_tootip':
+		case 'mgPlayerJSTest2_action:hide_inline_step_popup_tootip':
 			mg$('.gm-tip-' + message.data.id).css({
 				'display': 'none'
 			});
 			break;
 
-		case 'mgPlayerJSTest_action:step_element_hidden':
+		case 'mgPlayerJSTest2_action:step_element_hidden':
 			GmCXt.tourPlayerI.isLastStepVisible = false;
 			GmCXt.stepAudioPlayed = false;
 			GmCXt.stopAudioTrack();
 			break;
 
-		case 'mgPlayerJSTest_action:check_iframe_visible':
+		case 'mgPlayerJSTest2_action:check_iframe_visible':
 			if (message.data && message.data.selector) {
 				GmCXt.highlighter.bringElementInViewport({}, message.data.selector, true);
 			}
 			break;
-		case 'mgPlayerJSTest_action:update_notification_data_content_script':
+		case 'mgPlayerJSTest2_action:update_notification_data_content_script':
 			GmCXt.updNotifDataSidePanel(message.data.toursClosedByUser, message.data.tourIdArray);
 			break;
 
-		case 'mgPlayerJSTest_action:update_notification_data_content_script_snooze_tours':
+		case 'mgPlayerJSTest2_action:update_notification_data_content_script_snooze_tours':
 			GmCXt.setSnoozedTours(message.data.tour, message.data.msg);
 			break;
 
-		case 'mgPlayerJSTest_action:update_notification_data_content_script_donot_show':
+		case 'mgPlayerJSTest2_action:update_notification_data_content_script_donot_show':
 			GmCXt.updateNotification(message.data.tours);
 			break;
 
-		case 'mgPlayerJSTest_action:update_notification_count_content_script':
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_notification_count", {
+		case 'mgPlayerJSTest2_action:update_notification_count_content_script':
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_notification_count", {
 				count: message.data.count
 			});
 			break;
 
-		case 'mgPlayerJSTest_action:track_notification_for_automation':
+		case 'mgPlayerJSTest2_action:track_notification_for_automation':
 			GmCXt.auto.trackNotificationForAutomation(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_automation':
+		case 'mgPlayerJSTest2_action:stop_automation':
 			GmCXt.auto.stop(true);
 			break;
 
-		case 'mgPlayerJSTest_action:close_video_step':
+		case 'mgPlayerJSTest2_action:close_video_step':
 			GmCXt.confirmTourClose();
 			break;
 
-		case 'mgPlayerJSTest_action:update_click_time':
+		case 'mgPlayerJSTest2_action:update_click_time':
 			GmCXt.clickTime = message.data.clickTime;
 			break;
 
-		case 'mgPlayerJSTest_action:update_secrets':
+		case 'mgPlayerJSTest2_action:update_secrets':
 			GmCXt.trackerUtil.secrets = message.data.secrets;
 			GmCXt.storage().set({
 				'tracker_secrets': JSON.stringify(GmCXt.trackerUtil.secrets)
 			});
 			break;
 
-		case 'mgPlayerJSTest_action:update_segment_group_data':
+		case 'mgPlayerJSTest2_action:update_segment_group_data':
 			GmCXt.allSegments = message.data.allSegments;
 			break;
 
-		case 'mgPlayerJSTest_action:select_element_for_variable':
+		case 'mgPlayerJSTest2_action:select_element_for_variable':
 			GmCXt.requestHandler.selectElementForVariable();
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:find_element_for_variable':
+		case 'mgPlayerJSTest2_action:completed;task:find_element_for_variable':
 			GmCXt.requestHandler.updateVariableValues(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_notification_data_content_script_display_frequency':
+		case 'mgPlayerJSTest2_action:update_notification_data_content_script_display_frequency':
 			GmCXt.updateGuideDisplayFrequency(message.data.tours);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_audio':
+		case 'mgPlayerJSTest2_action:stop_audio':
 			GmCXt.stopAudioTrack();
 			break;
 
-		case 'mgPlayerJSTest_action:hide_step_popup':
-			mg$(".mgPlayerJSTest_preview-step-popup-container").addClass("mgPlayerJSTest_preview-step-popup-container-mp");
+		case 'mgPlayerJSTest2_action:hide_step_popup':
+			mg$(".mgPlayerJSTest2_preview-step-popup-container").addClass("mgPlayerJSTest2_preview-step-popup-container-mp");
 			break;
 
-		case 'mgPlayerJSTest_action:show_step_popup':
-			mg$(".mgPlayerJSTest_preview-step-popup-container").removeClass("mgPlayerJSTest_preview-step-popup-container-mp");
+		case 'mgPlayerJSTest2_action:show_step_popup':
+			mg$(".mgPlayerJSTest2_preview-step-popup-container").removeClass("mgPlayerJSTest2_preview-step-popup-container-mp");
 			break;
 
-		case 'mgPlayerJSTest_action:track_element_not_found':
+		case 'mgPlayerJSTest2_action:track_element_not_found':
 			GmCXt.trackElNotFound(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_player_sync_time':
+		case 'mgPlayerJSTest2_action:update_player_sync_time':
 			GmCXt.refreshTime = message.data.refreshTime;
 			GmCXt.lastTimeStampSync = message.data.lastTimeStampSync;
 			break;
 
-		case 'mgPlayerJSTest_action:send_dom_tracker_info':
+		case 'mgPlayerJSTest2_action:send_dom_tracker_info':
 			GmCXt.combineDomTrackerData(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_accessibility':
+		case 'mgPlayerJSTest2_action:update_accessibility':
 			GmCXt.updateAccessibility(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:media_player_on':
+		case 'mgPlayerJSTest2_action:media_player_on':
 			GmCXt.isMediaPlayerOn = message.data.mediaPlayerStatus;
 			break;
 
-		case 'mgPlayerJSTest_action:reset_micro_player_position':
+		case 'mgPlayerJSTest2_action:reset_micro_player_position':
 			GmCXt.resetMplayerPos();
 			break;
 
-		case 'mgPlayerJSTest_action:getSurveyScreen':
+		case 'mgPlayerJSTest2_action:getSurveyScreen':
 			GmCXt.getSurveyScreen(message.data, message.data.guideNotCompleted);
 			break;
 
-		case 'mgPlayerJSTest_action:showSurveyScreen':
+		case 'mgPlayerJSTest2_action:showSurveyScreen':
 			GmCXt.showSurveyScreen(message.data, message.data.guideNotCompleted);
 			break;
 
-		case 'mgPlayerJSTest_action:empty_media_recorder':
+		case 'mgPlayerJSTest2_action:empty_media_recorder':
 			mediaRecorder = null;
 			GmCXt.storage().remove(['screen_recorder_close']);
 			break;
 
-		case 'mgPlayerJSTest_action:send_feedback':
+		case 'mgPlayerJSTest2_action:send_feedback':
 			GmCXt.closeAppPanel();
 			GmCXt.addFeedBackToolbar();
 			GmCXt.timeout(function() {
@@ -40014,23 +40040,23 @@ GmCXt.processTopWinPlayer = function(event) {
 			}, 100);
 			break;
 
-		case 'mgPlayerJSTest_action:preview_sound':
+		case 'mgPlayerJSTest2_action:preview_sound':
 			GmCXt.sendMessageToDesktop(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_played_slideshow_step':
+		case 'mgPlayerJSTest2_action:update_played_slideshow_step':
 			GmCXt.updatePlayedSteps(message.data.playedStep);
 			break;
 
-		case 'mgPlayerJSTest_action:get_key_input_guides':
+		case 'mgPlayerJSTest2_action:get_key_input_guides':
 			GmCXt.keyInputGuides = message.data.tours;
 			break;
 
-		case 'mgPlayerJSTest_action:track_beacon_feature':
+		case 'mgPlayerJSTest2_action:track_beacon_feature':
 			GmCXt.trackerV1.trackBeacons(message.tour, message.eventType);
 			break;
 
-		case 'mgPlayerJSTest_action:get_context_guides':
+		case 'mgPlayerJSTest2_action:get_context_guides':
 			GmCXt.getContextGuides("Process Guides");
 			break;
 
@@ -40079,7 +40105,7 @@ GmCXt.toggleSidePanel = function(fullscreen) {
 
 	if (fullscreen) {
 		if (GmCXt.isMicroPlayer()) {
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'width': '100%',
 				'left': '0px',
 				'right': '0px',
@@ -40087,7 +40113,7 @@ GmCXt.toggleSidePanel = function(fullscreen) {
 				'min-width': '100%'
 			});
 		} else {
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'width': '100%',
 				'left': '0px',
 				'right': 'initial',
@@ -40098,26 +40124,26 @@ GmCXt.toggleSidePanel = function(fullscreen) {
 
 		if (GmCXt.APP_PANEL_OPEN) {
 			if (GmCXt.isMicroPlayer()) {
-				mg$('.mgPlayerJSTest_panel').removeAttr('style');
+				mg$('.mgPlayerJSTest2_panel').removeAttr('style');
 			}
 
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'width': '500px',
 				'right': '0px'
 			});
 
 			if (window.matchMedia("(max-width: 480px)").matches && !GmCXt.isMiniPlayer) {
-				mg$('.mgPlayerJSTest_panel').css({
+				mg$('.mgPlayerJSTest2_panel').css({
 					'width': '85%'
 				});
 			}
 
-			mg$('.mgPlayerJSTest_panel').css({
+			mg$('.mgPlayerJSTest2_panel').css({
 				'left': 'initial'
 			});
 
 		} else {
-			mg$('.mgPlayerJSTest_panel').removeAttr('style');
+			mg$('.mgPlayerJSTest2_panel').removeAttr('style');
 			GmCXt.closeAppPanel();
 		}
 	}
@@ -40132,7 +40158,7 @@ GmCXt.updateAppListSettingsInAllFrames = function(d) {
 		if (activeApp && activeApp.settings) {
 			d.activeAppSettings = activeApp.settings;
 		}
-		GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:update_app_settings', d);
+		GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:update_app_settings', d);
 	}
 };
 
@@ -40142,12 +40168,12 @@ GmCXt.requestHandler.printDebugLog = function(d) {
 
 GmCXt.requestHandler.updatePIPS = function(d) {
 	GmCXt.playerI.playStructure = d;
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:update_PI_PS_done');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:update_PI_PS_done');
 };
 
 GmCXt.requestHandler.updatePISteps = function(d) {
 	GmCXt.playerI.tour.steps = d;
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:update_PI_steps_done');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:update_PI_steps_done');
 };
 
 GmCXt.updateNotiDoNotShow = function(tour_id) {
@@ -40202,7 +40228,7 @@ GmCXt.handleUpdatePlayerMode = function(d) {
 
 	if (GmCXt.isWBMicroPlayer() || GmCXt.isMicroPlayer()) {
 		GmCXt.addDragMicroPlayerFunction();
-		mg$(".mgPlayerJSTest_panel").removeClass('mgPlayerJSTest_mobile-view');
+		mg$(".mgPlayerJSTest2_panel").removeClass('mgPlayerJSTest2_mobile-view');
 	}
 };
 
@@ -40213,9 +40239,9 @@ GmCXt.showDuctTapeAlert = function(data) {
 	};
 
 	GmCXt.alert(options).show();
-	mg$(".mgPlayerJSTest_popup-content-info").css('max-height', "250px");
-	mg$(".mgPlayerJSTest_popup-content-info").css('overflow', "auto");
-	mg$(".mgPlayerJSTest_popup-content-info *").css('width', "auto");
+	mg$(".mgPlayerJSTest2_popup-content-info").css('max-height', "250px");
+	mg$(".mgPlayerJSTest2_popup-content-info").css('overflow', "auto");
+	mg$(".mgPlayerJSTest2_popup-content-info *").css('width', "auto");
 };
 
 GmCXt.startAuto = function(app) {
@@ -40234,7 +40260,7 @@ GmCXt.initSfdc = function(m) {
 		var session = false;
 
 		if (!GmCXt.user) {
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:user_signed_in', {
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_in', {
 				data: userData
 			});
 			session = true;
@@ -40243,7 +40269,7 @@ GmCXt.initSfdc = function(m) {
 		}
 
 		var m = {
-			action: "mgPlayerJSTest_action:sfdc_app_acknowledgement",
+			action: "mgPlayerJSTest2_action:sfdc_app_acknowledgement",
 			data: {
 				session: session
 			}
@@ -40267,10 +40293,10 @@ GmCXt.initSnow = function(m) {
 	if (GmCXt.isPlayer() && GmCXt.serviceNow()) {
 		GmCXt.snowApp = true;
 
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:snow_sign_in', m);
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:snow_sign_in', m);
 
 		message = {
-			action: 'mgPlayerJSTest_action:snow_app_acknowledgement'
+			action: 'mgPlayerJSTest2_action:snow_app_acknowledgement'
 		};
 		GmCXt.msgToThisWin(message);
 	}
@@ -40280,12 +40306,12 @@ GmCXt.handlePositionToolbar = function(event) {
 	var message = event.data;
 
 	if (message.data.position === 'top') {
-		mg$('.mgPlayerJSTest_play-pause-toolbar').css({
+		mg$('.mgPlayerJSTest2_play-pause-toolbar').css({
 			top: '5px'
 		});
 	} else if (message.data.position === 'bottom') {
 		var bpos = mg$(window).height() - 141;
-		mg$('.mgPlayerJSTest_play-pause-toolbar').css({
+		mg$('.mgPlayerJSTest2_play-pause-toolbar').css({
 			top: bpos + 'px'
 		});
 	}
@@ -40344,7 +40370,7 @@ GmCXt.handlePreviewTooltip = function(event) {
 	GmCXt.hideTips();
 	GmCXt.smartTipPreviewOn = true;
 
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:smarttip_preview_on');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:smarttip_preview_on');
 
 	GmCXt.timeout(function() {
 		GmCXt.renderSmartTips(message.data, true);
@@ -40398,14 +40424,14 @@ GmCXt.handleAppInit = function(event) {
 		if (st.desktopReq) {
 			d.isDesktopReq = true;
 			GmCXt.deskReq = st.desktopReq;
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:connected_from_app', {
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:connected_from_app', {
 				data: st.desktopReq
 			});
-			GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:connected_from_app_step', {
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:connected_from_app_step', {
 				data: st.desktopReq
 			});
 		}
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:init_side_panel_app', d);
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:init_side_panel_app', d);
 	});
 };
 
@@ -40555,7 +40581,7 @@ GmCXt.loginUsingAuthKey = function() {
 			GmCXt.api.userApiKeySignin(params).then(function(response) {
 
 				if (response.error) {
-					GmCXt.sendMessageToApp('mgPlayerJSTest_action:user_signed_failed', response);
+					GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_failed', response);
 					GmCXt.log(21, "ERROR: User signin failed", response.message[0]);
 					return;
 				}
@@ -40566,14 +40592,31 @@ GmCXt.loginUsingAuthKey = function() {
 					clearInterval(GmCXt.reloginInterval);
 				}
 
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:user_signed_in', response);
+				var user = response.data.user;
+
+				if (GmCXt.isSumtotal() && user.user_email.indexOf('anonymous-') !== -1) {  // TODO: GmCXt.isSumtotal() condition need to update as admin per admin setting - enable_anonymous_user_preference
+					var data = {
+						email_id: params.email_id,
+						organization_id: user.organization_id
+					};
+					GmCXt.api.getAnonymousUserPrefrence(data, user.accesstoken).then(function(prefrence) {
+
+						if (!prefrence.error) {
+							response.data.user.signin_user_email = params.email_id;
+							response.data.user.settings = prefrence.data.settings;
+						}
+						GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_in', response);	
+					});
+				} else {
+					GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_in', response);
+				}
 
 				GmCXt.storage().set({
 					myGuideKey: jwOrgKey
 				});
 
 			}).catch(function(e) {
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:user_signed_failed', e);
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_failed', e);
 				GmCXt.storage().remove(['myGuideKey']);
 				GmCXt.log(21, "ERROR: exception, user signin failed", e);
 			});
@@ -40593,7 +40636,7 @@ GmCXt.pauseGuide = function() {
 		GmCXt.playerI.pausedOn = GmCXt.urlParts.host + GmCXt.urlParts.pathname;
 
 		GmCXt.storage().set({
-			'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+			'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 			'guide_play_event': GmCXt.guidePlayTracker
 		});
 
@@ -40605,9 +40648,9 @@ GmCXt.pauseGuide = function() {
 		GmCXt.storage().get(['resumeWinDisplayed']).then(function(st) {
 
 			if (!st.resumeWinDisplayed) {
-				mg$('.mgPlayerJSTest_play-pause-toolbar').show();
-				mg$('#mgPlayerJSTest_play-pause-toolbar-title').html(GmCXt.label.resumeGuide);
-				mg$('#mgPlayerJSTest_play-pause-resume-message').html(GmCXt.label.resume);
+				mg$('.mgPlayerJSTest2_play-pause-toolbar').show();
+				mg$('#mgPlayerJSTest2_play-pause-toolbar-title').html(GmCXt.label.resumeGuide);
+				mg$('#mgPlayerJSTest2_play-pause-resume-message').html(GmCXt.label.resume);
 				GmCXt.hideWidgetIcon();
 				GmCXt.setResumeWinDisplayed(true);
 			}
@@ -40644,7 +40687,7 @@ GmCXt.onSidePanelInit = function(m) {
 
 	GmCXt.updateGlobalUser(m.data.user);
 
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:save_user_in_iframes", {
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:save_user_in_iframes", {
 		user: GmCXt.user
 	});
 
@@ -40695,7 +40738,7 @@ GmCXt.processActiveReq = function() {
 
 	GmCXt.log(33, 'PROCESS ACTIVE REQUEST FROM PREVIOUS PAGE');
 
-	var items = ['mgPlayerJSTest_GM_PLAYER_STORAGE_KEY', 'SHOW_SURVEY', 'stepReq',
+	var items = ['mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY', 'SHOW_SURVEY', 'stepReq',
 		'testMe', 'linkClickOnStep', 'guide_play_event',
 		'loopingCompleted', 'tourActivity', 'playedTour', 'trackPageVisit',
 		'testAuto', 'guide_play_event', 'desktopReq', 'trackingTours', 'gm_quick_steps', 'isRecording', 'replaceElReq', 'tooltipTrackData'
@@ -40705,8 +40748,8 @@ GmCXt.processActiveReq = function() {
 
 		GmCXt.tooltipTrackData = st.tooltipTrackData ? st.tooltipTrackData : [];
 
-		if (GmCXt.isElectron() && !GmCXt.isEmpty(st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY)) {
-			st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY = null;
+		if (GmCXt.isElectron() && !GmCXt.isEmpty(st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY)) {
+			st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY = null;
 			GmCXt.cleanPlayer();
 		}
 
@@ -40720,7 +40763,7 @@ GmCXt.processActiveReq = function() {
 		}
 
 		if (st.replaceElReq) {
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:FindReplaceElReq", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:FindReplaceElReq", {
 				step: st.replaceElReq
 			});
 			GmCXt.storage().remove(['replaceElReq']);
@@ -40736,7 +40779,7 @@ GmCXt.processActiveReq = function() {
 					GmCXt.fastSteps[GmCXt.fastSteps.length - 1].step.step_settings.pageReloadOption = 'new_tab';
 				}
 				GmCXt.stepReq = st.stepReq;
-				GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:create_step,type:quick", GmCXt.stepReq.data);
+				GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:create_step,type:quick", GmCXt.stepReq.data);
 				return;
 			}
 		}
@@ -40750,18 +40793,24 @@ GmCXt.processActiveReq = function() {
 			} else if (st.testAuto.shouldRedirectToTourPage) {
 				GmCXt.getContextGuides("Test Auto");
 				GmCXt.auto.onRedirectToTourPage();
-			} else if (st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY) {
-				GmCXt.playerI = st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY;
+			} else if (st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY) {
+				GmCXt.playerI = st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY;
 				if (!GmCXt.tourPlayerI) {
 					GmCXt.tourPlayerI = GmCXt.tourPlayer();
 				}
-				if (st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY.isPageReloadByLastStep) {
+				if (st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.isPageReloadByLastStep) {
 					GmCXt.playerI.isPageReloadByLastStep = false;
 					GmCXt.tourPlayerI.stop();
 					return;
-				} else if (st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY.playNextBranch) {
+				} else if (st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.playNextBranch) {
 					GmCXt.playerI.playNextBranch = false;
 					GmCXt.tourPlayerI.playBranchStepInAutomation(GmCXt.playerI.currentBranchStep);
+					return;
+				} else if (st.testAuto.automationInProgress && st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.lastPlayedStepId) {
+					var nextStepId = GmCXt.getTail(st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.lastPlayedStepId, st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.playStructure);
+					if(nextStepId) {
+						GmCXt.playLiveTour(st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.tour, nextStepId, 'automation', false, 'live');
+					}
 					return;
 				}
 				return;
@@ -40770,12 +40819,12 @@ GmCXt.processActiveReq = function() {
 
 		if (GmCXt.isPlayer()) {
 			GmCXt.tourActivity = st.tourActivity || {};
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_tour_activity", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_tour_activity", {
 				tourActivity: GmCXt.tourActivity
 			});
 
 			GmCXt.playedTour = st.playedTour || [];
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_played_tour", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_played_tour", {
 				playedTour: GmCXt.playedTour
 			});
 		}
@@ -40824,8 +40873,8 @@ GmCXt.processGuides = function(d) {
 	if (GmCXt.checkPrecedence()) {
 
 		GmCXt.log(21, "Precedence check passed");
-		var tourAppId = d.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY.tour.application_id || d.testMe && d.testMe.message && d.testMe.message.tour.application_id || d.testMe && d.testMe.tour && d.testMe.tour.application_id;
-		var pubEnv = d.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY.tour.tour_settings.app_publish_env;
+		var tourAppId = d.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.tour.application_id || d.testMe && d.testMe.message && d.testMe.message.tour.application_id || d.testMe && d.testMe.tour && d.testMe.tour.application_id;
+		var pubEnv = d.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.tour.tour_settings.app_publish_env;
 		if ((tourAppId === GmCXt.activeAppId) ||
 			(GmCXt.isMirrorApp() && GmCXt.getBaseAppId() === GmCXt.activeAppId)) {
 			//ON APP ID MATCH
@@ -40911,13 +40960,13 @@ GmCXt.handleActiveStepReq = function(st) {
 
 	if (GmCXt.isDomainInActiveApp() && st.stepReq.appId === GmCXt.activeAppId) {
 		var req = st.stepReq;
-		var inlineReq = (req.action === 'mgPlayerJSTest_action:create_step,type:inline');
-		var tooltipReq = (req.action === 'mgPlayerJSTest_action:create_step,type:smartTip');
-		var fastSteps = (req.action === 'mgPlayerJSTest_action:create_step,type:quick');
+		var inlineReq = (req.action === 'mgPlayerJSTest2_action:create_step,type:inline');
+		var tooltipReq = (req.action === 'mgPlayerJSTest2_action:create_step,type:smartTip');
+		var fastSteps = (req.action === 'mgPlayerJSTest2_action:create_step,type:quick');
 
 		if (inlineReq || tooltipReq || fastSteps) {
 			var m = {
-				action: 'mgPlayerJSTest_action:get_current_tab_id'
+				action: 'mgPlayerJSTest2_action:get_current_tab_id'
 			};
 			GmCXt.sendMessageToBackgroundService(m, gotTabId);
 		} else {
@@ -40930,7 +40979,7 @@ GmCXt.handleActiveStepReq = function(st) {
 
 GmCXt.runPlayer = function(st) {
 
-	var pi = st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY;
+	var pi = st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY;
 
 	if (st.loopingCompleted && pi) {
 		pi = null;
@@ -40950,10 +40999,10 @@ GmCXt.runPlayer = function(st) {
 	if (pi) {
 		GmCXt.log(33, 'Page reloaded. Running player.');
 
-		GmCXt.playerI = st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY;
+		GmCXt.playerI = st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY;
 
 		GmCXt.storage().set({
-			'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+			'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 			'guide_play_event': st.guide_play_event
 		});
 
@@ -41018,6 +41067,13 @@ GmCXt.getContextGuides = function(eventType) {
 
 		GmCXt.pageTours = tours;
 
+		if(GmCXt.isAutomationRunning()) {
+			var automatedCurrentTour = GmCXt.getAutomatedCurrentTour();
+			GmCXt.log(37, "Automation running for guide ", automatedCurrentTour);
+			tours = tours.filter((tour) => tour.tour_id === automatedCurrentTour.tour_id);
+			GmCXt.log(37, "After automation filter Context tours left ", tours);
+		}
+
 		GmCXt.renderBeacons(GmCXt.filterBeaconGuides(tours));
 		GmCXt.renderSmartTips(GmCXt.filterSmartTipGuides(tours));
 
@@ -41034,7 +41090,7 @@ GmCXt.getContextGuides = function(eventType) {
 			GmCXt.startPageTracker();
 		}
 
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:refresh_current_page", {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:refresh_current_page", {
 			eventType: eventType
 		});
 	}
@@ -41078,18 +41134,18 @@ GmCXt.renderBeacon = function(tour, isPreview) {
 				data.timeout = Date.now() + findInIframe;
 
 				GmCXt.log(49, "FINDING BEACON only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:show_beacon_on_dom_element:target_frame_only', data);
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:show_beacon_on_dom_element:target_frame_only', data);
 
 				GmCXt.beaconIframe[_t.tour_id].timeout = GmCXt.timeout(function() {
 					if (!GmCXt.beaconIframe[_t.tour_id].frameId) {
 						GmCXt.log(49, "TIMED OUT in Target Frame..\nFINDING BEACON in all frames");
 						data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:show_beacon_on_dom_element', data);
+						GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:show_beacon_on_dom_element', data);
 					}
 				}, findInIframe + 500);
 			} else {
 				GmCXt.log(49, "FINDING BEACON in all frames");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:show_beacon_on_dom_element', data);
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:show_beacon_on_dom_element', data);
 			}
 		}
 	};
@@ -41159,7 +41215,7 @@ GmCXt.validateBeaconGuideRules = function(tours, isPreview, clickEvent) {
 			GmCXt.renderBeacon(result.tour, isPreview);
 		} else if (isPreview) {
 			GmCXt.openAppPanel("byPassRoute");
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:beacon_rules_donot_match");
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:beacon_rules_donot_match");
 		} else {
 			GmCXt.removeBeaconElement(result.tour);
 		}
@@ -41187,7 +41243,7 @@ GmCXt.renderBeacons = function(tours, isPreview, clickEvent) {
 GmCXt.removeBeaconElement = function(t) {
 	if (GmCXt.beaconsOnScreen.indexOf(parseInt(t.tour_id)) >= 0) {
 		GmCXt.log(48, "Rules Failed. Removing Beacon for " + t.tour_title, t);
-		GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:remove_beacon_job", {
+		GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:remove_beacon_job", {
 			tourId: t.tour_id
 		});
 	}
@@ -41402,13 +41458,13 @@ GmCXt.startFtTag = function(tour) {
 			data.timeout = Date.now() + findInIframe;
 
 			GmCXt.log(17, "FINDING TAG only in TARGET frame");
-			GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:find_tag_elm:target_frame_only', data);
+			GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:find_tag_elm:target_frame_only', data);
 
 			GmCXt.tagIframe[step.step_id].timeout = GmCXt.timeout(function() {
 				if (!GmCXt.tagIframe[step.step_id].frameId) {
 					GmCXt.log(17, "TIMED OUT in Target Frame..\nFINDING TAG in all frames");
 					data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-					GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:find_tag_elm', data);
+					GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:find_tag_elm', data);
 				}
 			}, findInIframe + 500);
 		}
@@ -41464,18 +41520,18 @@ GmCXt.startTooltip = function(tour, isPreview) {
 				data.timeout = Date.now() + findInIframe;
 
 				GmCXt.log(43, "FINDING TOOLTIP only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_dom_element_to_show_tooltip:target_frame_only', data);
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_dom_element_to_show_tooltip:target_frame_only', data);
 
 				GmCXt.smartTipIframe[step.step_id].timeout = GmCXt.timeout(function() {
 					if (!GmCXt.smartTipIframe[step.step_id].frameId) {
 						GmCXt.log(43, "TIMED OUT in Target Frame..\nFINDING TOOLTIP in all frames");
 						data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_dom_element_to_show_tooltip', data);
+						GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_dom_element_to_show_tooltip', data);
 					}
 				}, findInIframe + 500);
 			} else {
 				GmCXt.log(43, "FINDING TOOLTIP in all frames");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_dom_element_to_show_tooltip', data);
+				GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_dom_element_to_show_tooltip', data);
 			}
 		}
 	}
@@ -41546,7 +41602,7 @@ GmCXt.onTooltipMatch = function(r, isPreview) {
 
 		if (isPreview) {
 			GmCXt.openAppPanel("byPassRoute");
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:smartTip_rules_donot_match");
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:smartTip_rules_donot_match");
 		}
 	}
 };
@@ -41563,14 +41619,14 @@ GmCXt.filterOutSmarttipGuides = function(tours) {
 
 GmCXt.notifyCurrentPageGuideExistence = function() {
 	var m = {
-		action: 'mgPlayerJSTest_action:get_cguide_count',
+		action: 'mgPlayerJSTest2_action:get_cguide_count',
 		data: GmCXt.ifGuidesOnCurrentPage
 	};
 	GmCXt.msgToThisWin(m);
 };
 
 GmCXt.hideCurrentPageGuidesIndicator = function() {
-	mg$('.mgPlayerJSTest_start-button-cnt').hide();
+	mg$('.mgPlayerJSTest2_start-button-cnt').hide();
 	GmCXt.notifyCurrentPageGuideExistence();
 
 	GmCXt.showWidget();
@@ -41581,7 +41637,7 @@ GmCXt.showCurrentPageGuidesIndicator = function() {
 	if (GmCXt.FT.isPlayer) {
 		var ws = GmCXt.getWidgetSettings();
 
-		var wCnt = mg$('.mgPlayerJSTest_start-button-cnt');
+		var wCnt = mg$('.mgPlayerJSTest2_start-button-cnt');
 		if (GmCXt.ifGuidesOnCurrentPage && ws && ws.guide_count_on_widget) {
 
 			wCnt.css({
@@ -41620,7 +41676,7 @@ GmCXt.showNotifications = function(isPageClicked) {
 	GmCXt.log(10, "NOTIFICATION ENABLED guides", GmCXt.notificationGuides);
 
 	GmCXt.timeout(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:show_notifications', {
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:show_notifications', {
 			notifications: GmCXt.notificationGuides,
 			isAutomationRunning: GmCXt.isAutomationRunning(),
 			isPageClicked: isPageClicked
@@ -41727,7 +41783,7 @@ GmCXt.requestHandler.sendRequestForDomSelectTableRule = function(request) {
 		reSelect: request.data.reSelect
 	};
 
-	var action = "mgPlayerJSTest_action:started;task:select_new_table_for_dom_select_rule";
+	var action = "mgPlayerJSTest2_action:started;task:select_new_table_for_dom_select_rule";
 	GmCXt.sendMessageToAllWindows(action, data);
 };
 
@@ -41746,7 +41802,7 @@ GmCXt.requestHandler.sendRequestForDomSelectRule = function(request) {
 		reSelect: request.data.reSelect
 	};
 
-	var action = "mgPlayerJSTest_action:started;task:select_new_element_for_dom_select_rule";
+	var action = "mgPlayerJSTest2_action:started;task:select_new_element_for_dom_select_rule";
 	GmCXt.sendMessageToAllWindows(action, data);
 };
 
@@ -41768,7 +41824,7 @@ GmCXt.requestHandler.playLinkedGuide = function(data) {
 				GmCXt.playerI.startStepId = 0;
 
 				GmCXt.storage().set({
-					'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
+					'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
 					'guide_play_event': GmCXt.guidePlayTracker
 				}).then(function() {
 					GmCXt.playTour();
@@ -41808,7 +41864,7 @@ GmCXt.requestHandler.playGuide = function(data) {
 	var PI = GmCXt.playerI;
 
 	GmCXt.storage().set({
-		'mgPlayerJSTest_GM_PLAYER_STORAGE_KEY': PI,
+		'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': PI,
 		'guide_play_event': GmCXt.guidePlayTracker
 	}).then(function() {
 		GmCXt.playTour();
@@ -41861,7 +41917,7 @@ GmCXt.requestHandler.playAutoTour = function() {
 GmCXt.requestHandler.newIframeFound = function(iframeIdentifier) {
 
 	if (GmCXt.DomSelectorToolActive === true) {
-		GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:started;task:select_new_dom_element', {
+		GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:started;task:select_new_dom_element', {
 			enableNavigateTool: GmCXt.enableNavigateTool
 		});
 	}
@@ -41900,7 +41956,7 @@ GmCXt.requestHandler.newIframeFound = function(iframeIdentifier) {
 		GmCXt.iframeCount++;
 	}
 
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:task:init_new_iframe", d);
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:task:init_new_iframe", d);
 
 	//Gets beacon tour data and sends message to render beacons
 	GmCXt.sendMessageToRenderBeacons();
@@ -41928,12 +41984,12 @@ GmCXt.addWidgetIcon = function() {
 	return new Promise(function(resolve, reject) {
 		GmCXt.getWidgetIcon().then(function(wUrl) {
 
-			var str = "<wmgPlayerJSTest_ style='display:none' " +
-				" id='mgPlayerJSTest_btn-start-button' class='mgPlayerJSTest_start-button " + GmCXt.getStartBtnClass() + "'> " +
-				" <wmgPlayerJSTest_ class='mgPlayerJSTest_start-button-cnt' ></wmgPlayerJSTest_>" +
-				" <img src='" + wUrl + "' class='mgPlayerJSTest_custom-image' " +
+			var str = "<wmgPlayerJSTest2_ style='display:none' " +
+				" id='mgPlayerJSTest2_btn-start-button' class='mgPlayerJSTest2_start-button " + GmCXt.getStartBtnClass() + "'> " +
+				" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_start-button-cnt' ></wmgPlayerJSTest2_>" +
+				" <img src='" + wUrl + "' class='mgPlayerJSTest2_custom-image' " +
 				" err-src='" + GmCXt.getDefaultIcon() + "'/> " +
-				" </wmgPlayerJSTest_>";
+				" </wmgPlayerJSTest2_>";
 
 			mg$("html").append(str);
 			GmCXt.positionWidget();
@@ -41950,11 +42006,11 @@ GmCXt.addChatIcon = function() {
 	return new Promise(function(resolve, reject) {
 		GmCXt.getChatIcon().then(function(wUrl) {
 
-			var str = "<wmgPlayerJSTest_ style='display:none' " +
-				" id='mgPlayerJSTest_btn-chat-button' class='mgPlayerJSTest_chat-button " + GmCXt.getStartBtnClass() + "'> " +
-				" <img src='" + wUrl + "' class='mgPlayerJSTest_custom-image' " +
+			var str = "<wmgPlayerJSTest2_ style='display:none' " +
+				" id='mgPlayerJSTest2_btn-chat-button' class='mgPlayerJSTest2_chat-button " + GmCXt.getStartBtnClass() + "'> " +
+				" <img src='" + wUrl + "' class='mgPlayerJSTest2_custom-image' " +
 				" err-src='" + GmCXt.getChatDefaultIcon() + "'/> " +
-				" </wmgPlayerJSTest_>";
+				" </wmgPlayerJSTest2_>";
 
 			mg$("html").append(str);
 			GmCXt.positionChatIcon();
@@ -41968,7 +42024,7 @@ GmCXt.addChatIcon = function() {
 
 GmCXt.addWidgetIconEvents = function() {
 
-	dragElement(document.getElementById("mgPlayerJSTest_btn-start-button"));
+	dragElement(document.getElementById("mgPlayerJSTest2_btn-start-button"));
 
 	function dragElement(elmnt) {
 		var pos1 = 0,
@@ -42033,7 +42089,7 @@ GmCXt.addWidgetIconEvents = function() {
 
 GmCXt.addChatIconEvents = function() {
 
-	dragElement(document.getElementById("mgPlayerJSTest_btn-chat-button"));
+	dragElement(document.getElementById("mgPlayerJSTest2_btn-chat-button"));
 
 	function dragElement(elmnt) {
 		var pos1 = 0,
@@ -42137,7 +42193,7 @@ GmCXt.showWidget = function() {
 
 		if (widget.length) {
 			GmCXt.getWidgetIcon().then(function(wURl) {
-				mg$(".mgPlayerJSTest_start-button img").attr('src', wURl);
+				mg$(".mgPlayerJSTest2_start-button img").attr('src', wURl);
 				show();
 			});
 
@@ -42180,7 +42236,7 @@ GmCXt.showChatIcon = function() {
 
 		if (chat.length) {
 			GmCXt.getChatIcon().then(function(wURl) {
-				mg$("#mgPlayerJSTest_btn-chat-button img").attr('src', wURl);
+				mg$("#mgPlayerJSTest2_btn-chat-button img").attr('src', wURl);
 				show();
 			});
 
@@ -42320,7 +42376,7 @@ GmCXt.positionChatIcon = function() {
 GmCXt.requestHandler.selectBeaconPosition = function(request) {
 	GmCXt.hideWidgetIcon();
 
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:started;task:select_dom_element_for_beacon");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:started;task:select_dom_element_for_beacon");
 	GmCXt.toggleStepSelectionToolbar(true);
 };
 
@@ -42346,7 +42402,7 @@ GmCXt.requestHandler.closeSlideshow = function() {
 		GmCXt.showPushOptions(options).show();
 
 	} else {
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:stop_slideshow');
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:stop_slideshow');
 
 		if (pi) {
 			GmCXt.markAutoLaunchTourDoNotShow(pi.tour);
@@ -42361,7 +42417,7 @@ GmCXt.requestHandler.closeSlideshow = function() {
 
 GmCXt.requestHandler.pageClickForGuide = function(msg) {
 	var e = msg.data;
-	var stepPlaying = mg$('.mgPlayerJSTest_preview-step-popup-container').length;
+	var stepPlaying = mg$('.mgPlayerJSTest2_preview-step-popup-container').length;
 
 	if (GmCXt.playerI && stepPlaying && GmCXt.enforceGuideMePopup !== true && !GmCXt.isSurveyVisible) {
 
@@ -42450,12 +42506,12 @@ GmCXt.requestHandler.playVideo = function(data) {
 
 	GmCXt.playerI = data;
 
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_video');
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_video');
 };
 
 GmCXt.requestHandler.videoAssignmentPlayed = function() {
 
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:lms_video_assignment_complete');
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:lms_video_assignment_complete');
 
 	GmCXt.showSmartTips();
 	GmCXt.showBeacons();
@@ -42481,7 +42537,7 @@ GmCXt.playTour = function(data) {
 			return step.step_type !== 'survey';
 		});
 		GmCXt.openAppPanel("playSlideShow");
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_slideshow', {
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_slideshow', {
 			mode: mode
 		});
 
@@ -42512,7 +42568,7 @@ GmCXt.requestHandler.findOtherTooltips = function(message) {
 	data.timeout = Date.now() + parseInt(GmCXt.t.tooltipTimeout);
 	data.findOther = true;
 
-	var action = 'mgPlayerJSTest_action:started;task:select_dom_element_tooltips';
+	var action = 'mgPlayerJSTest2_action:started;task:select_dom_element_tooltips';
 	GmCXt.sendMessageToAllWindows(action, data);
 };
 
@@ -42579,12 +42635,12 @@ GmCXt.requestHandler.handleEventSelectDOMElement = function(event, message) {
 			d.element.position = GmCXt.addFrameOffset(event, pos);
 		}
 
-		if (message.action == 'mgPlayerJSTest_action:completed;task:select_existing_dom_element') {
+		if (message.action == 'mgPlayerJSTest2_action:completed;task:select_existing_dom_element') {
 
 			if (message.status === GmCXt.ELEMENT_FOUND && !d.watch) {
 				var visible = GmCXt.checkVisible(d.element.position);
 				if (!visible)
-					GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:bring_element_in_viewport', d);
+					GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:bring_element_in_viewport', d);
 			}
 
 			if (GmCXt.isEmpty(GmCXt.playerI)) return;
@@ -42607,7 +42663,7 @@ GmCXt.requestHandler.handleEventSelectDOMElement = function(event, message) {
 							if (d.posChanged) {
 								GmCXt.log(33, "POS CHANGED element");
 								render = true;
-							} else if (mg$('.mgPlayerJSTest_preview-step-popup-container').is(":hidden")) {
+							} else if (mg$('.mgPlayerJSTest2_preview-step-popup-container').is(":hidden")) {
 								GmCXt.log(33, "SHOW AGAIN. Step popup is hidden");
 								render = true;
 							}
@@ -42633,7 +42689,7 @@ GmCXt.requestHandler.handleEventSelectDOMElement = function(event, message) {
 };
 
 GmCXt.requestHandler.enableNextButton = function(message) {
-	mg$(".mgPlayerJSTest_play-step-next").css({
+	mg$(".mgPlayerJSTest2_play-step-next").css({
 		"opacity": 1,
 		"pointer-events": "initial"
 	});
@@ -42649,7 +42705,7 @@ GmCXt.getTooltipText = function(message) {
 		// From v1.3.27, added support multiple validations on a tooltip
 		if (opts.rules && opts.rules.message) {
 
-			mg$('.mgPlayerJSTest_smarttip-valid-' + message.stepId).hide();
+			mg$('.mgPlayerJSTest2_smarttip-valid-' + message.stepId).hide();
 
 			for (var rule in opts.rules) {
 
@@ -42671,7 +42727,7 @@ GmCXt.getTooltipText = function(message) {
 
 GmCXt.requestHandler.setBeaconPosition = function(m, ev) {
 	var css_ = GmCXt.addFrameOffset(ev, m.css_);
-	var beaconObj = mg$("#mgPlayerJSTest_beacon-icon-" + m.tourId);
+	var beaconObj = mg$("#mgPlayerJSTest2_beacon-icon-" + m.tourId);
 
 	if (beaconObj.length) {
 		beaconObj.css(css_);
@@ -42689,12 +42745,12 @@ GmCXt.requestHandler.setBeaconPosition = function(m, ev) {
 			beaconImgUrl = GmCXt.conf.staticContentPath + beaconIcon;
 		}
 
-		var beaconClass = "mgPlayerJSTest_beacon-icon mgPlayerJSTest_beacon-icon-tour-" + m.tourId;
+		var beaconClass = "mgPlayerJSTest2_beacon-icon mgPlayerJSTest2_beacon-icon-tour-" + m.tourId;
 		if (GmCXt.beaconsAreHidden && !m.isPreview) {
-			beaconClass += " mgPlayerJSTest_hidden";
+			beaconClass += " mgPlayerJSTest2_hidden";
 		}
 
-		if (m.isPreview) beaconClass += " mgPlayerJSTest_preview-beacon";
+		if (m.isPreview) beaconClass += " mgPlayerJSTest2_preview-beacon";
 
 		var titleAlign = m.align;
 		if (m.requestData.beaconSettings.beaconMsgPosition) {
@@ -42704,21 +42760,21 @@ GmCXt.requestHandler.setBeaconPosition = function(m, ev) {
 		var t = GmCXt.escapeHtml(m.tourTitle);
 		var c = GmCXt.singleLineTitle(t);
 
-		var html_ = "<wmgPlayerJSTest_ id='mgPlayerJSTest_beacon-icon-" + m.tourId +
+		var html_ = "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_beacon-icon-" + m.tourId +
 			"' class='" + beaconClass + "'>" +
-			"   <img src='" + beaconImgUrl + "' class='mgPlayerJSTest_custom-image' />" +
-			"   <div class='mgPlayerJSTest_tour-title-on-beacon " + c + " mgPlayerJSTest_tour-title-on-beacon-" +
+			"   <img src='" + beaconImgUrl + "' class='mgPlayerJSTest2_custom-image' />" +
+			"   <div class='mgPlayerJSTest2_tour-title-on-beacon " + c + " mgPlayerJSTest2_tour-title-on-beacon-" +
 			titleAlign + "'>" +
 			t +
 			"</div>" +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>";
 
 		mg$(html_)
 			.css(css_)
 			.appendTo('html:first')
 			.on('click', function() {
 				if (!m.isPreview) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_tour;event:beacon_click', {
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_tour;event:beacon_click', {
 						tourId: m.tourId,
 						userKey: m.userKey
 					});
@@ -42743,7 +42799,7 @@ GmCXt.requestHandler.setBeaconPosition = function(m, ev) {
 };
 
 GmCXt.requestHandler.toggleBeacon = function(m) {
-	var beaconImg = mg$(".mgPlayerJSTest_beacon-icon.mgPlayerJSTest_beacon-icon-tour-" + m.tourId);
+	var beaconImg = mg$(".mgPlayerJSTest2_beacon-icon.mgPlayerJSTest2_beacon-icon-tour-" + m.tourId);
 	if (m.remove) {
 		mg$(beaconImg).remove();
 	} else if (!m.show) {
@@ -42775,15 +42831,15 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 	var left = m.rect.left,
 		top = m.rect.top,
 		zIndex = m.zIndex,
-		id = 'mgPlayerJSTest_smarttip-' + m.stepId,
-		className = 'smarttip-guidance-msg mgPlayerJSTest_hover-smarttip-msg mgPlayerJSTest_smarttip-tour-' + m.step.tour_id;
+		id = 'mgPlayerJSTest2_smarttip-' + m.stepId,
+		className = 'smarttip-guidance-msg mgPlayerJSTest2_hover-smarttip-msg mgPlayerJSTest2_smarttip-tour-' + m.step.tour_id;
 
 	if (m.derivedType === 'validation') {
-		className += ' mgPlayerJSTest_smarttip-valid';
-		className += ' mgPlayerJSTest_smarttip-valid-' + m.stepId;
+		className += ' mgPlayerJSTest2_smarttip-valid';
+		className += ' mgPlayerJSTest2_smarttip-valid-' + m.stepId;
 		left = m.left;
 		top = m.top - m.scrollTop;
-		id = 'mgPlayerJSTest_smarttip-valid-' + m.stepId;
+		id = 'mgPlayerJSTest2_smarttip-valid-' + m.stepId;
 	}
 
 	if (m.tipPosition) {
@@ -42791,16 +42847,16 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 	}
 
 	if (m.isPreview)
-		className += ' mgPlayerJSTest_preview-smarttip';
+		className += ' mgPlayerJSTest2_preview-smarttip';
 
-	className += ' mgPlayerJSTest_guidence-message-' + m.tourId;
+	className += ' mgPlayerJSTest2_guidence-message-' + m.tourId;
 
 	if (m.options.type == 'disableElement') {
 		mg$('#' + id + "-alert").remove();
 	} else {
 		mg$('#' + id).remove();
 	}
-	mg$('.mgPlayerJSTest_smarttip-hover-element').hide();
+	mg$('.mgPlayerJSTest2_smarttip-hover-element').hide();
 
 	if (ev) {
 		var obj = {
@@ -42827,15 +42883,15 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 			alignment = m.options.rules.alignment;
 
 		if (alignment !== "top" || alignment !== "bottom")
-			className += " smarttip-guidance-msg-" + alignment + " mgPlayerJSTest_smarttip-valid-" + alignment;
+			className += " smarttip-guidance-msg-" + alignment + " mgPlayerJSTest2_smarttip-valid-" + alignment;
 		else if (alignment !== "bottom")
-			className += " mgPlayerJSTest_smarttip ";
+			className += " mgPlayerJSTest2_smarttip ";
 
-		className += " mgPlayerJSTest_smarttip-valid-" + alignment;
+		className += " mgPlayerJSTest2_smarttip-valid-" + alignment;
 	}
 
 	if (m.actionType === 'hover') {
-		className += " mgPlayerJSTest_smarttip-hover-element";
+		className += " mgPlayerJSTest2_smarttip-hover-element";
 	}
 
 	var popupSize = m.options.popupSize;
@@ -42851,16 +42907,16 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 	var tTheme = {};
 
 	if (m.derivedType !== 'validation') {
-		tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest_');
-		var popupFooter = "<wmgPlayerJSTest_ class='mgPlayerJSTest_smarttip-popup-footer mgPlayerJSTest_width-100 mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center mgPlayerJSTest_justify-content-flex-start'>" +
-			"                 <img class='mgPlayerJSTest_custom-image' src='" + GmCXt.brandLogo() + "'>" +
-			"              </wmgPlayerJSTest_>";
+		tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest2_');
+		var popupFooter = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_smarttip-popup-footer mgPlayerJSTest2_width-100 mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center mgPlayerJSTest2_justify-content-flex-start'>" +
+			"                 <img class='mgPlayerJSTest2_custom-image' src='" + GmCXt.brandLogo() + "'>" +
+			"              </wmgPlayerJSTest2_>";
 	}
 
 	if (m.options.type == 'disableElement') {
 
 		id = id + '-alert';
-		mg$("<wmgPlayerJSTest_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSTest_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSTest_>")
+		mg$("<wmgPlayerJSTest2_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSTest2_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSTest2_>")
 			.css({
 				left: left,
 				zIndex: zIndex,
@@ -42868,7 +42924,7 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 			})
 			.appendTo('html');
 	} else {
-		mg$("<wmgPlayerJSTest_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSTest_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSTest_>")
+		mg$("<wmgPlayerJSTest2_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSTest2_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSTest2_>")
 			.css({
 				left: left,
 				zIndex: zIndex,
@@ -42876,16 +42932,16 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 			})
 			.appendTo('html');
 	}
-	GmCXt.imageSizeStyle('#' + id + ' .mgPlayerJSTest_hover-smarttip-msg-inner img');
+	GmCXt.imageSizeStyle('#' + id + ' .mgPlayerJSTest2_hover-smarttip-msg-inner img');
 
-	GmCXt.zoomImage(text, ".mgPlayerJSTest_hover-smarttip-msg-inner");
+	GmCXt.zoomImage(text, ".mgPlayerJSTest2_hover-smarttip-msg-inner");
 
 	if (text.indexOf('target = "gssPlayGuide"' !== -1)) {
-		GmCXt.setLinkGuidePlay(text, ".mgPlayerJSTest_hover-smarttip-msg-inner");
+		GmCXt.setLinkGuidePlay(text, ".mgPlayerJSTest2_hover-smarttip-msg-inner");
 	}
 
 	if (GmCXt.isElectron()) {
-		GmCXt.setLinkClickhandler(text, ".mgPlayerJSTest_hover-smarttip-msg-inner");
+		GmCXt.setLinkClickhandler(text, ".mgPlayerJSTest2_hover-smarttip-msg-inner");
 	}
 
 	if (m.zIndex) {
@@ -42897,10 +42953,10 @@ GmCXt.requestHandler.showSmarttip = function(m, ev) {
 	if (ev) {
 		elArea = GmCXt.addFrameOffset(ev, elArea);
 
-		if (m.tipPosition !== 'mgPlayerJSTest_absolute-position')
+		if (m.tipPosition !== 'mgPlayerJSTest2_absolute-position')
 			elArea.top = elArea.top - m.scrollTop;
 
-	} else if (m.tipPosition === 'mgPlayerJSTest_absolute-position') {
+	} else if (m.tipPosition === 'mgPlayerJSTest2_absolute-position') {
 		elArea.top = elArea.top + m.scrollTop;
 		if (alignment === "bottom")
 			m.highlightedArea.top += 8;
@@ -42985,7 +43041,7 @@ GmCXt.sendStorageResponseToApp = function(res, id) {
 		"id": id,
 		"data": res
 	};
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:receive_lxp_storage', d);
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:receive_lxp_storage', d);
 };
 
 GmCXt.removeLxpStorageAll = function() {
@@ -42998,53 +43054,53 @@ GmCXt.removeLxpStorageAll = function() {
 };
 
 GmCXt.addOverlay = function() {
-	var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_global-black-overlay' style='display:none' > </wmgPlayerJSTest_>";
+	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_global-black-overlay' style='display:none' > </wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 };
 
 GmCXt.hideResumePopup = function() {
-	mg$('.mgPlayerJSTest_play-pause-toolbar').hide();
+	mg$('.mgPlayerJSTest2_play-pause-toolbar').hide();
 	GmCXt.setResumeWinDisplayed(false);
 };
 
 GmCXt.addPauseGuideHtml = function() {
-	var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-toolbar' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-toolbar-head'>" +
-		"<wmgPlayerJSTest_ id='mgPlayerJSTest_play-pause-toolbar-title' class='mgPlayerJSTest_play-pause-toolbar-title'>" + GmCXt.label.resumeGuide + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_action-icons-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-position-top'>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-position-bottom'>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-toolbar-close'>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-toolbar-inner mgPlayerJSTest_inline-block-vm'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-pause-toolbar-resume mgPlayerJSTest_inline-block-vm'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-resume-icon'>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ id='mgPlayerJSTest_play-pause-resume-message' class='mgPlayerJSTest_label-resume mgPlayerJSTest_inline-block-vm'>" + GmCXt.label.resume + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-toolbar' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-toolbar-head'>" +
+		"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_play-pause-toolbar-title' class='mgPlayerJSTest2_play-pause-toolbar-title'>" + GmCXt.label.resumeGuide + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_action-icons-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-position-top'>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-position-bottom'>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-toolbar-close'>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-toolbar-inner mgPlayerJSTest2_inline-block-vm'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-pause-toolbar-resume mgPlayerJSTest2_inline-block-vm'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-resume-icon'>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_play-pause-resume-message' class='mgPlayerJSTest2_label-resume mgPlayerJSTest2_inline-block-vm'>" + GmCXt.label.resume + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 
-	mg$(".mgPlayerJSTest_play-pause-position-top").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSTest_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSTest_play-pause-toolbar-close").html(GmCXt.svgs.close_resume);
-	mg$(".mgPlayerJSTest_toolbar-resume-icon").html(GmCXt.svgs.resume);
+	mg$(".mgPlayerJSTest2_play-pause-position-top").html(GmCXt.svgs.down_arrow);
+	mg$(".mgPlayerJSTest2_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
+	mg$(".mgPlayerJSTest2_play-pause-toolbar-close").html(GmCXt.svgs.close_resume);
+	mg$(".mgPlayerJSTest2_toolbar-resume-icon").html(GmCXt.svgs.resume);
 
-	mg$('.mgPlayerJSTest_play-pause-toolbar-resume').on("click", function() {
+	mg$('.mgPlayerJSTest2_play-pause-toolbar-resume').on("click", function() {
 		GmCXt.hideResumePopup();
 
-		GmCXt.storage().get(['mgPlayerJSTest_GM_PLAYER_STORAGE_KEY', 'guide_play_event']).then(function(result) {
+		GmCXt.storage().get(['mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY', 'guide_play_event']).then(function(result) {
 
 			GmCXt.guidePlayTracker = result.guide_play_event || {};
 
-			if (result.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY) {
+			if (result.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY) {
 
-				GmCXt.playerI.currentStepId = result.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY.lastPlayedStepId;
+				GmCXt.playerI.currentStepId = result.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY.lastPlayedStepId;
 
 				GmCXt.playerI.guideState = 'live';
 				GmCXt.tourPlayerI.guideState = 'live';
@@ -43054,31 +43110,31 @@ GmCXt.addPauseGuideHtml = function() {
 		});
 	});
 
-	mg$('.mgPlayerJSTest_play-pause-toolbar-close').on("click", function() {
+	mg$('.mgPlayerJSTest2_play-pause-toolbar-close').on("click", function() {
 		GmCXt.hideResumePopup();
 		GmCXt.displayWidget();
 
 		if (GmCXt.tourPlayerI) GmCXt.tourPlayerI.stop();
 	});
 
-	mg$('.mgPlayerJSTest_play-pause-position-top').on('click', function(e) {
-		mg$('.mgPlayerJSTest_play-pause-position-top').hide();
-		mg$('.mgPlayerJSTest_play-pause-position-bottom').show();
-		mg$('.mgPlayerJSTest_play-pause-position-bottom').css({
+	mg$('.mgPlayerJSTest2_play-pause-position-top').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_play-pause-position-top').hide();
+		mg$('.mgPlayerJSTest2_play-pause-position-bottom').show();
+		mg$('.mgPlayerJSTest2_play-pause-position-bottom').css({
 			'display': 'inline-block'
 		});
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:position_play_pause_toolbar', {
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:position_play_pause_toolbar', {
 			position: 'top'
 		});
 	});
 
-	mg$('.mgPlayerJSTest_play-pause-position-bottom').on('click', function(e) {
-		mg$('.mgPlayerJSTest_play-pause-position-bottom').hide();
-		mg$('.mgPlayerJSTest_play-pause-position-top').show();
-		mg$('.mgPlayerJSTest_play-pause-position-top').css({
+	mg$('.mgPlayerJSTest2_play-pause-position-bottom').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_play-pause-position-bottom').hide();
+		mg$('.mgPlayerJSTest2_play-pause-position-top').show();
+		mg$('.mgPlayerJSTest2_play-pause-position-top').css({
 			'display': 'inline-block'
 		});
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:position_play_pause_toolbar', {
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:position_play_pause_toolbar', {
 			position: 'bottom'
 		});
 	});
@@ -43086,17 +43142,17 @@ GmCXt.addPauseGuideHtml = function() {
 
 GmCXt.addImagePopHtml = function() {
 	var html =
-		"<wmgPlayerJSTest_ id='mgPlayerJSTest_image_popup' class='mgPlayerJSTest_image-popup' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_close-img-popup'>&times;</wmgPlayerJSTest_>" +
-		"<img class='mgPlayerJSTest_modal-content mgPlayerJSTest_custom-image' id='mgPlayerJSTest_img_desc'>" +
-		"</wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_image_popup' class='mgPlayerJSTest2_image-popup' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_close-img-popup'>&times;</wmgPlayerJSTest2_>" +
+		"<img class='mgPlayerJSTest2_modal-content mgPlayerJSTest2_custom-image' id='mgPlayerJSTest2_img_desc'>" +
+		"</wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 };
 
 GmCXt.addStepPreviewHtml = function(popupObj) {
 	var t = popupObj.tour;
 	var a = popupObj.settings.automation;
-	var audioIcon = "<span class='mgPlayerJSTest_popup-audio-on mgPlayerJSTest_popup-audio-icon'></span>";
+	var audioIcon = "<span class='mgPlayerJSTest2_popup-audio-on mgPlayerJSTest2_popup-audio-icon'></span>";
 	var os = GmCXt.getStepSettings();
 
 	var popupDesign = os.popupDesign;
@@ -43104,129 +43160,129 @@ GmCXt.addStepPreviewHtml = function(popupObj) {
 		GmCXt.getAppSetting("userLabels").btnPrev === GmCXt.engLbls.defaultBtnPrev) ? GmCXt.label.btnPrevious : GmCXt.label.btnPrev);
 
 	var html =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_preview-step-popup-container mgPlayerJSTest_step-popup' id='mgPlayerJSTest_preview-step-popup-container' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-header'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-s-num mgPlayerJSTest_inline-block-vm'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-ctrls-wrapper mgPlayerJSTest_position-relative' > ";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_preview-step-popup-container mgPlayerJSTest2_step-popup' id='mgPlayerJSTest2_preview-step-popup-container' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-header'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-s-num mgPlayerJSTest2_inline-block-vm'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-ctrls-wrapper mgPlayerJSTest2_position-relative' > ";
 
 	if (a.hasHumanInteraction) {
-		html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_play-step-automation-indicator-wrapper' class='mgPlayerJSTest_play-step-automation-indicator-wrapper'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-user-icon'>" +
+		html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_play-step-automation-indicator-wrapper' class='mgPlayerJSTest2_play-step-automation-indicator-wrapper'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-user-icon'>" +
 			"<img src='" + GmCXt.getBaseUrl('common/icons/mg-user-icon.png') + "'/>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 	} else {
-		html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_play-step-automation-indicator-wrapper' class='mgPlayerJSTest_play-step-automation-indicator-wrapper'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-auto-gear mgPlayerJSTest_inline-block-vm' id='mgPlayerJSTest_play_step_auto_gear'></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_automation-progress-wrapper'>" +
-			"<wmgPlayerJSTest_ id='mgPlayerJSTest_auto-progress-1' class='mgPlayerJSTest_automation-progress mgPlayerJSTest_inline-block-vm''></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ id='mgPlayerJSTest_auto-progress-2' class='mgPlayerJSTest_automation-progress mgPlayerJSTest_inline-block-vm''></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ id='mgPlayerJSTest_auto-progress-3' class='mgPlayerJSTest_automation-progress mgPlayerJSTest_inline-block-vm''></wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_play-step-automation-indicator-wrapper' class='mgPlayerJSTest2_play-step-automation-indicator-wrapper'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-auto-gear mgPlayerJSTest2_inline-block-vm' id='mgPlayerJSTest2_play_step_auto_gear'></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_automation-progress-wrapper'>" +
+			"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_auto-progress-1' class='mgPlayerJSTest2_automation-progress mgPlayerJSTest2_inline-block-vm''></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_auto-progress-2' class='mgPlayerJSTest2_automation-progress mgPlayerJSTest2_inline-block-vm''></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_auto-progress-3' class='mgPlayerJSTest2_automation-progress mgPlayerJSTest2_inline-block-vm''></wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
-	html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-drag mgPlayerJSTest_message-popup-drag mgPlayerJSTest_inline-block-vm mgPlayerJSTest_play-step-popup-icon-common' aria-label='step popup drag button' id='mgPlayerJSTest_play_step_popup_drag'>" +
-		"<span id='mgPlayerJSTest_play-step-popup-drag-icon' ></span>" +
-		"</wmgPlayerJSTest_>";
+	html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-drag mgPlayerJSTest2_message-popup-drag mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_play-step-popup-icon-common' aria-label='step popup drag button' id='mgPlayerJSTest2_play_step_popup_drag'>" +
+		"<span id='mgPlayerJSTest2_play-step-popup-drag-icon' ></span>" +
+		"</wmgPlayerJSTest2_>";
 
 	var audioPreference = GmCXt.getAudioPreference();
 
 	if (!audioPreference || GmCXt.isPageReloaded) {
-		audioIcon = "<span class='mgPlayerJSTest_popup-audio-off mgPlayerJSTest_popup-audio-icon'></span>";
+		audioIcon = "<span class='mgPlayerJSTest2_popup-audio-off mgPlayerJSTest2_popup-audio-icon'></span>";
 	}
 
 	if (GmCXt.FT.audio) {
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-audio mgPlayerJSTest_inline-block-vm mgPlayerJSTest_play-step-popup-icon-common' id='mgPlayerJSTest_play_step_audio'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_audio-pop-icons' >" +
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-audio mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_play-step-popup-icon-common' id='mgPlayerJSTest2_play_step_audio'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_audio-pop-icons' >" +
 			audioIcon +
-			"</wmgPlayerJSTest_>" +
-			"<iframe id='mgPlayerJSTest_play-step-audio-iframe' title='Guideme step audio iframe'  class='mgPlayerJSTest_play-step-audio-iframe' src='" + GmCXt.getBasePath('common/audio/audio.html') + "' ></iframe>" +
-			"</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-audio-loader mgPlayerJSTest_inline-block-vm'>" +
-			"<img src='" + GmCXt.loader() + "' />" + "</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>" +
+			"<iframe id='mgPlayerJSTest2_play-step-audio-iframe' title='Guideme step audio iframe'  class='mgPlayerJSTest2_play-step-audio-iframe' src='" + GmCXt.getBasePath('common/audio/audio.html') + "' ></iframe>" +
+			"</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-audio-loader mgPlayerJSTest2_inline-block-vm'>" +
+			"<img src='" + GmCXt.loader() + "' />" + "</wmgPlayerJSTest2_>";
 	}
 	if (GmCXt.FT.creatorApp && t && !t.is_published && !(GmCXt.isDesktop())) {
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-edit mgPlayerJSTest_inline-block-vm mgPlayerJSTest_play-step-popup-icon-common' id ='mgPlayerJSTest_play_step_popup_edit'>" +
-			"<span id='mgPlayerJSTest_play-step-popup-edit-icon' class='mgPlayerJSTest_play-step-popup-edit-icon'></span>" +
-			"</wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-edit mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_play-step-popup-icon-common' id ='mgPlayerJSTest2_play_step_popup_edit'>" +
+			"<span id='mgPlayerJSTest2_play-step-popup-edit-icon' class='mgPlayerJSTest2_play-step-popup-edit-icon'></span>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
 	if (!GmCXt.isAutomationRunning()) {
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-close mgPlayerJSTest_inline-block-vm mgPlayerJSTest_play-step-popup-icon-common' aria-label='step popup close button' id='mgPlayerJSTest_play_step_popup_close'>" +
-			"<span id='mgPlayerJSTest_play-step-popup-close-svg' class='mgPlayerJSTest_play-step-popup-close-svg' ></span>" +
-			"</wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-close mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_play-step-popup-icon-common' aria-label='step popup close button' id='mgPlayerJSTest2_play_step_popup_close'>" +
+			"<span id='mgPlayerJSTest2_play-step-popup-close-svg' class='mgPlayerJSTest2_play-step-popup-close-svg' ></span>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
-	html += "</wmgPlayerJSTest_>";
+	html += "</wmgPlayerJSTest2_>";
 
-	html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-content-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-s-title mgPlayerJSTest_step-title mgPlayerJSTest_inline-block-vm'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-description'></wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+	html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-content-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-s-title mgPlayerJSTest2_step-title mgPlayerJSTest2_inline-block-vm'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-description'></wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
-	html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-footer'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-popup-logo mgPlayerJSTest_inline-block-vm'>" +
-		"<img src='' class='mgPlayerJSTest_custom-image'  alt='" + GmCXt.label.brandLogo + "'/>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-navigation mgPlayerJSTest_inline-block-vm'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-prev mgPlayerJSTest_inline-block-vm' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSTest_play_step_prev'>" +
-		"<span class='mgPlayerJSTest_width-auto mgPlayerJSTest_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-next mgPlayerJSTest_play-step-next-done mgPlayerJSTest_inline-block-vm' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSTest_play_step_next'>" +
-		"<span class='mgPlayerJSTest_width-auto mgPlayerJSTest_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-next mgPlayerJSTest_play-step-next-done mgPlayerJSTest_play-step mgPlayerJSTest_inline-block-vm' aria-label='step popup done button' id='mgPlayerJSTest_play_step_next_done' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
-		"<span id='mgPlayerJSTest_play-step-next-done-svg' class='mgPlayerJSTest_width-auto'></span>" +
-		"</wmgPlayerJSTest_>";
+	html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-footer'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-popup-logo mgPlayerJSTest2_inline-block-vm'>" +
+		"<img src='' class='mgPlayerJSTest2_custom-image'  alt='" + GmCXt.label.brandLogo + "'/>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-navigation mgPlayerJSTest2_inline-block-vm'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-prev mgPlayerJSTest2_inline-block-vm' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSTest2_play_step_prev'>" +
+		"<span class='mgPlayerJSTest2_width-auto mgPlayerJSTest2_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-next mgPlayerJSTest2_play-step-next-done mgPlayerJSTest2_inline-block-vm' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSTest2_play_step_next'>" +
+		"<span class='mgPlayerJSTest2_width-auto mgPlayerJSTest2_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-next mgPlayerJSTest2_play-step-next-done mgPlayerJSTest2_play-step mgPlayerJSTest2_inline-block-vm' aria-label='step popup done button' id='mgPlayerJSTest2_play_step_next_done' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
+		"<span id='mgPlayerJSTest2_play-step-next-done-svg' class='mgPlayerJSTest2_width-auto'></span>" +
+		"</wmgPlayerJSTest2_>";
 
 	if (!GmCXt.isAutomationRunning()) {
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_play-step-pause mgPlayerJSTest_inline-block-vm' aria-label='step popup pause button' id='mgPlayerJSTest_play_step_pause' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
-			"<span id='mgPlayerJSTest_play-step-pause-svg' class='mgPlayerJSTest_inline-block-vt mgPlayerJSTest_width-auto'></span>" +
-			"</wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_play-step-pause mgPlayerJSTest2_inline-block-vm' aria-label='step popup pause button' id='mgPlayerJSTest2_play_step_pause' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
+			"<span id='mgPlayerJSTest2_play-step-pause-svg' class='mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_width-auto'></span>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
-	html += "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='preview-step-popup-navigation-wrapper mgPlayerJSTest_inline-block-vt popup-classic-design-navigation'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-classic-navigation-next mgPlayerJSTest_play-step-next mgPlayerJSTest_play-step-next-done mgPlayerJSTest_play-step mgPlayerJSTest_play-step-classic-done mgPlayerJSTest_inline-block-vt' aria-label='step popup " + GmCXt.label.close + " button' id='mgPlayerJSTest_play_step_next_done_classic' style='display:none;'>" +
-		"<span class='popup-classic-next mgPlayerJSTest_width-auto' style='margin: 0 !important;'>" + GmCXt.label.close + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-classic-navigation-next mgPlayerJSTest_play-step-next mgPlayerJSTest_inline-block-vt' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSTest_play_step_next_classic'>" +
-		"<span class='mgPlayerJSTest_width-auto mgPlayerJSTest_text-span mgPlayerJSTest_width-auto mgPlayerJSTest_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
-		"<span id='mgPlayerJSTest_popup-classic-navigation-next-svg'  class='mgPlayerJSTest_width-auto' style='margin: 0 !important;'></span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='popup-classic-design-navigation-prev mgPlayerJSTest_play-step-prev mgPlayerJSTest_inline-block-vt' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSTest_play_step_prev_classic'>" +
-		"<span id='mgPlayerJSTest_popup-classic-navigation-prev-svg' class='mgPlayerJSTest_width-auto' style='margin: 0 !important;'></span>" +
-		"<span class='mgPlayerJSTest_width-auto mgPlayerJSTest_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-classic-navigation-pause mgPlayerJSTest_play-step-pause-classic mgPlayerJSTest_inline-block-vt' aria-label='step popup pause button' id='mgPlayerJSTest_play_step_pause_classic' style='display:none;'>" +
-		"<span id='mgPlayerJSTest_popup-classic-nav-pause-svg' class='mgPlayerJSTest_inline-block-vt mgPlayerJSTest_width-auto'></span>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_clear'></wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+	html += "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='preview-step-popup-navigation-wrapper mgPlayerJSTest2_inline-block-vt popup-classic-design-navigation'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-classic-navigation-next mgPlayerJSTest2_play-step-next mgPlayerJSTest2_play-step-next-done mgPlayerJSTest2_play-step mgPlayerJSTest2_play-step-classic-done mgPlayerJSTest2_inline-block-vt' aria-label='step popup " + GmCXt.label.close + " button' id='mgPlayerJSTest2_play_step_next_done_classic' style='display:none;'>" +
+		"<span class='popup-classic-next mgPlayerJSTest2_width-auto' style='margin: 0 !important;'>" + GmCXt.label.close + "</span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-classic-navigation-next mgPlayerJSTest2_play-step-next mgPlayerJSTest2_inline-block-vt' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSTest2_play_step_next_classic'>" +
+		"<span class='mgPlayerJSTest2_width-auto mgPlayerJSTest2_text-span mgPlayerJSTest2_width-auto mgPlayerJSTest2_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
+		"<span id='mgPlayerJSTest2_popup-classic-navigation-next-svg'  class='mgPlayerJSTest2_width-auto' style='margin: 0 !important;'></span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='popup-classic-design-navigation-prev mgPlayerJSTest2_play-step-prev mgPlayerJSTest2_inline-block-vt' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSTest2_play_step_prev_classic'>" +
+		"<span id='mgPlayerJSTest2_popup-classic-navigation-prev-svg' class='mgPlayerJSTest2_width-auto' style='margin: 0 !important;'></span>" +
+		"<span class='mgPlayerJSTest2_width-auto mgPlayerJSTest2_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-classic-navigation-pause mgPlayerJSTest2_play-step-pause-classic mgPlayerJSTest2_inline-block-vt' aria-label='step popup pause button' id='mgPlayerJSTest2_play_step_pause_classic' style='display:none;'>" +
+		"<span id='mgPlayerJSTest2_popup-classic-nav-pause-svg' class='mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_width-auto'></span>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_clear'></wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	mg$("html:first").append(html);
 
-	mg$("#mgPlayerJSTest_play-step-popup-drag-icon").html(GmCXt.svgs.iconPopupDrag);
-	mg$("#mgPlayerJSTest_play_step_auto_gear").html(GmCXt.svgs.iconStepAutoGear);
-	mg$(".mgPlayerJSTest_popup-audio-on").html(GmCXt.svgs.iconStepPlayAudioOn);
-	mg$(".mgPlayerJSTest_popup-audio-off").html(GmCXt.svgs.iconStepPlayAudioOff);
-	mg$("#mgPlayerJSTest_play-step-popup-edit-icon").html(GmCXt.svgs.iconPopupEdit);
-	mg$("#mgPlayerJSTest_play-step-popup-close-svg").html(GmCXt.svgs.iconClosePopup);
-	mg$("#mgPlayerJSTest_play-step-pause-svg").html(GmCXt.svgs.iconPause);
-	mg$("#mgPlayerJSTest_popup-classic-navigation-next-svg").html(GmCXt.svgs.iconClassicNavNext);
-	mg$("#mgPlayerJSTest_popup-classic-navigation-prev-svg").html(GmCXt.svgs.iconClassicNavPrev);
-	mg$("#mgPlayerJSTest_play-step-next-done-svg").html(GmCXt.svgs.iconPlayStepNext);
-	mg$("#mgPlayerJSTest_popup-classic-nav-pause-svg").html(GmCXt.svgs.iconPause);
+	mg$("#mgPlayerJSTest2_play-step-popup-drag-icon").html(GmCXt.svgs.iconPopupDrag);
+	mg$("#mgPlayerJSTest2_play_step_auto_gear").html(GmCXt.svgs.iconStepAutoGear);
+	mg$(".mgPlayerJSTest2_popup-audio-on").html(GmCXt.svgs.iconStepPlayAudioOn);
+	mg$(".mgPlayerJSTest2_popup-audio-off").html(GmCXt.svgs.iconStepPlayAudioOff);
+	mg$("#mgPlayerJSTest2_play-step-popup-edit-icon").html(GmCXt.svgs.iconPopupEdit);
+	mg$("#mgPlayerJSTest2_play-step-popup-close-svg").html(GmCXt.svgs.iconClosePopup);
+	mg$("#mgPlayerJSTest2_play-step-pause-svg").html(GmCXt.svgs.iconPause);
+	mg$("#mgPlayerJSTest2_popup-classic-navigation-next-svg").html(GmCXt.svgs.iconClassicNavNext);
+	mg$("#mgPlayerJSTest2_popup-classic-navigation-prev-svg").html(GmCXt.svgs.iconClassicNavPrev);
+	mg$("#mgPlayerJSTest2_play-step-next-done-svg").html(GmCXt.svgs.iconPlayStepNext);
+	mg$("#mgPlayerJSTest2_popup-classic-nav-pause-svg").html(GmCXt.svgs.iconPause);
 
 	if (!GmCXt.FT.audio) {
-		mg$('.mgPlayerJSTest_play-step-popup-drag').css('right', '30px');
-		mg$('.mgPlayerJSTest_play-step-popup-edit').css('right', '50px');
+		mg$('.mgPlayerJSTest2_play-step-popup-drag').css('right', '30px');
+		mg$('.mgPlayerJSTest2_play-step-popup-edit').css('right', '50px');
 	}
 };
 
@@ -43238,134 +43294,134 @@ GmCXt.setResumeWinDisplayed = function(status) {
 
 GmCXt.addVlabHtml = function() {
 	var html =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_vlab-container' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_vlab-screen'>" +
-		"   <img class='mgPlayerJSTest_vlab-screen-img' src='" + GmCXt.getDefaultGuideIcon() + "' alt='' />" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_vlab-video-screen'>" +
-		"   <video id='mgPlayerJSTest_vlab-video-container' class='mgPlayerJSTest_vlab-video-container' autoplay controls ></video>" +
-		"</wmgPlayerJSTest_>" +
-		"<img alt='loader image' class='mgPlayerJSTest_vlab-screen-loader' src='" + GmCXt.loader() + "' />" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_vlab-virtual-element'></wmgPlayerJSTest_>" +
-		"<button class='mgPlayerJSTest_vlab-next mgPlayerJSTest_lbl-btn' aria-label='vlab next button' >" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_vlab-container' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_vlab-screen'>" +
+		"   <img class='mgPlayerJSTest2_vlab-screen-img' src='" + GmCXt.getDefaultGuideIcon() + "' alt='' />" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_vlab-video-screen'>" +
+		"   <video id='mgPlayerJSTest2_vlab-video-container' class='mgPlayerJSTest2_vlab-video-container' autoplay controls ></video>" +
+		"</wmgPlayerJSTest2_>" +
+		"<img alt='loader image' class='mgPlayerJSTest2_vlab-screen-loader' src='" + GmCXt.loader() + "' />" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_vlab-virtual-element'></wmgPlayerJSTest2_>" +
+		"<button class='mgPlayerJSTest2_vlab-next mgPlayerJSTest2_lbl-btn' aria-label='vlab next button' >" +
 		"<img alt='next' src='" + GmCXt.conf.staticContentPath + "white_next.png' />" +
 		"</button>" +
-		"<button class='mgPlayerJSTest_vlab-prev mgPlayerJSTest_lbl-btn' aria-label='vlab next button' >" +
+		"<button class='mgPlayerJSTest2_vlab-prev mgPlayerJSTest2_lbl-btn' aria-label='vlab next button' >" +
 		"<img alt='next' src='" + GmCXt.conf.staticContentPath + "white_next.png' />" +
 		"</button>" +
-		"<button class='mgPlayerJSTest_vlab-close mgPlayerJSTest_lbl-btn' aria-label='vlab close button'>" +
+		"<button class='mgPlayerJSTest2_vlab-close mgPlayerJSTest2_lbl-btn' aria-label='vlab close button'>" +
 		"<img alt='close' src='" + GmCXt.conf.staticContentPath + "white_close.png' />" +
 		"</button>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 };
 
 GmCXt.addStopTestMePanel = function() {
 	var html =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-active' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-active-head'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-active-countdown'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-action-icons-wrapper'>" +
-		"<button class='mgPlayerJSTest_play-pause-position-top mgPlayerJSTest_lbl-btn'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-active' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-active-head'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-active-countdown'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-action-icons-wrapper'>" +
+		"<button class='mgPlayerJSTest2_play-pause-position-top mgPlayerJSTest2_lbl-btn'>" +
 		"</button>" +
-		"<button class='mgPlayerJSTest_play-pause-position-bottom mgPlayerJSTest_lbl-btn'>" +
+		"<button class='mgPlayerJSTest2_play-pause-position-bottom mgPlayerJSTest2_lbl-btn'>" +
 		"</button>" +
-		"<button class='mgPlayerJSTest_testme-active-close mgPlayerJSTest_lbl-btn'>" +
+		"<button class='mgPlayerJSTest2_testme-active-close mgPlayerJSTest2_lbl-btn'>" +
 		"</button>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-active-inner'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-active-title'>" + GmCXt.label.testMeStopMessage + "</wmgPlayerJSTest_>" +
-		"<button class='mgPlayerJSTest_testme-active-stop mgPlayerJSTest_lbl-btn'>" +
-		"<img class='mgPlayerJSTest_testme-stop-img' src='" + GmCXt.conf.staticContentPath + "white_stop.png'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_testme-stop-label'>" + GmCXt.label.stop + "</wmgPlayerJSTest_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-active-inner'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-active-title'>" + GmCXt.label.testMeStopMessage + "</wmgPlayerJSTest2_>" +
+		"<button class='mgPlayerJSTest2_testme-active-stop mgPlayerJSTest2_lbl-btn'>" +
+		"<img class='mgPlayerJSTest2_testme-stop-img' src='" + GmCXt.conf.staticContentPath + "white_stop.png'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_testme-stop-label'>" + GmCXt.label.stop + "</wmgPlayerJSTest2_>" +
 		"</button>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 
-	mg$(".mgPlayerJSTest_play-pause-position-top").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSTest_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSTest_testme-active-close").html(GmCXt.svgs.close_resume);
+	mg$(".mgPlayerJSTest2_play-pause-position-top").html(GmCXt.svgs.down_arrow);
+	mg$(".mgPlayerJSTest2_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
+	mg$(".mgPlayerJSTest2_testme-active-close").html(GmCXt.svgs.close_resume);
 
 	function stopTestMe() {
 		GmCXt.requestHandler.stopToolTestMe();
 	}
 
-	mg$('.mgPlayerJSTest_testme-active-stop').on("click", stopTestMe);
-	mg$('.mgPlayerJSTest_testme-active-close').on("click", stopTestMe);
+	mg$('.mgPlayerJSTest2_testme-active-stop').on("click", stopTestMe);
+	mg$('.mgPlayerJSTest2_testme-active-close').on("click", stopTestMe);
 
-	mg$('.mgPlayerJSTest_play-pause-position-top').on('click', function(e) {
+	mg$('.mgPlayerJSTest2_play-pause-position-top').on('click', function(e) {
 		mg$(this).hide();
-		mg$('.mgPlayerJSTest_play-pause-position-bottom').show().css({
+		mg$('.mgPlayerJSTest2_play-pause-position-bottom').show().css({
 			'display': 'inline-block'
 		});
-		mg$('.mgPlayerJSTest_testme-active').css({
+		mg$('.mgPlayerJSTest2_testme-active').css({
 			top: '5px'
 		});
 	});
 
-	mg$('.mgPlayerJSTest_play-pause-position-bottom').on('click', function(e) {
+	mg$('.mgPlayerJSTest2_play-pause-position-bottom').on('click', function(e) {
 		mg$(this).hide();
-		mg$('.mgPlayerJSTest_play-pause-position-top').show().css({
+		mg$('.mgPlayerJSTest2_play-pause-position-top').show().css({
 			'display': 'inline-block'
 		});
 		var bpos = mg$(window).height() - 127;
-		mg$('.mgPlayerJSTest_testme-active').css({
+		mg$('.mgPlayerJSTest2_testme-active').css({
 			top: bpos + 'px'
 		});
 	});
 };
 
 GmCXt.addFeedBackToolbar = function() {
-	var html = "<wmgPlayerJSTest_ id='mg-feedback-container-wrapper' style='display:none;'>" +
-		"	<div id='mg-feedback-flex-container' class='mgPlayerJSTest_feedback-flex-container'>" +
-		"		<div id='mgPlayerJSTest_blackout' class='mgPlayerJSTest_blackout'></div>" +
-		"		<div id='mgPlayerJSTest_highlight' class='mgPlayerJSTest_highlight'></div>" +
-		"		<div id='mg-feedback-popup' class='mgPlayerJSTest_feedback-modal-content'>" +
-		"			<div class='mgPlayerJSTest_feedback-popup-inner-container'>" +
-		"				<div class='mgPlayerJSTest_feedback-header'>" +
-		"					<div class='mgPlayerJSTest_feedback-header-text'>" + GmCXt.label.sendFeedback + "</div>" +
+	var html = "<wmgPlayerJSTest2_ id='mg-feedback-container-wrapper' style='display:none;'>" +
+		"	<div id='mg-feedback-flex-container' class='mgPlayerJSTest2_feedback-flex-container'>" +
+		"		<div id='mgPlayerJSTest2_blackout' class='mgPlayerJSTest2_blackout'></div>" +
+		"		<div id='mgPlayerJSTest2_highlight' class='mgPlayerJSTest2_highlight'></div>" +
+		"		<div id='mg-feedback-popup' class='mgPlayerJSTest2_feedback-modal-content'>" +
+		"			<div class='mgPlayerJSTest2_feedback-popup-inner-container'>" +
+		"				<div class='mgPlayerJSTest2_feedback-header'>" +
+		"					<div class='mgPlayerJSTest2_feedback-header-text'>" + GmCXt.label.sendFeedback + "</div>" +
 		"				</div>" +
-		"				<textarea class='mgPlayerJSTest_feedback-textarea' id='mg-feedback' name='feedback' rows='4' cols='5' maxlength='3000' placeholder='" + GmCXt.label.feedbackPlaceholder + "'></textarea>" +
-		"				<div class='mgPlayerJSTest_feedback-body'>" +
-		"					<div class='mgPlayerJSTest_feedback-check'>" +
-		"						<input type='checkbox' id='mg-feedback-screenshot-check' class='mgPlayerJSTest_feedback-checkbox' checked>" +
-		"						<div class='mgPlayerJSTest_feedback-label'>" + GmCXt.label.includeScreen + "</div>" +
+		"				<textarea class='mgPlayerJSTest2_feedback-textarea' id='mg-feedback' name='feedback' rows='4' cols='5' maxlength='3000' placeholder='" + GmCXt.label.feedbackPlaceholder + "'></textarea>" +
+		"				<div class='mgPlayerJSTest2_feedback-body'>" +
+		"					<div class='mgPlayerJSTest2_feedback-check'>" +
+		"						<input type='checkbox' id='mg-feedback-screenshot-check' class='mgPlayerJSTest2_feedback-checkbox' checked>" +
+		"						<div class='mgPlayerJSTest2_feedback-label'>" + GmCXt.label.includeScreen + "</div>" +
 		"					</div>" +
-		"					<div class='mgPlayerJSTest_feedback-img-container'>" +
-		"						<button class='mgPlayerJSTest_feedback-re-edit-btn click-reEditImage'>" +
-		"							<img id='mg-feedback-screenshot-image' class='mgPlayerJSTest_feedback-img' src=''>" +
-		"							<div class='mgPlayerJSTest_feedback-overlay-svg'>" +
+		"					<div class='mgPlayerJSTest2_feedback-img-container'>" +
+		"						<button class='mgPlayerJSTest2_feedback-re-edit-btn click-reEditImage'>" +
+		"							<img id='mg-feedback-screenshot-image' class='mgPlayerJSTest2_feedback-img' src=''>" +
+		"							<div class='mgPlayerJSTest2_feedback-overlay-svg'>" +
 		"								<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
 		"									<path d='M16.1 8.43V5.36a1 1 0 1 1 2 0v3.07a1 1 0 0 1-2 0Zm7 3.49a1 1 0 0 0 .71-.29L26 9.46a1 1 0 0 0 0-1.41 1 1 0 0 0-1.41 0l-2.17 2.17a1 1 0 0 0 .7 1.7ZM10.37 22.26 8.2 24.43a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l2.17-2.17a1 1 0 1 0-1.42-1.42ZM9.58 17a1 1 0 0 0-1-1H5.52a1 1 0 0 0 0 2h3.06a1 1 0 0 0 1-1Zm0-8.9A1 1 0 0 0 8.2 9.46l2.17 2.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29 1 1 0 0 0 0-1.41Zm17.57 19.3a1 1 0 0 1-1.41 0l-3.63-3.63-2.58 3.35a1 1 0 0 1-.79.39h-.17a1 1 0 0 1-.78-.68L14.28 15.7a1 1 0 0 1 1.26-1.26L26.61 18a1 1 0 0 1 .31 1.75l-3.35 2.58 3.62 3.62a1 1 0 0 1 0 1.4Zm-5.89-5.8.07-.06.07-.06 2.74-2.11L16.73 17l2.37 7.4Z' />" +
 		"								</svg>" +
-		"								<span class='mgPlayerJSTest_feedback-svg-text'>" + GmCXt.label.feedbackOptBtn + "</span>" +
+		"								<span class='mgPlayerJSTest2_feedback-svg-text'>" + GmCXt.label.feedbackOptBtn + "</span>" +
 		"							</div>" +
 		"						</button>" +
-		"						<div class='mgPlayerJSTest_feedback-overlay-svg-error'>" + GmCXt.label.feedbackImgErrorMsg + " </div>" +
+		"						<div class='mgPlayerJSTest2_feedback-overlay-svg-error'>" + GmCXt.label.feedbackImgErrorMsg + " </div>" +
 		"					</div>" +
 		"				</div>" +
-		"				<div class='mgPlayerJSTest_feedback-footer'>" +
-		"					<button type='submit' class='mgPlayerJSTest_feedback-cancel'>" + GmCXt.label.btnCancel + "</button>" +
-		"					<button type='submit' class='mgPlayerJSTest_feedback-send-btn'>" + GmCXt.label.send + "</button>" +
+		"				<div class='mgPlayerJSTest2_feedback-footer'>" +
+		"					<button type='submit' class='mgPlayerJSTest2_feedback-cancel'>" + GmCXt.label.btnCancel + "</button>" +
+		"					<button type='submit' class='mgPlayerJSTest2_feedback-send-btn'>" + GmCXt.label.send + "</button>" +
 		"				</div>" +
 		"			</div>" +
 		"		</div>" +
-		"		<div id='mg-feedback-selector-toolbar' class='mgPlayerJSTest_feedback-selector-toolbar mgPlayerJSTest_feedback-modal-content'>" +
+		"		<div id='mg-feedback-selector-toolbar' class='mgPlayerJSTest2_feedback-selector-toolbar mgPlayerJSTest2_feedback-modal-content'>" +
 		"			<button id='mg-feedback-highlight-btn' class='selector-btn btn-border'>" + GmCXt.label.highlight + "</button>" +
 		"			<button id='mg-feedback-hide-btn' class='selector-btn btn-border'>" + GmCXt.label.hide + "</button>" +
 		"			<button id='mg-feedback-done-btn' class='selector-btn'>" + GmCXt.label.done + "</button>" +
 		"		</div>" +
 		"	</div>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 
 	mg$("html").append(html);
 
-	mg$('.mgPlayerJSTest_feedback-send-btn').off('click').on('click', function() {
+	mg$('.mgPlayerJSTest2_feedback-send-btn').off('click').on('click', function() {
 		GmCXt.sendFeedback();
 	});
-	mg$('.mgPlayerJSTest_feedback-cancel').off('click').on('click', function() {
+	mg$('.mgPlayerJSTest2_feedback-cancel').off('click').on('click', function() {
 		GmCXt.clearFeedBackView();
 	});
 	mg$('.click-reEditImage').off('click').on('click', function() {
@@ -43391,7 +43447,7 @@ GmCXt.addListenersToDesktopApp = function() {
 			GmCXt.log(37, "input data", e.detail.playJSON);
 			var data = GmCXt.parseJSON(e.detail.playJSON);
 			syncDesktopRequest(e).then(function() {
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:switch_app', {
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:switch_app', {
 					app: GmCXt.appList['app:' + data.application_id]
 				});
 				GmCXt.startAuto(data);
@@ -43411,11 +43467,11 @@ GmCXt.addListenersToDesktopApp = function() {
 				deskReq = Object.assign({}, st.desktopReq, deskReq);
 			}
 			GmCXt.deskReq = deskReq;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:connected_from_app_step', {
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:connected_from_app_step', {
 				data: deskReq
 			});
 
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:connected_from_app', {
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:connected_from_app', {
 				data: deskReq
 			});
 			return deskReq;
@@ -43434,7 +43490,7 @@ GmCXt.addListenersToDesktopApp = function() {
 			var data = {};
 			data.user = GmCXt.validateDataModel(GmCXt.parseJSON(e.detail.user), GmCXt.model.user);
 			if (!GmCXt.user && data.user && !GmCXt.isEmpty(data.user)) {
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:user_signed_in', {
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:user_signed_in', {
 					data: data
 				});
 			}
@@ -43443,66 +43499,66 @@ GmCXt.addListenersToDesktopApp = function() {
 };
 
 GmCXt.addDragPopUpFunction = function() {
-	var elmnt = document.getElementById("mgPlayerJSTest_preview-step-popup-container");
-	var dragEl = document.getElementById('mgPlayerJSTest_play_step_popup_drag');
+	var elmnt = document.getElementById("mgPlayerJSTest2_preview-step-popup-container");
+	var dragEl = document.getElementById('mgPlayerJSTest2_play_step_popup_drag');
 
 	GmCXt.attachDragEvents(elmnt, dragEl);
 };
 
 GmCXt.addDragMicroPlayerFunction = function() {
-	var elmnt = document.getElementsByClassName('mgPlayerJSTest_panel mgPlayerJSTest_theme-mplayer')[0];
-	var dragEl = document.getElementById('mgPlayerJSTest_mPlayer-drag');
+	var elmnt = document.getElementsByClassName('mgPlayerJSTest2_panel mgPlayerJSTest2_theme-mplayer')[0];
+	var dragEl = document.getElementById('mgPlayerJSTest2_mPlayer-drag');
 
 	GmCXt.attachDragEvents(elmnt, dragEl);
 };
 
 GmCXt.addStepToolbar = function() {
 
-	var cname = 'mgPlayerJSTest_toolbar-iframe';
+	var cname = 'mgPlayerJSTest2_toolbar-iframe';
 	if (GmCXt.isEnt()) {
 		cname += ' ' + GmCXt.conf.appName + '-step-toolbar';
 	}
 
-	var html = "<div class='mgPlayerJSTest_toolbar-panel'>" +
-		"<iframe id='mgPlayerJSTest_toolbar-iframe' class='" + cname + "' name='guideme-iframe' title='Guideme toolbar iframe' src='" +
+	var html = "<div class='mgPlayerJSTest2_toolbar-panel'>" +
+		"<iframe id='mgPlayerJSTest2_toolbar-iframe' class='" + cname + "' name='guideme-iframe' title='Guideme toolbar iframe' src='" +
 		GmCXt.getBaseUrl("content_script/toolbar/toolbar.html") +
 		"' width='100%' marginwidth='0' marginheight='0' scrolling='no' frameborder='0'></iframe> " +
 		"</div>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip mgPlayerJSTest_toolbar-top-pos' style='display:none;'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-close'>" +
-		"<span class='mgPlayerJSTest_toolbar-tooltip-close-svg'></span>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-bottom-left'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-capture'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-title'>" + GmCXt.label.captureModeNow + "</li></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnables + "</li></wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-navigation'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-title'>" + GmCXt.label.navigateMode + "</li></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-instruction'>" + GmCXt.label.captureNavigateMode + "</li></wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-delay-capture'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-title'>" + GmCXt.label.captureDelayModeNow + "</li></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnablesPage + "</li></wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='ok-got-it'>" + GmCXt.label.gotIt + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip mgPlayerJSTest2_toolbar-top-pos' style='display:none;'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-close'>" +
+		"<span class='mgPlayerJSTest2_toolbar-tooltip-close-svg'></span>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-bottom-left'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-capture'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-title'>" + GmCXt.label.captureModeNow + "</li></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnables + "</li></wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-navigation'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-title'>" + GmCXt.label.navigateMode + "</li></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-instruction'>" + GmCXt.label.captureNavigateMode + "</li></wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-delay-capture'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-title'>" + GmCXt.label.captureDelayModeNow + "</li></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnablesPage + "</li></wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='ok-got-it'>" + GmCXt.label.gotIt + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	mg$("html").append(html);
 
-	mg$(".mgPlayerJSTest_toolbar-tooltip-close-svg").html(GmCXt.svgs.popup_close);
+	mg$(".mgPlayerJSTest2_toolbar-tooltip-close-svg").html(GmCXt.svgs.popup_close);
 
-	mg$(".mgPlayerJSTest_toolbar-tooltip .ok-got-it").click(function() {
-		mg$(".mgPlayerJSTest_toolbar-tooltip").hide();
+	mg$(".mgPlayerJSTest2_toolbar-tooltip .ok-got-it").click(function() {
+		mg$(".mgPlayerJSTest2_toolbar-tooltip").hide();
 	});
 };
 
 GmCXt.getStepCreatorIframe = function() {
 	if (GmCXt.FT.creatorApp) {
 		var appName = GmCXt.conf.appName;
-		return "<div class='mgPlayerJSTest_step-panel " + appName + "-step-container'>" +
-			"<iframe id='mgPlayerJSTest_step-iframe' name='" + appName + "-guideme-iframe' title='Guideme step iframe' class='" + appName + "-step-iframe mgPlayerJSTest_step-iframe' src='" +
+		return "<div class='mgPlayerJSTest2_step-panel " + appName + "-step-container'>" +
+			"<iframe id='mgPlayerJSTest2_step-iframe' name='" + appName + "-guideme-iframe' title='Guideme step iframe' class='" + appName + "-step-iframe mgPlayerJSTest2_step-iframe' src='" +
 			GmCXt.getBaseUrl("content_script/step/step.html") +
 			"' marginwidth='0' marginheight='0' scrolling='no' frameborder='0' allow='microphone; camera'></iframe> " +
 			"</div>";
@@ -43512,41 +43568,41 @@ GmCXt.getStepCreatorIframe = function() {
 };
 
 GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/src/index_1721911749137.html") + "?domainName=" + GmCXt.getPageDomain();
+	var u = GmCXt.getBaseUrl("side_panel/src/index_1722929292953.html") + "?domainName=" + GmCXt.getPageDomain();
 	var aria_hidden = "aria-hidden = 'true' tabindex = '-1'";
-	var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_panel mgPlayerJSTest_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSTest_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSTest_theme-mplayer' : '') + "' " + aria_hidden + ">";
+	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel mgPlayerJSTest2_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSTest2_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSTest2_theme-mplayer' : '') + "' " + aria_hidden + ">";
 
 	if (GmCXt.isWBMicroPlayer()) {
 		html +=
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_panel-micro-header mgPlayerJSTest_position-relative'>" +
-			"	<wmgPlayerJSTest_ class='mgPlayerJSTest_player-title-wrapper mgPlayerJSTest_wb-micro-font-family'>" +
-			GmCXt.label.wbMplayerTitle + "</wmgPlayerJSTest_>" +
-			"	<wmgPlayerJSTest_ id='mgPlayerJSTest_micro_player_drag' class='mgPlayerJSTest_player-drag-wrapper'>" +
-			" 		<span id='mgPlayerJSTest_micro_player_drag-svg'></span> " +
-			"  		<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-top-left'>" +
-			"     		<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title mgPlayerJSTest_wb-micro-font-family'>" + GmCXt.label.wbDragTooltip + "</wmgPlayerJSTest_>" +
-			"		</wmgPlayerJSTest_>" +
-			"	</wmgPlayerJSTest_>" +
-			"	<wmgPlayerJSTest_ class='mgPlayerJSTest_player-close-wrapper'>" +
-			"       <span id='mgPlayerJSTest_mplayer-close-svg'></span>" +
-			"		<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-top-left'>" +
-			"		<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title mgPlayerJSTest_wb-micro-font-family'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-			"		</wmgPlayerJSTest_>" +
-			"	</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-micro-header mgPlayerJSTest2_position-relative'>" +
+			"	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_player-title-wrapper mgPlayerJSTest2_wb-micro-font-family'>" +
+			GmCXt.label.wbMplayerTitle + "</wmgPlayerJSTest2_>" +
+			"	<wmgPlayerJSTest2_ id='mgPlayerJSTest2_micro_player_drag' class='mgPlayerJSTest2_player-drag-wrapper'>" +
+			" 		<span id='mgPlayerJSTest2_micro_player_drag-svg'></span> " +
+			"  		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-top-left'>" +
+			"     		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title mgPlayerJSTest2_wb-micro-font-family'>" + GmCXt.label.wbDragTooltip + "</wmgPlayerJSTest2_>" +
+			"		</wmgPlayerJSTest2_>" +
+			"	</wmgPlayerJSTest2_>" +
+			"	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_player-close-wrapper'>" +
+			"       <span id='mgPlayerJSTest2_mplayer-close-svg'></span>" +
+			"		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-top-left'>" +
+			"		<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title mgPlayerJSTest2_wb-micro-font-family'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+			"		</wmgPlayerJSTest2_>" +
+			"	</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 
 	} else {
-		html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_panel-close' class='mgPlayerJSTest_panel-close " + ((GmCXt.isMicroPlayer()) ? 'mgPlayerJSTest_display-none' : '') + "' aria-label='panel close button'>" +
-			"<button class='mgPlayerJSTest_panel-close-btn-wrapper mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center mgPlayerJSTest_lbl-btn'><wmgPlayerJSTest_ class='mgPlayerJSTest_close-lbl'>" + GmCXt.label.close + " </wmgPlayerJSTest_> <span id='mgPlayerJSTest_close-lbl-svg' class='mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center mgPlayerJSTest_justify-content-center'></span> </button>" +
-			"</wmgPlayerJSTest_>";
+		html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_panel-close' class='mgPlayerJSTest2_panel-close " + ((GmCXt.isMicroPlayer()) ? 'mgPlayerJSTest2_display-none' : '') + "' aria-label='panel close button'>" +
+			"<button class='mgPlayerJSTest2_panel-close-btn-wrapper mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center mgPlayerJSTest2_lbl-btn'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_close-lbl'>" + GmCXt.label.close + " </wmgPlayerJSTest2_> <span id='mgPlayerJSTest2_close-lbl-svg' class='mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center mgPlayerJSTest2_justify-content-center'></span> </button>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
 	// micro player drag element 
-	html += "<wmgPlayerJSTest_ id='mgPlayerJSTest_mPlayer-drag'> </wmgPlayerJSTest_>";
+	html += "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_mPlayer-drag'> </wmgPlayerJSTest2_>";
 
-	var cname = 'mgPlayerJSTest_app';
+	var cname = 'mgPlayerJSTest2_app';
 	if (GmCXt.isWBMicroPlayer()) {
-		cname += ' mgPlayerJSTest_app-micro';
+		cname += ' mgPlayerJSTest2_app-micro';
 	}
 
 	if (GmCXt.isEnt() || GmCXt.isPlayer()) {
@@ -43558,16 +43614,16 @@ GmCXt.getSidePanelIframe = function() {
 		scormText = 'onload="updateIframesLoadedCount()"';
 	}
 
-	html += "<iframe id='mgPlayerJSTest_app' name='guideme-iframe' title='Guideme sidepanel iframe' " +
+	html += "<iframe id='mgPlayerJSTest2_app' name='guideme-iframe' title='Guideme sidepanel iframe' " +
 		"	class='" + cname + "'" + aria_hidden +
 		"	src='" + u + "' allowfullscreen='true' allow='microphone; camera' " + scormText + "></iframe> " +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 
 	return html;
 };
 
 function initialiseTestAutomationData() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:construct_test_automation');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:construct_test_automation');
 }
 
 GmCXt.bootApplication = function() {
@@ -43591,20 +43647,20 @@ GmCXt.bootApplication = function() {
 	var editStepLoader = '';
 
 	if (GmCXt.FT.creatorApp) {
-		editStepLoader = "<div class='mgPlayerJSTest_edit-step-loader'>" +
+		editStepLoader = "<div class='mgPlayerJSTest2_edit-step-loader'>" +
 			"<img src='" + GmCXt.loader() + "' /></div>";
-		imgStepLoader = "<div class='mgPlayerJSTest_image-step-loader'>" +
+		imgStepLoader = "<div class='mgPlayerJSTest2_image-step-loader'>" +
 			"<img src='" + GmCXt.loader() + "' /></div>";
 
 		GmCXt.addStepToolbar();
 	}
 
 	var html = GmCXt.getSidePanelIframe() +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_screen-blackout'></wmgPlayerJSTest_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_screen-blackout'></wmgPlayerJSTest2_>" +
 		editStepLoader +
 		imgStepLoader +
 		GmCXt.getStepCreatorIframe() +
-		"<wmgPlayerJSTest_ id='mgPlayerJSTest_toast-msg'></wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ id='mgPlayerJSTest2_toast-msg'></wmgPlayerJSTest2_>";
 
 	if (GmCXt.browserApp === 'ie') {
 		mg$("body").append(html);
@@ -43612,20 +43668,20 @@ GmCXt.bootApplication = function() {
 		mg$("html").append(html);
 	}
 
-	mg$("#mgPlayerJSTest_micro_player_drag-svg").html(GmCXt.svgs.micro_drag);
-	mg$("#mgPlayerJSTest_mplayer-close-svg").html(GmCXt.svgs.mplayer_close);
-	mg$("#mgPlayerJSTest_close-lbl-svg").html(GmCXt.svgs.close);
-	mg$("#mgPlayerJSTest_slideshow_drag").html(GmCXt.svgs.slideshow_drag);
+	mg$("#mgPlayerJSTest2_micro_player_drag-svg").html(GmCXt.svgs.micro_drag);
+	mg$("#mgPlayerJSTest2_mplayer-close-svg").html(GmCXt.svgs.mplayer_close);
+	mg$("#mgPlayerJSTest2_close-lbl-svg").html(GmCXt.svgs.close);
+	mg$("#mgPlayerJSTest2_slideshow_drag").html(GmCXt.svgs.slideshow_drag);
 
 	GmCXt.initialization.sidePanel = false;
 
-	mg$(".mgPlayerJSTest_panel-close .mgPlayerJSTest_panel-close-btn-wrapper").click(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:close_video');
+	mg$(".mgPlayerJSTest2_panel-close .mgPlayerJSTest2_panel-close-btn-wrapper").click(function() {
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:close_video');
 		GmCXt.closeAppPanel();
 	});
 
-	mg$(".mgPlayerJSTest_player-close-wrapper").click(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSTest_action:close_video');
+	mg$(".mgPlayerJSTest2_player-close-wrapper").click(function() {
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:close_video');
 		GmCXt.closeAppPanel();
 	});
 
@@ -43692,7 +43748,7 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 
 GmCXt.showCookieDisabledPopup = function() {
 	var m = {
-		action: 'mgPlayerJSTest_action:to_background;task:show_cookie_disabled_popup'
+		action: 'mgPlayerJSTest2_action:to_background;task:show_cookie_disabled_popup'
 	};
 	GmCXt.sendMessageToBackgroundService(m);
 
@@ -43718,7 +43774,7 @@ GmCXt.setSession = function() {
 		);
 	}
 
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:update_session_info", {
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:update_session_info", {
 		sessionInfo: GmCXt.parseJSON(mgInfo)
 	});
 };
@@ -43742,7 +43798,7 @@ GmCXt.main = function() {
 	GmCXt.setSession();
 
 	var m = {
-		action: 'mgPlayerJSTest_action:to_background;task:disable_browser_action_popup'
+		action: 'mgPlayerJSTest2_action:to_background;task:disable_browser_action_popup'
 	};
 	GmCXt.sendMessageToBackgroundService(m, function() {});
 
@@ -43778,7 +43834,7 @@ GmCXt.main = function() {
 	GmCXt.readExternalVars();
 
 	if (GmCXt.FT.isPlayer) {
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_guideme_config");
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_guideme_config");
 		window.addEventListener('message', GmCXt.listenTopWinPlayer, false);
 	} else {
 		window.addEventListener('message', GmCXt.listenTopWinCreator);
@@ -43825,8 +43881,8 @@ GmCXt.readExternalVars = function() {
 };
 
 GmCXt.updateGmConfig = function() {
-	GmCXt.sendMessageToolbar("mgPlayerJSTest_action:update_guideme_config");
-	GmCXt.sendMessageToStepFrame("mgPlayerJSTest_action:update_guideme_config");
+	GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:update_guideme_config");
+	GmCXt.sendMessageToStepFrame("mgPlayerJSTest2_action:update_guideme_config");
 };
 
 GmCXt.onClickGuideMeIcon = function(e) {
@@ -43849,14 +43905,14 @@ GmCXt.getStartBtnClass = function() {
 
 	// This class is only used to set position 
 
-	var n = "mgPlayerJSTest_start-button-creator";
+	var n = "mgPlayerJSTest2_start-button-creator";
 
 	if (GmCXt.FT.isPlayer) {
 
 		if (GmCXt.isExtension())
-			n = "mgPlayerJSTest_start-button-playerxt";
+			n = "mgPlayerJSTest2_start-button-playerxt";
 		else
-			n = "mgPlayerJSTest_start-button-clientJS";
+			n = "mgPlayerJSTest2_start-button-clientJS";
 	}
 
 	return n;
@@ -43996,7 +44052,6 @@ GmCXt.triggerChangeListeners = function(source) {
 
 	if (GmCXt.pageTitle !== GmCXt.getDocTitle()) {
 		GmCXt.setPageTitle();
-
 		GmCXt.changeEvent('page_title');
 	}
 };
@@ -44020,12 +44075,12 @@ GmCXt.changeEvent = function(type) {
 	GmCXt.ruleEngine.clearJobs();
 
 	if (!(GmCXt.isHumana() && GmCXt.checkSalesForceSite())) {
-		GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:clear_rule_jobs', {
+		GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_rule_jobs', {
 			trigger: type
 		});
 	}
 
-	GmCXt.sendMessageToApp("mgPlayerJSTest_action:clear_current_page", {});
+	GmCXt.sendMessageToApp("mgPlayerJSTest2_action:clear_current_page", {});
 
 	if (GmCXt.isExcludeDomain()) return;
 	// call processLastActionTime from background.js to track events and for player sync
@@ -44035,7 +44090,7 @@ GmCXt.changeEvent = function(type) {
 
 		} else {
 			var m = {
-				action: "mgPlayerJSTest_action:record_user_activity",
+				action: "mgPlayerJSTest2_action:record_user_activity",
 				data: {
 					organization: GmCXt.organization,
 					user: GmCXt.user
@@ -44100,10 +44155,10 @@ GmCXt.onContextChange = function(eventType) {
 	GmCXt.clearBeaconsAndTooltips(false, GmCXt.filterGuidesByRuleType(eventType));
 	GmCXt.rulesIframeQueue = [];
 
-	GmCXt.storage().get(['mgPlayerJSTest_GM_PLAYER_STORAGE_KEY', 'testMe', 'guide_play_event'])
+	GmCXt.storage().get(['mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY', 'testMe', 'guide_play_event'])
 		.then(function(st) {
 
-			var pi = st.mgPlayerJSTest_GM_PLAYER_STORAGE_KEY;
+			var pi = st.mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY;
 
 			if (pi && pi.testAutomation) {
 				GmCXt.guidePlayTracker = st.guide_play_event || {};
@@ -44231,7 +44286,7 @@ GmCXt.onPageClicked = function() {
 	var gc = GmCXt.getAppSetting('guide_count_on_widget');
 	var hw = GmCXt.getAppSetting('hide_widget_if_noguide');
 	if ((gc && !GmCXt.isWestpac()) || hw || GmCXt.APP_PANEL_OPEN) {
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:refresh_current_page", {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:refresh_current_page", {
 			eventType: 'page_click'
 		});
 	}
@@ -44519,12 +44574,12 @@ GmCXt.syncCurrentURL = function() {
 
 	GmCXt.trackerV1.setUrl(GmCXt.getCurrentURL().fullUrl);
 
-	GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:page_url', GmCXt.getCurrentURL());
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:page_url', GmCXt.getCurrentURL());
+	GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:page_url', GmCXt.getCurrentURL());
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:page_url', GmCXt.getCurrentURL());
 
 	domainInApp = GmCXt.isDomainInActiveApp();
 
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:domain_in_active_app', {
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:domain_in_active_app', {
 		domainInApp: domainInApp
 	});
 };
@@ -44557,10 +44612,10 @@ GmCXt.saveCurrentURL = function() {
 
 GmCXt.setPageTitle = function() {
 	GmCXt.pageTitle = GmCXt.getDocTitle();
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:page_title', {
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:page_title', {
 		title: GmCXt.pageTitle
 	});
-	GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:page_title', {
+	GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:page_title', {
 		title: GmCXt.pageTitle
 	});
 };
@@ -44573,7 +44628,7 @@ GmCXt.requestHandler.hideSmarttipDelay = function(data, options) {
 			}, 200);
 		} else {
 			var m = {
-				action: 'mgPlayerJSTest_action:hide_smarttip_delay',
+				action: 'mgPlayerJSTest2_action:hide_smarttip_delay',
 				stepId: data.step_id
 			};
 			GmCXt.sendToParentWindow(m);
@@ -44583,18 +44638,18 @@ GmCXt.requestHandler.hideSmarttipDelay = function(data, options) {
 
 GmCXt.requestHandler.hideSmartTip = function(msg, options) {
 	if (options && (options.type == 'disableElement')) {
-		mg$('#mgPlayerJSTest_smarttip-' + msg.stepId + '-alert').hide();
+		mg$('#mgPlayerJSTest2_smarttip-' + msg.stepId + '-alert').hide();
 	} else {
-		mg$('#mgPlayerJSTest_smarttip-' + msg.stepId).hide();
-		mg$('.mgPlayerJSTest_smarttip-icon-wrapper-' + msg.stepId).hide();
+		mg$('#mgPlayerJSTest2_smarttip-' + msg.stepId).hide();
+		mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + msg.stepId).hide();
 	}
 };
 
 GmCXt.requestHandler.hideValidationSmarttip = function(message) {
-	mg$(".mgPlayerJSTest_smarttip-valid-" + message.stepId).hide();
+	mg$(".mgPlayerJSTest2_smarttip-valid-" + message.stepId).hide();
 
 	if (message.showGuidanceTooltip) {
-		mg$('#mgPlayerJSTest_smarttip-' + message.stepId).show();
+		mg$('#mgPlayerJSTest2_smarttip-' + message.stepId).show();
 	}
 };
 
@@ -44608,7 +44663,7 @@ GmCXt.getManifest = function() {
 };
 
 GmCXt.toggleJsonEditor = function() {
-	GmCXt.sendMessageToApp("mgPlayerJSTest_action:toggle_json_editor");
+	GmCXt.sendMessageToApp("mgPlayerJSTest2_action:toggle_json_editor");
 };
 
 GmCXt.playStepFromDesktop = function(msg) {
@@ -44681,11 +44736,11 @@ GmCXt.setLangFromCS = function(lang) {
 	var data = {
 		'lang': lang
 	};
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_lang_side_panel', data);
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:set_lang_side_panel', data);
 
 	if (GmCXt.FT.creatorApp) {
-		GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:set_lang_step_panel', data);
-		GmCXt.sendMessageToolbar('mgPlayerJSTest_action:set_lang_toolbar', data);
+		GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:set_lang_step_panel', data);
+		GmCXt.sendMessageToolbar('mgPlayerJSTest2_action:set_lang_toolbar', data);
 	}
 };
 
@@ -44696,24 +44751,24 @@ GmCXt.setLangFromCS = function(lang) {
 GmCXt.setLangPref = function(lang) {
 	GmCXt.mgActiveLang = lang;
 	GmCXt.getAllLabels(lang);
-	mg$('#mgPlayerJSTest_panel-close .mgPlayerJSTest_close-lbl').text(GmCXt.label.close);
+	mg$('#mgPlayerJSTest2_panel-close .mgPlayerJSTest2_close-lbl').text(GmCXt.label.close);
 
 	if (GmCXt.FT.creatorApp) {
 		var data = {
 			'lang': lang
 		};
-		GmCXt.sendMessageToStepFrame('mgPlayerJSTest_action:set_lang_step_panel', data);
-		GmCXt.sendMessageToolbar('mgPlayerJSTest_action:set_lang_toolbar', data);
+		GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:set_lang_step_panel', data);
+		GmCXt.sendMessageToolbar('mgPlayerJSTest2_action:set_lang_toolbar', data);
 	}
 };
 
 GmCXt.stopAudioTrack = function() {
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:stop_audio', {});
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:stop_audio', {});
 };
 
 GmCXt.playAudioTrack = function(message) {
 	GmCXt.isPageReloaded = false;
-	GmCXt.sendMessageToApp('mgPlayerJSTest_action:play_audio', message);
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:play_audio', message);
 };
 
 GmCXt.filterPrivateTours = function(tours) {
@@ -44730,11 +44785,11 @@ GmCXt.filterPrivateTours = function(tours) {
 };
 
 GmCXt.hidePanelCloseBtn = function() {
-	mg$('.mgPlayerJSTest_panel-close').hide();
+	mg$('.mgPlayerJSTest2_panel-close').hide();
 };
 
 GmCXt.showPanelCloseBtn = function() {
-	mg$('.mgPlayerJSTest_panel-close').show();
+	mg$('.mgPlayerJSTest2_panel-close').show();
 };
 
 GmCXt.isExitSurvey = function() {
@@ -44763,7 +44818,7 @@ GmCXt.widgetIconCustomize = function() {
 				height: s.widgetIconSize.widgetIconWidth,
 				borderRadius: '50%'
 			});
-			widget.find('.mgPlayerJSTest_custom-image').css('border-radius', '50%');
+			widget.find('.mgPlayerJSTest2_custom-image').css('border-radius', '50%');
 			break;
 
 		case 'rectangular':
@@ -44790,7 +44845,7 @@ GmCXt.chatIconCustomize = function() {
 					height: s.chatIconSize ? s.chatIconSize.chatIconWidth : 50,
 					borderRadius: '50%'
 				});
-				chat.find('.mgPlayerJSTest_custom-image').css('border-radius', '50%');
+				chat.find('.mgPlayerJSTest2_custom-image').css('border-radius', '50%');
 				break;
 
 			case 'rectangular':
@@ -44880,45 +44935,45 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 		var previewClass = '';
 		if (isPreview) {
-			previewClass = ' mgPlayerJSTest_forbidden';
+			previewClass = ' mgPlayerJSTest2_forbidden';
 		}
 
-		var htmlData = " <wmgPlayerJSTest_ class='mgPlayerJSTest_survey-popup-container'> " +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_survey-popup-wrapper'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_survey-header-wrapper'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_survey-logo-wrapper'>" + surveyTitle + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_survey-popup-close' aria-label='close survey' >" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-bottom-left'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_survey-content-wrapper'>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_question-single-select-wrapper'>" +
+		var htmlData = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-popup-container'> " +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-popup-wrapper'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-header-wrapper'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-logo-wrapper'>" + surveyTitle + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-popup-close' aria-label='close survey' >" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-bottom-left'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_survey-content-wrapper'>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_question-single-select-wrapper'>" +
 
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 
 		var progressWrap = '';
 		if (result.questions.length > 1) {
-			progressWrap = '<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-footer-progress-wrapper mgPlayerJSTest_inline-block-vm">' +
-				'	<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-progressbar-wrapper mgPlayerJSTest_inline-block-vm">' +
-				'		<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-progressbar mgPlayerJSTest_inline-block-vm"></wmgPlayerJSTest_>' +
-				'	</wmgPlayerJSTest_>' +
-				'	<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-questions-count mgPlayerJSTest_inline-block-vm">' + GmCXt.label.question +
-				' 		<span id="current_question">1</span> <span id="mgPlayerJSTest_question_count">' + GmCXt.label.of + ' ' + surveyQuestionList.length +
-				'	</span></wmgPlayerJSTest_>' +
-				'</wmgPlayerJSTest_>';
+			progressWrap = '<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-footer-progress-wrapper mgPlayerJSTest2_inline-block-vm">' +
+				'	<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-progressbar-wrapper mgPlayerJSTest2_inline-block-vm">' +
+				'		<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-progressbar mgPlayerJSTest2_inline-block-vm"></wmgPlayerJSTest2_>' +
+				'	</wmgPlayerJSTest2_>' +
+				'	<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-questions-count mgPlayerJSTest2_inline-block-vm">' + GmCXt.label.question +
+				' 		<span id="current_question">1</span> <span id="mgPlayerJSTest2_question_count">' + GmCXt.label.of + ' ' + surveyQuestionList.length +
+				'	</span></wmgPlayerJSTest2_>' +
+				'</wmgPlayerJSTest2_>';
 		}
 
-		htmlData += '<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-footer-action-wrapper">' +
-			'<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-button-back mgPlayerJSTest_btn-default mgPlayerJSTest_disabled mgPlayerJSTest_inline-block-vm" aria-label="' + GmCXt.label.back + '" >' + GmCXt.label.back + '</wmgPlayerJSTest_>' +
-			'<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-button-continue mgPlayerJSTest_btn-default mgPlayerJSTest_inline-block-vm" aria-label="' + GmCXt.label.next + '">' + GmCXt.label.next + '</wmgPlayerJSTest_>' +
-			'<wmgPlayerJSTest_ class="mgPlayerJSTest_survey-button-submit mgPlayerJSTest_inline-block-vm mgPlayerJSTest_btn-default' + previewClass + '" style="display:none" aria-label="' + GmCXt.label.btnSubmit + '">' + GmCXt.label.btnSubmit + '</wmgPlayerJSTest_>' +
+		htmlData += '<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-footer-action-wrapper">' +
+			'<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-button-back mgPlayerJSTest2_btn-default mgPlayerJSTest2_disabled mgPlayerJSTest2_inline-block-vm" aria-label="' + GmCXt.label.back + '" >' + GmCXt.label.back + '</wmgPlayerJSTest2_>' +
+			'<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-button-continue mgPlayerJSTest2_btn-default mgPlayerJSTest2_inline-block-vm" aria-label="' + GmCXt.label.next + '">' + GmCXt.label.next + '</wmgPlayerJSTest2_>' +
+			'<wmgPlayerJSTest2_ class="mgPlayerJSTest2_survey-button-submit mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_btn-default' + previewClass + '" style="display:none" aria-label="' + GmCXt.label.btnSubmit + '">' + GmCXt.label.btnSubmit + '</wmgPlayerJSTest2_>' +
 			progressWrap +
-			'</wmgPlayerJSTest_>' +
-			'</wmgPlayerJSTest_>';
+			'</wmgPlayerJSTest2_>' +
+			'</wmgPlayerJSTest2_>';
 
 		return htmlData;
 	}
@@ -44928,10 +44983,10 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 		var message = GmCXt.parseMsg(event);
 
 		if (!message) return;
-		if (!message.action || message.action.indexOf('mgPlayerJSTest_action:') !== 0) return;
+		if (!message.action || message.action.indexOf('mgPlayerJSTest2_action:') !== 0) return;
 		message = GmCXt.convertMgdata(message);
 
-		if (message.action === 'mgPlayerJSTest_action:got_survey_detail') {
+		if (message.action === 'mgPlayerJSTest2_action:got_survey_detail') {
 			cb(message.data);
 			window.removeEventListener('message', listen);
 		}
@@ -44941,9 +44996,9 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 		if (sd) {
 			var htmlData = getHtml(sd.data);
 
-			mg$(".mgPlayerJSTest_user-guide-container").empty().append(htmlData).show();
+			mg$(".mgPlayerJSTest2_user-guide-container").empty().append(htmlData).show();
 
-			mg$(".mgPlayerJSTest_survey-popup-close").html(GmCXt.svgs.close_btn);
+			mg$(".mgPlayerJSTest2_survey-popup-close").html(GmCXt.svgs.close_btn);
 			currentQues = sd.data.questions[0];
 			addQuestionInSurvey(sd.data.questions[0], 1);
 			toggleBackContinueButton(0);
@@ -44951,20 +45006,20 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 			attachDOMEvents(options);
 
 			if (GmCXt.accessibility) {
-				mg$(".mgPlayerJSTest_survey-footer-action-wrapper").addClass("mgPlayerJSTest_accessibility-theme");
-				mg$(".mgPlayerJSTest_survey-button-back").addClass("mgPlayerJSTest_ass-default-btn");
-				mg$(".mgPlayerJSTest_survey-button-continue").addClass("mgPlayerJSTest_ass-default-btn");
-				mg$(".mgPlayerJSTest_survey-button-submit").addClass("mgPlayerJSTest_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-footer-action-wrapper").addClass("mgPlayerJSTest2_accessibility-theme");
+				mg$(".mgPlayerJSTest2_survey-button-back").addClass("mgPlayerJSTest2_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-button-continue").addClass("mgPlayerJSTest2_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-button-submit").addClass("mgPlayerJSTest2_ass-default-btn");
 
 			} else {
-				mg$(".mgPlayerJSTest_survey-footer-action-wrapper").removeClass("mgPlayerJSTest_accessibility-theme");
-				mg$(".mgPlayerJSTest_survey-button-back").removeClass("mgPlayerJSTest_ass-default-btn");
-				mg$(".mgPlayerJSTest_survey-button-continue").removeClass("mgPlayerJSTest_ass-default-btn");
-				mg$(".mgPlayerJSTest_survey-button-submit").removeClass("mgPlayerJSTest_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-footer-action-wrapper").removeClass("mgPlayerJSTest2_accessibility-theme");
+				mg$(".mgPlayerJSTest2_survey-button-back").removeClass("mgPlayerJSTest2_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-button-continue").removeClass("mgPlayerJSTest2_ass-default-btn");
+				mg$(".mgPlayerJSTest2_survey-button-submit").removeClass("mgPlayerJSTest2_ass-default-btn");
 			}
 
 			GmCXt.timeout(function() {
-				mg$(".mgPlayerJSTest_survey-popup-close").focus();
+				mg$(".mgPlayerJSTest2_survey-popup-close").focus();
 			}, 500);
 
 		} else {
@@ -44978,13 +45033,13 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 		var os = GmCXt.getOrgSettings();
 		data.sentiment = os.sentiment;
 		data.isExit = true;
-		GmCXt.sendMessageToApp("mgPlayerJSTest_action:get_survey_detail", data);
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:get_survey_detail", data);
 	}
 
 	function openSurvey(options) {
 
-		mg$("html").find('.mgPlayerJSTest_user-guide-container').remove();
-		mg$("<wmgPlayerJSTest_></wmgPlayerJSTest_>").addClass('mgPlayerJSTest_user-guide-container').appendTo('html');
+		mg$("html").find('.mgPlayerJSTest2_user-guide-container').remove();
+		mg$("<wmgPlayerJSTest2_></wmgPlayerJSTest2_>").addClass('mgPlayerJSTest2_user-guide-container').appendTo('html');
 
 		if (isExitSurvey) {
 			try {
@@ -45016,7 +45071,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 			} else if (options.tourId) {
 				data.tourId = options.tourId;
 			}
-			GmCXt.sendMessageToApp("mgPlayerJSTest_action:get_survey_detail", data);
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:get_survey_detail", data);
 		}
 	}
 
@@ -45059,7 +45114,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 	function addQuestionInSurvey(result, id) {
 		var questionType = result.type;
 		mg$('#current_question').html(id);
-		mg$('#mgPlayerJSTest_question_count').html(GmCXt.label.of + ' ' + surveyQuestionList.length);
+		mg$('#mgPlayerJSTest2_question_count').html(GmCXt.label.of + ' ' + surveyQuestionList.length);
 		var htmlData = '';
 		switch (questionType) {
 			case 'yes-no':
@@ -45082,53 +45137,53 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 				break;
 		}
 		changeProgressbar(id);
-		mg$(".mgPlayerJSTest_question-single-select-wrapper").empty().append(htmlData);
-		mg$(".mgPlayerJSTest_ext-link-svg").html(GmCXt.svgs.external_link);
+		mg$(".mgPlayerJSTest2_question-single-select-wrapper").empty().append(htmlData);
+		mg$(".mgPlayerJSTest2_ext-link-svg").html(GmCXt.svgs.external_link);
 
 	}
 
 	function addCommentTypeQuestion(question) {
-		var html = "<wmgPlayerJSTest_><wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'>" + GmCXt.escapeHtml(question.question) +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_select-option'>" +
-			"<textarea id='comment_type_" + question.questionID + "' class='mgPlayerJSTest_comment_type_question' cols='44' rows='4' data-gramm_editor='false' placeholder='" + GmCXt.label.surveyCommentPlaceholder + "' maxlength='500'></textarea>" +
-			"</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_><wmgPlayerJSTest_ id='comment_type_survey_" + question.questionID + "'>" + GmCXt.label.characters + " 0</wmgPlayerJSTest_><br><wmgPlayerJSTest_>";
+		var html = "<wmgPlayerJSTest2_><wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'>" + GmCXt.escapeHtml(question.question) +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_select-option'>" +
+			"<textarea id='comment_type_" + question.questionID + "' class='mgPlayerJSTest2_comment_type_question' cols='44' rows='4' data-gramm_editor='false' placeholder='" + GmCXt.label.surveyCommentPlaceholder + "' maxlength='500'></textarea>" +
+			"</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_><wmgPlayerJSTest2_ id='comment_type_survey_" + question.questionID + "'>" + GmCXt.label.characters + " 0</wmgPlayerJSTest2_><br><wmgPlayerJSTest2_>";
 		return html;
 	}
 
 	function changeProgressbar(length) {
 		var initialProgressBar = parseInt((100 * length) / surveyQuestionList.length);
-		mg$('.mgPlayerJSTest_survey-progressbar').css('width', initialProgressBar + '%');
+		mg$('.mgPlayerJSTest2_survey-progressbar').css('width', initialProgressBar + '%');
 	}
 
 	function addYesAndNoQuestion(question) {
-		var html = "<div id='mgPlayerJSTest_single-type-question-" + question.questionID + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_select-option'>" +
-			'<input type="radio" name="mgPlayerJSTest_capture-guide-radio-' + question.questionID + '" value="Yes" id="mgPlayerJSTest_capture-guide-checkbox" class="mgPlayerJSTest_input-radio-custom mgPlayerJSTest_input-radio-with-branch mgPlayerJSTest_inline-block-vm mgPlayerJSTest_input-display-block"><wmgPlayerJSTest_ class="mgPlayerJSTest_option-label mgPlayerJSTest_inline-block-vm">' + GmCXt.escapeHtml('Yes') + '</wmgPlayerJSTest_>';
+		var html = "<div id='mgPlayerJSTest2_single-type-question-" + question.questionID + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_select-option'>" +
+			'<input type="radio" name="mgPlayerJSTest2_capture-guide-radio-' + question.questionID + '" value="Yes" id="mgPlayerJSTest2_capture-guide-checkbox" class="mgPlayerJSTest2_input-radio-custom mgPlayerJSTest2_input-radio-with-branch mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_input-display-block"><wmgPlayerJSTest2_ class="mgPlayerJSTest2_option-label mgPlayerJSTest2_inline-block-vm">' + GmCXt.escapeHtml('Yes') + '</wmgPlayerJSTest2_>';
 		if (!GmCXt.isFalse(question.options[0]) && !GmCXt.isFalse(question.options[0].optionReferenceLink)) {
-			html += "<a href='" + getReferenceURL(question.options[0].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest_ class='mgPlayerJSTest_ext-link-svg'></wmgPlayerJSTest_></a>";
+			html += "<a href='" + getReferenceURL(question.options[0].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_ext-link-svg'></wmgPlayerJSTest2_></a>";
 		}
-		html += '</wmgPlayerJSTest_>' +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_select-option'>" +
-			'<input type="radio" name="mgPlayerJSTest_capture-guide-radio-' + question.questionID + '" value="No" id="mgPlayerJSTest_capture-guide-checkbox" class="mgPlayerJSTest_input-radio-custom mgPlayerJSTest_input-radio-with-branch mgPlayerJSTest_inline-block-vm mgPlayerJSTest_input-display-block"><wmgPlayerJSTest_ class="mgPlayerJSTest_option-label mgPlayerJSTest_inline-block-vm">' + GmCXt.escapeHtml('No') + '</wmgPlayerJSTest_>';
+		html += '</wmgPlayerJSTest2_>' +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_select-option'>" +
+			'<input type="radio" name="mgPlayerJSTest2_capture-guide-radio-' + question.questionID + '" value="No" id="mgPlayerJSTest2_capture-guide-checkbox" class="mgPlayerJSTest2_input-radio-custom mgPlayerJSTest2_input-radio-with-branch mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_input-display-block"><wmgPlayerJSTest2_ class="mgPlayerJSTest2_option-label mgPlayerJSTest2_inline-block-vm">' + GmCXt.escapeHtml('No') + '</wmgPlayerJSTest2_>';
 		if (!GmCXt.isFalse(question.options[1]) && !GmCXt.isFalse(question.options[1].optionReferenceLink)) {
-			html += "<a href='" + getReferenceURL(question.options[1].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest_ class='mgPlayerJSTest_ext-link-svg'></wmgPlayerJSTest_></a>";
+			html += "<a href='" + getReferenceURL(question.options[1].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_ext-link-svg'></wmgPlayerJSTest2_></a>";
 		}
-		html += '</wmgPlayerJSTest_>' +
+		html += '</wmgPlayerJSTest2_>' +
 			"<br></div>";
 		return html;
 	}
 
 	function addSelectTypeQuestion(question) {
-		var html = "<div id='mgPlayerJSTest_single-type-question-" + question.questionID + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest_>";
+		var html = "<div id='mgPlayerJSTest2_single-type-question-" + question.questionID + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest2_>";
 		mg$.each(question.options, function(index, element) {
-			html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_select-option'>" +
-				"<input class='mgPlayerJSTest_inline-block-vm mgPlayerJSTest_input-radio-with-branch mgPlayerJSTest_input-radio-custom mgPlayerJSTest_input-display-block' type='radio' name='select_type_option_" + question.questionID + "' value='" + element.option + "' />" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_option-label mgPlayerJSTest_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_select-option'>" +
+				"<input class='mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_input-radio-with-branch mgPlayerJSTest2_input-radio-custom mgPlayerJSTest2_input-display-block' type='radio' name='select_type_option_" + question.questionID + "' value='" + element.option + "' />" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_option-label mgPlayerJSTest2_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSTest2_>";
 			if (!GmCXt.isFalse(element.optionReferenceLink)) {
-				html += "<a href='" + getReferenceURL(element.optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest_ class='mgPlayerJSTest_ext-link-svg'></wmgPlayerJSTest_></a>";
+				html += "<a href='" + getReferenceURL(element.optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_ext-link-svg'></wmgPlayerJSTest2_></a>";
 			}
-			html += "</wmgPlayerJSTest_>";
+			html += "</wmgPlayerJSTest2_>";
 		});
 		html += "<br></div>";
 		return html;
@@ -45142,45 +45197,45 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 	}
 
 	function addMultiSelectType(question) {
-		var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest_><div id='mgPlayerJSTest_multiselect-type-question'>";
+		var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest2_><div id='mgPlayerJSTest2_multiselect-type-question'>";
 		mg$.each(question.options, function(index, element) {
-			html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_select-option'>" +
-				"<input class='mgPlayerJSTest_inline-block-vm mgPlayerJSTest_input-checkbox-custom mgPlayerJSTest_input-display-block' type='checkbox' name='multiselect_type_option_" + question.questionID + "[]' id='multiselect_type_option_" + question.questionID + "' value='" + GmCXt.escapeHtml(element.option) + "' />" +
-				"<wmgPlayerJSTest_ class='mgPlayerJSTest_option-label mgPlayerJSTest_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_select-option'>" +
+				"<input class='mgPlayerJSTest2_inline-block-vm mgPlayerJSTest2_input-checkbox-custom mgPlayerJSTest2_input-display-block' type='checkbox' name='multiselect_type_option_" + question.questionID + "[]' id='multiselect_type_option_" + question.questionID + "' value='" + GmCXt.escapeHtml(element.option) + "' />" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_option-label mgPlayerJSTest2_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>";
 		});
 		html += "<br></div>";
 		return html;
 	}
 
 	function addRangeQuestion(question) {
-		var html = "<div id='mgPlayerJSTest_single-type-question-" + question.questionID + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_range-question-wrapper'>";
+		var html = "<div id='mgPlayerJSTest2_single-type-question-" + question.questionID + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_range-question-wrapper'>";
 
 		for (var i = 1; i < 10; i++) {
-			html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_value-range mgPlayerJSTest_inline-block-vm' id='mgPlayerJSTest_value-range-" + i + "' aria-label='range'>" + i + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_value-range mgPlayerJSTest2_inline-block-vm' id='mgPlayerJSTest2_value-range-" + i + "' aria-label='range'>" + i + "</wmgPlayerJSTest2_>";
 		}
 
-		html += "<wmgPlayerJSTest_ class='mgPlayerJSTest_value-range mgPlayerJSTest_inline-block-vm' style='border-right: 1px solid #cccccc;' id='mgPlayerJSTest_value-range-10' aria-label='range'>10</wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>" +
+		html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_value-range mgPlayerJSTest2_inline-block-vm' style='border-right: 1px solid #cccccc;' id='mgPlayerJSTest2_value-range-10' aria-label='range'>10</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>" +
 			"<br></div>";
 		return html;
 	}
 
 	function addRateQuestion(question) {
-		var html = "<div id='mgPlayerJSTest_single-type-question-" + question.questionID + "'><wmgPlayerJSTest_ class='mgPlayerJSTest_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_rating'>";
+		var html = "<div id='mgPlayerJSTest2_single-type-question-" + question.questionID + "'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_rating'>";
 
 		for (var i = 1; i < 4; i++) {
-			html += "<button class='mgPlayerJSTest_lbl-btn mgPlayerJSTest_stars-rate' id='mgPlayerJSTest_rate-" + i + "' aria-label='rate' >&#9733;</button>";
+			html += "<button class='mgPlayerJSTest2_lbl-btn mgPlayerJSTest2_stars-rate' id='mgPlayerJSTest2_rate-" + i + "' aria-label='rate' >&#9733;</button>";
 		}
-		html += "</wmgPlayerJSTest_>" +
+		html += "</wmgPlayerJSTest2_>" +
 			"<br></div>";
 		return html;
 	}
 
 	function checkCommentTypeMess() {
-		mg$('.mgPlayerJSTest_comment_type_question').on('keyup', function(e) {
+		mg$('.mgPlayerJSTest2_comment_type_question').on('keyup', function(e) {
 			var qI = parseInt(mg$('#current_question').html());
 			if (!qI) {
 				qI = 1;
@@ -45313,7 +45368,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 	function attachDOMEvents(options) {
 
-		mg$('.mgPlayerJSTest_survey-popup-close').on('click', function(e) {
+		mg$('.mgPlayerJSTest2_survey-popup-close').on('click', function(e) {
 			if (isExitSurvey) {
 				closeTourWithSurvey(true);
 			} else if (GmCXt.isPlayer() && GmCXt.playerI && options && options.type === "stepPlay" && GmCXt.isExitSurvey()) {
@@ -45331,44 +45386,44 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 		checkCommentTypeMess();
 
-		mg$(document).off('click', '.mgPlayerJSTest_value-range');
-		mg$(document).on('click', '.mgPlayerJSTest_value-range', function(e) {
-			mg$('.mgPlayerJSTest_value-range').removeClass('mgPlayerJSTest_value-range-selected');
+		mg$(document).off('click', '.mgPlayerJSTest2_value-range');
+		mg$(document).on('click', '.mgPlayerJSTest2_value-range', function(e) {
+			mg$('.mgPlayerJSTest2_value-range').removeClass('mgPlayerJSTest2_value-range-selected');
 			var selectRange = e.target.innerHTML;
-			mg$('#mgPlayerJSTest_value-range-' + selectRange).addClass('mgPlayerJSTest_value-range-selected');
+			mg$('#mgPlayerJSTest2_value-range-' + selectRange).addClass('mgPlayerJSTest2_value-range-selected');
 		});
 
-		mg$(document).off('click', '.mgPlayerJSTest_stars-rate');
-		mg$(document).on('click', '.mgPlayerJSTest_stars-rate', function(e) {
-			if (e.target.id.indexOf("mgPlayerJSTest_rate") !== -1) {
+		mg$(document).off('click', '.mgPlayerJSTest2_stars-rate');
+		mg$(document).on('click', '.mgPlayerJSTest2_stars-rate', function(e) {
+			if (e.target.id.indexOf("mgPlayerJSTest2_rate") !== -1) {
 				var elem = mg$('#' + e.target.id);
-				elem.toggleClass('mgPlayerJSTest_rating-filled');
-				elem.nextAll().removeClass('mgPlayerJSTest_rating-filled');
-				elem.prevAll().addClass('mgPlayerJSTest_rating-filled');
+				elem.toggleClass('mgPlayerJSTest2_rating-filled');
+				elem.nextAll().removeClass('mgPlayerJSTest2_rating-filled');
+				elem.prevAll().addClass('mgPlayerJSTest2_rating-filled');
 			}
 		});
 
-		mg$(document).off('click', '.mgPlayerJSTest_survey-button-continue');
-		mg$(document).on('click', '.mgPlayerJSTest_survey-button-continue', function(e) {
+		mg$(document).off('click', '.mgPlayerJSTest2_survey-button-continue');
+		mg$(document).on('click', '.mgPlayerJSTest2_survey-button-continue', function(e) {
 			onNextQuesClick();
 		});
 
-		mg$(document).off('change', '.mgPlayerJSTest_input-radio-with-branch');
-		mg$(document).on('change', '.mgPlayerJSTest_input-radio-with-branch', function(e) {
-			var ans = mg$("input:radio[name='" + mg$('.mgPlayerJSTest_input-radio-with-branch')[0].name +
+		mg$(document).off('change', '.mgPlayerJSTest2_input-radio-with-branch');
+		mg$(document).on('change', '.mgPlayerJSTest2_input-radio-with-branch', function(e) {
+			var ans = mg$("input:radio[name='" + mg$('.mgPlayerJSTest2_input-radio-with-branch')[0].name +
 				"']:checked").val();
 			if (currentQues && currentQues.isBranchNode && !GmCXt.isEmpty(ans)) {
 				var isSubmitVisible = false;
-				if (mg$('.mgPlayerJSTest_survey-button-submit') && mg$('.mgPlayerJSTest_survey-button-submit')[0] &&
-					mg$('.mgPlayerJSTest_survey-button-submit')[0].style.display !== "none") {
+				if (mg$('.mgPlayerJSTest2_survey-button-submit') && mg$('.mgPlayerJSTest2_survey-button-submit')[0] &&
+					mg$('.mgPlayerJSTest2_survey-button-submit')[0].style.display !== "none") {
 					isSubmitVisible = true;
 				}
 				if (isSubmitVisible) {
 					for (var o = 0; o < currentQues.options.length; o++) {
 						if (currentQues.options[o].option === ans &&
 							currentQues.options[o].nextHopOnBranch) {
-							mg$('.mgPlayerJSTest_survey-button-submit').hide();
-							mg$('.mgPlayerJSTest_survey-button-continue').show();
+							mg$('.mgPlayerJSTest2_survey-button-submit').hide();
+							mg$('.mgPlayerJSTest2_survey-button-continue').show();
 							break;
 						}
 					}
@@ -45376,13 +45431,13 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 			}
 		});
 
-		mg$(document).off('click', '.mgPlayerJSTest_survey-button-back');
-		mg$(document).on('click', '.mgPlayerJSTest_survey-button-back', function(e) {
+		mg$(document).off('click', '.mgPlayerJSTest2_survey-button-back');
+		mg$(document).on('click', '.mgPlayerJSTest2_survey-button-back', function(e) {
 			onBackQuesClick();
 		});
 
-		mg$(document).off('click', '.mgPlayerJSTest_survey-button-submit');
-		mg$(document).on('click', ".mgPlayerJSTest_survey-button-submit", function(e) {
+		mg$(document).off('click', '.mgPlayerJSTest2_survey-button-submit');
+		mg$(document).on('click', ".mgPlayerJSTest2_survey-button-submit", function(e) {
 			if (!isPreview) {
 				submitSurvey();
 			}
@@ -45540,11 +45595,11 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 			var prevStep = GmCXt.getPreviousStep();
 			if (!GmCXt.isEmpty(prevStep)) {
 				if (mg$.inArray(prevStep.step_id, GmCXt.playedPreviousSteps) !== -1 || prevStep.step_settings.optional) {
-					mg$('.mgPlayerJSTest_survey-button-back').removeClass('mgPlayerJSTest_disabled');
+					mg$('.mgPlayerJSTest2_survey-button-back').removeClass('mgPlayerJSTest2_disabled');
 				}
 			}
 		} else {
-			mg$('.mgPlayerJSTest_survey-button-back').addClass('mgPlayerJSTest_disabled');
+			mg$('.mgPlayerJSTest2_survey-button-back').addClass('mgPlayerJSTest2_disabled');
 		}
 	}
 
@@ -45552,29 +45607,29 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 		if (surveyQuestionList.length === 1) {
 			//Only One Question in Survey
-			mg$('.mgPlayerJSTest_survey-button-submit').show();
-			mg$('.mgPlayerJSTest_survey-button-continue').hide();
-			mg$('.mgPlayerJSTest_survey-button-back').show();
+			mg$('.mgPlayerJSTest2_survey-button-submit').show();
+			mg$('.mgPlayerJSTest2_survey-button-continue').hide();
+			mg$('.mgPlayerJSTest2_survey-button-back').show();
 			toggleBackButton();
 		} else if (surveyQuestionList.length > 1 && ind === 0) {
 			//More than one question and current question no 1
-			mg$('.mgPlayerJSTest_survey-button-submit').hide();
-			mg$('.mgPlayerJSTest_survey-button-continue').show();
-			mg$('.mgPlayerJSTest_survey-button-back').show();
+			mg$('.mgPlayerJSTest2_survey-button-submit').hide();
+			mg$('.mgPlayerJSTest2_survey-button-continue').show();
+			mg$('.mgPlayerJSTest2_survey-button-back').show();
 			toggleBackButton();
 
 		} else if (surveyQuestionList.length === ind + 1) {
 			//More than one questions and current at last question
-			mg$('.mgPlayerJSTest_survey-button-submit').show();
-			mg$('.mgPlayerJSTest_survey-button-continue').hide();
-			mg$('.mgPlayerJSTest_survey-button-back').show();
-			mg$('.mgPlayerJSTest_survey-button-back').removeClass('mgPlayerJSTest_disabled');
+			mg$('.mgPlayerJSTest2_survey-button-submit').show();
+			mg$('.mgPlayerJSTest2_survey-button-continue').hide();
+			mg$('.mgPlayerJSTest2_survey-button-back').show();
+			mg$('.mgPlayerJSTest2_survey-button-back').removeClass('mgPlayerJSTest2_disabled');
 		} else if (surveyQuestionList.length > 1 && ind > 0) {
 			//More than one question and questions between 1st and Last Excluding the tow
-			mg$('.mgPlayerJSTest_survey-button-submit').hide();
-			mg$('.mgPlayerJSTest_survey-button-continue').show();
-			mg$('.mgPlayerJSTest_survey-button-back').show();
-			mg$('.mgPlayerJSTest_survey-button-back').removeClass('mgPlayerJSTest_disabled');
+			mg$('.mgPlayerJSTest2_survey-button-submit').hide();
+			mg$('.mgPlayerJSTest2_survey-button-continue').show();
+			mg$('.mgPlayerJSTest2_survey-button-back').show();
+			mg$('.mgPlayerJSTest2_survey-button-back').removeClass('mgPlayerJSTest2_disabled');
 		}
 
 	}
@@ -45582,9 +45637,9 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 	function close(closeIconClicked, playPrevStep) {
 		var pi = GmCXt.playerI;
 		GmCXt.isSurveyVisible = false;
-		mg$('.mgPlayerJSTest_overlay-container').hide().empty();
-		mg$('.mgPlayerJSTest_user-guide-container').hide().empty();
-		mg$('.mgPlayerJSTest_user-tip-guide-container').hide().empty();
+		mg$('.mgPlayerJSTest2_overlay-container').hide().empty();
+		mg$('.mgPlayerJSTest2_user-guide-container').hide().empty();
+		mg$('.mgPlayerJSTest2_user-tip-guide-container').hide().empty();
 		if (isPreview) {
 			GmCXt.openAppPanel();
 		} else if (options.type === 'stepPlay') {
@@ -45594,7 +45649,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 				if (GmCXt.FT.isPlayer && pi) {
 					GmCXt.tourActivity['t:' + pi.tour.tour_id] = pi.lastPlayedStepId;
 
-					GmCXt.sendMessageToApp("mgPlayerJSTest_action:update_tour_activity", {
+					GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_tour_activity", {
 						tourActivity: GmCXt.tourActivity
 					});
 				}
@@ -45636,7 +45691,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 		switch (questionType) {
 			case 'yes-no':
-				surveyQuestionList[id].answer = mg$('input:radio[name=mgPlayerJSTest_capture-guide-radio-' + qId + ']:checked').val() || '';
+				surveyQuestionList[id].answer = mg$('input:radio[name=mgPlayerJSTest2_capture-guide-radio-' + qId + ']:checked').val() || '';
 				break;
 			case 'comment':
 				var ans = mg$('textarea#comment_type_' + qId + '').val();
@@ -45662,11 +45717,11 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 				break;
 			case 'range':
-				var rangeValue = mg$('#mgPlayerJSTest_single-type-question-' + qId + '').find('.mgPlayerJSTest_value-range-selected');
+				var rangeValue = mg$('#mgPlayerJSTest2_single-type-question-' + qId + '').find('.mgPlayerJSTest2_value-range-selected');
 				surveyQuestionList[id].answer = rangeValue.length ? rangeValue[0].textContent : '';
 				break;
 			case 'rating':
-				var rateValue = mg$('#mgPlayerJSTest_single-type-question-' + qId + '').find('.mgPlayerJSTest_rating-filled');
+				var rateValue = mg$('#mgPlayerJSTest2_single-type-question-' + qId + '').find('.mgPlayerJSTest2_rating-filled');
 				surveyQuestionList[id].answer = rateValue.length ? rateValue.length.toString() : '';
 				break;
 		}
@@ -45681,7 +45736,7 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 
 		switch (questionType) {
 			case 'yes-no':
-				mg$('input:radio[name=mgPlayerJSTest_capture-guide-radio-' + qId + '][value="' + questionAns + '"]').prop('checked', true);
+				mg$('input:radio[name=mgPlayerJSTest2_capture-guide-radio-' + qId + '][value="' + questionAns + '"]').prop('checked', true);
 				break;
 			case 'comment':
 				mg$('textarea#comment_type_' + qId + '').val(questionAns);
@@ -45697,13 +45752,13 @@ GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
 				});
 				break;
 			case 'range':
-				mg$('#mgPlayerJSTest_single-type-question-' + qId + '').find('#mgPlayerJSTest_value-range-' + questionAns + '').addClass('mgPlayerJSTest_value-range-selected');
+				mg$('#mgPlayerJSTest2_single-type-question-' + qId + '').find('#mgPlayerJSTest2_value-range-' + questionAns + '').addClass('mgPlayerJSTest2_value-range-selected');
 				break;
 			case 'rating':
-				mg$('.mgPlayerJSTest_stars-rate').removeClass('mgPlayerJSTest_rating-filled');
-				var elem = mg$('#mgPlayerJSTest_single-type-question-' + qId + '').find('#mgPlayerJSTest_rate-' + questionAns + '');
-				elem.addClass('mgPlayerJSTest_rating-filled');
-				elem.prevAll().addClass('mgPlayerJSTest_rating-filled');
+				mg$('.mgPlayerJSTest2_stars-rate').removeClass('mgPlayerJSTest2_rating-filled');
+				var elem = mg$('#mgPlayerJSTest2_single-type-question-' + qId + '').find('#mgPlayerJSTest2_rate-' + questionAns + '');
+				elem.addClass('mgPlayerJSTest2_rating-filled');
+				elem.prevAll().addClass('mgPlayerJSTest2_rating-filled');
 				break;
 		}
 	}
@@ -45774,7 +45829,7 @@ GmCXt.showTestMeCountdown = function() {
 				if (seconds > 0) {
 					str += seconds + "s";
 				}
-				mg$('.mgPlayerJSTest_testme-active-countdown').html(str);
+				mg$('.mgPlayerJSTest2_testme-active-countdown').html(str);
 			}
 		}
 	}, 1000);
@@ -45783,13 +45838,13 @@ GmCXt.showTestMeCountdown = function() {
 GmCXt.requestHandler.startTestMeWatcher = function() {
 
 	GmCXt.log(58, 'MyTest started');
-	mg$('.mgPlayerJSTest_testme-active').show();
-	mg$('.mgPlayerJSTest_testme-active-title').html(GmCXt.label.testMeStopMessage);
-	mg$('.mgPlayerJSTest_testme-stop-label').html(GmCXt.label.stop);
+	mg$('.mgPlayerJSTest2_testme-active').show();
+	mg$('.mgPlayerJSTest2_testme-active-title').html(GmCXt.label.testMeStopMessage);
+	mg$('.mgPlayerJSTest2_testme-stop-label').html(GmCXt.label.stop);
 
 	GmCXt.showTestMeCountdown();
 	GmCXt.hideWidgetIcon();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:start_watcher;testMe");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:start_watcher;testMe");
 };
 
 GmCXt.requestHandler.recordEventTestMe = function(data) {
@@ -45919,14 +45974,14 @@ GmCXt.requestHandler.recordEventTestMe = function(data) {
 GmCXt.requestHandler.stopToolTestMe = function() {
 	GmCXt.log(58, 'MyTest ENDED');
 	clearInterval(GmCXt.testMe.timer);
-	mg$('.mgPlayerJSTest_testme-active').hide();
+	mg$('.mgPlayerJSTest2_testme-active').hide();
 	GmCXt.testMe.stopTime = Date.now();
 	GmCXt.requestHandler.stopTestMeWatcher();
 	GmCXt.requestHandler.showTestMeReport();
 };
 
 GmCXt.requestHandler.stopTestMeWatcher = function() {
-	GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:stop_watcher;testMe");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:stop_watcher;testMe");
 };
 
 GmCXt.requestHandler.showTestMeReport = function() {
@@ -45962,37 +46017,37 @@ GmCXt.requestHandler.showTestMeReport = function() {
 GmCXt.showTestMeReportUI = function() {
 
 	var testMeResultHeader =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-test-me-result-header'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-test-me-result-title'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-test-me-result-header'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-test-me-result-title'>" +
 		GmCXt.label.testMeResultTitle +
-		"</wmgPlayerJSTest_>" +
-		"<button class='mgPlayerJSTest_popup-test-me-result-close mgPlayerJSTest_lbl-btn'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-test-me-close-svg'></wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-bottom-left'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<button class='mgPlayerJSTest2_popup-test-me-result-close mgPlayerJSTest2_lbl-btn'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-test-me-close-svg'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_title-tooltip-wrapper mgPlayerJSTest2_position-bottom-left'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
 		"</button>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 
 	var testMeUserResultPass =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_result-passed-container'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_message-icon-passed'>" +
-		"<span class='mgPlayerJSTest_message-icon-passed-svg'></span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_message-text-passed'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_result-passed-container'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_message-icon-passed'>" +
+		"<span class='mgPlayerJSTest2_message-icon-passed-svg'></span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_message-text-passed'>" +
 		"<span>" + GmCXt.label.testMePassedMessage + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	var testMeUserResultFail =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_result-failed-container'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_message-icon-failed'>" +
-		"<span class='mgPlayerJSTest_message-icon-failed-svg'></span>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_message-text-failed'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_result-failed-container'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_message-icon-failed'>" +
+		"<span class='mgPlayerJSTest2_message-icon-failed-svg'></span>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_message-text-failed'>" +
 		"<span>" + GmCXt.label.testMeFailedMessage + "</span>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	//Get test time in min-sec format
 	if (GmCXt.testMe.userTime > 60) {
@@ -46021,56 +46076,56 @@ GmCXt.showTestMeReportUI = function() {
 	}
 
 	var efficiencyResult =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-guide-efficiency'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-guide-efficiency'>" +
 		GmCXt.label.testMeGuideEfficiency + " " + testMeEfficiency + "%" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 
 	var effectivenessResult =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-guide-effectiveness'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-guide-effectiveness'>" +
 		GmCXt.label.testMeGuideEffectiveness + " " + testMeEffectiveness + "%" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>";
 
 	var testEfficiency =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_guide-efficiency-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_guide-efficiency-wrapper'>" +
 		efficiencyResult +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_verticle-line'>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-time-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_time-taken-text'>" + GmCXt.label.testMeTestTime + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_time-user'>" + testMeUserTime + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-expected-time-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_expected-time-text'>" + GmCXt.label.testMeExpectedTime + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_time-expected'>" + testMeExpectedTime + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_verticle-line'>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-time-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_time-taken-text'>" + GmCXt.label.testMeTestTime + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_time-user'>" + testMeUserTime + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-expected-time-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_expected-time-text'>" + GmCXt.label.testMeExpectedTime + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_time-expected'>" + testMeExpectedTime + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	var testEffectiveness =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_guide-effectiveness-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_guide-effectiveness-wrapper'>" +
 		effectivenessResult +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_verticle-line'>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-test-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_test-steps-text'>" + GmCXt.label.testMeStepsTaken + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_count-steps'>" + GmCXt.testMe.eventCount + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_text-required-steps-wrapper'>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_required-steps-text'>" + GmCXt.label.testMeExpectedSteps + "</wmgPlayerJSTest_>" +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_count-steps'>" + GmCXt.testMe.stepCount + "</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_verticle-line'>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-test-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_test-steps-text'>" + GmCXt.label.testMeStepsTaken + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_count-steps'>" + GmCXt.testMe.eventCount + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-required-steps-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_required-steps-text'>" + GmCXt.label.testMeExpectedSteps + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_count-steps'>" + GmCXt.testMe.stepCount + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	if (GmCXt.testMe.testResult === "Passed") {
 		var bottomButtons =
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_test-me-btn-action'>" +
-			"<button class='mgPlayerJSTest_btn-default mgPlayerJSTest_btn-neutral mgPlayerJSTest_btn-esc-test-me mgPlayerJSTest_inline-block-vt mgPlayerJSTest_lbl-btn'>" + GmCXt.label.close + "</button>" +
-			"</wmgPlayerJSTest_>";
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_test-me-btn-action'>" +
+			"<button class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_btn-esc-test-me mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + GmCXt.label.close + "</button>" +
+			"</wmgPlayerJSTest2_>";
 	} else {
 		var bottomButtons =
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_test-me-btn-action'>" +
-			"<button class='mgPlayerJSTest_btn-default mgPlayerJSTest_btn-start-test mgPlayerJSTest_inline-block-vt mgPlayerJSTest_lbl-btn'>" + GmCXt.label.testMeRetakeTestBtn + "</button>" +
-			"<button class='mgPlayerJSTest_btn-default mgPlayerJSTest_btn-neutral mgPlayerJSTest_btn-esc-test-me mgPlayerJSTest_inline-block-vt mgPlayerJSTest_lbl-btn'>" + GmCXt.label.close + "</button>" +
-			"</wmgPlayerJSTest_>";
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_test-me-btn-action'>" +
+			"<button class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-start-test mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + GmCXt.label.testMeRetakeTestBtn + "</button>" +
+			"<button class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_btn-esc-test-me mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + GmCXt.label.close + "</button>" +
+			"</wmgPlayerJSTest2_>";
 	}
 
 	var testMeFailedDescription = "";
@@ -46088,32 +46143,32 @@ GmCXt.showTestMeReportUI = function() {
         msg = msg.replace(/{CORRECT_STEPS}/g, GmCXt.testMe.hitCount);
         msg = msg.replace(/{TOTAL_STEPS}/g, GmCXt.testMe.stepCount);
 
-        testMeFailedDescription = "<wmgPlayerJSTest_ class='mgPlayerJSTest_text-guide-message-failed'>" + msg + "</wmgPlayerJSTest_>";
+        testMeFailedDescription = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_text-guide-message-failed'>" + msg + "</wmgPlayerJSTest2_>";
 	}
 
 	var html =
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-test-me-result-preview'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-test-me-result-preview'>" +
 		testMeResultHeader +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-test-me-result-container'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-test-me-result-container'>" +
 		testMeUserResultFail +
 		testMeUserResultPass +
-		"<wmgPlayerJSTest_ class='mgPlayerJSTest_result-score-container'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_result-score-container'>" +
 		testEfficiency +
 		testEffectiveness +
 		testMeFailedDescription +
-		"</wmgPlayerJSTest_>" +
+		"</wmgPlayerJSTest2_>" +
 		bottomButtons +
-		"</wmgPlayerJSTest_>" +
-		"</wmgPlayerJSTest_>";
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	mg$("html").append(html);
 
-	mg$(".mgPlayerJSTest_popup-test-me-close-svg").html(GmCXt.svgs.close_btn);
-	mg$(".mgPlayerJSTest_message-icon-passed-svg").html(GmCXt.svgs.testme_result_passed);
-	mg$(".mgPlayerJSTest_message-icon-failed-svg").html(GmCXt.svgs.testme_result_failed);
+	mg$(".mgPlayerJSTest2_popup-test-me-close-svg").html(GmCXt.svgs.close_btn);
+	mg$(".mgPlayerJSTest2_message-icon-passed-svg").html(GmCXt.svgs.testme_result_passed);
+	mg$(".mgPlayerJSTest2_message-icon-failed-svg").html(GmCXt.svgs.testme_result_failed);
 
 	function closeTestMeReport() {
-		mg$('.mgPlayerJSTest_popup-test-me-result-preview').hide();
+		mg$('.mgPlayerJSTest2_popup-test-me-result-preview').hide();
 		GmCXt.openAppPanel();
 		GmCXt.displayWidget();
 		GmCXt.testMe = null;
@@ -46127,7 +46182,7 @@ GmCXt.showTestMeReportUI = function() {
 		GmCXt.storage().set({
 			'testMe': GmCXt.testMe
 		});
-		mg$('.mgPlayerJSTest_popup-test-me-result-preview').hide();
+		mg$('.mgPlayerJSTest2_popup-test-me-result-preview').hide();
 		GmCXt.hideWidgetIcon();
 		var testMeMessage = mg$.extend(true, {}, GmCXt.testMe.message);
 
@@ -46147,10 +46202,10 @@ GmCXt.showTestMeReportUI = function() {
 	}
 
 	//Close report on clicking close icon/Esc button
-	mg$(".mgPlayerJSTest_popup-test-me-result-close").on("click", closeTestMeReport);
-	mg$(".mgPlayerJSTest_btn-esc-test-me").on("click", closeTestMeReport);
+	mg$(".mgPlayerJSTest2_popup-test-me-result-close").on("click", closeTestMeReport);
+	mg$(".mgPlayerJSTest2_btn-esc-test-me").on("click", closeTestMeReport);
 
-	mg$(".mgPlayerJSTest_btn-start-test").on("click", reStartTestMe);
+	mg$(".mgPlayerJSTest2_btn-start-test").on("click", reStartTestMe);
 
 };
 
@@ -46175,10 +46230,10 @@ GmCXt.requestHandler.redirectToUrl = function(data) {
 	function button1Callback() {
 		var message = {
 			currStepUrl: 'https://' + data.tour.steps[0].step_url,
-			action: "mgPlayerJSTest_action:start_tool;testMe",
+			action: "mgPlayerJSTest2_action:start_tool;testMe",
 			data: data
 		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:redirectTestMe', message);
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:redirectTestMe', message);
 	}
 
 	var options = {
@@ -46215,41 +46270,41 @@ alertV1 = function(options) {
 	}
 	pub.show = function() {
 
-		var html = " <wmgPlayerJSTest_ class='mgPlayerJSTest_overlay-container'></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup'>" +
-			"<img class='mgPlayerJSTest_popup-close-button' src='" + GmCXt.conf.staticContentPath + "close.png'/>" +
-			"<wmgPlayerJSTest_ style='display:" + popupInputField + "'><input type='text'  maxlength='250' class='mgPlayerJSTest_popup-input-field'/></wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-content-wrapper'>" + self.description + "</wmgPlayerJSTest_>" +
-			"<wmgPlayerJSTest_ class='mgPlayerJSTest_popup-btn-wrapper'>";
+		var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup'>" +
+			"<img class='mgPlayerJSTest2_popup-close-button' src='" + GmCXt.conf.staticContentPath + "close.png'/>" +
+			"<wmgPlayerJSTest2_ style='display:" + popupInputField + "'><input type='text'  maxlength='250' class='mgPlayerJSTest2_popup-input-field'/></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + self.description + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>";
 
 		if (self.button1) {
-			html += "<wmgPlayerJSTest_ title='" + self.button1 + "' aria-label='popup " + self.button1 + " button' class='mgPlayerJSTest_popup-ok-btn mgPlayerJSTest_btn-default mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt'>" + self.button1 + "</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button1 + "' aria-label='popup " + self.button1 + " button' class='mgPlayerJSTest2_popup-ok-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button1 + "</wmgPlayerJSTest2_>";
 		}
 		if (self.button2) {
-			html += "<wmgPlayerJSTest_ title='" + self.button2 + "' aria-label='popup " + self.button2 + " button' class='mgPlayerJSTest_popup-cancel-btn mgPlayerJSTest_btn-default mgPlayerJSTest_text-overflow-ellipsis mgPlayerJSTest_inline-block-vt'>" + self.button2 + "</wmgPlayerJSTest_>" +
-				"</wmgPlayerJSTest_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button2 + "' aria-label='popup " + self.button2 + " button' class='mgPlayerJSTest2_popup-cancel-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button2 + "</wmgPlayerJSTest2_>" +
+				"</wmgPlayerJSTest2_>";
 		}
-		html += "</wmgPlayerJSTest_>";
+		html += "</wmgPlayerJSTest2_>";
 
 		mg$("html").append(html);
 
 		var windowHeight = mg$(window).height();
-		var popupTop = (windowHeight - mg$('.mgPlayerJSTest_popup').height()) / 2;
-		mg$('.mgPlayerJSTest_popup').css("top", popupTop);
+		var popupTop = (windowHeight - mg$('.mgPlayerJSTest2_popup').height()) / 2;
+		mg$('.mgPlayerJSTest2_popup').css("top", popupTop);
 
-		mg$(".mgPlayerJSTest_popup-ok-btn").on("click", function() {
-			var popupInputFieldValue = mg$('.mgPlayerJSTest_popup-input-field').val();
+		mg$(".mgPlayerJSTest2_popup-ok-btn").on("click", function() {
+			var popupInputFieldValue = mg$('.mgPlayerJSTest2_popup-input-field').val();
 			pub.close();
 			if (mg$.isFunction(self.button1Callback))
 				self.button1Callback(popupInputFieldValue);
 		});
 
-		mg$(".mgPlayerJSTest_popup-cancel-btn").on("click", function() {
+		mg$(".mgPlayerJSTest2_popup-cancel-btn").on("click", function() {
 			pub.close(self.keepScrollLock);
 			GmCXt.openAppPanel();
 		});
 
-		mg$(".mgPlayerJSTest_popup-close-button").on("click", function() {
+		mg$(".mgPlayerJSTest2_popup-close-button").on("click", function() {
 			pub.close(self.keepScrollLock);
 		});
 	};
@@ -46259,8 +46314,8 @@ alertV1 = function(options) {
 		if (!keepScrollLock)
 			GmCXt.unlockScroll();
 
-		mg$(".mgPlayerJSTest_popup").remove();
-		mg$(".mgPlayerJSTest_overlay-container").remove();
+		mg$(".mgPlayerJSTest2_popup").remove();
+		mg$(".mgPlayerJSTest2_overlay-container").remove();
 	};
 
 	return pub;
@@ -46288,12 +46343,12 @@ GmCXt.vlabPanel = function() {
 			}
 		}
 
-		mg$(".mgPlayerJSTest_vlab-next").off("click").on("click", playNextStep);
-		mg$(".mgPlayerJSTest_vlab-prev").off("click").on("click", playPrevStep);
-		mg$(".mgPlayerJSTest_vlab-close").off("click").on("click", close);
+		mg$(".mgPlayerJSTest2_vlab-next").off("click").on("click", playNextStep);
+		mg$(".mgPlayerJSTest2_vlab-prev").off("click").on("click", playPrevStep);
+		mg$(".mgPlayerJSTest2_vlab-close").off("click").on("click", close);
 
 		GmCXt.timeout(function() {
-			mg$(".mgPlayerJSTest_vlab-next").focus();
+			mg$(".mgPlayerJSTest2_vlab-next").focus();
 		}, 500);
 
 		GmCXt.hideWidgetIcon();
@@ -46330,15 +46385,15 @@ GmCXt.vlabPanel = function() {
 	}
 
 	function hide() {
-		mg$('.mgPlayerJSTest_vlab-screen-img').attr('src', GmCXt.getDefaultGuideIcon()).attr('alt', '');
-		mg$('.mgPlayerJSTest_vlab-screen-loader').hide();
-		mg$('.mgPlayerJSTest_vlab-virtual-element').hide();
-		mg$('.mgPlayerJSTest_vlab-screen').hide();
-		mg$('.mgPlayerJSTest_vlab-next').hide();
-		mg$('.mgPlayerJSTest_vlab-prev').hide();
-		mg$('.mgPlayerJSTest_vlab-virtual-element').off();
-		mg$('.mgPlayerJSTest_vlab-video-screen').empty().hide();
-		mg$('.mgPlayerJSTest_vlab-container').hide();
+		mg$('.mgPlayerJSTest2_vlab-screen-img').attr('src', GmCXt.getDefaultGuideIcon()).attr('alt', '');
+		mg$('.mgPlayerJSTest2_vlab-screen-loader').hide();
+		mg$('.mgPlayerJSTest2_vlab-virtual-element').hide();
+		mg$('.mgPlayerJSTest2_vlab-screen').hide();
+		mg$('.mgPlayerJSTest2_vlab-next').hide();
+		mg$('.mgPlayerJSTest2_vlab-prev').hide();
+		mg$('.mgPlayerJSTest2_vlab-virtual-element').off();
+		mg$('.mgPlayerJSTest2_vlab-video-screen').empty().hide();
+		mg$('.mgPlayerJSTest2_vlab-container').hide();
 	}
 
 	function updatePlayStructure(tour) {
@@ -46355,18 +46410,18 @@ GmCXt.vlabPanel = function() {
 
 			var message = GmCXt.parseMsg(event);
 
-			if (!message || !message.action || message.action.indexOf('mgPlayerJSTest_action:') !== 0) {
+			if (!message || !message.action || message.action.indexOf('mgPlayerJSTest2_action:') !== 0) {
 				return;
 			}
 			message = GmCXt.convertMgdata(message);
 
-			if (message.action === 'mgPlayerJSTest_action:update_PI_steps_done') {
+			if (message.action === 'mgPlayerJSTest2_action:update_PI_steps_done') {
 				GmCXt.playerI.currentStepId = GmCXt.playerI.linkGuideFS;
 				start();
 				window.removeEventListener('message', listen);
 			}
 
-			if (message.action === 'mgPlayerJSTest_action:update_PI_PS_done') {
+			if (message.action === 'mgPlayerJSTest2_action:update_PI_PS_done') {
 				if (!ts.length) return;
 				GmCXt.concatLinkGuideSteps(ts);
 			}
@@ -46387,16 +46442,16 @@ GmCXt.vlabPanel = function() {
 		var step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
 
 		function onLoadInlineStep() {
-			mg$('.mgPlayerJSTest_vlab-screen-loader').hide();
-			mg$('.mgPlayerJSTest_vlab-next').hide();
+			mg$('.mgPlayerJSTest2_vlab-screen-loader').hide();
+			mg$('.mgPlayerJSTest2_vlab-next').hide();
 			createVirtualEl(step);
 		}
 
 		function onLoadMsgStep() {
-			mg$('.mgPlayerJSTest_vlab-screen-loader').hide();
-			mg$('.mgPlayerJSTest_vlab-next').show();
+			mg$('.mgPlayerJSTest2_vlab-screen-loader').hide();
+			mg$('.mgPlayerJSTest2_vlab-next').show();
 			if (!GmCXt.isFirstStep()) {
-				mg$('.mgPlayerJSTest_vlab-prev').show();
+				mg$('.mgPlayerJSTest2_vlab-prev').show();
 			}
 		}
 
@@ -46406,17 +46461,17 @@ GmCXt.vlabPanel = function() {
 
 			if (step.step_type === GmCXt.STEP_TYPE_VIDEO) {
 
-				mg$(".mgPlayerJSTest_vlab-container").show();
-				mg$('.mgPlayerJSTest_vlab-video-screen').show();
+				mg$(".mgPlayerJSTest2_vlab-container").show();
+				mg$('.mgPlayerJSTest2_vlab-video-screen').show();
 
-				mg$(".mgPlayerJSTest_vlab-video-screen").append(
-					"<video id='mgPlayerJSTest_vlab-video-container' class='mgPlayerJSTest_vlab-video-container' autoplay controls ></video>");
+				mg$(".mgPlayerJSTest2_vlab-video-screen").append(
+					"<video id='mgPlayerJSTest2_vlab-video-container' class='mgPlayerJSTest2_vlab-video-container' autoplay controls ></video>");
 
-				var vid = document.getElementById('mgPlayerJSTest_vlab-video-container');
+				var vid = document.getElementById('mgPlayerJSTest2_vlab-video-container');
 				vid.innerHTML = "<source type='video/mp4' src=" + step.step_video_url + GmCXt.user.cdn_signature + ">";
 
-				mg$('.mgPlayerJSTest_vlab-next').show();
-				mg$('.mgPlayerJSTest_vlab-prev').show();
+				mg$('.mgPlayerJSTest2_vlab-next').show();
+				mg$('.mgPlayerJSTest2_vlab-prev').show();
 
 				vid.onended = function() {
 					GmCXt.timeout(function() {
@@ -46446,24 +46501,24 @@ GmCXt.vlabPanel = function() {
 	}
 
 	function loadScreen(step, cb) {
-		mg$(".mgPlayerJSTest_vlab-container").show();
-		mg$('.mgPlayerJSTest_vlab-screen-loader').show();
-		mg$('.mgPlayerJSTest_vlab-screen').show();
-		mg$('.mgPlayerJSTest_vlab-screen-img').off('load').on('load', function(e) {
+		mg$(".mgPlayerJSTest2_vlab-container").show();
+		mg$('.mgPlayerJSTest2_vlab-screen-loader').show();
+		mg$('.mgPlayerJSTest2_vlab-screen').show();
+		mg$('.mgPlayerJSTest2_vlab-screen-img').off('load').on('load', function(e) {
 			if (e.target.src.indexOf('default') === -1) {
 				cb();
 			}
 		});
 
-		mg$('.mgPlayerJSTest_vlab-screen-img').attr('src', step.screen_url + GmCXt.user.cdn_signature).attr('alt', GmCXt.concatHTMLStringWithSpace(step.step_title));
+		mg$('.mgPlayerJSTest2_vlab-screen-img').attr('src', step.screen_url + GmCXt.user.cdn_signature).attr('alt', GmCXt.concatHTMLStringWithSpace(step.step_title));
 	}
 
 	function getElemPosition(step) {
 
 		var stepElPos = step.step_settings.element.position;
 
-		var vLabImageWidth = mg$('.mgPlayerJSTest_vlab-screen-img').width();
-		var vLabImageHeight = mg$('.mgPlayerJSTest_vlab-screen-img').height();
+		var vLabImageWidth = mg$('.mgPlayerJSTest2_vlab-screen-img').width();
+		var vLabImageHeight = mg$('.mgPlayerJSTest2_vlab-screen-img').height();
 
 		var vLabImageOffsetLeft = ((mg$(window).width() - vLabImageWidth) / 2);
 		var vLabImageOffsetTop = ((mg$(window).height() - vLabImageHeight) / 2);
@@ -46487,8 +46542,8 @@ GmCXt.vlabPanel = function() {
 	}
 
 	function showVirtualEl(pos) {
-		mg$('.mgPlayerJSTest_vlab-virtual-element').empty().show();
-		mg$('.mgPlayerJSTest_vlab-virtual-element').css({
+		mg$('.mgPlayerJSTest2_vlab-virtual-element').empty().show();
+		mg$('.mgPlayerJSTest2_vlab-virtual-element').css({
 			"top": pos.top,
 			"left": pos.left,
 			"width": pos.width,
@@ -46520,10 +46575,10 @@ GmCXt.vlabPanel = function() {
 		var lastStep = GmCXt.isLastStep(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure);
 		var eventArr = ['keepNext', 'onChangeNext'];
 		if ((eventArr.indexOf(e) !== -1 && !lastStep) || !pos) {
-			mg$('.mgPlayerJSTest_vlab-next').show();
+			mg$('.mgPlayerJSTest2_vlab-next').show();
 		}
 		if (!GmCXt.isFirstStep()) {
-			mg$('.mgPlayerJSTest_vlab-prev').show();
+			mg$('.mgPlayerJSTest2_vlab-prev').show();
 		}
 	}
 
@@ -46538,15 +46593,15 @@ GmCXt.vlabPanel = function() {
 
 	function createInputBox(step) {
 
-		var textField = "<input class='mgPlayerJSTest_vlab-element-input-text' type='text' /> ";
+		var textField = "<input class='mgPlayerJSTest2_vlab-element-input-text' type='text' /> ";
 
-		mg$(".mgPlayerJSTest_vlab-virtual-element").append(textField);
-		mg$(".mgPlayerJSTest_vlab-element-input-text").off("keyup").on("keyup", triggerNextOnTyping);
+		mg$(".mgPlayerJSTest2_vlab-virtual-element").append(textField);
+		mg$(".mgPlayerJSTest2_vlab-element-input-text").off("keyup").on("keyup", triggerNextOnTyping);
 	}
 
 	function getRadioEl(el) {
 
-		return "<input class='mgPlayerJSTest_vlab-element-input-radio mgPlayerJSTest_input-radio-custom' type='radio' " +
+		return "<input class='mgPlayerJSTest2_vlab-element-input-radio mgPlayerJSTest2_input-radio-custom' type='radio' " +
 			"name='" + el.name +
 			"' style = 'width:" + el.width + "px; " +
 			"height:" + el.height + "px; " +
@@ -46555,7 +46610,7 @@ GmCXt.vlabPanel = function() {
 	}
 
 	function getCheckboxEl(el) {
-		return "<input class='mgPlayerJSTest_vlab-element-input-checkbox mgPlayerJSTest_input-checkbox-custom' type='checkbox' " +
+		return "<input class='mgPlayerJSTest2_vlab-element-input-checkbox mgPlayerJSTest2_input-checkbox-custom' type='checkbox' " +
 			"name='" + el.name +
 			"' style='width:" + el.width + "px; " +
 			" height:" + el.height + "px; " +
@@ -46594,10 +46649,10 @@ GmCXt.vlabPanel = function() {
 			}
 
 			if (elType === 'select') {
-				opHtml = '<select class="mgPlayerJSTest_vlab-element-input-select">' + opHtml + "</select>";
+				opHtml = '<select class="mgPlayerJSTest2_vlab-element-input-select">' + opHtml + "</select>";
 			}
 
-			mg$(".mgPlayerJSTest_vlab-virtual-element").append(opHtml);
+			mg$(".mgPlayerJSTest2_vlab-virtual-element").append(opHtml);
 		}
 	}
 
@@ -46606,24 +46661,24 @@ GmCXt.vlabPanel = function() {
 		switch (event) {
 
 			case 'clickNext':
-				mg$(".mgPlayerJSTest_vlab-virtual-element").off("click").on("click", playNextStep);
+				mg$(".mgPlayerJSTest2_vlab-virtual-element").off("click").on("click", playNextStep);
 				break;
 
 			case 'onRightClickNext':
-				mg$(".mgPlayerJSTest_vlab-virtual-element").off("mousedown").on("mousedown", checkForRightClick);
+				mg$(".mgPlayerJSTest2_vlab-virtual-element").off("mousedown").on("mousedown", checkForRightClick);
 				break;
 
 			case 'hoverNext':
-				mg$(".mgPlayerJSTest_vlab-virtual-element").off("mouseover").on("mouseover", playNextStep);
+				mg$(".mgPlayerJSTest2_vlab-virtual-element").off("mouseover").on("mouseover", playNextStep);
 				break;
 
 			case 'onClickAnywhere':
 			case 'headerNext':
-				mg$(".mgPlayerJSTest_vlab-screen").off("click").on("click", playNextStep);
+				mg$(".mgPlayerJSTest2_vlab-screen").off("click").on("click", playNextStep);
 				break;
 
 			case 'onChangeNext':
-				mg$(".mgPlayerJSTest_vlab-element-input-select").off("change").on("change", triggerNextOnTyping);
+				mg$(".mgPlayerJSTest2_vlab-element-input-select").off("change").on("change", triggerNextOnTyping);
 				break;
 
 			case 'closeAfterDelay':
@@ -46693,6 +46748,35 @@ GmCXt.userApiKeySignin = function(data) {
 	};
 	return GmCXt.xhr(params);
 };
+
+GmCXt.getAnonymousUserPrefrence = function(data, accesstoken) {
+
+	var params = {
+		url: 'user/preference',
+		method: 'POST',
+		headers: {
+			'Content-Type': "application/json",
+			AccessToken: accesstoken
+		},
+		data: JSON.stringify(data)
+	};
+	return GmCXt.xhr(params);
+};
+
+GmCXt.setAnonymousUserPrefrence = function(data) {
+
+	var params = {
+		url: 'user/preference',
+		method: 'PUT',
+		headers: {
+			'Content-Type': "application/json",
+			AccessToken: GmCXt.user.accesstoken
+		},
+		data: JSON.stringify(data)
+	};
+	return GmCXt.xhr(params);
+};
+
 
 GmCXt.apiGetHandOffToken = function() {
 	var params = {
@@ -46975,12 +47059,12 @@ GmCXt.apiUpdateUserGuidevView = function(data) {
 };
 
 GmCXt.logoutUser = function() {
-	GmCXt.msgToApp('mgPlayerJSTest_action:to_signin_page', {}, senderTabId);
+	GmCXt.msgToApp('mgPlayerJSTest2_action:to_signin_page', {}, senderTabId);
 };
 
 GmCXt.loginFromConsole = function(email, password) {
 	if (!GmCXt.isBackgroundPage) {
-		GmCXt.msgToApp('mgPlayerJSTest_action:signin_from_console', {
+		GmCXt.msgToApp('mgPlayerJSTest2_action:signin_from_console', {
 			email: email,
 			password: password
 		}, senderTabId);
@@ -47144,9 +47228,9 @@ GmCXt.xhr = function(params, doNotAddWebURL, extApi) {
 
 		var showMaintenance = function() {
 			if (GmCXt.isBackgroundPage === true) {
-				GmCXt.sendMessageToPanel('mgPlayerJSTest_action:maintenance');
+				GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:maintenance');
 			} else {
-				GmCXt.sendMessageToApp('mgPlayerJSTest_action:maintenance');
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:maintenance');
 			}
 		};
 
@@ -47717,6 +47801,8 @@ GmCXt.guideMeApiProvider = function() {
 	pub.getCdnSignature = GmCXt.callGetCdnSignature;
 	pub.getTour = GmCXt.getDetailTour;
 	pub.sendFeedbackEmail = GmCXt.sendFeedbackEmail;
+	pub.getAnonymousUserPrefrence = GmCXt.getAnonymousUserPrefrence;
+	pub.setAnonymousUserPrefrence = GmCXt.setAnonymousUserPrefrence;
 
 	return pub;
 };
@@ -47753,6 +47839,8 @@ GmCXt.apiPlayerProvider = function() {
 	pub.getCdnSignature = GmCXt.callGetCdnSignature;
 	pub.getTour = GmCXt.getDetailTour;
 	pub.sendFeedbackEmail = GmCXt.sendFeedbackEmail;
+	pub.getAnonymousUserPrefrence = GmCXt.getAnonymousUserPrefrence;
+	pub.setAnonymousUserPrefrence = GmCXt.setAnonymousUserPrefrence;
 
 	return pub;
 };
@@ -47977,7 +48065,7 @@ if (GmCXt.conf.appConfig.desktopCommunication) {
 
 			var e = {
 				data: {
-					action: "mgPlayerJSTest_action:reselect_edit_step_element,task:edit_step",
+					action: "mgPlayerJSTest2_action:reselect_edit_step_element,task:edit_step",
 					data: step,
 					isDesktop: true,
 					isEdit: true
@@ -48003,7 +48091,7 @@ if (GmCXt.conf.appConfig.desktopCommunication) {
 
 	window.onbeforeunload = function() {
 		if (GmCXt.desktopConnection.activeReq) {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSTest_action:hide_dom_outline");
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:hide_dom_outline");
 			GmCXt.sendMessageToDesktop({
 				stepCreation: "fail",
 				ack: 'closedStepCreation'
@@ -48037,27 +48125,27 @@ GmCXt.sendMsgUp = function(type, data, toTop) {
 
 	if (window.self === window.top) {
 		switch (type) {
-			case 'mgPlayerJSTest_action:close_step':
+			case 'mgPlayerJSTest2_action:close_step':
 				GmCXt.requestHandler.closeStep();
 				break;
 
-			case 'mgPlayerJSTest_action:enable_next_button':
+			case 'mgPlayerJSTest2_action:enable_next_button':
 				GmCXt.requestHandler.enableNextButton();
 				break;
 
-			case 'mgPlayerJSTest_action:record_event;testMe':
+			case 'mgPlayerJSTest2_action:record_event;testMe':
 				GmCXt.requestHandler.recordEventTestMe(data);
 				break;
 
-			case "mgPlayerJSTest_action:play_next_step":
+			case "mgPlayerJSTest2_action:play_next_step":
 				GmCXt.requestHandler.playTourNextStep();
 				break;
 
-			case "mgPlayerJSTest_action:update_PI_PS":
+			case "mgPlayerJSTest2_action:update_PI_PS":
 				GmCXt.requestHandler.updatePIPS(data);
 				break;
 
-			case 'mgPlayerJSTest_action:update_PI_steps':
+			case 'mgPlayerJSTest2_action:update_PI_steps':
 				GmCXt.requestHandler.updatePISteps(data);
 				break;
 
@@ -48151,7 +48239,7 @@ GmCXt.requestHandler.findElementToCheckDomRule = function(data) {
 		};
 
 		var message = {
-			action: "mgPlayerJSTest_action:completed;task:select_dom_element_for_rules",
+			action: "mgPlayerJSTest2_action:completed;task:select_dom_element_for_rules",
 			data: obj
 		};
 
@@ -48241,7 +48329,7 @@ GmCXt.requestHandler.selectExistingDomElementIframe = function(d) {
 };
 
 GmCXt.requestHandler.selectELForVariable = function(request) {
-	var actionName = "mgPlayerJSTest_action:completed;task:find_element_for_variable";
+	var actionName = "mgPlayerJSTest2_action:completed;task:find_element_for_variable";
 
 	function callback(data) {
 		var message = {
@@ -48264,7 +48352,7 @@ GmCXt.requestHandler.selectELForVariable = function(request) {
 
 GmCXt.requestHandler.selectDomElement = function(request) {
 
-	var actionName = "mgPlayerJSTest_action:completed;task:select_dom_element_tooltips";
+	var actionName = "mgPlayerJSTest2_action:completed;task:select_dom_element_tooltips";
 
 	var data = request.data;
 	var elems = data.settings.domElems;
@@ -48299,7 +48387,7 @@ GmCXt.requestHandler.selectDomElement = function(request) {
 			if (window.self === window.top) {
 				GmCXt.requestHandler.findOtherTooltips(request);
 			} else {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:find_other_msg_step_tooltips', request);
+				GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:find_other_msg_step_tooltips', request);
 			}
 		}
 	};
@@ -48336,11 +48424,11 @@ GmCXt.requestHandler.searchStartPoint = function(data) {
 
 	var cb = function(d) {
 		if (d.status === GmCXt.ELEMENT_FOUND) {
-			GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest_action:start_point_found", {
+			GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:start_point_found", {
 				step: data.startPoint
 			});
 		} else {
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:start_point_not_found');
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:start_point_not_found');
 		}
 	};
 	var step = data.startPoint;
@@ -48366,7 +48454,7 @@ GmCXt.requestHandler.searchDomElement = function(d) {
 		data: d,
 		cb: function(r) {
 			if (r.status === GmCXt.ELEMENT_FOUND) {
-				GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest_action:next_step_found");
+				GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:next_step_found");
 			}
 		}
 	});
@@ -48386,7 +48474,7 @@ GmCXt.requestHandler.selectExistingDomElement = function(d) {
 
 GmCXt.onFindExistingEl = function(data) {
 
-	var actionName = "mgPlayerJSTest_action:completed;task:select_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:select_existing_dom_element";
 	delete data.he;
 
 	var message = {
@@ -48513,7 +48601,7 @@ GmCXt.requestHandler.removeToolip = function(data) {
 
 GmCXt.requestHandler.hideAllSmartTip = function(msg) {
 	GmCXt.forwardToContentWindows(msg);
-	mg$('.mgPlayerJSTest_smarttip-icon').hide();
+	mg$('.mgPlayerJSTest2_smarttip-icon').hide();
 	GmCXt.smarttipAreHidden = true;
 };
 
@@ -48524,65 +48612,65 @@ GmCXt.processIframePlayer = function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSTest_action:domain_in_active_app':
+		case 'mgPlayerJSTest2_action:domain_in_active_app':
 			GmCXt.domainInApp = message.data.domainInApp;
 			break;
 
-		case 'mgPlayerJSTest_action:page_url':
+		case 'mgPlayerJSTest2_action:page_url':
 			GmCXt.urlParts = message.data.urlParts;
 			GmCXt.elAppName = message.data.elAppName;
 			GmCXt.pageTitle = message.data.title;
 			break;
 
-		case 'mgPlayerJSTest_action:started; task:remove_intel_events':
+		case 'mgPlayerJSTest2_action:started; task:remove_intel_events':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.removeExistingDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_outline;action:do':
+		case 'mgPlayerJSTest2_action:clear_outline;action:do':
 			if (message.data.scriptId !== GmCXt.id) {
-				mg$('.mgPlayerJSTest_new-outline').hide();
-				mg$('.mgPlayerJSTest_select-outline').hide();
+				mg$('.mgPlayerJSTest2_new-outline').hide();
+				mg$('.mgPlayerJSTest2_select-outline').hide();
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:set_iframe_id:do':
+		case 'mgPlayerJSTest2_action:set_iframe_id:do':
 			GmCXt.currentIframeId = message.data.currentIframeId;
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:select_existing_dom_element':
 			if (GmCXt.visibleWindow(message.data)) {
 				GmCXt.forwardToContentWindows(message);
 				GmCXt.requestHandler.selectExistingDomElement(messageCopy.data);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_existing_dom_element:target_frame_only':
+		case 'mgPlayerJSTest2_action:started;task:select_existing_dom_element:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.requestHandler.selectExistingDomElement(messageCopy.data);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id', {
 					currentIframeId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:search_next_step':
+		case 'mgPlayerJSTest2_action:started;task:search_next_step':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.searchDomElement(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:search_start_point':
+		case 'mgPlayerJSTest2_action:started;task:search_start_point':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.searchStartPoint(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_tooltips':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_tooltips':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:task:init_new_iframe':
+		case 'mgPlayerJSTest2_action:task:init_new_iframe':
 			GmCXt.forwardToContentWindows(message);
 
 			if (message.data.receiverId === GmCXt.id) {
@@ -48598,7 +48686,7 @@ GmCXt.processIframePlayer = function(event) {
 
 				if (message.data.domainInApp) GmCXt.domainInApp = message.data.domainInApp;
 
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:update_variables');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:update_variables');
 
 				if (message.data.activeAppSettings) {
 					GmCXt.activeAppSettings = message.data.activeAppSettings;
@@ -48608,192 +48696,192 @@ GmCXt.processIframePlayer = function(event) {
 			}
 			break;
 
-		case "mgPlayerJSTest_action:command; task:trigger_step_click":
+		case "mgPlayerJSTest2_action:command; task:trigger_step_click":
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.triggerElementClick(message);
 			break;
 
-		case "mgPlayerJSTest_action:find_element_for_variable":
+		case "mgPlayerJSTest2_action:find_element_for_variable":
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectELForVariable(messageCopy);
 
 			break;
 
-		case 'mgPlayerJSTest_action:show_beacon_on_dom_element':
+		case 'mgPlayerJSTest2_action:show_beacon_on_dom_element':
 			GmCXt.forwardToContentWindows(message);
 
 			GmCXt.highlighter.queueBeacon(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:show_beacon_on_dom_element:target_frame_only':
+		case 'mgPlayerJSTest2_action:show_beacon_on_dom_element:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.stepData.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueBeacon(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id:beacon', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id:beacon', {
 					tour_id: message.data.tourId,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:clear_dom_outline':
+		case 'mgPlayerJSTest2_action:clear_dom_outline':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.removeOutline(message.data.id);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_dom_highlighter':
+		case 'mgPlayerJSTest2_action:stop_dom_highlighter':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.unqueue(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:select_dom_element_tooltips':
-		case 'mgPlayerJSTest_action:completed;task:select_existing_dom_element':
-		case 'mgPlayerJSTest_action:completed;task:select_dom_element_for_rules':
-		case 'mgPlayerJSTest_action:completed;task:find_element_for_variable':
+		case 'mgPlayerJSTest2_action:completed;task:select_dom_element_tooltips':
+		case 'mgPlayerJSTest2_action:completed;task:select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:select_dom_element_for_rules':
+		case 'mgPlayerJSTest2_action:completed;task:find_element_for_variable':
 			if (!GmCXt.isSidePanelApp) {
 				GmCXt.requestHandler.updateElementOffset(event, message);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:close_step':
+		case 'mgPlayerJSTest2_action:close_step':
 			// pass to the top window if current window is not the top window
 			if (window.parent !== window.top) {
 				GmCXt.sendToParentWindow(message);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_to_show_tooltip':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_to_show_tooltip':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.queueSmarttip(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_to_show_tooltip:target_frame_only':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_to_show_tooltip:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueSmarttip(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id:tooltip', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id:tooltip', {
 					step_id: message.data.step.step_id,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:find_tag_elm':
+		case 'mgPlayerJSTest2_action:started;task:find_tag_elm':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.queueTag(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:find_tag_elm:target_frame_only':
+		case 'mgPlayerJSTest2_action:started;task:find_tag_elm:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueTag(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id:tag', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id:tag', {
 					step_id: message.data.step.step_id,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:bring_element_in_viewport':
+		case 'mgPlayerJSTest2_action:bring_element_in_viewport':
 			GmCXt.requestHandler.bringElementInViewport(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:bring_element_in_viewport_edit_step':
+		case 'mgPlayerJSTest2_action:bring_element_in_viewport_edit_step':
 			GmCXt.requestHandler.bringElementInViewportEditStep(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:start_watcher;testMe':
+		case 'mgPlayerJSTest2_action:start_watcher;testMe':
 			GmCXt.requestHandler.startWatcherTestMe(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_watcher;testMe':
+		case 'mgPlayerJSTest2_action:stop_watcher;testMe':
 			GmCXt.requestHandler.stopWatcherTestMe();
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_for_rules':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_for_rules':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.findElementToCheckDomRule(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:save_org_in_iframes':
+		case 'mgPlayerJSTest2_action:save_org_in_iframes':
 			if (!GmCXt.isEmpty(message.data.org)) {
 				GmCXt.updateGlobalOrg(message.data.org);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:save_user_in_iframes':
+		case 'mgPlayerJSTest2_action:save_user_in_iframes':
 			if (!GmCXt.isEmpty(message.data.user)) {
 				GmCXt.updateGlobalUser(message.data.user);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:hide_beacons':
+		case 'mgPlayerJSTest2_action:hide_beacons':
 			GmCXt.forwardToContentWindows(message);
-			mg$('.mgPlayerJSTest_beacon-icon').addClass('mgPlayerJSTest_hidden');
+			mg$('.mgPlayerJSTest2_beacon-icon').addClass('mgPlayerJSTest2_hidden');
 			GmCXt.beaconsAreHidden = true;
 			break;
 
-		case 'mgPlayerJSTest_action:show_beacons':
+		case 'mgPlayerJSTest2_action:show_beacons':
 			GmCXt.forwardToContentWindows(message);
-			mg$('.mgPlayerJSTest_beacon-icon').removeClass('mgPlayerJSTest_hidden');
+			mg$('.mgPlayerJSTest2_beacon-icon').removeClass('mgPlayerJSTest2_hidden');
 			GmCXt.beaconsAreHidden = false;
 			break;
 
-		case 'mgPlayerJSTest_action:remove_preview':
+		case 'mgPlayerJSTest2_action:remove_preview':
 			GmCXt.removePreviewFrame();
 			break;
 
-		case "mgPlayerJSTest_action:clear_session":
+		case "mgPlayerJSTest2_action:clear_session":
 			GmCXt.clearSession();
 			break;
 
-		case 'mgPlayerJSTest_action:hide_all_smarttip':
+		case 'mgPlayerJSTest2_action:hide_all_smarttip':
 			GmCXt.requestHandler.hideAllSmartTip(message);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_message_tooltip':
+		case 'mgPlayerJSTest2_action:clear_message_tooltip':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.clearJob(message.data.id);
 			break;
 
-		case 'mgPlayerJSTest_action:remove_tooltip':
+		case 'mgPlayerJSTest2_action:remove_tooltip':
 			GmCXt.requestHandler.removeToolip(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:show_all_smarttip':
+		case 'mgPlayerJSTest2_action:show_all_smarttip':
 			GmCXt.updateFrameOffsetsForSmarttip(message);
-			mg$('.mgPlayerJSTest_smarttip-icon').show();
+			mg$('.mgPlayerJSTest2_smarttip-icon').show();
 			GmCXt.smarttipAreHidden = false;
 			break;
 
-		case 'mgPlayerJSTest_action:hide_smarttip_delay':
+		case 'mgPlayerJSTest2_action:hide_smarttip_delay':
 			if (window.self !== window.top) {
 				GmCXt.sendToParentWindow(message);
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:show_preview_smarttip':
-			mg$('.mgPlayerJSTest_smarttip-icon-wrapper-' + message.data.id).removeClass('tooltip-hidden');
+		case 'mgPlayerJSTest2_action:show_preview_smarttip':
+			mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + message.data.id).removeClass('tooltip-hidden');
 			break;
 
-		case 'mgPlayerJSTest_action:show_preview_beacon':
-			mg$('.mgPlayerJSTest_beacon-icon-tour-' + message.data.id).show();
+		case 'mgPlayerJSTest2_action:show_preview_beacon':
+			mg$('.mgPlayerJSTest2_beacon-icon-tour-' + message.data.id).show();
 			break;
 
-		case 'mgPlayerJSTest_action:forward;remove_active_smarttip_beacon':
+		case 'mgPlayerJSTest2_action:forward;remove_active_smarttip_beacon':
 			GmCXt.requestHandler.removeSmarttipBeacon(message.data.idList);
 			break;
 
-		case 'mgPlayerJSTest_action:smarttip_preview_on':
+		case 'mgPlayerJSTest2_action:smarttip_preview_on':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.smartTipPreviewOn = true;
 			break;
 
-		case 'mgPlayerJSTest_action:insert_power_html':
+		case 'mgPlayerJSTest2_action:insert_power_html':
 			GmCXt.highlighter.insertPowerForm(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:update_tracking_info:frames':
+		case 'mgPlayerJSTest2_action:update_tracking_info:frames':
 			GmCXt.forwardToContentWindows(message);
 
 			GmCXt.trackerUtil = GmCXt.trackerUtil || {};
@@ -48802,11 +48890,11 @@ GmCXt.processIframePlayer = function(event) {
 			GmCXt.trackerUtil.pageTracking =  message.data.pageTracking;
 			break;
 
-		case 'mgPlayerJSTest_action:remove_beacon_job':
+		case 'mgPlayerJSTest2_action:remove_beacon_job':
 			GmCXt.highlighter.removeBeaconJob(message.data.tourId);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_rule_jobs':
+		case 'mgPlayerJSTest2_action:clear_rule_jobs':
 			GmCXt.forwardToContentWindows(message);
 
 			var init = message.data.initiator || '';
@@ -48815,23 +48903,23 @@ GmCXt.processIframePlayer = function(event) {
 			GmCXt.highlighter.clearRuleJobs(init, triggerSource);
 			break;
 
-		case "mgPlayerJSTest_action:update_app_settings":
+		case "mgPlayerJSTest2_action:update_app_settings":
 			GmCXt.activeAppSettings = message.data.activeAppSettings;
 			break;
 
-		case 'mgPlayerJSTest_action:sync_playerinstance_for_automation':
+		case 'mgPlayerJSTest2_action:sync_playerinstance_for_automation':
 			GmCXt.playerI = message.data.playerInstance;
 			break;
 
-		case 'mgPlayerJSTest_action:request_dom_tracker_info':
+		case 'mgPlayerJSTest2_action:request_dom_tracker_info':
 			GmCXt.shareDomTrackerInfo();
 			break;
 
-		case 'mgPlayerJSTest_action:reset_dom_tracker':
+		case 'mgPlayerJSTest2_action:reset_dom_tracker':
 			GmCXt.resetElTrackerVariable();
 			break;
 
-		case 'mgPlayerJSTest_action:empty_user_on_logout_in_iframes':
+		case 'mgPlayerJSTest2_action:empty_user_on_logout_in_iframes':
 			
 			GmCXt.user = false;
 			break;
@@ -48863,7 +48951,7 @@ GmCXt.processIframeCreator = function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSTest_action:toggle_capture_and_navigate_tool':
+		case 'mgPlayerJSTest2_action:toggle_capture_and_navigate_tool':
 			if (GmCXt.enableNavigateTool === true) {
 				GmCXt.enableNavigateTool = false;
 			} else {
@@ -48871,33 +48959,33 @@ GmCXt.processIframeCreator = function(event) {
 			}
 			break;
 		
-		case 'mgPlayerJSTest_action:hide_step_selector_toolbar':
+		case 'mgPlayerJSTest2_action:hide_step_selector_toolbar':
 			GmCXt.toggleStepSelectionToolbar(false);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:highlight_element':
+		case 'mgPlayerJSTest2_action:started;task:highlight_element':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.highlightElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:do;task:enable_navigate_tool':
+		case 'mgPlayerJSTest2_action:do;task:enable_navigate_tool':
 			GmCXt.enableNavigateTool = true;
 			GmCXt.forwardToContentWindows(message);
 			break;
 
-		case 'mgPlayerJSTest_action:do;task:enable_capture_tool':
+		case 'mgPlayerJSTest2_action:do;task:enable_capture_tool':
 			GmCXt.enableManualJQuerySelector = false;
 			GmCXt.enableNavigateTool = false;
 			GmCXt.jQElementFound = false;
 			GmCXt.forwardToContentWindows(message);
 			break;
 
-		case 'mgPlayerJSTest_action:do;task:enable_capture_delay_tool':
+		case 'mgPlayerJSTest2_action:do;task:enable_capture_delay_tool':
 			GmCXt.enableNavigateTool = true;
 			GmCXt.forwardToContentWindows(message);
 			break;
 
-		case 'mgPlayerJSTest_action:do;task:enable_jQuery_selector':
+		case 'mgPlayerJSTest2_action:do;task:enable_jQuery_selector':
 			GmCXt.enableManualJQuerySelector = true;
 			GmCXt.enableNavigateTool = true;
 			GmCXt.jQElementFound = false;
@@ -48905,82 +48993,82 @@ GmCXt.processIframeCreator = function(event) {
 			GmCXt.requestHandler.selectElementUsingJQ(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_invalid_jQuery_message;action:do':
+		case 'mgPlayerJSTest2_action:clear_invalid_jQuery_message;action:do':
 			GmCXt.jQElementFound = true;
 			GmCXt.forwardToContentWindows(message.data);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_new_dom_element':
-		case 'mgPlayerJSTest_action:started;task:select_new_dom_element_for_edit_step':
+		case 'mgPlayerJSTest2_action:started;task:select_new_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step':
 			GmCXt.enableNavigateTool = message.data.enableNavigateTool || false;
 			GmCXt.forwardToContentWindows(message);
 
-			GmCXt.log(74, 'mgPlayerJSTest_action:started;task:select_new_dom_element', messageCopy);
+			GmCXt.log(74, 'mgPlayerJSTest2_action:started;task:select_new_dom_element', messageCopy);
 
 			GmCXt.requestHandler.selectNewDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_new_dom_element_quick':
+		case 'mgPlayerJSTest2_action:started;task:select_new_dom_element_quick':
 			GmCXt.enableNavigateTool = message.data.enableNavigateTool || false;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewDomElementQuick(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_new_dom_element_find_replace':
+		case 'mgPlayerJSTest2_action:started;task:select_new_dom_element_find_replace':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewDomElementFindReplace(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:narrow_element_selection':
-		case 'mgPlayerJSTest_action:started;task:expand_element_selection':
+		case 'mgPlayerJSTest2_action:started;task:narrow_element_selection':
+		case 'mgPlayerJSTest2_action:started;task:expand_element_selection':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.modifyElementSelection(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_tags':
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_tags_2':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_tags':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_tags_2':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewDomElementTags(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_element_for_message_step':
+		case 'mgPlayerJSTest2_action:started;task:select_element_for_message_step':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectSupportingElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_element_for_branching_step':
+		case 'mgPlayerJSTest2_action:started;task:select_element_for_branching_step':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectSupportingElementForBranching(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_element_for_step_rule':
-		case 'mgPlayerJSTest_action:started;task:select_new_element_for_dom_select_rule':
+		case 'mgPlayerJSTest2_action:started;task:select_element_for_step_rule':
+		case 'mgPlayerJSTest2_action:started;task:select_new_element_for_dom_select_rule':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewElementForDomRule(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_new_table_for_dom_select_rule':
+		case 'mgPlayerJSTest2_action:started;task:select_new_table_for_dom_select_rule':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewElementForDomTableRule(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:delete_element_for_message_step':
+		case 'mgPlayerJSTest2_action:started;task:delete_element_for_message_step':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.deleteSupportingElement();
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_for_beacon':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_for_beacon':
 			GmCXt.enableNavigateTool = false;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementForBeacon(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:blackout_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:blackout_dom_element':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.blackoutDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_step_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element':
 			GmCXt.selectorTool = null;
 			if (GmCXt.visibleWindow(message.data)) {
 				GmCXt.forwardToContentWindows(message);
@@ -48988,127 +49076,127 @@ GmCXt.processIframeCreator = function(event) {
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_tag_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:edit_tag_select_existing_dom_element':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementEditTag(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_step_select_existing_dom_element:target_frame_only':
+		case 'mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element:target_frame_only':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.requestHandler.selectDomElementEditStep(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id', {
 					currentIframeId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_message_step_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:edit_message_step_select_existing_dom_element':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementMessageEditStep(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:step_blackout_area_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:step_blackout_area_existing_dom_element':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementForBlackOutArea(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementBeaconEdit(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only':
+		case 'mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only':
 			GmCXt.selectorTool = null;
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.requestHandler.selectDomElementBeaconEdit(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:set_iframe_id', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:set_iframe_id', {
 					currentIframeId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSTest_action:started:select_new_dom_element_for_smart_tip':
+		case 'mgPlayerJSTest2_action:started:select_new_dom_element_for_smart_tip':
 			GmCXt.enableNavigateTool = false;
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectNewDomElementForSmartTip(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_dom_selector;action:do':
+		case 'mgPlayerJSTest2_action:stop_dom_selector;action:do':
 			GmCXt.handleStopDom(message);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_step_req':
+		case 'mgPlayerJSTest2_action:clear_step_req':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.clearStepReqObj();
 			break;
 
-		case 'mgPlayerJSTest_action:clear_dom_outline':
+		case 'mgPlayerJSTest2_action:clear_dom_outline':
 			GmCXt.handleClearDomOutline(message);
 			break;
 
-		case 'mgPlayerJSTest_action:set_curr_he':
+		case 'mgPlayerJSTest2_action:set_curr_he':
 			GmCXt.setCurrentHe(message);
 			break;
 
-		case 'mgPlayerJSTest_action:clear_dom_outline_new':
+		case 'mgPlayerJSTest2_action:clear_dom_outline_new':
 			GmCXt.handleClearDomOutlineNew(message);
 			break;
 
-		case 'mgPlayerJSTest_action:hide_dom_outline':
+		case 'mgPlayerJSTest2_action:hide_dom_outline':
 			GmCXt.handleHideDomOutline(message);
 			break;
 
-		case 'mgPlayerJSTest_action:delete_beacon_icon':
+		case 'mgPlayerJSTest2_action:delete_beacon_icon':
 			var tourId = (message.data.tourId) ? message.data.tourId : 0;
-			var len = mg$('.mgPlayerJSTest_beacon-icon-tour-' + tourId).length;
+			var len = mg$('.mgPlayerJSTest2_beacon-icon-tour-' + tourId).length;
 			if (len && len === 1)
-				mg$('.mgPlayerJSTest_beacon-icon-tour-' + tourId).remove();
+				mg$('.mgPlayerJSTest2_beacon-icon-tour-' + tourId).remove();
 
 			break;
 
-		case 'mgPlayerJSTest_action:find_element_to_get_precision':
+		case 'mgPlayerJSTest2_action:find_element_to_get_precision':
 			GmCXt.requestHandler.findElementToGetPrecision(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:find_element_to_get_precision_for_rules':
+		case 'mgPlayerJSTest2_action:find_element_to_get_precision_for_rules':
 			GmCXt.requestHandler.findElementToGetPrecisionForRules(messageCopy);
 			break;
 
-		case 'mgPlayerJSTest_action:completed;task:select_new_dom_element':
-		case 'mgPlayerJSTest_action:completed;task:select_new_dom_element_quick':
-		case 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_edit_step':
-		case 'mgPlayerJSTest_action:completed;task:edit_step_select_existing_dom_element':
-		case 'mgPlayerJSTest_action:completed;task:edit_tag_select_existing_dom_element':
-		case 'mgPlayerJSTest_action:completed;task:select_element_for_message_step':
-		case 'mgPlayerJSTest_action:completed;task:select_element_for_branching_step':
-		case 'mgPlayerJSTest_action:completed;task:select_dom_element_for_beacon':
-		case 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_smart_tip':
-		case 'mgPlayerJSTest_action:started;task:edit_beacon_select_existing_dom_element':
-		case 'mgPlayerJSTest_action:completed;task:select_element_for_step_rule':
-		case 'mgPlayerJSTest_action:completed;task:select_new_element_for_dom_select_rule':
-		case 'mgPlayerJSTest_action:completed;task:select_new_table_for_dom_select_rule':
-		case 'mgPlayerJSTest_action:completed;task:select_element_for_variable_completed':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_quick':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_edit_step':
+		case 'mgPlayerJSTest2_action:completed;task:edit_step_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:edit_tag_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:select_element_for_message_step':
+		case 'mgPlayerJSTest2_action:completed;task:select_element_for_branching_step':
+		case 'mgPlayerJSTest2_action:completed;task:select_dom_element_for_beacon':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_smart_tip':
+		case 'mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element':
+		case 'mgPlayerJSTest2_action:completed;task:select_element_for_step_rule':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_element_for_dom_select_rule':
+		case 'mgPlayerJSTest2_action:completed;task:select_new_table_for_dom_select_rule':
+		case 'mgPlayerJSTest2_action:completed;task:select_element_for_variable_completed':
 			GmCXt.requestHandler.updateElementOffset(event, message);
 			break;
 
-		case 'mgPlayerJSTest_action:stop_step_edit_tool_instance':
+		case 'mgPlayerJSTest2_action:stop_step_edit_tool_instance':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.unqueue(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_dom_element_for_matching_in_rules':
+		case 'mgPlayerJSTest2_action:started;task:select_dom_element_for_matching_in_rules':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.findElementToCheckMatchingAlgo(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSTest_action:started;task:select_element_for_variable':
+		case 'mgPlayerJSTest2_action:started;task:select_element_for_variable':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElementForVariable(messageCopy);
 			break;
@@ -49181,7 +49269,7 @@ GmCXt.requestHandler.findElementToGetPrecision = function(req) {
 			index: index,
 			el: el
 		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:update_element_precision', data);
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:update_element_precision', data);
 	}
 
 	if (GmCXt.stepReq) {
@@ -49220,7 +49308,7 @@ GmCXt.requestHandler.findElementToGetPrecisionForRules = function(req) {
 			parentIndex: d.parentIndex,
 			rulesElement: el
 		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:update_element_precision:for_rules', dataValue);
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:update_element_precision:for_rules', dataValue);
 	}
 
 	if (GmCXt.highlighter) {
@@ -49236,7 +49324,7 @@ GmCXt.requestHandler.blackoutDomElement = function(request) {
 	var cb = function(data) {
 
 		var rect = data.element.position;
-		var actionName = 'mgPlayerJSTest_action:completed;task:blackout_dom_element';
+		var actionName = 'mgPlayerJSTest2_action:completed;task:blackout_dom_element';
 
 		var message = {
 			action: actionName,
@@ -49252,7 +49340,7 @@ GmCXt.requestHandler.blackoutDomElement = function(request) {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
 			GmCXt.selectorToolFill.removeBlackoutOutline();
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 	GmCXt.selectorToolFill = GmCXt.selector({
@@ -49266,7 +49354,7 @@ GmCXt.requestHandler.blackoutDomElement = function(request) {
 GmCXt.requestHandler.selectSupportingElement = function(request) {
 	var cb = function(data) {
 
-		var actionName = "mgPlayerJSTest_action:completed;task:select_element_for_message_step";
+		var actionName = "mgPlayerJSTest2_action:completed;task:select_element_for_message_step";
 		delete data.he;
 
 		var message = {
@@ -49284,7 +49372,7 @@ GmCXt.requestHandler.selectSupportingElement = function(request) {
 
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 	var frame = request.data.frame;
@@ -49316,7 +49404,7 @@ GmCXt.requestHandler.selectNewDomElementTags = function(request) {
 			}
 		}, 500);
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 200);
 	};
 
@@ -49367,7 +49455,7 @@ GmCXt.requestHandler.selectSupportingElementForBranching = function(request) {
 
 	var cb = function(data) {
 
-		var actionName = "mgPlayerJSTest_action:completed;task:select_element_for_branching_step";
+		var actionName = "mgPlayerJSTest2_action:completed;task:select_element_for_branching_step";
 		var message = {
 			action: actionName,
 			status: GmCXt.ELEMENT_FOUND,
@@ -49431,7 +49519,7 @@ GmCXt.requestHandler.selectSupportingElementForBranching = function(request) {
 
 		// Send a message to all frames to clear outline.
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 			if (window.self === window.top) {
 				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
 			} else {
@@ -49487,10 +49575,10 @@ GmCXt.requestHandler.selectNewElementForDomTableRule = function(request) {
 					}
 				}
 			}
-			actionName = "mgPlayerJSTest_action:completed;task:select_new_table_for_dom_select_rule";
+			actionName = "mgPlayerJSTest2_action:completed;task:select_new_table_for_dom_select_rule";
 		} else {
 			//If selected element not table change rule to select element
-			actionName = "mgPlayerJSTest_action:completed;task:select_new_element_for_dom_select_rule";
+			actionName = "mgPlayerJSTest2_action:completed;task:select_new_element_for_dom_select_rule";
 		}
 		var message = {
 			action: actionName,
@@ -49500,7 +49588,7 @@ GmCXt.requestHandler.selectNewElementForDomTableRule = function(request) {
 
 		// Send a message to all frames to clear outline.
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 			if (window.self === window.top) {
 				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
 			} else {
@@ -49533,11 +49621,11 @@ GmCXt.requestHandler.selectNewElementForDomRule = function(request) {
 		GmCXt.requestHandler.updateCriteriaForQuickFindEl(data);
 		delete data.he;
 
-		var actionName = "mgPlayerJSTest_action:completed;task:select_new_element_for_dom_select_rule";
-		if (request.action === 'mgPlayerJSTest_action:started;task:select_element_for_step_rule') {
+		var actionName = "mgPlayerJSTest2_action:completed;task:select_new_element_for_dom_select_rule";
+		if (request.action === 'mgPlayerJSTest2_action:started;task:select_element_for_step_rule') {
 			// dom rule at step level
 			data.rules = request.data.rules;
-			actionName = "mgPlayerJSTest_action:completed;task:select_element_for_step_rule";
+			actionName = "mgPlayerJSTest2_action:completed;task:select_element_for_step_rule";
 		}
 		var message = {
 			action: actionName,
@@ -49547,7 +49635,7 @@ GmCXt.requestHandler.selectNewElementForDomRule = function(request) {
 
 		// Send a message to all frames to clear outline.
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 			if (window.self === window.top) {
 				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
 			} else {
@@ -49567,7 +49655,7 @@ GmCXt.requestHandler.selectNewElementForDomRule = function(request) {
 
 GmCXt.requestHandler.deleteSupportingElement = function(request) {
 	var message = {
-		action: "mgPlayerJSTest_action:completed;task:delete_element_for_message_step",
+		action: "mgPlayerJSTest2_action:completed;task:delete_element_for_message_step",
 		iframeIdentifier: GmCXt.id
 	};
 
@@ -49578,14 +49666,14 @@ GmCXt.requestHandler.deleteSupportingElement = function(request) {
 		} else {
 			GmCXt.sendMessageToParentWindow(message.action, message);
 		}
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 	}, 300);
 };
 
 GmCXt.selectNewDomElForEdit = function(request) {
 
 	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_edit_step';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_edit_step';
 
 	var cb = function(data, autoCorrectData) {
 
@@ -49606,7 +49694,7 @@ GmCXt.selectNewDomElForEdit = function(request) {
 		var req = mg$.extend(true, {}, request);
 
 		//Auto correction functionality
-		if (req && req.action === 'mgPlayerJSTest_action:started;task:select_new_dom_element_for_edit_step') {
+		if (req && req.action === 'mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step') {
 
 			var oldSelector = req.data.stepReq.data.step.step_settings.element.selector;
 
@@ -49631,7 +49719,7 @@ GmCXt.selectNewDomElForEdit = function(request) {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
 
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -49640,10 +49728,10 @@ GmCXt.selectNewDomElForEdit = function(request) {
 
 GmCXt.selectNewDomEl = function(request) {
 	var frame = request.data.frame;
-	if (request.action === 'mgPlayerJSTest_action:started;task:select_new_dom_element_for_edit_step') {
-		var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_edit_step';
+	if (request.action === 'mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step') {
+		var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_edit_step';
 	} else {
-		var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element';
+		var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element';
 	}
 
 	var cb = function(data) {
@@ -49667,7 +49755,7 @@ GmCXt.selectNewDomEl = function(request) {
 			} else {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -49677,7 +49765,7 @@ GmCXt.selectNewDomEl = function(request) {
 GmCXt.selectNewDomElFindReplace = function(request) {
 
 	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_find_replace';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_find_replace';
 	var cb = function(data) {
 
 		delete data.he;
@@ -49698,7 +49786,7 @@ GmCXt.selectNewDomElFindReplace = function(request) {
 			}
 		}, 500);
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 200);
 	};
 
@@ -49720,7 +49808,7 @@ GmCXt.requestHandler.selectElementUsingJQ = function(request) {
 
 GmCXt.requestHandler.selectNewDomElementQuick = function(request) {
 	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_quick';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_quick';
 
 	var cb = function(data) {
 		GmCXt.getInfoFromHe(data);
@@ -49740,7 +49828,7 @@ GmCXt.requestHandler.selectNewDomElementQuick = function(request) {
 			} else {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -49751,18 +49839,18 @@ GmCXt.requestHandler.selectNewDomElement = function(request) {
 
 	GmCXt.log(74, 'selectNewDomElement', request);
 
-	if (request.action === 'mgPlayerJSTest_action:started;task:select_new_dom_element' ||
+	if (request.action === 'mgPlayerJSTest2_action:started;task:select_new_dom_element' ||
 		request.data.stepReq.data.step.step_settings.element.selector1) {
 
 		GmCXt.selectNewDomEl(request);
 
-	} else if (request.action === 'mgPlayerJSTest_action:started;task:select_new_dom_element_for_edit_step') {
+	} else if (request.action === 'mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step') {
 		GmCXt.selectNewDomElForEdit(request);
 	}
 };
 
 GmCXt.requestHandler.selectNewDomElementFindReplace = function(request) {
-	if (request.action === 'mgPlayerJSTest_action:started;task:select_new_dom_element_find_replace') {
+	if (request.action === 'mgPlayerJSTest2_action:started;task:select_new_dom_element_find_replace') {
 		GmCXt.selectNewDomElFindReplace(request);
 	}
 };
@@ -49780,10 +49868,10 @@ GmCXt.requestHandler.modifyElementSelection = function(request) {
 	}
 
 	if (GmCXt.selectorTool) {
-		if (request.action === 'mgPlayerJSTest_action:started;task:expand_element_selection') {
+		if (request.action === 'mgPlayerJSTest2_action:started;task:expand_element_selection') {
 			var data = GmCXt.selectorTool.expandElementSelection(currentHe);
 			GmCXt.onChangeSelection(data);
-		} else if (request.action === 'mgPlayerJSTest_action:started;task:narrow_element_selection') {
+		} else if (request.action === 'mgPlayerJSTest2_action:started;task:narrow_element_selection') {
 			var data = GmCXt.selectorTool.narrowElementSelection(currentHe);
 			GmCXt.onChangeSelection(data);
 		}
@@ -49793,7 +49881,7 @@ GmCXt.requestHandler.modifyElementSelection = function(request) {
 GmCXt.onChangeSelection = function(data) {
 	if (!data) return;
 	var step_type = GmCXt.stepReq.step.step_type;
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element';
 	var he = data.he;
 
 	data.isChildrenVisited = mg$(he).children('[gm_visited="true"]').length ? true : false;
@@ -49802,7 +49890,10 @@ GmCXt.onChangeSelection = function(data) {
 	if (step_type === GmCXt.STEP_TYPE_SMART_TIP) {
 
 		data.isEditableEl = mg$(he).attr('contenteditable');
-		actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_smart_tip';
+		actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_smart_tip';
+		var isElementFixed = GmCXt.dom.getElementFixedPosition(he);
+		data.elPosProp = isElementFixed ? 'fixed' : mg$(he).css('position');
+		data.parentElPosProp = mg$(he).parent().css('position');
 	}
 
 	delete data.he;
@@ -49824,7 +49915,7 @@ GmCXt.onChangeSelection = function(data) {
 		} else {
 			GmCXt.sendMessageToParentWindow(message.action, message);
 		}
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 	}, 0);
 };
 
@@ -49842,7 +49933,7 @@ GmCXt.startSelectorTool = function(cb, frame, isQuick) {
 
 GmCXt.requestHandler.selectDomElementEditStep = function(request) {
 
-	var actionName = "mgPlayerJSTest_action:completed;task:edit_step_select_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:edit_step_select_existing_dom_element";
 
 	var cb = function(data) {
 		if (data.he) {
@@ -49879,7 +49970,7 @@ GmCXt.requestHandler.selectDomElementEditStep = function(request) {
 
 GmCXt.requestHandler.selectDomElementEditTag = function(request) {
 	
-	var actionName = "mgPlayerJSTest_action:completed;task:edit_tag_select_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:edit_tag_select_existing_dom_element";
 	var elTags = request.data.elTags;
 
 	var cb = function(data) {
@@ -49920,7 +50011,7 @@ GmCXt.requestHandler.selectDomElementEditTag = function(request) {
 GmCXt.requestHandler.selectDomElementMessageEditStep = function(request) {
 
 	var data = request.data;
-	var actionName = "mgPlayerJSTest_action:completed;task:edit_message_step_select_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:edit_message_step_select_existing_dom_element";
 
 	var elems = data.settings.domElems || {};
 	var cb = function(data) {
@@ -49942,7 +50033,7 @@ GmCXt.requestHandler.selectDomElementMessageEditStep = function(request) {
 			} else {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -49967,7 +50058,7 @@ GmCXt.requestHandler.selectDomElementMessageEditStep = function(request) {
 
 GmCXt.requestHandler.selectDomElementForBlackOutArea = function(request) {
 
-	var actionName = "mgPlayerJSTest_action:completed;task:step_blackout_area_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:step_blackout_area_existing_dom_element";
 
 	var cb = function(data) {
 
@@ -49997,7 +50088,7 @@ GmCXt.requestHandler.selectDomElementForBlackOutArea = function(request) {
 
 GmCXt.requestHandler.selectDomElementBeaconEdit = function(request) {
 
-	var actionName = "mgPlayerJSTest_action:completed;task:edit_beacon_select_existing_dom_element";
+	var actionName = "mgPlayerJSTest2_action:completed;task:edit_beacon_select_existing_dom_element";
 
 	var cb = function(data) {
 
@@ -50033,7 +50124,7 @@ GmCXt.requestHandler.updateCriteriaForQuickFindEl = function(data) {
 
 GmCXt.requestHandler.selectDomElementForBeacon = function(request) {
 
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_dom_element_for_beacon';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_dom_element_for_beacon';
 
 	var frame = request.data.frame;
 	var cb = function(data) {
@@ -50055,7 +50146,7 @@ GmCXt.requestHandler.selectDomElementForBeacon = function(request) {
 			} else {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -50064,7 +50155,7 @@ GmCXt.requestHandler.selectDomElementForBeacon = function(request) {
 
 GmCXt.requestHandler.selectDomElementForVariable = function(request) {
 
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_element_for_variable_completed';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_element_for_variable_completed';
 
 	var frame = request.data.frame;
 	var cb = function(data) {
@@ -50086,7 +50177,7 @@ GmCXt.requestHandler.selectDomElementForVariable = function(request) {
 			} else {
 				GmCXt.sendMessageToParentWindow(actionName, message);
 			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 500);
 	};
 
@@ -50101,7 +50192,7 @@ GmCXt.requestHandler.selectDomElementForVariable = function(request) {
 
 GmCXt.requestHandler.highlightElement = function(request) {
 
-	var actionName = 'mgPlayerJSTest_action:completed;task:highlight_element';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:highlight_element';
 
 	var cb = function(data) {
 
@@ -50123,7 +50214,7 @@ GmCXt.requestHandler.highlightElement = function(request) {
 			if (window.self === window.top) {
 				GmCXt.executeEditInlineStep(data);
 			} else {
-				GmCXt.sendMessageToParentWindow("mgPlayerJSTest_action:task:execute_edit_inline_step", data);
+				GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:task:execute_edit_inline_step", data);
 			}
 		}
 	};
@@ -50139,7 +50230,7 @@ GmCXt.requestHandler.highlightElement = function(request) {
 
 GmCXt.requestHandler.selectNewDomElementForSmartTip = function(request) {
 
-	var actionName = 'mgPlayerJSTest_action:completed;task:select_new_dom_element_for_smart_tip';
+	var actionName = 'mgPlayerJSTest2_action:completed;task:select_new_dom_element_for_smart_tip';
 
 	var frame = request.data.frame;
 
@@ -50169,7 +50260,7 @@ GmCXt.requestHandler.selectNewDomElementForSmartTip = function(request) {
 
 		// Send a message to all frames to clear outline.
 		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:stop_dom_selector;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:stop_dom_selector;action:inform');
 		}, 300);
 	};
 
@@ -50299,7 +50390,7 @@ GmCXt.requestHandler.findElementToCheckMatchingAlgo = function(data) {
 		GmCXt.rulesElement = result.he;
 
 		var message = {
-			action: "mgPlayerJSTest_action:forward;task:select_dom_element_for_matching_in_rules",
+			action: "mgPlayerJSTest2_action:forward;task:select_dom_element_for_matching_in_rules",
 			data: obj
 		};
 
@@ -51373,17 +51464,17 @@ GmCXt.dom1334.filterParentTextEl = function(nodes, text) {
 	var text = text.trim().toLowerCase();
 
 	nodes.filter(function(index, node) {
-		mg$(node).parents().addClass('mgPlayerJSTest_dummy-class');
+		mg$(node).parents().addClass('mgPlayerJSTest2_dummy-class');
 	});
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText) {
 			var nodeText = node.innerText.trim().toLowerCase();
-			return nodeText === text && !mg$(node).hasClass('mgPlayerJSTest_dummy-class');
+			return nodeText === text && !mg$(node).hasClass('mgPlayerJSTest2_dummy-class');
 		}
 	});
 
-	mg$('.mgPlayerJSTest_dummy-class').removeClass('mgPlayerJSTest_dummy-class');
+	mg$('.mgPlayerJSTest2_dummy-class').removeClass('mgPlayerJSTest2_dummy-class');
 
 	return GmCXt.l.return(nodes);
 };
@@ -52315,17 +52406,17 @@ GmCXt.dom1334.filterParentNodes = function(nodes, text) {
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText && node.innerText.trim().toLowerCase() === text) {
-			mg$(node).parents().addClass('mgPlayerJSTest_dummy-class');
+			mg$(node).parents().addClass('mgPlayerJSTest2_dummy-class');
 			return true;
 		}
 		return false;
 	});
 
 	var childNodes = nodes.filter(function(index, node) {
-		return !mg$(node).hasClass('mgPlayerJSTest_dummy-class');
+		return !mg$(node).hasClass('mgPlayerJSTest2_dummy-class');
 	});
 
-	mg$('.mgPlayerJSTest_dummy-class').removeClass('mgPlayerJSTest_dummy-class');
+	mg$('.mgPlayerJSTest2_dummy-class').removeClass('mgPlayerJSTest2_dummy-class');
 
 	var returnValue;
 	if (childNodes.length === 1) { // All nodes are hierachichally linked (parent-child)
@@ -52418,9 +52509,9 @@ GmCXt.dom1334.executeTextBasedJquery = function(queryString, text) {
 
 GmCXt.getPosition = function(cssPos) {
 	if (cssPos) {
-		return 'mgPlayerJSTest_fixed-position';
+		return 'mgPlayerJSTest2_fixed-position';
 	} else {
-		return 'mgPlayerJSTest_absolute-position';
+		return 'mgPlayerJSTest2_absolute-position';
 	}
 };
 GmCXt.dom = {};
@@ -54954,17 +55045,17 @@ GmCXt.dom.filterParentTextEl = function(nodes, text) {
 	var text = text.trim().toLowerCase();
 
 	nodes.filter(function(index, node) {
-		mg$(node).parents().addClass('mgPlayerJSTest_dummy-class');
+		mg$(node).parents().addClass('mgPlayerJSTest2_dummy-class');
 	});
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText) {
 			var nodeText = node.innerText.trim().toLowerCase();
-			return nodeText === text && !mg$(node).hasClass('mgPlayerJSTest_dummy-class');
+			return nodeText === text && !mg$(node).hasClass('mgPlayerJSTest2_dummy-class');
 		}
 	});
 
-	mg$('.mgPlayerJSTest_dummy-class').removeClass('mgPlayerJSTest_dummy-class');
+	mg$('.mgPlayerJSTest2_dummy-class').removeClass('mgPlayerJSTest2_dummy-class');
 
 	return GmCXt.l.return(nodes);
 };
@@ -55139,8 +55230,8 @@ GmCXt.highlighter = (function() {
 		}
 
 		pub.removeOutline();
-		mg$('.mgPlayerJSTest_selector-blackout').remove();
-		mg$(".mgPlayerJSTest_user-tip-guide-container").remove();
+		mg$('.mgPlayerJSTest2_selector-blackout').remove();
+		mg$(".mgPlayerJSTest2_user-tip-guide-container").remove();
 	};
 
 	pub.queueVariable = function(req) {
@@ -55209,7 +55300,7 @@ GmCXt.highlighter = (function() {
 			}
 		}
 		beaconJobs = [];
-		mg$(".mgPlayerJSTest_beacon-icon").remove();
+		mg$(".mgPlayerJSTest2_beacon-icon").remove();
 	};
 
 	pub.queueTag = function(req) {
@@ -55326,9 +55417,9 @@ GmCXt.highlighter = (function() {
 	};
 
 	pub.removeToolTipIcons = function(d) {
-		mg$('.mgPlayerJSTest_smarttip-icon-wrapper-' + d.step_id).remove();
-		mg$('.mgPlayerJSTest_smarttip-valid-' + d.step_id).remove();
-		mg$('#mgPlayerJSTest_smarttip-' + d.step_id).remove();
+		mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + d.step_id).remove();
+		mg$('.mgPlayerJSTest2_smarttip-valid-' + d.step_id).remove();
+		mg$('#mgPlayerJSTest2_smarttip-' + d.step_id).remove();
 		mg$('.gssSmarttip-form-submit-' + d.tour_id).removeClass('gssSmarttip-form-submit');
 		mg$('.gssSmarttip-form-submit-' + d.tour_id).removeClass('gssSmarttip-form-submit-' + d.tour_id);
 	};
@@ -55561,12 +55652,14 @@ GmCXt.highlighter = (function() {
 		delete jobs[jobId];
 	}
 
+	var jobNumber = 0;
 	function setJobInterval() {
 		// Start interval when at least one elem in queue. 
 		// Stop when no elems in queue.
 		if (Object.keys(jobs).length === 1) {
 			clearInterval(intervalId);
-			intervalId = setInterval(processJobs, 1000);
+			jobNumber = 0;
+			intervalId = setInterval(processJobs, 300);
 		}
 	}
 
@@ -55577,21 +55670,24 @@ GmCXt.highlighter = (function() {
 	}
 
 	function processJobs() {
-
+		jobNumber++;
 		checkJobsQueue();
 		for (var jobId in jobs) {
 			var job = jobs[jobId];
 
-			if (job.state === 'find') findJob(jobId);
-			else if (job.state === 'watch') watchJob(jobId);
-			else if (job.state === 'findBeacon') findBeacon(jobId);
-			else if (job.state === 'watchBeacon') watchBeaconJob(jobId);
-			else if (job.state === 'findSmarttip') findSmarttip(jobId);
+			if (job.state === 'watchBeacon') watchBeaconJob(jobId);
 			else if (job.state === 'watchSmarttip') watchSmartTip(jobId);
-			else if (job.state === 'findRuleElement') findRuleElement(jobId);
-			else if (job.state === 'findMatchingAlgoElement') findMatchingAlgoElement(jobId);
-			else if (job.state === 'findVariable') findVariable(jobId);
-			else if (job.state === 'findTag') findTag(jobId);
+
+			if (jobNumber%3 === 0) {
+				if (job.state === 'find') findJob(jobId);
+				else if (job.state === 'watch') watchJob(jobId);
+				else if (job.state === 'findBeacon') findBeacon(jobId);
+				else if (job.state === 'findSmarttip') findSmarttip(jobId);
+				else if (job.state === 'findRuleElement') findRuleElement(jobId);
+				else if (job.state === 'findMatchingAlgoElement') findMatchingAlgoElement(jobId);
+				else if (job.state === 'findVariable') findVariable(jobId);
+				else if (job.state === 'findTag') findTag(jobId);
+			}
 		}
 	}
 
@@ -55689,15 +55785,15 @@ GmCXt.highlighter = (function() {
 
 			if (!doNotHideStep(req)) {
 				if (req.data.tooltipId) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:hide_inline_step_popup_tootip', {
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_inline_step_popup_tootip', {
 						id: req.data.tooltipId
 					});
 				} else {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:hide_inline_step_popup');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_inline_step_popup');
 				}
 
 			} else {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:step_element_hidden');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:step_element_hidden');
 			}
 		}
 	}
@@ -56268,7 +56364,7 @@ GmCXt.highlighter = (function() {
 				}
 
 			});
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:check_iframe_visible', {
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:check_iframe_visible', {
 				selector: s
 			});
 		}
@@ -56783,15 +56879,15 @@ GmCXt.highlighter = (function() {
 	}
 
 	function hideOutline(jobId) {
-		mg$('.mgPlayerJSTest_select-outline.' + jobId).hide();
+		mg$('.mgPlayerJSTest2_select-outline.' + jobId).hide();
 	}
 
 	function showOutline(jobId) {
-		mg$('.mgPlayerJSTest_select-outline.' + jobId).show();
+		mg$('.mgPlayerJSTest2_select-outline.' + jobId).show();
 	}
 
 	function editStep(e) {
-		GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:execute_edit_step_activerequest');
+		GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:execute_edit_step_activerequest');
 	}
 
 	function getNextDomain(nextStep) {
@@ -56812,7 +56908,7 @@ GmCXt.highlighter = (function() {
 
 		if (GmCXt.playerI.testAutomation) {
 			var nextStep = GmCXt.getNextStep();
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:automation_check_reload', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:automation_check_reload', {
 				pageReloadOption: s.pageReloadOption,
 				isNextStep: nextStep ? true : false
 			});
@@ -56891,7 +56987,7 @@ GmCXt.highlighter = (function() {
 			job.resp.userEventFlag = true;
 			onElem = true;
 
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:close_step');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:close_step');
 
 			// TODO: 
 			if (PI.tour && PI.tour.steps && mg$.isArray(PI.tour.steps)) {
@@ -56914,7 +57010,7 @@ GmCXt.highlighter = (function() {
 				if (currentStepDomainName === nextStepDomainName && checkReload(setting)) {
 
 					GmCXt.log(33, "On user event, send message to play next step.");
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_next_step');
 
 				} else if (setting.pageReloadOption === "restart_parent") {
 					GmCXt.restartInParent();
@@ -56928,31 +57024,31 @@ GmCXt.highlighter = (function() {
 				GmCXt.log(33, 'Tour Loop: ' + (PI.currentLoop + 1) + ' completed.');
 
 				if (!(setting.pageReloadOption === "new_tab" || setting.pageReloadOption === "reload")) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:tour_loop_completed');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:tour_loop_completed');
 				}
 			} else if ((!(GmCXt.isPlayer() && PI.tour.tour_settings.enableSentiment) || PI.testAutomation) &&
 				GmCXt.isLastStep(PI.currentStepId, PI.playStructure) && !GmCXt.isLooping()) {
 
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:close_guide');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:close_guide');
 			}
 
 			hideOutline(jobId);
 			delete jobs[jobId];
 
 			if (GmCXt.isDesktop() && !PI.isLastStep) {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_next_step');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_next_step');
 			}
 		}
 	}
 
 	function createOutline(jobId, tooltipId, identifier) {
-		var cname = 'mgPlayerJSTest_select-outline ' + jobId;
+		var cname = 'mgPlayerJSTest2_select-outline ' + jobId;
 		if (identifier === "editStep") {
-			cname = 'mgPlayerJSTest_select-tool-outline ' + jobId;
+			cname = 'mgPlayerJSTest2_select-tool-outline ' + jobId;
 		}
 
 		if (tooltipId)
-			cname += ' mgPlayerJSTest_msg-tooltip-' + tooltipId;
+			cname += ' mgPlayerJSTest2_msg-tooltip-' + tooltipId;
 
 		var div = '<div class="' + cname + '"></div>';
 
@@ -56985,10 +57081,10 @@ GmCXt.highlighter = (function() {
 	pub.removeOutline = function(tooltipId) {
 
 		if (tooltipId) {
-			mg$('.mgPlayerJSTest_msg-tooltip-' + tooltipId).remove();
+			mg$('.mgPlayerJSTest2_msg-tooltip-' + tooltipId).remove();
 		} else
-			mg$('.mgPlayerJSTest_select-outline').remove();
-		mg$('.mgPlayerJSTest_select-tool-outline').remove();
+			mg$('.mgPlayerJSTest2_select-outline').remove();
+		mg$('.mgPlayerJSTest2_select-tool-outline').remove();
 	};
 
 	// Bind events on the element
@@ -57024,13 +57120,13 @@ GmCXt.highlighter = (function() {
 		if (GmCXt.playerI && resp.userEventFlag === false) {
 			resp.userEventFlag = true;
 
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:close_step');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:close_step');
 
 			var data = {
 				tourId: resp.guideLinkId
 			};
 
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_linked_tour', data);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_linked_tour', data);
 
 			hideOutline(jobId);
 			delete jobs[jobId];
@@ -57055,7 +57151,7 @@ GmCXt.highlighter = (function() {
 
 	var onKeyupElement = function(e) {
 		if (mg$(this).val().length) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:enable_next_button');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:enable_next_button');
 		}
 	};
 
@@ -57239,11 +57335,11 @@ GmCXt.highlighter = (function() {
 	};
 
 	function addNoWatch(he) {
-		mg$(he).addClass('mgPlayerJSTest_no-watch');
+		mg$(he).addClass('mgPlayerJSTest2_no-watch');
 	}
 
 	function removeNoWatch(he) {
-		mg$(he).removeClass('mgPlayerJSTest_no-watch');
+		mg$(he).removeClass('mgPlayerJSTest2_no-watch');
 	}
 
 	function triggerRightClick(he) {
@@ -57372,7 +57468,7 @@ GmCXt.highlighter = (function() {
 				}
 			}
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:trigger_next_click');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:trigger_next_click');
 		}
 	}
 
@@ -57575,7 +57671,7 @@ GmCXt.highlighter = (function() {
 			insertPowerHtml(he, tag, value);
 		}
 
-		if (isPreview) mg$(he).addClass('mgPlayerJSTest_preview-smarttip-pwr-html');
+		if (isPreview) mg$(he).addClass('mgPlayerJSTest2_preview-smarttip-pwr-html');
 
 		if (!isPreview) {
 			GmCXt.updateOnScreenTooltipGuideInfo(rd.tour, rd.tour.tour_id, rd.step.step_id, true, opt, GmCXt.urlParts.fullUrl);
@@ -57664,7 +57760,7 @@ GmCXt.highlighter = (function() {
 
 			if (auto.hasHumanInteraction && !GmCXt.isAutomationStep(nextStep)) {
 				GmCXt.log(33, "Waiting for human interaction.");
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:automation_waiting_for_human_interaction');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:automation_waiting_for_human_interaction');
 				return;
 			}
 
@@ -57672,14 +57768,14 @@ GmCXt.highlighter = (function() {
 			(!GmCXt.isAutomationStep(nextStep) || !nextStep) &&
 			(s.onKeyupNext || s.onChangeNext || s.onClickAnywhere)) {
 			GmCXt.log(33, "Waiting for human interaction.");
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:automation_waiting_for_human_interaction');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:automation_waiting_for_human_interaction');
 			return;
 		}
 
 		if (window.self === window.top) {
 			GmCXt.rotateGear();
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:rotate_gear');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:rotate_gear');
 		}
 
 		if (s.headerNext && GmCXt.isAutomationStep(nextStep) && GmCXt.playerI) {
@@ -57731,9 +57827,9 @@ GmCXt.highlighter = (function() {
 				} else if (s.keepNext) {
 					triggerNextBtnClick(he, req);
 				} else if (s.onClickAnywhere) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_next_step');
 				} else if (s.onPageClickNext === true && (GmCXt.playerI.testAutomation || !auto.hasHumanInteraction)) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_next_step');
 				} else if (s.removeElement) {
 					removeElement(he);
 				}
@@ -57979,7 +58075,7 @@ GmCXt.highlighter = (function() {
 			var list = data.blackoutElements;
 			for (var j = 0; j < list.length; j++) {
 				var rect = list[j];
-				mg$('<div class="mgPlayerJSTest_selector-blackout ' + req.data.requestId + '"></div>')
+				mg$('<div class="mgPlayerJSTest2_selector-blackout ' + req.data.requestId + '"></div>')
 					.appendTo('body')
 					.css({
 						'width': rect.width,
@@ -58195,7 +58291,7 @@ GmCXt.highlighter = (function() {
 		GmCXt.log(48, "REMOVED beacon [" + tourId || tourTitle + "]");
 		mg$(beaconImg).remove();
 		var m = {
-			action: "mgPlayerJSTest_action:toggle_beacon_visibility",
+			action: "mgPlayerJSTest2_action:toggle_beacon_visibility",
 			remove: true,
 			tourId: tourId || rd.tourId
 		};
@@ -58219,7 +58315,7 @@ GmCXt.highlighter = (function() {
 		var pos = resp.elemPos;
 		var rd = job.req.data;
 		var tourTitle = rd.tourTitle;
-		var beaconImg = mg$(".mgPlayerJSTest_beacon-icon.mgPlayerJSTest_beacon-icon-tour-" + rd.tourId);
+		var beaconImg = mg$(".mgPlayerJSTest2_beacon-icon.mgPlayerJSTest2_beacon-icon-tour-" + rd.tourId);
 		var rect = GmCXt.getBoundingRect(he);
 
 		if (!rect) {
@@ -58231,7 +58327,7 @@ GmCXt.highlighter = (function() {
 
 		if (rect.width === 0 && rect.height === 0) visibility = 'hidden';
 		var m = {
-			action: "mgPlayerJSTest_action:toggle_beacon_visibility",
+			action: "mgPlayerJSTest2_action:toggle_beacon_visibility",
 			show: true,
 			tourId: rd.tourId
 		};
@@ -58258,12 +58354,8 @@ GmCXt.highlighter = (function() {
 			job.elVisible = 'visible';
 			if (pos && (pos.top !== rect.top || pos.left !== rect.left || pos.height !== rect.height || pos.width !== rect.width) && !rd.beaconSettings.stickTargetElement) {
 				GmCXt.log(48, "POS CHANGE beacon [" + tourTitle + "]", pos);
-				// This timeout waits for URL change event
-				// On URL change event, beacons are cleared
-				// So if beacon do not exist, then POS change event is not needed as well
-				GmCXt.timeout(function() {
-					setBeaconPosition(jobId);
-				}, 500);
+		
+				setBeaconPosition(jobId);	
 			}
 		}
 	}
@@ -58338,7 +58430,7 @@ GmCXt.highlighter = (function() {
 
 
 		if(requestData.beaconSettings.stickTargetElement){
-			mg$(he).parent().addClass('mgPlayerJSTest_relative-position');
+			mg$(he).parent().addClass('mgPlayerJSTest2_relative-position');
 		}
 
 		css_.position = 'absolute';
@@ -58357,7 +58449,7 @@ GmCXt.highlighter = (function() {
 			addBeaconHtml(jobId,css_, align);
 		} else {
 			var m = {
-				action: "mgPlayerJSTest_action:show_beacon",
+				action: "mgPlayerJSTest2_action:show_beacon",
 				jobId: jobId,
 				requestData: requestData,
 				isPreview: requestData.isPreview,
@@ -58380,7 +58472,7 @@ GmCXt.highlighter = (function() {
 		var job = jobs[jobId];
 		var requestData = job.req.data;
 		var settings = requestData.beaconSettings;
-		var beaconObj = mg$("#mgPlayerJSTest_beacon-icon-" + requestData.tourId);
+		var beaconObj = mg$("#mgPlayerJSTest2_beacon-icon-" + requestData.tourId);
 		var he = job.resp.he;
 
 		if (beaconObj.length) {
@@ -58399,12 +58491,12 @@ GmCXt.highlighter = (function() {
 				beaconImgUrl = GmCXt.conf.staticContentPath + beaconIcon;
 			}
 
-			var beaconClass = "mgPlayerJSTest_beacon-icon mgPlayerJSTest_beacon-icon-tour-" + requestData.tourId;
+			var beaconClass = "mgPlayerJSTest2_beacon-icon mgPlayerJSTest2_beacon-icon-tour-" + requestData.tourId;
 			if (GmCXt.beaconsAreHidden && !requestData.isPreview) {
-				beaconClass += " mgPlayerJSTest_hidden";
+				beaconClass += " mgPlayerJSTest2_hidden";
 			}
 
-			if (requestData.isPreview) beaconClass += " mgPlayerJSTest_preview-beacon";
+			if (requestData.isPreview) beaconClass += " mgPlayerJSTest2_preview-beacon";
 
 			var titleAlign = align;
 			if (requestData.beaconSettings.beaconMsgPosition) {
@@ -58414,17 +58506,17 @@ GmCXt.highlighter = (function() {
 			var t = GmCXt.escapeHtml(requestData.tourTitle);
 			var c = GmCXt.singleLineTitle(t);
 
-			var html_ = "<wmgPlayerJSTest_ id='mgPlayerJSTest_beacon-icon-" + requestData.tourId +
+			var html_ = "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_beacon-icon-" + requestData.tourId +
 				"' class='" + beaconClass + "'>" +
-				"   <img src='" + beaconImgUrl + "' class='mgPlayerJSTest_custom-image' />" +
-				"   <div class='mgPlayerJSTest_tour-title-on-beacon " + c + " mgPlayerJSTest_tour-title-on-beacon-" +
+				"   <img src='" + beaconImgUrl + "' class='mgPlayerJSTest2_custom-image' />" +
+				"   <div class='mgPlayerJSTest2_tour-title-on-beacon " + c + " mgPlayerJSTest2_tour-title-on-beacon-" +
 				titleAlign + "'>" +
 				t +
 				"</div>" +
-				"</wmgPlayerJSTest_>";
+				"</wmgPlayerJSTest2_>";
 			var m = {
 				tour : requestData.tour,
-				action : 'mgPlayerJSTest_action:track_beacon_feature'
+				action : 'mgPlayerJSTest2_action:track_beacon_feature'
 			};
 
 			mg$(html_)
@@ -58432,7 +58524,7 @@ GmCXt.highlighter = (function() {
 				.insertAfter(he)
 				.on('click', function() {
 					if (!requestData.isPreview) {
-						GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:play_tour;event:beacon_click', {
+						GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:play_tour;event:beacon_click', {
 							tourId: requestData.tourId,
 							userKey: requestData.userKey
 						});
@@ -58546,9 +58638,9 @@ GmCXt.highlighter = (function() {
 
 			if (prevJobId && prevJobId !== jobId) {
 
-				var tooltip = mg$(".mgPlayerJSTest_smarttip-icon-wrapper-" + prevStepId);
-				var validationMessage = mg$("#mgPlayerJSTest_smarttip-valid-" + prevStepId);
-				var ductTapeTooltip = mg$("#mgPlayerJSTest_smarttip-" + prevStepId);
+				var tooltip = mg$(".mgPlayerJSTest2_smarttip-icon-wrapper-" + prevStepId);
+				var validationMessage = mg$("#mgPlayerJSTest2_smarttip-valid-" + prevStepId);
+				var ductTapeTooltip = mg$("#mgPlayerJSTest2_smarttip-" + prevStepId);
 
 				mg$(he).off('mouseover focus blur click');
 
@@ -58563,7 +58655,7 @@ GmCXt.highlighter = (function() {
 				if (!rd.isPreview) {
 
 					if (prevTourId) {
-						mg$('.mgPlayerJSTest_guidence-message-' + prevTourId).remove();
+						mg$('.mgPlayerJSTest2_guidence-message-' + prevTourId).remove();
 						mg$(he).removeClass(getGuidenceMessageElmClass(prevStepId, prevTourId));
 
 						GmCXt.log(42, "REMOVED PREV: " + GmCXt.stepLog(prevStepId, prevTourId));
@@ -58637,7 +58729,7 @@ GmCXt.highlighter = (function() {
 
 		var isHidden = !mg$(he).is(":visible") || GmCXt.getElVisibility(he) === 'hidden' || isTextChanged;
 
-		if (mg$(he).hasClass('mgPlayerJSTest_no-watch') && !isHidden) return true;
+		if (mg$(he).hasClass('mgPlayerJSTest2_no-watch') && !isHidden) return true;
 
 		if (isHidden && he && de.targetInfo && GmCXt.dom.isWDTextArea(de)) {
 			var expandedHe = GmCXt.dom.checkForExpandedTextBox(he, de.meta);
@@ -58647,8 +58739,8 @@ GmCXt.highlighter = (function() {
 			}
 		}
 
-		var tooltip = mg$(".mgPlayerJSTest_smarttip-icon-wrapper-" + step.step_id);
-		var validationMessage = mg$("#mgPlayerJSTest_smarttip-" + step.step_id);
+		var tooltip = mg$(".mgPlayerJSTest2_smarttip-icon-wrapper-" + step.step_id);
+		var validationMessage = mg$("#mgPlayerJSTest2_smarttip-" + step.step_id);
 
 		if (!rect) {
 			if (!isPreview) {
@@ -58706,15 +58798,8 @@ GmCXt.highlighter = (function() {
 			job.elVisible = "visible";
 
 			if (job.posChanged) {
-
 				job.posChanged = false;
-
-				// This timeout waits for URL change event
-				// On URL change event, tooltips are cleared
-				// So if tooltip do not exist, then POS change event is not needed as well
-				GmCXt.timeout(function() {
-					positionSmartTip(jobId, he, true);
-				}, 500);
+				positionSmartTip(jobId, he, true);	
 			}
 
 			if (rd.isPreview) GmCXt.previewSmartTips(step.step_id);
@@ -58734,7 +58819,7 @@ GmCXt.highlighter = (function() {
 	}
 
 	function getDuctTapeClass(id) {
-		return 'mgPlayerJSTest_duct-tape-' + id;
+		return 'mgPlayerJSTest2_duct-tape-' + id;
 	}
 
 	function addDuctTape(he, opt, w, h, job, rect) {
@@ -58748,17 +58833,17 @@ GmCXt.highlighter = (function() {
 			if (type === 'opacity') {
 
 				if (isPreview)
-					mg$(he).addClass('mgPlayerJSTest_duct-tape-invisible-preview mgPlayerJSTest_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
+					mg$(he).addClass('mgPlayerJSTest2_duct-tape-invisible-preview mgPlayerJSTest2_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
 				else
-					mg$(he).addClass('mgPlayerJSTest_duct-tape-invisible mgPlayerJSTest_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
+					mg$(he).addClass('mgPlayerJSTest2_duct-tape-invisible mgPlayerJSTest2_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
 
 			} else if (type === 'color') {
 				if (settings.stickTargetElement) {
-					mg$(he).parent().addClass('mgPlayerJSTest_relative-position');
-					mg$(he).removeClass('mgPlayerJSTest_relative');
+					mg$(he).parent().addClass('mgPlayerJSTest2_relative-position');
+					mg$(he).removeClass('mgPlayerJSTest2_relative');
 				} else {
-					mg$(he).addClass('mgPlayerJSTest_relative');
-					mg$(he).parent().removeClass('mgPlayerJSTest_relative-position');
+					mg$(he).addClass('mgPlayerJSTest2_relative');
+					mg$(he).parent().removeClass('mgPlayerJSTest2_relative-position');
 				}
 				positionDuctTape(job, he, opt, w, h, rect);
 			} else if (type === 'delete') {
@@ -58777,16 +58862,16 @@ GmCXt.highlighter = (function() {
 		var opacity = getDuctTapeOpacity(job.req.data.step);
 		var isPreview = job.req.data.isPreview;
 		var d = opt.disableElement || GmCXt.getDiableEleDefaultVal();
-		var id = 'mgPlayerJSTest_smarttip-' + job.req.data.step.step_id;
-		var tourClass = 'mgPlayerJSTest_smarttip-tour-' + job.req.data.step.tour_id;
+		var id = 'mgPlayerJSTest2_smarttip-' + job.req.data.step.step_id;
+		var tourClass = 'mgPlayerJSTest2_smarttip-tour-' + job.req.data.step.tour_id;
 
 		var preview = "";
-		if (isPreview) preview = "mgPlayerJSTest_preview-smarttip";
+		if (isPreview) preview = "mgPlayerJSTest2_preview-smarttip";
 
-		var html = "<wmgPlayerJSTest_ jobid='" + job.id + "' id='" + id + "'" +
-			" class='mgPlayerJSTest_duct-tape " + preview + " " + tourClass + " " + posClass + "'" +
+		var html = "<wmgPlayerJSTest2_ jobid='" + job.id + "' id='" + id + "'" +
+			" class='mgPlayerJSTest2_duct-tape " + preview + " " + tourClass + " " + posClass + "'" +
 			" style='width:" + w + "px;height:" + h + "px;background:" + d.color + ";opacity:" + opacity + "'>" +
-			"</wmgPlayerJSTest_>";
+			"</wmgPlayerJSTest2_>";
 
 		return html;
 	}
@@ -58801,7 +58886,7 @@ GmCXt.highlighter = (function() {
 
 		var opt = requestData.settings.smartTip;
 
-		var id = '#mgPlayerJSTest_smarttip-' + job.req.data.step.step_id;
+		var id = '#mgPlayerJSTest2_smarttip-' + job.req.data.step.step_id;
 
 		var posClass = '';
 
@@ -58811,8 +58896,8 @@ GmCXt.highlighter = (function() {
 
 			var parentEl = mg$(he).parent()[0];
 			var parentPos = parentEl.getBoundingClientRect();
-			posClass = 'mgPlayerJSTest_absolute-position';
-			mg$(id).removeClass('mgPlayerJSTest_fixed-position');
+			posClass = 'mgPlayerJSTest2_absolute-position';
+			mg$(id).removeClass('mgPlayerJSTest2_fixed-position');
 
 		} else {
 
@@ -58831,14 +58916,14 @@ GmCXt.highlighter = (function() {
 		};
 
 		if (!requestData.settings.stickTargetElement) {
-			if (posClass === 'mgPlayerJSTest_absolute-position') {
-				mg$(id).removeClass('mgPlayerJSTest_fixed-position');
-				mg$(id).addClass('mgPlayerJSTest_absolute-position');
+			if (posClass === 'mgPlayerJSTest2_absolute-position') {
+				mg$(id).removeClass('mgPlayerJSTest2_fixed-position');
+				mg$(id).addClass('mgPlayerJSTest2_absolute-position');
 				style.top += scrollTop;
 				style.left += scrollLeft;
 			} else {
-				mg$(id).removeClass('mgPlayerJSTest_absolute-position');
-				mg$(id).addClass('mgPlayerJSTest_fixed-position');
+				mg$(id).removeClass('mgPlayerJSTest2_absolute-position');
+				mg$(id).addClass('mgPlayerJSTest2_fixed-position');
 			}
 		}
 
@@ -58998,7 +59083,7 @@ GmCXt.highlighter = (function() {
 	}
 
 	function getFormSubmitClass(tourId, isPreview) {
-		var previewClass = isPreview ? ' mgPlayerJSTest_form-submit-preview' : '';
+		var previewClass = isPreview ? ' mgPlayerJSTest2_form-submit-preview' : '';
 		return 'gssSmarttip-form-submit-' + tourId + previewClass;
 	}
 
@@ -59110,7 +59195,7 @@ GmCXt.highlighter = (function() {
 
 			mg$(getTooltipMessageHtml(he, requestData, options)).css(msgStyle).appendTo('html:first');
 
-			var iconId = 'mgPlayerJSTest_smarttip-icon-' + requestData.step.step_id;
+			var iconId = 'mgPlayerJSTest2_smarttip-icon-' + requestData.step.step_id;
 			var gId = "smarttip-guidance-msg-" + requestData.step.step_id;
 
 			var iconEL = document.getElementById(iconId);
@@ -59152,7 +59237,7 @@ GmCXt.highlighter = (function() {
 			left: options.pos.left,
 			top: options.pos.top
 		};
-		var iconId = 'mgPlayerJSTest_smarttip-icon-' + step.step_id;
+		var iconId = 'mgPlayerJSTest2_smarttip-icon-' + step.step_id;
 
 		if (GmCXt.getElVisibility(he) === 'hidden') {
 			style.display = 'none';
@@ -59196,7 +59281,7 @@ GmCXt.highlighter = (function() {
 			var url = requestData.settings.smartTip.icon;
 			addEventstoTooltip(style, he, requestData, options, step, updatedUrl);
 
-			var tipClass = 'mgPlayerJSTest_smarttip-icon-wrapper-' + requestData.step.step_id;
+			var tipClass = 'mgPlayerJSTest2_smarttip-icon-wrapper-' + requestData.step.step_id;
 			GmCXt.imageSizeStyle('.' + tipClass + ' .smarttip-msg-inner img');
 
 			GmCXt.zoomImage(options.guidanceMessage, ".smarttip-msg-inner");
@@ -59569,7 +59654,7 @@ GmCXt.highlighter = (function() {
 		if (isPreview && !GmCXt.smartTipPreviewOn) return;
 
 		var step = requestData.step;
-		var iconId = 'mgPlayerJSTest_smarttip-icon-' + step.step_id;
+		var iconId = 'mgPlayerJSTest2_smarttip-icon-' + step.step_id;
 
 		mg$(he).addClass(getGuidenceMessageElmClass(step.step_id, tourId));
 
@@ -59608,28 +59693,28 @@ GmCXt.highlighter = (function() {
 			GmCXt.requestHandler.showSmarttip(d);
 			GmCXt.addEventOnTooltip(requestData);
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:show_smarttip', d);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:show_smarttip', d);
 		}
 	}
 
 	function getTooltipHtml(he, requestData, size, options, updatedUrl) {
 		if (options.stickTargetElement) {
-			mg$(he).parent().addClass('mgPlayerJSTest_relative-position');
+			mg$(he).parent().addClass('mgPlayerJSTest2_relative-position');
 		} else {
-			mg$(he).parent().removeClass('mgPlayerJSTest_relative-position');
+			mg$(he).parent().removeClass('mgPlayerJSTest2_relative-position');
 		}
-		var id = 'mgPlayerJSTest_smarttip-icon-' + requestData.step.step_id;
+		var id = 'mgPlayerJSTest2_smarttip-icon-' + requestData.step.step_id;
 
-		var tipClass = 'mgPlayerJSTest_smarttip-icon mg-smarttip-icon mgPlayerJSTest_smarttip-icon-wrapper-' + requestData.step.step_id + ' ' + 'mgPlayerJSTest_smarttip-tour-' + requestData.step.tour_id;
+		var tipClass = 'mgPlayerJSTest2_smarttip-icon mg-smarttip-icon mgPlayerJSTest2_smarttip-icon-wrapper-' + requestData.step.step_id + ' ' + 'mgPlayerJSTest2_smarttip-tour-' + requestData.step.tour_id;
 		
 		if (GmCXt.smarttipAreHidden === true && !requestData.isPreview) {
 			tipClass += ' tooltip-hidden';
 		}
 
 		if (options.tipPosition)
-			tipClass += ' ' + options.tipPosition.replace('mgPlayerJSTest_', 'mg-');
+			tipClass += ' ' + options.tipPosition.replace('mgPlayerJSTest2_', 'mg-');
 
-		if (requestData.isPreview) tipClass += ' mgPlayerJSTest_preview-smarttip';
+		if (requestData.isPreview) tipClass += ' mgPlayerJSTest2_preview-smarttip';
 
 		var img = requestData.settings.smartTip.icon;
 		if (updatedUrl) {
@@ -59642,21 +59727,21 @@ GmCXt.highlighter = (function() {
 
 		var os = requestData.os;
 
-		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest_');
+		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest2_');
 
-		var popupFooter = "<wmgPlayerJSTest_ class='mgPlayerJSTest_smarttip-popup-footer mgPlayerJSTest_width-100 mgPlayerJSTest_display-flex mgPlayerJSTest_align-items-center mgPlayerJSTest_justify-content-flex-start'>" +
-			"                 <img class='mgPlayerJSTest_custom-image' src='" + GmCXt.brandLogo() + "'>" +
-			"              </wmgPlayerJSTest_>";
+		var popupFooter = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_smarttip-popup-footer mgPlayerJSTest2_width-100 mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center mgPlayerJSTest2_justify-content-flex-start'>" +
+			"                 <img class='mgPlayerJSTest2_custom-image' src='" + GmCXt.brandLogo() + "'>" +
+			"              </wmgPlayerJSTest2_>";
 
-		var html = "<wmgPlayerJSTest_ class='" + tipClass + " ' style='width:" +
+		var html = "<wmgPlayerJSTest2_ class='" + tipClass + " ' style='width:" +
 			size.width + "px; height:" + size.height + "px' >" +
-			"   <img class='mgPlayerJSTest_custom-image' id='" + id + "'" +
+			"   <img class='mgPlayerJSTest2_custom-image' id='" + id + "'" +
 			"       src='" + img + "' " +
 			"       style='width:" + size.width + "px; height:" + size.height + "px' />" +
 			(options.stickTargetElement ? '' : getTooltipMessageHtml(he, requestData, options)) +
 			(tTheme.tooltipBgColor.length > 0 ? popupFooter : '') +
-			"   </wmgPlayerJSTest_>" +
-			"</wmgPlayerJSTest_>";
+			"   </wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 
 		return html;
 	}
@@ -59674,7 +59759,7 @@ GmCXt.highlighter = (function() {
 
 		var os = requestData.os;
 
-		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest_');
+		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSTest2_');
 
 		var gId = "smarttip-guidance-msg-" + requestData.step.step_id;
 
@@ -59692,9 +59777,9 @@ GmCXt.highlighter = (function() {
 		var t = GmCXt.updateOrgAndAddSignature(GmCXt.replaceVariableWithValue(options.guidanceMessage));
 		var c = GmCXt.singleLineTitle(t);
 
-		var html = "<wmgPlayerJSTest_ id ='" + gId + "'class='smarttip-guidance-msg " + guidanc_class + " " + c + " ' style='" + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipPaddingTop ? tTheme.tooltipPaddingTop : '') + (tTheme.tooltipPaddingBottom ? tTheme.tooltipPaddingBottom : '') + (tTheme.tooltipPaddingLeft ? tTheme.tooltipPaddingLeft : '') + (tTheme.tooltipPaddingRight ? tTheme.tooltipPaddingRight : '') + "'>" +
-		"       <wmgPlayerJSTest_ class='smarttip-msg-inner' style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + t +
-		"       </wmgPlayerJSTest_>";
+		var html = "<wmgPlayerJSTest2_ id ='" + gId + "'class='smarttip-guidance-msg " + guidanc_class + " " + c + " ' style='" + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipPaddingTop ? tTheme.tooltipPaddingTop : '') + (tTheme.tooltipPaddingBottom ? tTheme.tooltipPaddingBottom : '') + (tTheme.tooltipPaddingLeft ? tTheme.tooltipPaddingLeft : '') + (tTheme.tooltipPaddingRight ? tTheme.tooltipPaddingRight : '') + "'>" +
+		"       <wmgPlayerJSTest2_ class='smarttip-msg-inner' style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + t +
+		"       </wmgPlayerJSTest2_>";
 
 		return html;
 
@@ -59766,8 +59851,25 @@ GmCXt.highlighter = (function() {
 				break;
 
 			case 'custom':
-				var w = options.customPosition.left * (rect.width / originalEl.width);
-				var h = options.customPosition.top * (rect.height / originalEl.height);
+				if(options.customPosition.left_pos === '%') {
+					if(options.displayOn === 'icon') {
+						var w = ((rect.width * options.customPosition.left) / 100) - (options.size.width/2);
+					} else {
+						var w = ((rect.width * options.customPosition.left) / 100);
+					}
+				} else {
+					var w = options.customPosition.left * (rect.width / originalEl.width);
+				}
+				if(options.customPosition.top_pos === '%') {
+					if(options.displayOn === 'icon') {
+						var h = ((rect.height * options.customPosition.top) / 100) - (options.size.height/2);
+					} else {
+						var h = ((rect.height * options.customPosition.top) / 100);
+					}
+					
+				} else {
+					var h = options.customPosition.top * (rect.height / originalEl.height);
+				}
 				if (options.stickTargetElement && !options.msgPosition) {
 					left = (rect.left - options.parentPos.left) + w;
 					top = (rect.top - options.parentPos.top) + h;
@@ -59778,7 +59880,7 @@ GmCXt.highlighter = (function() {
 		}
 
 		if (!options.stickTargetElement) {
-			if (options.tipPosition === "mgPlayerJSTest_absolute-position") {
+			if (options.tipPosition === "mgPlayerJSTest2_absolute-position") {
 				top = top + mg$(window).scrollTop();
 				left = left + mg$(window).scrollLeft();
 			}
@@ -59873,7 +59975,7 @@ GmCXt.highlighter = (function() {
 				top = rect.top + options.rules.customPosition.top;
 		}
 
-		if (options.tipPosition === "mgPlayerJSTest_absolute-position") {
+		if (options.tipPosition === "mgPlayerJSTest2_absolute-position") {
 			top = top + mg$(window).scrollTop();
 			left = left + mg$(window).scrollLeft();
 		}
@@ -59926,7 +60028,7 @@ GmCXt.highlighter = (function() {
 		if (window.self === window.top) {
 			GmCXt.requestHandler.showSmarttip(d);
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:show_smarttip', d);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:show_smarttip', d);
 		}
 	}
 
@@ -60312,11 +60414,11 @@ GmCXt.highlighter = (function() {
 		if (job) {
 			var rd = job.req.data;
 			var tourTitle = rd.tourTitle;
-			var beaconImg = mg$(".mgPlayerJSTest_beacon-icon.mgPlayerJSTest_beacon-icon-tour-" + rd.tourId);
+			var beaconImg = mg$(".mgPlayerJSTest2_beacon-icon.mgPlayerJSTest2_beacon-icon-tour-" + rd.tourId);
 
 			removeBeacon(jobId, rd, beaconImg, tourTitle);
 		} else {
-			var beaconImg = mg$(".mgPlayerJSTest_beacon-icon.mgPlayerJSTest_beacon-icon-tour-" + tourId);
+			var beaconImg = mg$(".mgPlayerJSTest2_beacon-icon.mgPlayerJSTest2_beacon-icon-tour-" + tourId);
 
 			if (beaconImg.length) {
 				removeBeacon(jobId, null, beaconImg, null, tourId);
@@ -60391,14 +60493,14 @@ GmCXt.bootScript = function() {
 	};
 
 	if (!GmCXt.isMyGuideIframe(GmCXt._location().href) && window.self !== window.top) {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:new_iframe_found', GmCXt.id);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:new_iframe_found', GmCXt.id);
 	}
 
 	mg$(window).on('unload', function() {
 		var pi = GmCXt.playerI;
 		if (pi) {
 			if (GmCXt.currentIframeId === GmCXt.id) {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:close_step');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:close_step');
 			}
 		}
 		GmCXt.highlighter.clearIframeWatch();
@@ -60407,7 +60509,7 @@ GmCXt.bootScript = function() {
 	mg$(window).on('keyup', function(e) {
 
 		if (e.which === 16 && GmCXt.FT.creatorApp) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:toggle_capture_and_navigate_tool:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:toggle_capture_and_navigate_tool:inform');
 		}
 	});
 
@@ -60429,7 +60531,7 @@ GmCXt.bootScript = function() {
 		if (!GmCXt.isClickInStepPopup(e) && !GmCXt.isClickInSurveyPopup(e)) {
 			var d = GmCXt.highlighter.onDocumentClick(e);
 			if (GmCXt.playerI) {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:click_event_for_guide', d);
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:click_event_for_guide', d);
 			}
 
 			GmCXt.highlighter.onDocumentClickForTooltip(e);
@@ -60439,7 +60541,7 @@ GmCXt.bootScript = function() {
 			if (window.self === window.top) {
 				GmCXt.changeEvent("page_click");
 			} else {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:page_clicked');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:page_clicked');
 			}
 
 			if (GmCXt.FT.isPlayer) {
@@ -60449,7 +60551,7 @@ GmCXt.bootScript = function() {
 					if (window.self === window.top) {
 						GmCXt.trackerV1.trackFeatureClick(data);
 					} else {
-						GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:track_feature_click', data);
+						GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:track_feature_click', data);
 					}
 				}
 			}
@@ -60520,14 +60622,14 @@ GmCXt.selector = function(options) {
 
 	pub.start = function() {
 		pub.status = 'active';
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:dom_selctor_started');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:dom_selctor_started');
 		showOutline();
 		createOutlineElements();
 		subscribeEvents();
 	};
 
 	pub.stop = function() {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:dom_selctor_stopped');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:dom_selctor_stopped');
 		unsubscribeEvents();
 	};
 
@@ -60536,27 +60638,27 @@ GmCXt.selector = function(options) {
 	};
 
 	pub.removeOutline = function() {
-		mg$('.mgPlayerJSTest_select-tool-outline').remove();
+		mg$('.mgPlayerJSTest2_select-tool-outline').remove();
 	};
 
 	pub.removeOutlineNew = function() {
-		mg$('.mgPlayerJSTest_new-outline').remove();
+		mg$('.mgPlayerJSTest2_new-outline').remove();
 	};
 
 	pub.hideOutline = function() {
-		mg$('.mgPlayerJSTest_select-tool-outline').hide();
+		mg$('.mgPlayerJSTest2_select-tool-outline').hide();
 	};
 
 	pub.clearBlackoutArea = function() {
-		mg$('.mgPlayerJSTest_selector-blackout').remove();
+		mg$('.mgPlayerJSTest2_selector-blackout').remove();
 	};
 
 	pub.removeBlackoutOutline = function() {
-		mg$('.mgPlayerJSTest_blackout-tool-outline').remove();
+		mg$('.mgPlayerJSTest2_blackout-tool-outline').remove();
 	};
 
 	pub.removeRulesEngineOutline = function() {
-		mg$('.mgPlayerJSTest_rules-engine-tool-outline').remove();
+		mg$('.mgPlayerJSTest2_rules-engine-tool-outline').remove();
 	};
 
 	pub.getElementPrecision = function(criteria) {
@@ -60593,11 +60695,11 @@ GmCXt.selector = function(options) {
 				found: true,
 				openPanel: openPanel
 			};
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:clear_invalid_jQuery_message;action:inform', message);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:clear_invalid_jQuery_message;action:inform', message);
 		}
 
 		if (checkjQ.nodeCount > 1) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:show_unique_elem_not_found;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:show_unique_elem_not_found;action:inform');
 		}
 	};
 
@@ -60721,9 +60823,9 @@ GmCXt.selector = function(options) {
 
 	function onBodyMouseEnter() {
 		if (!GmCXt.jQElementFound && !GmCXt.enableNavigateTool) {
-			mg$('.mgPlayerJSTest_select-tool-outline').show();
+			mg$('.mgPlayerJSTest2_select-tool-outline').show();
 
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:clear_outline;action:inform', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:clear_outline;action:inform', {
 				scriptId: GmCXt.id
 			});
 		}
@@ -60748,11 +60850,11 @@ GmCXt.selector = function(options) {
 
 	function hideOutline() {
 		if (!GmCXt.jQElementFound)
-			mg$('.mgPlayerJSTest_new-outline').hide();
+			mg$('.mgPlayerJSTest2_new-outline').hide();
 	}
 
 	function showOutline() {
-		mg$('.mgPlayerJSTest_select-tool-outline').show();
+		mg$('.mgPlayerJSTest2_select-tool-outline').show();
 	}
 
 	function stopEventPropagationforClickEvent(e) {
@@ -60790,13 +60892,13 @@ GmCXt.selector = function(options) {
 
 	function clickOnToolbar(e) {
 
-		if (e.target.className === 'mgPlayerJSTest_toolbar-tooltip mgPlayerJSTest_toolbar-top-pos' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip mgPlayerJSTest_toolbar-bottom-pos' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-capture' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-navigation' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-title' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-instruction' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-delay-capture') {
+		if (e.target.className === 'mgPlayerJSTest2_toolbar-tooltip mgPlayerJSTest2_toolbar-top-pos' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip mgPlayerJSTest2_toolbar-bottom-pos' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-capture' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-navigation' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-title' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-instruction' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-delay-capture') {
 			return true;
 		} else return false;
 	}
@@ -60804,10 +60906,10 @@ GmCXt.selector = function(options) {
 	function clickOnTooltip(e) {
 
 		if (e.target.className === 'ok-got-it' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-close' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-close' ||
-			e.target.className === 'mgPlayerJSTest_toolbar-tooltip-close-svg' ||
-			(e.target.parentElement && e.target.parentElement.className === 'mgPlayerJSTest_toolbar-tooltip-close-svg')) {
+			e.target.className === 'mgPlayerJSTest2_toolbar-close' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-close' ||
+			e.target.className === 'mgPlayerJSTest2_toolbar-tooltip-close-svg' ||
+			(e.target.parentElement && e.target.parentElement.className === 'mgPlayerJSTest2_toolbar-tooltip-close-svg')) {
 			return true;
 		} else return false;
 	}
@@ -60815,8 +60917,8 @@ GmCXt.selector = function(options) {
 	function documentClickEvent(e) {
 		
 		if (!GmCXt.user) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:stop_inline_step_selection_mode');
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:close_inline_step_panel');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:stop_inline_step_selection_mode');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:close_inline_step_panel');
 			return;
 			
 		}
@@ -60826,7 +60928,7 @@ GmCXt.selector = function(options) {
 		if (clickOnToolbar(e)) return;
 
 		if (clickOnTooltip(e)) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:hide_guideme_toolbar_tooltip');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:hide_guideme_toolbar_tooltip');
 			return;
 		}
 
@@ -60914,7 +61016,7 @@ GmCXt.selector = function(options) {
 				found = true;
 			}
 		} catch (error) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:clear_invalid_jQuery_message;action:inform', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:clear_invalid_jQuery_message;action:inform', {
 				found: found
 			});
 		}
@@ -61340,7 +61442,7 @@ GmCXt.selector = function(options) {
 		if (!self.identifier) {
 			GmCXt.currentHe = currentHe;
 		}
-		mg$('.mgPlayerJSTest_new-outline').removeClass('mgPlayerJSTest_new-outline');
+		mg$('.mgPlayerJSTest2_new-outline').removeClass('mgPlayerJSTest2_new-outline');
 		return data;
 	};
 
@@ -61363,7 +61465,7 @@ GmCXt.selector = function(options) {
 
 		if (self.isQuick) {
 			if (!inTopWindow) {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSTest_action:hide_step_selector_toolbar');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:hide_step_selector_toolbar');
 				setTimeout(function() {
 					GmCXt.takeScreenshot().then(function(imageStr) {
 						data.image = imageStr;
@@ -61484,7 +61586,7 @@ GmCXt.selector = function(options) {
 	var showingScoreOf = null;
 
 	function setConfidenceScoreCss(color, score) {
-		mg$('.mgPlayerJSTest_scoreEl').css({
+		mg$('.mgPlayerJSTest2_scoreEl').css({
 			boxShadow: "#a0a0a0 2px 2px 5px 0px",
 			display: "block",
 			position: "relative",
@@ -61494,7 +61596,7 @@ GmCXt.selector = function(options) {
 			"border-radius": "50%"
 		});
 
-		mg$('.mgPlayerJSTest_figcaption').css({
+		mg$('.mgPlayerJSTest2_figcaption').css({
 			"text-align": "center",
 			color: color,
 			width: "100%",
@@ -61506,7 +61608,7 @@ GmCXt.selector = function(options) {
 			"font-weight": "bold"
 		});
 
-		mg$('.mgPlayerJSTest_scoreEl svg').css({
+		mg$('.mgPlayerJSTest2_scoreEl svg').css({
 			display: "block",
 			height: "100%",
 			width: "100%",
@@ -61516,18 +61618,18 @@ GmCXt.selector = function(options) {
 			overflow: "visible"
 		});
 
-		if (mg$('.mgPlayerJSTest_circle').css('stroke-dashoffset') === '0px') {
-			mg$('.mgPlayerJSTest_circle').css({
+		if (mg$('.mgPlayerJSTest2_circle').css('stroke-dashoffset') === '0px') {
+			mg$('.mgPlayerJSTest2_circle').css({
 				stroke: color,
 				fill: 'rgba(0,0,0,0)',
 				'stroke-width': '15%',
 				'stroke-dashoffset': '25'
 			});
 		} else {
-			mg$('.mgPlayerJSTest_circle').css({
+			mg$('.mgPlayerJSTest2_circle').css({
 				background: '#fff',
-				"animation": "mgPlayerJSTest_pie" + score + " 4s infinite ease both",
-				"-webkit-animation": "mgPlayerJSTest_pie" + score + " 2s infinite ease both"
+				"animation": "mgPlayerJSTest2_pie" + score + " 4s infinite ease both",
+				"-webkit-animation": "mgPlayerJSTest2_pie" + score + " 2s infinite ease both"
 			});
 		}
 	}
@@ -61541,11 +61643,11 @@ GmCXt.selector = function(options) {
 		var el = GmCXt.dom.getElement(he, null, self.frame, hoverEl);
 		var sc = GmCXt.getMatchConfidence(el.meta.score);
 
-		var scoreEl = '<div class="mgPlayerJSTest_scoreEl">' +
-			'<figcaption class="mgPlayerJSTest_figcaption" style="color:' + sc.color + ';">' + sc.val + '</figcaption>' +
+		var scoreEl = '<div class="mgPlayerJSTest2_scoreEl">' +
+			'<figcaption class="mgPlayerJSTest2_figcaption" style="color:' + sc.color + ';">' + sc.val + '</figcaption>' +
 			'<svg viewBox="0 0 40 40">' +
 			'<circle stroke="#f3f3f3" stroke-width="15%" fill="none" cx="20" cy="20" r="15"/>' +
-			'<circle class="mgPlayerJSTest_pie1 ' + sc.class_ + ' mgPlayerJSTest_circle" cx="20" cy="20" r="15"/>' +
+			'<circle class="mgPlayerJSTest2_pie1 ' + sc.class_ + ' mgPlayerJSTest2_circle" cx="20" cy="20" r="15"/>' +
 			'</svg>' +
 			'</div>';
 
@@ -61644,7 +61746,7 @@ GmCXt.selector = function(options) {
 		}
 
 		if (typeof e.target.className == "string" &&
-			e.target.className.indexOf('mgPlayerJSTest_select-tool-outline') !== -1) {
+			e.target.className.indexOf('mgPlayerJSTest2_select-tool-outline') !== -1) {
 			return;
 		}
 
@@ -61667,12 +61769,12 @@ GmCXt.selector = function(options) {
 
 	function createOutlineElements() {
 
-		var c = 'mgPlayerJSTest_select-tool-outline ' + self.id + ' mgPlayerJSTest_new-outline';
+		var c = 'mgPlayerJSTest2_select-tool-outline ' + self.id + ' mgPlayerJSTest2_new-outline';
 
 		if (self.identifier && self.identifier == 'blackout-request') {
-			c += ' mgPlayerJSTest_blackout-tool-outline';
+			c += ' mgPlayerJSTest2_blackout-tool-outline';
 		} else if (self.identifier && self.identifier === 'rules-engine-request') {
-			c += ' mgPlayerJSTest_rules-engine-tool-outline';
+			c += ' mgPlayerJSTest2_rules-engine-tool-outline';
 		}
 		var st = '';
 		var div = '<div class="' + c + '"' + st + '></div>';
@@ -61690,28 +61792,28 @@ GmCXt.getMatchConfidence = function(score) {
 
 	var val = '0/5';
 	var color = '#ff0000';
-	var class_ = 'mgPlayerJSTest_level-0';
+	var class_ = 'mgPlayerJSTest2_level-0';
 
 	if (score === 5) {
 		val = '5/5';
 		color = '#2f9987';
-		class_ = 'mgPlayerJSTest_level-5';
+		class_ = 'mgPlayerJSTest2_level-5';
 	} else if (score === 4) {
 		val = '4/5';
 		color = '#6bc9b8';
-		class_ = 'mgPlayerJSTest_level-4';
+		class_ = 'mgPlayerJSTest2_level-4';
 	} else if (score === 3) {
 		val = '3/5';
 		color = '#F9AF6A';
-		class_ = 'mgPlayerJSTest_level-3';
+		class_ = 'mgPlayerJSTest2_level-3';
 	} else if (score === 2) {
 		val = '2/5';
 		color = '#F1736A';
-		class_ = 'mgPlayerJSTest_level-2';
+		class_ = 'mgPlayerJSTest2_level-2';
 	} else if (score === 1) {
 		val = '1/5';
 		color = '#B3463F';
-		class_ = 'mgPlayerJSTest_level-1';
+		class_ = 'mgPlayerJSTest2_level-1';
 	}
 
 	return {
@@ -61769,14 +61871,14 @@ GmCXt.testMeWatcher = function(options) {
 	}
 
 	function checkTestMeWidgetClick(e) {
-		if (e.target.className === 'mgPlayerJSTest_testme-active' ||
-			e.target.className === 'mgPlayerJSTest_testme-active-head' ||
-			e.target.className === 'mgPlayerJSTest_play-pause-position-top' ||
-			e.target.className === 'mgPlayerJSTest_play-pause-position-bottom' ||
-			e.target.className === 'mgPlayerJSTest_testme-active-close' ||
-			e.target.className === 'mgPlayerJSTest_testme-active-inner' ||
-			e.target.className === 'mgPlayerJSTest_testme-active-title' ||
-			e.target.className === 'mgPlayerJSTest_testme-active-stop') {
+		if (e.target.className === 'mgPlayerJSTest2_testme-active' ||
+			e.target.className === 'mgPlayerJSTest2_testme-active-head' ||
+			e.target.className === 'mgPlayerJSTest2_play-pause-position-top' ||
+			e.target.className === 'mgPlayerJSTest2_play-pause-position-bottom' ||
+			e.target.className === 'mgPlayerJSTest2_testme-active-close' ||
+			e.target.className === 'mgPlayerJSTest2_testme-active-inner' ||
+			e.target.className === 'mgPlayerJSTest2_testme-active-title' ||
+			e.target.className === 'mgPlayerJSTest2_testme-active-stop') {
 
 			return true;
 		} else {
@@ -61830,7 +61932,7 @@ GmCXt.testMeWatcher = function(options) {
 				event: eventName,
 				element: element
 			};
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:record_event;testMe', data);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:record_event;testMe', data);
 		}
 	}
 
@@ -61865,7 +61967,7 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1721911749137.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1722929292953.css');
 })();
 (function() {
 	function load(cssId, path) {
@@ -61881,5 +61983,5 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1721911749137.css');
+	load('guideme-clientjs-css', 'content_script/worker/css/style_1722929292953.css');
 })();

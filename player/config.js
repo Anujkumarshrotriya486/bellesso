@@ -3,8 +3,8 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.4.1.1";
-GmCXt.conf.env = "Test";
+GmCXt.conf.version = "2024.4.2";
+GmCXt.conf.env = "Test2";
 
 GmCXt.conf.creatorApp = 'mgExt';
 GmCXt.conf.playerApp = 'mgPlayer';
@@ -18,7 +18,7 @@ GmCXt.conf.appTypeScript = 'JScript';
 GmCXt.conf.appTypeElectron = 'electron';
 GmCXt.conf.Premise = 'Premise';
 GmCXt.conf.runEnv = "browser";
-GmCXt.conf.msgPrefix = "mgPlayerJSTest_";
+GmCXt.conf.msgPrefix = "mgPlayerJSTest2_";
 
 GmCXt.conf.showWidget = false;
 
@@ -101,20 +101,20 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
+	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/";
 	GmCXt.conf.chromeExtensionUrl = "";
-	GmCXt.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
-	GmCXt.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
-	GmCXt.conf.webPortalUrl = "https://qa-admin.myguide.org/";
-	GmCXt.conf.analyticsPath = "https://analytics-qa.guideme.io/";
-	GmCXt.conf.analyticsPortalUrl = "https://analytics-qa.myguide.org/";
+	GmCXt.conf.webServiceUrl = "https://qa2-api.guideme.io/v3/";
+	GmCXt.conf.staticContentPath = "https://qa2-cdn.guideme.io/guideme-assests/";
+	GmCXt.conf.webPortalUrl = "https://qa2-admin.guideme.io/";
+	GmCXt.conf.analyticsPath = "https://qa2-insightsapi.guideme.io/";
+	GmCXt.conf.analyticsPortalUrl = "https://qa2-insights.guideme.io/";
 
-	GmCXt.conf.cdnStorage = "https://stagecdn.guideme.io/";
-	GmCXt.conf.jsonStorageUrl = "https://stage-mycdn.guideme.io/";
+	GmCXt.conf.cdnStorage = "https://qa2-cdn.guideme.io/";
+	GmCXt.conf.jsonStorageUrl = "https://qa2-mycdn.guideme.io/";
 	
-	GmCXt.conf.ssoRedirectionUrl = "https://qa-sso.guideme.io/saml2/sp/sso/";
-	GmCXt.conf.ssoApiUrl = "https://qa-sso.guideme.io/saml2/sp/session/";
-	GmCXt.conf.ssoConfigUrl = "https://stagecdn.guideme.io/guideme-auth-qa/objects/";
+	GmCXt.conf.ssoRedirectionUrl = "https://qa2-sso.guideme.io/saml2/sp/sso/";
+	GmCXt.conf.ssoApiUrl = "https://qa2-sso.guideme.io/saml2/sp/session/";
+	GmCXt.conf.ssoConfigUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/objects/";
 
 	GmCXt.conf.paymentEndPoint = "";
 
@@ -147,7 +147,7 @@ GmCXt.conf.appConfig = {
 	tourViewOptions: { showMe:1, testme:1, audio:1 },
 	defaultIcon: 'myguide.png',
 	isLXP: false,
-	customer: 'myguide',
+	customer: 'sumtotal',
 	desktopCommunication: false,
-	iframeInjection: false
+	iframeInjection: true
 };
