@@ -3,13 +3,13 @@ var stepAudio = {};
 var userPrefAudio = false;
 
 function setAudioModeOn() {
-	mg$('.mgPlayerJSPreview_play-step-audio-on').show();
-	mg$('.mgPlayerJSPreview_play-step-audio-off').hide();
-	mg$('.mgPlayerJSPreview_play-step-audio').addClass('playing-audio');
+	mg$('.mgPlayerJSProd_play-step-audio-on').show();
+	mg$('.mgPlayerJSProd_play-step-audio-off').hide();
+	mg$('.mgPlayerJSProd_play-step-audio').addClass('playing-audio');
 
 	if (userPrefAudio) {
 
-		var action = "mgPlayerJSPreview_action:set_audio_storage";
+		var action = "mgPlayerJSProd_action:set_audio_storage";
 		var data = {
 			'stepAudioRunningStatus': true
 		};
@@ -18,13 +18,13 @@ function setAudioModeOn() {
 }
 
 function setAudioModeOff() {
-	mg$('.mgPlayerJSPreview_play-step-audio-on').hide();
-	mg$('.mgPlayerJSPreview_play-step-audio-off').show();
-	mg$('.mgPlayerJSPreview_play-step-audio').removeClass('playing-audio');
+	mg$('.mgPlayerJSProd_play-step-audio-on').hide();
+	mg$('.mgPlayerJSProd_play-step-audio-off').show();
+	mg$('.mgPlayerJSProd_play-step-audio').removeClass('playing-audio');
 
 	if (userPrefAudio) {
 
-		var action = "mgPlayerJSPreview_action:set_audio_storage";
+		var action = "mgPlayerJSProd_action:set_audio_storage";
 		var data = {
 			'stepAudioRunningStatus': false
 		};
@@ -62,7 +62,7 @@ window.addEventListener('message', function(event) {
 	var message = GmCXt.parseMsg(event);
 
 	if (!message) return;
-	if (!message.action || message.action.indexOf('mgPlayerJSPreview_action:') !== 0) return;
+	if (!message.action || message.action.indexOf('mgPlayerJSProd_action:') !== 0) return;
 	message = GmCXt.convertMgdata(message);
 
 	if (message.data) {
@@ -88,22 +88,22 @@ window.addEventListener('message', function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSPreview_action:set_audio_mode_on':
+		case 'mgPlayerJSProd_action:set_audio_mode_on':
 			setAudioModeOn();
 			break;
 
-		case 'mgPlayerJSPreview_action:set_audio_mode_off':
+		case 'mgPlayerJSProd_action:set_audio_mode_off':
 			setAudioModeOff();
 			break;
 
-		case 'mgPlayerJSPreview_action:stop_audio':
+		case 'mgPlayerJSProd_action:stop_audio':
 			GmCXt.requestHandler.stopAudioTrack();
 			break;
 
-		case 'mgPlayerJSPreview_action:set_style_audio_icon_response':
+		case 'mgPlayerJSProd_action:set_style_audio_icon_response':
 			mg$("html:first").append(message.data.data);
-			mg$('.mgPlayerJSPreview_audio-iframe-icons').removeAttr('style');
-			formatAndSendToParentWindow('mgPlayerJSPreview_action:hide_pop_audio_ctrl', {});
+			mg$('.mgPlayerJSProd_audio-iframe-icons').removeAttr('style');
+			formatAndSendToParentWindow('mgPlayerJSProd_action:hide_pop_audio_ctrl', {});
 			break;
 	}
 
@@ -155,7 +155,7 @@ GmCXt.playStepAudio = function(message) {
 
 		GmCXt.audioObject = new Audio(audioTrack);
 
-		var action = "mgPlayerJSPreview_action:start_step_completion_timeout";
+		var action = "mgPlayerJSProd_action:start_step_completion_timeout";
 		var data = {
 			step: stepObj
 		};
@@ -203,14 +203,14 @@ function formatAndSendToParentWindow(action, data) {
 	GmCXt.sendToParentWindow(obj);
 }
 
-mg$('.mgPlayerJSPreview_play-step-audio-on').off('click').on('click', function() {
+mg$('.mgPlayerJSProd_play-step-audio-on').off('click').on('click', function() {
 	userPrefAudio = true;
 	GmCXt.stopAudio();
-	formatAndSendToParentWindow('mgPlayerJSPreview_action:stop_audio', {});
+	formatAndSendToParentWindow('mgPlayerJSProd_action:stop_audio', {});
 	setAudioModeOff();
 });
 
-mg$('.mgPlayerJSPreview_play-step-audio-off').off('click').on('click', function() {
+mg$('.mgPlayerJSProd_play-step-audio-off').off('click').on('click', function() {
 	userPrefAudio = true;
 	setAudioModeOn();
 	if (GmCXt.playerI) {
@@ -225,5 +225,5 @@ mg$('.mgPlayerJSPreview_play-step-audio-off').off('click').on('click', function(
 });
 
 mg$(document).ready(function() {
-	formatAndSendToParentWindow('mgPlayerJSPreview_action:set_style_audio_icon', {});
+	formatAndSendToParentWindow('mgPlayerJSProd_action:set_style_audio_icon', {});
 });

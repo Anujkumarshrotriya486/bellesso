@@ -1,11 +1,3 @@
-/**
- * Check if script is not already loaded
- */
-if (window.guideMeClientLoaded === true) {
-	throw new Error("gm_client.js is already loaded!");
-}
-window.guideMeClientLoaded = true;
-
 !function(e){function n(){}function t(e,n){return function(){e.apply(n,arguments)}}function o(e){if("object"!=typeof this)throw new TypeError("Promises must be constructed via new");if("function"!=typeof e)throw new TypeError("not a function");this._state=0,this._handled=!1,this._value=void 0,this._deferreds=[],s(e,this)}function i(e,n){for(;3===e._state;)e=e._value;return 0===e._state?void e._deferreds.push(n):(e._handled=!0,void o._immediateFn(function(){var t=1===e._state?n.onFulfilled:n.onRejected;if(null===t)return void(1===e._state?r:u)(n.promise,e._value);var o;try{o=t(e._value)}catch(i){return void u(n.promise,i)}r(n.promise,o)}))}function r(e,n){try{if(n===e)throw new TypeError("A promise cannot be resolved with itself.");if(n&&("object"==typeof n||"function"==typeof n)){var i=n.then;if(n instanceof o)return e._state=3,e._value=n,void f(e);if("function"==typeof i)return void s(t(i,n),e)}e._state=1,e._value=n,f(e)}catch(r){u(e,r)}}function u(e,n){e._state=2,e._value=n,f(e)}function f(e){2===e._state&&0===e._deferreds.length&&o._immediateFn(function(){e._handled||o._unhandledRejectionFn(e._value)});for(var n=0,t=e._deferreds.length;n<t;n++)i(e,e._deferreds[n]);e._deferreds=null}function c(e,n,t){this.onFulfilled="function"==typeof e?e:null,this.onRejected="function"==typeof n?n:null,this.promise=t}function s(e,n){var t=!1;try{e(function(e){t||(t=!0,r(n,e))},function(e){t||(t=!0,u(n,e))})}catch(o){if(t)return;t=!0,u(n,o)}}var a=setTimeout;o.prototype["catch"]=function(e){return this.then(null,e)},o.prototype.then=function(e,t){var o=new this.constructor(n);return i(this,new c(e,t,o)),o},o.all=function(e){var n=Array.prototype.slice.call(e);return new o(function(e,t){function o(r,u){try{if(u&&("object"==typeof u||"function"==typeof u)){var f=u.then;if("function"==typeof f)return void f.call(u,function(e){o(r,e)},t)}n[r]=u,0===--i&&e(n)}catch(c){t(c)}}if(0===n.length)return e([]);for(var i=n.length,r=0;r<n.length;r++)o(r,n[r])})},o.resolve=function(e){return e&&"object"==typeof e&&e.constructor===o?e:new o(function(n){n(e)})},o.reject=function(e){return new o(function(n,t){t(e)})},o.race=function(e){return new o(function(n,t){for(var o=0,i=e.length;o<i;o++)e[o].then(n,t)})},o._immediateFn="function"==typeof setImmediate&&function(e){setImmediate(e)}||function(e){a(e,0)},o._unhandledRejectionFn=function(e){"undefined"!=typeof console&&console&&console.warn("Possible Unhandled Promise Rejection:",e)},o._setImmediateFn=function(e){o._immediateFn=e},o._setUnhandledRejectionFn=function(e){o._unhandledRejectionFn=e},"undefined"!=typeof module&&module.exports?module.exports=o:e.Promise||(e.Promise=o)}(this);
 if (GmCXt === undefined) var GmCXt = {};
 
@@ -31,6 +23,159 @@ if (GmCXt.isIE) {
 	}
 	GmCXt.browserApp = 'ie';
 }
+if (GmCXt === undefined) {
+	var GmCXt = {};
+}
+
+GmCXt.conf = {};
+GmCXt.conf.version = "2024.4.2";
+GmCXt.conf.env = "Prod";
+
+GmCXt.conf.creatorApp = 'mgExt';
+GmCXt.conf.playerApp = 'mgPlayer';
+GmCXt.conf.creatorJS = 'mgCreator';
+GmCXt.conf.appName = "mgPlayer";
+
+GmCXt.conf.allowedDomains = [];
+GmCXt.conf.autologin = false;
+GmCXt.conf.appTypeExt = 'Extension';
+GmCXt.conf.appTypeScript = 'JScript';
+GmCXt.conf.appTypeElectron = 'electron';
+GmCXt.conf.Premise = 'Premise';
+GmCXt.conf.runEnv = "browser";
+GmCXt.conf.msgPrefix = "mgPlayerJSProd_";
+
+GmCXt.conf.showWidget = false;
+
+GmCXt.conf.playerExtension = GmCXt.conf.playerApp + GmCXt.conf.appTypeExt;
+GmCXt.conf.playerJS = GmCXt.conf.playerApp + GmCXt.conf.appTypeScript;
+
+GmCXt.conf.websiteUrl = "https://myguide.org";
+GmCXt.conf.privacyPolicyUrl = "https://www.edcast.com/corp/privacy-policy/";
+GmCXt.conf.termsURL = "https://www.edcast.com/corp/terms-of-service/";
+GmCXt.conf.feedbackDetails = "mailto:support@csod.com?Subject=MyGuide Feedback";
+GmCXt.conf.adminEmail = "<a href='mailto:admin@edcast.com' target='_top'>admin@edcast.com</a>";
+GmCXt.conf.hideCaptcha = "";
+
+try {
+	chrome.runtime.onMessage.addListener(function() {
+		return true;
+	});
+	GmCXt.conf.appType = GmCXt.conf.appTypeExt;
+} catch (e) {
+	try {
+		var uri = safari.extension.baseURI;
+		if (uri !== null) {
+			GmCXt.conf.appType = GmCXt.conf.appTypeExt;
+		}
+	} catch (e2) {
+		GmCXt.conf.appType = GmCXt.conf.appTypeScript;
+	}
+}
+
+// Default true, guideme icon will be visible on all urls. 
+// If false, guideme icon will only be visible on urls where user have created tours. 
+
+GmCXt.conf.allUrls = true;
+
+GmCXt.conf.provider = "playerApi";
+
+GmCXt.conf.storageUrl = "";
+
+GmCXt.setOnPremise = function() {
+
+	function apply(p) {
+		if (p.apiSecrret) GmCXt.conf.apiSecrret = p.apiSecrret;
+		if (p.apiUrl) GmCXt.conf.webServiceUrl = p.apiUrl;
+		if (p.analyticsUrl) GmCXt.conf.analyticsPath = p.analyticsUrl;
+		if (p.cdnUrl) GmCXt.conf.staticContentPath = p.cdnUrl;
+		if (p.webPortal) GmCXt.conf.webPortalUrl = p.webPortal;
+		if (p.analyticsPortal) GmCXt.conf.analyticsPortalUrl = p.analyticsPortal;
+		if (p.assetPath) GmCXt.conf.staticContentPath = p.assetPath;
+	}
+
+	if (GmCXt.conf.appName === GmCXt.conf.creatorApp) {
+
+		if (GmCXt.onPremise) {
+			apply(GmCXt.onPremise);
+		} else {
+			chrome.storage.sync.get({
+				onPrem_appKey: '',
+				onPrem_apiUrl: '',
+				onPrem_insightsUrl: '',
+				onPrem_cdnUrl: '',
+				onPrem_adminPortal: '',
+				onPrem_insightsPortal: '',
+				onPrem_assetPath: ''
+			}, function(items) {
+				var prem = {
+					appKey: items.onPrem_appKey,
+					apiUrl: items.onPrem_apiUrl,
+					analyticsUrl: items.onPrem_insightsUrl,
+					cdnUrl: items.onPrem_cdnUrl,
+					webPortal: items.onPrem_adminPortal,
+					analyticsPortal: items.onPrem_insightsPortal,
+					assetPath: items.onPrem_assetPath
+				};
+				apply(prem);
+			});
+		}
+	}
+};
+
+GmCXt.setConfig = function() {
+	GmCXt.conf.apiSecrret = "4fb49382-2867-41c0-9ece-fdcaf03b46b8";
+	GmCXt.conf.orgSecrret = "";
+	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
+	GmCXt.conf.chromeExtensionUrl = "";
+	GmCXt.conf.webServiceUrl = "https://api-v3.guideme.io/v3/";
+	GmCXt.conf.staticContentPath = "https://cdn.guideme.io/guideme-assests/";
+	GmCXt.conf.webPortalUrl = "https://admin.myguide.org/";
+	GmCXt.conf.analyticsPath = "https://v3-analytics.guideme.io/";
+	GmCXt.conf.analyticsPortalUrl = "https://analytics.myguide.org/";
+
+	GmCXt.conf.cdnStorage = "https://cdn.guideme.io/";
+	GmCXt.conf.jsonStorageUrl = "https://mycdn.myguide.org/";
+	
+	GmCXt.conf.ssoRedirectionUrl = "https://sso.myguide.org/saml2/sp/sso/";
+	GmCXt.conf.ssoApiUrl = "https://sso.myguide.org/saml2/sp/session/";
+	GmCXt.conf.ssoConfigUrl = "https://cdn.guideme.io/guideme-auth/objects/";
+
+	GmCXt.conf.paymentEndPoint = "";
+
+	GmCXt.setOnPremise();
+};
+
+GmCXt.setConfig();
+
+(function() {
+	if (GmCXt.conf.appType === GmCXt.conf.appTypeExt) {
+
+		var root = '';
+
+		if (GmCXt.browserApp === 'Safari') {
+			root = safari.extension.baseURI;
+		} else if (GmCXt.browserApp === 'firefox' ) {
+
+			root = chrome.extension.getURL('');
+
+		} else {
+			root = chrome.runtime.getURL('');
+		}
+	}
+
+})();
+
+GmCXt.conf.appConfig = {
+	login: { guideme: 1, forgotPass: 1 },
+	requireLogin: true,
+	tourViewOptions: { showMe:1, testme:1, audio:1 },
+	defaultIcon: 'myguide.png',
+	isLXP: false,
+	customer: 'sumtotal',
+	desktopCommunication: false,
+	iframeInjection: true
+};
 /*! jQuery v3.7.1 | (c) OpenJS Foundation and other contributors | jquery.org/license */
 var hostJquery;
 var host$;
@@ -46,2554 +191,6 @@ if (hostJquery) {
 }
 !function(t){var i=t(window);t.fn.visible=function(t,e,o){if(!(this.length<1)){var r=this.length>1?this.eq(0):this,n=r.get(0),f=i.width(),h=i.height(),o=o?o:"both",l=e===!0?n.offsetWidth*n.offsetHeight:!0;if("function"==typeof n.getBoundingClientRect){var g=n.getBoundingClientRect(),u=g.top>=0&&g.top<h,s=g.bottom>0&&g.bottom<=h,c=g.left>=0&&g.left<f,a=g.right>0&&g.right<=f,v=t?u||s:u&&s,b=t?c||a:c&&a;if("both"===o)return l&&v&&b;if("vertical"===o)return l&&v;if("horizontal"===o)return l&&b}else{var d=i.scrollTop(),p=d+h,w=i.scrollLeft(),m=w+f,y=r.offset(),z=y.top,B=z+r.height(),C=y.left,R=C+r.width(),j=t===!0?B:z,q=t===!0?z:B,H=t===!0?R:C,L=t===!0?C:R;if("both"===o)return!!l&&p>=q&&j>=d&&m>=L&&H>=w;if("vertical"===o)return!!l&&p>=q&&j>=d;if("horizontal"===o)return!!l&&m>=L&&H>=w}}}}(mg$);
 
-/*
- * JavaScript MD5
- * https://github.com/blueimp/JavaScript-MD5
- *
- * Copyright 2011, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * https://opensource.org/licenses/MIT
- *
- * Based on
- * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
- * Digest Algorithm, as defined in RFC 1321.
- * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
- * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
- * Distributed under the BSD License
- * See http://pajhome.org.uk/crypt/md5 for more info.
- */
-
-/* global define */
-
-(function ($) {
-  'use strict'
-
-  /*
-  * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-  * to work around bugs in some JS interpreters.
-  */
-  function safeAdd (x, y) {
-    var lsw = (x & 0xffff) + (y & 0xffff)
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16)
-    return (msw << 16) | (lsw & 0xffff)
-  }
-
-  /*
-  * Bitwise rotate a 32-bit number to the left.
-  */
-  function bitRotateLeft (num, cnt) {
-    return (num << cnt) | (num >>> (32 - cnt))
-  }
-
-  /*
-  * These functions implement the four basic operations the algorithm uses.
-  */
-  function md5cmn (q, a, b, x, s, t) {
-    return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b)
-  }
-  function md5ff (a, b, c, d, x, s, t) {
-    return md5cmn((b & c) | (~b & d), a, b, x, s, t)
-  }
-  function md5gg (a, b, c, d, x, s, t) {
-    return md5cmn((b & d) | (c & ~d), a, b, x, s, t)
-  }
-  function md5hh (a, b, c, d, x, s, t) {
-    return md5cmn(b ^ c ^ d, a, b, x, s, t)
-  }
-  function md5ii (a, b, c, d, x, s, t) {
-    return md5cmn(c ^ (b | ~d), a, b, x, s, t)
-  }
-
-  /*
-  * Calculate the MD5 of an array of little-endian words, and a bit length.
-  */
-  function binlMD5 (x, len) {
-    /* append padding */
-    x[len >> 5] |= 0x80 << (len % 32)
-    x[((len + 64) >>> 9 << 4) + 14] = len
-
-    var i
-    var olda
-    var oldb
-    var oldc
-    var oldd
-    var a = 1732584193
-    var b = -271733879
-    var c = -1732584194
-    var d = 271733878
-
-    for (i = 0; i < x.length; i += 16) {
-      olda = a
-      oldb = b
-      oldc = c
-      oldd = d
-
-      a = md5ff(a, b, c, d, x[i], 7, -680876936)
-      d = md5ff(d, a, b, c, x[i + 1], 12, -389564586)
-      c = md5ff(c, d, a, b, x[i + 2], 17, 606105819)
-      b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330)
-      a = md5ff(a, b, c, d, x[i + 4], 7, -176418897)
-      d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426)
-      c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341)
-      b = md5ff(b, c, d, a, x[i + 7], 22, -45705983)
-      a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416)
-      d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417)
-      c = md5ff(c, d, a, b, x[i + 10], 17, -42063)
-      b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162)
-      a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682)
-      d = md5ff(d, a, b, c, x[i + 13], 12, -40341101)
-      c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290)
-      b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329)
-
-      a = md5gg(a, b, c, d, x[i + 1], 5, -165796510)
-      d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632)
-      c = md5gg(c, d, a, b, x[i + 11], 14, 643717713)
-      b = md5gg(b, c, d, a, x[i], 20, -373897302)
-      a = md5gg(a, b, c, d, x[i + 5], 5, -701558691)
-      d = md5gg(d, a, b, c, x[i + 10], 9, 38016083)
-      c = md5gg(c, d, a, b, x[i + 15], 14, -660478335)
-      b = md5gg(b, c, d, a, x[i + 4], 20, -405537848)
-      a = md5gg(a, b, c, d, x[i + 9], 5, 568446438)
-      d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690)
-      c = md5gg(c, d, a, b, x[i + 3], 14, -187363961)
-      b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501)
-      a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467)
-      d = md5gg(d, a, b, c, x[i + 2], 9, -51403784)
-      c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473)
-      b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734)
-
-      a = md5hh(a, b, c, d, x[i + 5], 4, -378558)
-      d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463)
-      c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562)
-      b = md5hh(b, c, d, a, x[i + 14], 23, -35309556)
-      a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060)
-      d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353)
-      c = md5hh(c, d, a, b, x[i + 7], 16, -155497632)
-      b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640)
-      a = md5hh(a, b, c, d, x[i + 13], 4, 681279174)
-      d = md5hh(d, a, b, c, x[i], 11, -358537222)
-      c = md5hh(c, d, a, b, x[i + 3], 16, -722521979)
-      b = md5hh(b, c, d, a, x[i + 6], 23, 76029189)
-      a = md5hh(a, b, c, d, x[i + 9], 4, -640364487)
-      d = md5hh(d, a, b, c, x[i + 12], 11, -421815835)
-      c = md5hh(c, d, a, b, x[i + 15], 16, 530742520)
-      b = md5hh(b, c, d, a, x[i + 2], 23, -995338651)
-
-      a = md5ii(a, b, c, d, x[i], 6, -198630844)
-      d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415)
-      c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905)
-      b = md5ii(b, c, d, a, x[i + 5], 21, -57434055)
-      a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571)
-      d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606)
-      c = md5ii(c, d, a, b, x[i + 10], 15, -1051523)
-      b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799)
-      a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359)
-      d = md5ii(d, a, b, c, x[i + 15], 10, -30611744)
-      c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380)
-      b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649)
-      a = md5ii(a, b, c, d, x[i + 4], 6, -145523070)
-      d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379)
-      c = md5ii(c, d, a, b, x[i + 2], 15, 718787259)
-      b = md5ii(b, c, d, a, x[i + 9], 21, -343485551)
-
-      a = safeAdd(a, olda)
-      b = safeAdd(b, oldb)
-      c = safeAdd(c, oldc)
-      d = safeAdd(d, oldd)
-    }
-    return [a, b, c, d]
-  }
-
-  /*
-  * Convert an array of little-endian words to a string
-  */
-  function binl2rstr (input) {
-    var i;
-    var output = '';
-    var length32 = input.length * 32;
-    for (i = 0; i < length32; i += 8) {
-      output += String.fromCharCode((input[i >> 5] >>> (i % 32)) & 0xff);
-    }
-    return output;
-  }
-
-  /*
-  * Convert a raw string to an array of little-endian words
-  * Characters >255 have their high-byte silently ignored.
-  */
-  function rstr2binl (input) {
-    var i
-    var output = []
-    output[(input.length >> 2) - 1] = undefined
-    for (i = 0; i < output.length; i += 1) {
-      output[i] = 0
-    }
-    var length8 = input.length * 8
-    for (i = 0; i < length8; i += 8) {
-      output[i >> 5] |= (input.charCodeAt(i / 8) & 0xff) << (i % 32)
-    }
-    return output
-  }
-
-  /*
-  * Calculate the MD5 of a raw string
-  */
-  function rstrMD5 (s) {
-    return binl2rstr(binlMD5(rstr2binl(s), s.length * 8))
-  }
-
-  /*
-  * Calculate the HMAC-MD5, of a key and some data (raw strings)
-  */
-  function rstrHMACMD5 (key, data) {
-    var i
-    var bkey = rstr2binl(key)
-    var ipad = []
-    var opad = []
-    var hash
-    ipad[15] = opad[15] = undefined
-    if (bkey.length > 16) {
-      bkey = binlMD5(bkey, key.length * 8)
-    }
-    for (i = 0; i < 16; i += 1) {
-      ipad[i] = bkey[i] ^ 0x36363636
-      opad[i] = bkey[i] ^ 0x5c5c5c5c
-    }
-    hash = binlMD5(ipad.concat(rstr2binl(data)), 512 + data.length * 8)
-    return binl2rstr(binlMD5(opad.concat(hash), 512 + 128))
-  }
-
-  /*
-  * Convert a raw string to a hex string
-  */
-  function rstr2hex (input) {
-    var hexTab = '0123456789abcdef'
-    var output = ''
-    var x
-    var i
-    for (i = 0; i < input.length; i += 1) {
-      x = input.charCodeAt(i)
-      output += hexTab.charAt((x >>> 4) & 0x0f) + hexTab.charAt(x & 0x0f)
-    }
-    return output
-  }
-
-  /*
-  * Encode a string as utf-8
-  */
-  function str2rstrUTF8 (input) {
-    return unescape(encodeURIComponent(input))
-  }
-
-  /*
-  * Take string arguments and return either raw or hex encoded strings
-  */
-  function rawMD5 (s) {
-    return rstrMD5(str2rstrUTF8(s))
-  }
-  function hexMD5 (s) {
-    return rstr2hex(rawMD5(s))
-  }
-  function rawHMACMD5 (k, d) {
-    return rstrHMACMD5(str2rstrUTF8(k), str2rstrUTF8(d))
-  }
-  function hexHMACMD5 (k, d) {
-    return rstr2hex(rawHMACMD5(k, d))
-  }
-
-  function md5 (string, key, raw) {
-    if (!key) {
-      if (!raw) {
-        return hexMD5(string)
-      }
-      return rawMD5(string)
-    }
-    if (!raw) {
-      return hexHMACMD5(key, string)
-    }
-    return rawHMACMD5(key, string)
-  }
-
-  if (typeof define === 'function' && define.amd) {
-    define(function () {
-      return md5
-    })
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = md5
-  } else {
-    $.md5 = md5
-  }
-})(this);
-
-
-function SHA256(s){
-    var chrsz = 8;
-    var hexcase = 0;
-   
-    function safe_add (x, y) {
-    var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-    var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-    return (msw << 16) | (lsw & 0xFFFF);
-    }
-   
-    function S (X, n) { return ( X >>> n ) | (X << (32 - n)); }
-    function R (X, n) { return ( X >>> n ); }
-    function Ch(x, y, z) { return ((x & y) ^ ((~x) & z)); }
-    function Maj(x, y, z) { return ((x & y) ^ (x & z) ^ (y & z)); }
-    function Sigma0256(x) { return (S(x, 2) ^ S(x, 13) ^ S(x, 22)); }
-    function Sigma1256(x) { return (S(x, 6) ^ S(x, 11) ^ S(x, 25)); }
-    function Gamma0256(x) { return (S(x, 7) ^ S(x, 18) ^ R(x, 3)); }
-    function Gamma1256(x) { return (S(x, 17) ^ S(x, 19) ^ R(x, 10)); }
-   
-    function core_sha256 (m, l) {
-    var K = new Array(0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5, 0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174, 0xE49B69C1, 0xEFBE4786, 0xFC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA, 0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x6CA6351, 0x14292967, 0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85, 0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070, 0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3, 0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2);
-    var HASH = new Array(0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19);
-    var W = new Array(64);
-    var a, b, c, d, e, f, g, h, i, j;
-    var T1, T2;
-   
-    m[l >> 5] |= 0x80 << (24 - l % 32);
-    m[((l + 64 >> 9) << 4) + 15] = l;
-   
-    for ( var i = 0; i<m.length; i+=16 ) {
-    a = HASH[0];
-    b = HASH[1];
-    c = HASH[2];
-    d = HASH[3];
-    e = HASH[4];
-    f = HASH[5];
-    g = HASH[6];
-    h = HASH[7];
-   
-    for ( var j = 0; j<64; j++) {
-    if (j < 16) W[j] = m[j + i];
-    else W[j] = safe_add(safe_add(safe_add(Gamma1256(W[j - 2]), W[j - 7]), Gamma0256(W[j - 15])), W[j - 16]);
-   
-    T1 = safe_add(safe_add(safe_add(safe_add(h, Sigma1256(e)), Ch(e, f, g)), K[j]), W[j]);
-    T2 = safe_add(Sigma0256(a), Maj(a, b, c));
-   
-    h = g;
-    g = f;
-    f = e;
-    e = safe_add(d, T1);
-    d = c;
-    c = b;
-    b = a;
-    a = safe_add(T1, T2);
-    }
-   
-    HASH[0] = safe_add(a, HASH[0]);
-    HASH[1] = safe_add(b, HASH[1]);
-    HASH[2] = safe_add(c, HASH[2]);
-    HASH[3] = safe_add(d, HASH[3]);
-    HASH[4] = safe_add(e, HASH[4]);
-    HASH[5] = safe_add(f, HASH[5]);
-    HASH[6] = safe_add(g, HASH[6]);
-    HASH[7] = safe_add(h, HASH[7]);
-    }
-    return HASH;
-    }
-   
-    function str2binb (str) {
-    var bin = Array();
-    var mask = (1 << chrsz) - 1;
-    for(var i = 0; i < str.length * chrsz; i += chrsz) {
-    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (24 - i % 32);
-    }
-    return bin;
-    }
-   
-    function Utf8Encode(string) {
-    string = string.replace(/\r\n/g,'\n');
-    var utftext = '';
-   
-    for (var n = 0; n < string.length; n++) {
-   
-    var c = string.charCodeAt(n);
-   
-    if (c < 128) {
-    utftext += String.fromCharCode(c);
-    }
-    else if((c > 127) && (c < 2048)) {
-    utftext += String.fromCharCode((c >> 6) | 192);
-    utftext += String.fromCharCode((c & 63) | 128);
-    }
-    else {
-    utftext += String.fromCharCode((c >> 12) | 224);
-    utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-    utftext += String.fromCharCode((c & 63) | 128);
-    }
-   
-    }
-   
-    return utftext;
-    }
-   
-    function binb2hex (binarray) {
-    var hex_tab = hexcase ? '0123456789ABCDEF' : '0123456789abcdef';
-    var str = '';
-    for(var i = 0; i < binarray.length * 4; i++) {
-    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i % 4)*8+4)) & 0xF) +
-    hex_tab.charAt((binarray[i>>2] >> ((3 - i % 4)*8 )) & 0xF);
-    }
-    return str;
-    }
-   
-    s = Utf8Encode(s);
-    return binb2hex(core_sha256(str2binb(s), s.length * chrsz));
-   }
-! function(t, r) {
-	"object" == typeof exports ? module.exports = exports = r() : "function" == typeof define && define.amd ? define([], r) : t.CryptoJS = r()
-}(this, function() {
-	var t = t || function(t, r) {
-		var e = Object.create || function() {
-				function t() {}
-				return function(r) {
-					var e;
-					return t.prototype = r, e = new t, t.prototype = null, e
-				}
-			}(),
-			i = {},
-			n = i.lib = {},
-			o = n.Base = function() {
-				return {
-					extend: function(t) {
-						var r = e(this);
-						return t && r.mixIn(t), r.hasOwnProperty("init") && this.init !== r.init || (r.init = function() {
-							r.$super.init.apply(this, arguments)
-						}), r.init.prototype = r, r.$super = this, r
-					},
-					create: function() {
-						var t = this.extend();
-						return t.init.apply(t, arguments), t
-					},
-					init: function() {},
-					mixIn: function(t) {
-						for (var r in t) t.hasOwnProperty(r) && (this[r] = t[r]);
-						t.hasOwnProperty("toString") && (this.toString = t.toString)
-					},
-					clone: function() {
-						return this.init.prototype.extend(this)
-					}
-				}
-			}(),
-			s = n.WordArray = o.extend({
-				init: function(t, e) {
-					t = this.words = t || [], e != r ? this.sigBytes = e : this.sigBytes = 4 * t.length
-				},
-				toString: function(t) {
-					return (t || c).stringify(this)
-				},
-				concat: function(t) {
-					var r = this.words,
-						e = t.words,
-						i = this.sigBytes,
-						n = t.sigBytes;
-					if (this.clamp(), i % 4)
-						for (var o = 0; o < n; o++) {
-							var s = e[o >>> 2] >>> 24 - o % 4 * 8 & 255;
-							r[i + o >>> 2] |= s << 24 - (i + o) % 4 * 8
-						} else
-							for (var o = 0; o < n; o += 4) r[i + o >>> 2] = e[o >>> 2];
-					return this.sigBytes += n, this
-				},
-				clamp: function() {
-					var r = this.words,
-						e = this.sigBytes;
-					r[e >>> 2] &= 4294967295 << 32 - e % 4 * 8, r.length = t.ceil(e / 4)
-				},
-				clone: function() {
-					var t = o.clone.call(this);
-					return t.words = this.words.slice(0), t
-				},
-				random: function(r) {
-					for (var e, i = [], n = function(r) {
-							var r = r,
-								e = 987654321,
-								i = 4294967295;
-							return function() {
-								e = 36969 * (65535 & e) + (e >> 16) & i, r = 18e3 * (65535 & r) + (r >> 16) & i;
-								var n = (e << 16) + r & i;
-								return n /= 4294967296, n += .5, n * (t.random() > .5 ? 1 : -1)
-							}
-						}, o = 0; o < r; o += 4) {
-						var a = n(4294967296 * (e || t.random()));
-						e = 987654071 * a(), i.push(4294967296 * a() | 0)
-					}
-					return new s.init(i, r)
-				}
-			}),
-			a = i.enc = {},
-			c = a.Hex = {
-				stringify: function(t) {
-					for (var r = t.words, e = t.sigBytes, i = [], n = 0; n < e; n++) {
-						var o = r[n >>> 2] >>> 24 - n % 4 * 8 & 255;
-						i.push((o >>> 4).toString(16)), i.push((15 & o).toString(16))
-					}
-					return i.join("")
-				},
-				parse: function(t) {
-					for (var r = t.length, e = [], i = 0; i < r; i += 2) e[i >>> 3] |= parseInt(t.substr(i, 2), 16) << 24 - i % 8 * 4;
-					return new s.init(e, r / 2)
-				}
-			},
-			h = a.Latin1 = {
-				stringify: function(t) {
-					for (var r = t.words, e = t.sigBytes, i = [], n = 0; n < e; n++) {
-						var o = r[n >>> 2] >>> 24 - n % 4 * 8 & 255;
-						i.push(String.fromCharCode(o))
-					}
-					return i.join("")
-				},
-				parse: function(t) {
-					for (var r = t.length, e = [], i = 0; i < r; i++) e[i >>> 2] |= (255 & t.charCodeAt(i)) << 24 - i % 4 * 8;
-					return new s.init(e, r)
-				}
-			},
-			l = a.Utf8 = {
-				stringify: function(t) {
-					try {
-						return decodeURIComponent(escape(h.stringify(t)))
-					} catch (t) {
-						throw new Error("Malformed UTF-8 data")
-					}
-				},
-				parse: function(t) {
-					return h.parse(unescape(encodeURIComponent(t)))
-				}
-			},
-			f = n.BufferedBlockAlgorithm = o.extend({
-				reset: function() {
-					this._data = new s.init, this._nDataBytes = 0
-				},
-				_append: function(t) {
-					"string" == typeof t && (t = l.parse(t)), this._data.concat(t), this._nDataBytes += t.sigBytes
-				},
-				_process: function(r) {
-					var e = this._data,
-						i = e.words,
-						n = e.sigBytes,
-						o = this.blockSize,
-						a = 4 * o,
-						c = n / a;
-					c = r ? t.ceil(c) : t.max((0 | c) - this._minBufferSize, 0);
-					var h = c * o,
-						l = t.min(4 * h, n);
-					if (h) {
-						for (var f = 0; f < h; f += o) this._doProcessBlock(i, f);
-						var u = i.splice(0, h);
-						e.sigBytes -= l
-					}
-					return new s.init(u, l)
-				},
-				clone: function() {
-					var t = o.clone.call(this);
-					return t._data = this._data.clone(), t
-				},
-				_minBufferSize: 0
-			}),
-			u = (n.Hasher = f.extend({
-				cfg: o.extend(),
-				init: function(t) {
-					this.cfg = this.cfg.extend(t), this.reset()
-				},
-				reset: function() {
-					f.reset.call(this), this._doReset()
-				},
-				update: function(t) {
-					return this._append(t), this._process(), this
-				},
-				finalize: function(t) {
-					t && this._append(t);
-					var r = this._doFinalize();
-					return r
-				},
-				blockSize: 16,
-				_createHelper: function(t) {
-					return function(r, e) {
-						return new t.init(e).finalize(r)
-					}
-				},
-				_createHmacHelper: function(t) {
-					return function(r, e) {
-						return new u.HMAC.init(t, e).finalize(r)
-					}
-				}
-			}), i.algo = {});
-		return i
-	}(Math);
-	return function() {
-			function r(t, r, e) {
-				for (var i = [], o = 0, s = 0; s < r; s++)
-					if (s % 4) {
-						var a = e[t.charCodeAt(s - 1)] << s % 4 * 2,
-							c = e[t.charCodeAt(s)] >>> 6 - s % 4 * 2;
-						i[o >>> 2] |= (a | c) << 24 - o % 4 * 8, o++
-					}
-				return n.create(i, o)
-			}
-			var e = t,
-				i = e.lib,
-				n = i.WordArray,
-				o = e.enc;
-			o.Base64 = {
-				stringify: function(t) {
-					var r = t.words,
-						e = t.sigBytes,
-						i = this._map;
-					t.clamp();
-					for (var n = [], o = 0; o < e; o += 3)
-						for (var s = r[o >>> 2] >>> 24 - o % 4 * 8 & 255, a = r[o + 1 >>> 2] >>> 24 - (o + 1) % 4 * 8 & 255, c = r[o + 2 >>> 2] >>> 24 - (o + 2) % 4 * 8 & 255, h = s << 16 | a << 8 | c, l = 0; l < 4 && o + .75 * l < e; l++) n.push(i.charAt(h >>> 6 * (3 - l) & 63));
-					var f = i.charAt(64);
-					if (f)
-						for (; n.length % 4;) n.push(f);
-					return n.join("")
-				},
-				parse: function(t) {
-					var e = t.length,
-						i = this._map,
-						n = this._reverseMap;
-					if (!n) {
-						n = this._reverseMap = [];
-						for (var o = 0; o < i.length; o++) n[i.charCodeAt(o)] = o
-					}
-					var s = i.charAt(64);
-					if (s) {
-						var a = t.indexOf(s);
-						a !== -1 && (e = a)
-					}
-					return r(t, e, n)
-				},
-				_map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-			}
-		}(),
-		function(r) {
-			function e(t, r, e, i, n, o, s) {
-				var a = t + (r & e | ~r & i) + n + s;
-				return (a << o | a >>> 32 - o) + r
-			}
-
-			function i(t, r, e, i, n, o, s) {
-				var a = t + (r & i | e & ~i) + n + s;
-				return (a << o | a >>> 32 - o) + r
-			}
-
-			function n(t, r, e, i, n, o, s) {
-				var a = t + (r ^ e ^ i) + n + s;
-				return (a << o | a >>> 32 - o) + r
-			}
-
-			function o(t, r, e, i, n, o, s) {
-				var a = t + (e ^ (r | ~i)) + n + s;
-				return (a << o | a >>> 32 - o) + r
-			}
-			var s = t,
-				a = s.lib,
-				c = a.WordArray,
-				h = a.Hasher,
-				l = s.algo,
-				f = [];
-			! function() {
-				for (var t = 0; t < 64; t++) f[t] = 4294967296 * r.abs(r.sin(t + 1)) | 0
-			}();
-			var u = l.MD5 = h.extend({
-				_doReset: function() {
-					this._hash = new c.init([1732584193, 4023233417, 2562383102, 271733878])
-				},
-				_doProcessBlock: function(t, r) {
-					for (var s = 0; s < 16; s++) {
-						var a = r + s,
-							c = t[a];
-						t[a] = 16711935 & (c << 8 | c >>> 24) | 4278255360 & (c << 24 | c >>> 8)
-					}
-					var h = this._hash.words,
-						l = t[r + 0],
-						u = t[r + 1],
-						d = t[r + 2],
-						v = t[r + 3],
-						p = t[r + 4],
-						_ = t[r + 5],
-						y = t[r + 6],
-						g = t[r + 7],
-						B = t[r + 8],
-						w = t[r + 9],
-						k = t[r + 10],
-						S = t[r + 11],
-						m = t[r + 12],
-						x = t[r + 13],
-						b = t[r + 14],
-						H = t[r + 15],
-						z = h[0],
-						A = h[1],
-						C = h[2],
-						D = h[3];
-					z = e(z, A, C, D, l, 7, f[0]), D = e(D, z, A, C, u, 12, f[1]), C = e(C, D, z, A, d, 17, f[2]), A = e(A, C, D, z, v, 22, f[3]), z = e(z, A, C, D, p, 7, f[4]), D = e(D, z, A, C, _, 12, f[5]), C = e(C, D, z, A, y, 17, f[6]), A = e(A, C, D, z, g, 22, f[7]), z = e(z, A, C, D, B, 7, f[8]), D = e(D, z, A, C, w, 12, f[9]), C = e(C, D, z, A, k, 17, f[10]), A = e(A, C, D, z, S, 22, f[11]), z = e(z, A, C, D, m, 7, f[12]), D = e(D, z, A, C, x, 12, f[13]), C = e(C, D, z, A, b, 17, f[14]), A = e(A, C, D, z, H, 22, f[15]), z = i(z, A, C, D, u, 5, f[16]), D = i(D, z, A, C, y, 9, f[17]), C = i(C, D, z, A, S, 14, f[18]), A = i(A, C, D, z, l, 20, f[19]), z = i(z, A, C, D, _, 5, f[20]), D = i(D, z, A, C, k, 9, f[21]), C = i(C, D, z, A, H, 14, f[22]), A = i(A, C, D, z, p, 20, f[23]), z = i(z, A, C, D, w, 5, f[24]), D = i(D, z, A, C, b, 9, f[25]), C = i(C, D, z, A, v, 14, f[26]), A = i(A, C, D, z, B, 20, f[27]), z = i(z, A, C, D, x, 5, f[28]), D = i(D, z, A, C, d, 9, f[29]), C = i(C, D, z, A, g, 14, f[30]), A = i(A, C, D, z, m, 20, f[31]), z = n(z, A, C, D, _, 4, f[32]), D = n(D, z, A, C, B, 11, f[33]), C = n(C, D, z, A, S, 16, f[34]), A = n(A, C, D, z, b, 23, f[35]), z = n(z, A, C, D, u, 4, f[36]), D = n(D, z, A, C, p, 11, f[37]), C = n(C, D, z, A, g, 16, f[38]), A = n(A, C, D, z, k, 23, f[39]), z = n(z, A, C, D, x, 4, f[40]), D = n(D, z, A, C, l, 11, f[41]), C = n(C, D, z, A, v, 16, f[42]), A = n(A, C, D, z, y, 23, f[43]), z = n(z, A, C, D, w, 4, f[44]), D = n(D, z, A, C, m, 11, f[45]), C = n(C, D, z, A, H, 16, f[46]), A = n(A, C, D, z, d, 23, f[47]), z = o(z, A, C, D, l, 6, f[48]), D = o(D, z, A, C, g, 10, f[49]), C = o(C, D, z, A, b, 15, f[50]), A = o(A, C, D, z, _, 21, f[51]), z = o(z, A, C, D, m, 6, f[52]), D = o(D, z, A, C, v, 10, f[53]), C = o(C, D, z, A, k, 15, f[54]), A = o(A, C, D, z, u, 21, f[55]), z = o(z, A, C, D, B, 6, f[56]), D = o(D, z, A, C, H, 10, f[57]), C = o(C, D, z, A, y, 15, f[58]), A = o(A, C, D, z, x, 21, f[59]), z = o(z, A, C, D, p, 6, f[60]), D = o(D, z, A, C, S, 10, f[61]), C = o(C, D, z, A, d, 15, f[62]), A = o(A, C, D, z, w, 21, f[63]), h[0] = h[0] + z | 0, h[1] = h[1] + A | 0, h[2] = h[2] + C | 0, h[3] = h[3] + D | 0
-				},
-				_doFinalize: function() {
-					var t = this._data,
-						e = t.words,
-						i = 8 * this._nDataBytes,
-						n = 8 * t.sigBytes;
-					e[n >>> 5] |= 128 << 24 - n % 32;
-					var o = r.floor(i / 4294967296),
-						s = i;
-					e[(n + 64 >>> 9 << 4) + 15] = 16711935 & (o << 8 | o >>> 24) | 4278255360 & (o << 24 | o >>> 8), e[(n + 64 >>> 9 << 4) + 14] = 16711935 & (s << 8 | s >>> 24) | 4278255360 & (s << 24 | s >>> 8), t.sigBytes = 4 * (e.length + 1), this._process();
-					for (var a = this._hash, c = a.words, h = 0; h < 4; h++) {
-						var l = c[h];
-						c[h] = 16711935 & (l << 8 | l >>> 24) | 4278255360 & (l << 24 | l >>> 8)
-					}
-					return a
-				},
-				clone: function() {
-					var t = h.clone.call(this);
-					return t._hash = this._hash.clone(), t
-				}
-			});
-			s.MD5 = h._createHelper(u), s.HmacMD5 = h._createHmacHelper(u)
-		}(Math),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.WordArray,
-				n = e.Hasher,
-				o = r.algo,
-				s = [],
-				a = o.SHA1 = n.extend({
-					_doReset: function() {
-						this._hash = new i.init([1732584193, 4023233417, 2562383102, 271733878, 3285377520])
-					},
-					_doProcessBlock: function(t, r) {
-						for (var e = this._hash.words, i = e[0], n = e[1], o = e[2], a = e[3], c = e[4], h = 0; h < 80; h++) {
-							if (h < 16) s[h] = 0 | t[r + h];
-							else {
-								var l = s[h - 3] ^ s[h - 8] ^ s[h - 14] ^ s[h - 16];
-								s[h] = l << 1 | l >>> 31
-							}
-							var f = (i << 5 | i >>> 27) + c + s[h];
-							f += h < 20 ? (n & o | ~n & a) + 1518500249 : h < 40 ? (n ^ o ^ a) + 1859775393 : h < 60 ? (n & o | n & a | o & a) - 1894007588 : (n ^ o ^ a) - 899497514, c = a, a = o, o = n << 30 | n >>> 2, n = i, i = f
-						}
-						e[0] = e[0] + i | 0, e[1] = e[1] + n | 0, e[2] = e[2] + o | 0, e[3] = e[3] + a | 0, e[4] = e[4] + c | 0
-					},
-					_doFinalize: function() {
-						var t = this._data,
-							r = t.words,
-							e = 8 * this._nDataBytes,
-							i = 8 * t.sigBytes;
-						return r[i >>> 5] |= 128 << 24 - i % 32, r[(i + 64 >>> 9 << 4) + 14] = Math.floor(e / 4294967296), r[(i + 64 >>> 9 << 4) + 15] = e, t.sigBytes = 4 * r.length, this._process(), this._hash
-					},
-					clone: function() {
-						var t = n.clone.call(this);
-						return t._hash = this._hash.clone(), t
-					}
-				});
-			r.SHA1 = n._createHelper(a), r.HmacSHA1 = n._createHmacHelper(a)
-		}(),
-		function(r) {
-			var e = t,
-				i = e.lib,
-				n = i.WordArray,
-				o = i.Hasher,
-				s = e.algo,
-				a = [],
-				c = [];
-			! function() {
-				function t(t) {
-					for (var e = r.sqrt(t), i = 2; i <= e; i++)
-						if (!(t % i)) return !1;
-					return !0
-				}
-
-				function e(t) {
-					return 4294967296 * (t - (0 | t)) | 0
-				}
-				for (var i = 2, n = 0; n < 64;) t(i) && (n < 8 && (a[n] = e(r.pow(i, .5))), c[n] = e(r.pow(i, 1 / 3)), n++), i++
-			}();
-			var h = [],
-				l = s.SHA256 = o.extend({
-					_doReset: function() {
-						this._hash = new n.init(a.slice(0))
-					},
-					_doProcessBlock: function(t, r) {
-						for (var e = this._hash.words, i = e[0], n = e[1], o = e[2], s = e[3], a = e[4], l = e[5], f = e[6], u = e[7], d = 0; d < 64; d++) {
-							if (d < 16) h[d] = 0 | t[r + d];
-							else {
-								var v = h[d - 15],
-									p = (v << 25 | v >>> 7) ^ (v << 14 | v >>> 18) ^ v >>> 3,
-									_ = h[d - 2],
-									y = (_ << 15 | _ >>> 17) ^ (_ << 13 | _ >>> 19) ^ _ >>> 10;
-								h[d] = p + h[d - 7] + y + h[d - 16]
-							}
-							var g = a & l ^ ~a & f,
-								B = i & n ^ i & o ^ n & o,
-								w = (i << 30 | i >>> 2) ^ (i << 19 | i >>> 13) ^ (i << 10 | i >>> 22),
-								k = (a << 26 | a >>> 6) ^ (a << 21 | a >>> 11) ^ (a << 7 | a >>> 25),
-								S = u + k + g + c[d] + h[d],
-								m = w + B;
-							u = f, f = l, l = a, a = s + S | 0, s = o, o = n, n = i, i = S + m | 0
-						}
-						e[0] = e[0] + i | 0, e[1] = e[1] + n | 0, e[2] = e[2] + o | 0, e[3] = e[3] + s | 0, e[4] = e[4] + a | 0, e[5] = e[5] + l | 0, e[6] = e[6] + f | 0, e[7] = e[7] + u | 0
-					},
-					_doFinalize: function() {
-						var t = this._data,
-							e = t.words,
-							i = 8 * this._nDataBytes,
-							n = 8 * t.sigBytes;
-						return e[n >>> 5] |= 128 << 24 - n % 32, e[(n + 64 >>> 9 << 4) + 14] = r.floor(i / 4294967296), e[(n + 64 >>> 9 << 4) + 15] = i, t.sigBytes = 4 * e.length, this._process(), this._hash
-					},
-					clone: function() {
-						var t = o.clone.call(this);
-						return t._hash = this._hash.clone(), t
-					}
-				});
-			e.SHA256 = o._createHelper(l), e.HmacSHA256 = o._createHmacHelper(l)
-		}(Math),
-		function() {
-			function r(t) {
-				return t << 8 & 4278255360 | t >>> 8 & 16711935
-			}
-			var e = t,
-				i = e.lib,
-				n = i.WordArray,
-				o = e.enc;
-			o.Utf16 = o.Utf16BE = {
-				stringify: function(t) {
-					for (var r = t.words, e = t.sigBytes, i = [], n = 0; n < e; n += 2) {
-						var o = r[n >>> 2] >>> 16 - n % 4 * 8 & 65535;
-						i.push(String.fromCharCode(o))
-					}
-					return i.join("")
-				},
-				parse: function(t) {
-					for (var r = t.length, e = [], i = 0; i < r; i++) e[i >>> 1] |= t.charCodeAt(i) << 16 - i % 2 * 16;
-					return n.create(e, 2 * r)
-				}
-			};
-			o.Utf16LE = {
-				stringify: function(t) {
-					for (var e = t.words, i = t.sigBytes, n = [], o = 0; o < i; o += 2) {
-						var s = r(e[o >>> 2] >>> 16 - o % 4 * 8 & 65535);
-						n.push(String.fromCharCode(s))
-					}
-					return n.join("")
-				},
-				parse: function(t) {
-					for (var e = t.length, i = [], o = 0; o < e; o++) i[o >>> 1] |= r(t.charCodeAt(o) << 16 - o % 2 * 16);
-					return n.create(i, 2 * e)
-				}
-			}
-		}(),
-		function() {
-			if ("function" == typeof ArrayBuffer) {
-				var r = t,
-					e = r.lib,
-					i = e.WordArray,
-					n = i.init,
-					o = i.init = function(t) {
-						if (t instanceof ArrayBuffer && (t = new Uint8Array(t)), (t instanceof Int8Array || "undefined" != typeof Uint8ClampedArray && t instanceof Uint8ClampedArray || t instanceof Int16Array || t instanceof Uint16Array || t instanceof Int32Array || t instanceof Uint32Array || t instanceof Float32Array || t instanceof Float64Array) && (t = new Uint8Array(t.buffer, t.byteOffset, t.byteLength)), t instanceof Uint8Array) {
-							for (var r = t.byteLength, e = [], i = 0; i < r; i++) e[i >>> 2] |= t[i] << 24 - i % 4 * 8;
-							n.call(this, e, r)
-						} else n.apply(this, arguments)
-					};
-				o.prototype = i
-			}
-		}(),
-		function(r) {
-			function e(t, r, e) {
-				return t ^ r ^ e
-			}
-
-			function i(t, r, e) {
-				return t & r | ~t & e
-			}
-
-			function n(t, r, e) {
-				return (t | ~r) ^ e
-			}
-
-			function o(t, r, e) {
-				return t & e | r & ~e
-			}
-
-			function s(t, r, e) {
-				return t ^ (r | ~e)
-			}
-
-			function a(t, r) {
-				return t << r | t >>> 32 - r
-			}
-			var c = t,
-				h = c.lib,
-				l = h.WordArray,
-				f = h.Hasher,
-				u = c.algo,
-				d = l.create([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8, 3, 10, 14, 4, 9, 15, 8, 1, 2, 7, 0, 6, 13, 11, 5, 12, 1, 9, 11, 10, 0, 8, 12, 4, 13, 3, 7, 15, 14, 5, 6, 2, 4, 0, 5, 9, 7, 12, 2, 10, 14, 1, 3, 8, 11, 6, 15, 13]),
-				v = l.create([5, 14, 7, 0, 9, 2, 11, 4, 13, 6, 15, 8, 1, 10, 3, 12, 6, 11, 3, 7, 0, 13, 5, 10, 14, 15, 8, 12, 4, 9, 1, 2, 15, 5, 1, 3, 7, 14, 6, 9, 11, 8, 12, 2, 10, 0, 4, 13, 8, 6, 4, 1, 3, 11, 15, 0, 5, 12, 2, 13, 9, 7, 10, 14, 12, 15, 10, 4, 1, 5, 8, 7, 6, 2, 13, 14, 0, 3, 9, 11]),
-				p = l.create([11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8, 7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12, 11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5, 11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12, 9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6]),
-				_ = l.create([8, 9, 9, 11, 13, 15, 15, 5, 7, 7, 8, 11, 14, 14, 12, 6, 9, 13, 15, 7, 12, 8, 9, 11, 7, 7, 12, 7, 6, 15, 13, 11, 9, 7, 15, 11, 8, 6, 6, 14, 12, 13, 5, 14, 13, 13, 7, 5, 15, 5, 8, 11, 14, 14, 6, 14, 6, 9, 12, 9, 12, 5, 15, 8, 8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11]),
-				y = l.create([0, 1518500249, 1859775393, 2400959708, 2840853838]),
-				g = l.create([1352829926, 1548603684, 1836072691, 2053994217, 0]),
-				B = u.RIPEMD160 = f.extend({
-					_doReset: function() {
-						this._hash = l.create([1732584193, 4023233417, 2562383102, 271733878, 3285377520])
-					},
-					_doProcessBlock: function(t, r) {
-						for (var c = 0; c < 16; c++) {
-							var h = r + c,
-								l = t[h];
-							t[h] = 16711935 & (l << 8 | l >>> 24) | 4278255360 & (l << 24 | l >>> 8)
-						}
-						var f, u, B, w, k, S, m, x, b, H, z = this._hash.words,
-							A = y.words,
-							C = g.words,
-							D = d.words,
-							R = v.words,
-							E = p.words,
-							M = _.words;
-						S = f = z[0], m = u = z[1], x = B = z[2], b = w = z[3], H = k = z[4];
-						for (var F, c = 0; c < 80; c += 1) F = f + t[r + D[c]] | 0, F += c < 16 ? e(u, B, w) + A[0] : c < 32 ? i(u, B, w) + A[1] : c < 48 ? n(u, B, w) + A[2] : c < 64 ? o(u, B, w) + A[3] : s(u, B, w) + A[4], F |= 0, F = a(F, E[c]), F = F + k | 0, f = k, k = w, w = a(B, 10), B = u, u = F, F = S + t[r + R[c]] | 0, F += c < 16 ? s(m, x, b) + C[0] : c < 32 ? o(m, x, b) + C[1] : c < 48 ? n(m, x, b) + C[2] : c < 64 ? i(m, x, b) + C[3] : e(m, x, b) + C[4], F |= 0, F = a(F, M[c]), F = F + H | 0, S = H, H = b, b = a(x, 10), x = m, m = F;
-						F = z[1] + B + b | 0, z[1] = z[2] + w + H | 0, z[2] = z[3] + k + S | 0, z[3] = z[4] + f + m | 0, z[4] = z[0] + u + x | 0, z[0] = F
-					},
-					_doFinalize: function() {
-						var t = this._data,
-							r = t.words,
-							e = 8 * this._nDataBytes,
-							i = 8 * t.sigBytes;
-						r[i >>> 5] |= 128 << 24 - i % 32, r[(i + 64 >>> 9 << 4) + 14] = 16711935 & (e << 8 | e >>> 24) | 4278255360 & (e << 24 | e >>> 8), t.sigBytes = 4 * (r.length + 1), this._process();
-						for (var n = this._hash, o = n.words, s = 0; s < 5; s++) {
-							var a = o[s];
-							o[s] = 16711935 & (a << 8 | a >>> 24) | 4278255360 & (a << 24 | a >>> 8)
-						}
-						return n
-					},
-					clone: function() {
-						var t = f.clone.call(this);
-						return t._hash = this._hash.clone(), t
-					}
-				});
-			c.RIPEMD160 = f._createHelper(B), c.HmacRIPEMD160 = f._createHmacHelper(B)
-		}(Math),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.Base,
-				n = r.enc,
-				o = n.Utf8,
-				s = r.algo;
-			s.HMAC = i.extend({
-				init: function(t, r) {
-					t = this._hasher = new t.init, "string" == typeof r && (r = o.parse(r));
-					var e = t.blockSize,
-						i = 4 * e;
-					r.sigBytes > i && (r = t.finalize(r)), r.clamp();
-					for (var n = this._oKey = r.clone(), s = this._iKey = r.clone(), a = n.words, c = s.words, h = 0; h < e; h++) a[h] ^= 1549556828, c[h] ^= 909522486;
-					n.sigBytes = s.sigBytes = i, this.reset()
-				},
-				reset: function() {
-					var t = this._hasher;
-					t.reset(), t.update(this._iKey)
-				},
-				update: function(t) {
-					return this._hasher.update(t), this
-				},
-				finalize: function(t) {
-					var r = this._hasher,
-						e = r.finalize(t);
-					r.reset();
-					var i = r.finalize(this._oKey.clone().concat(e));
-					return i
-				}
-			})
-		}(),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.Base,
-				n = e.WordArray,
-				o = r.algo,
-				s = o.SHA1,
-				a = o.HMAC,
-				c = o.PBKDF2 = i.extend({
-					cfg: i.extend({
-						keySize: 4,
-						hasher: s,
-						iterations: 1
-					}),
-					init: function(t) {
-						this.cfg = this.cfg.extend(t)
-					},
-					compute: function(t, r) {
-						for (var e = this.cfg, i = a.create(e.hasher, t), o = n.create(), s = n.create([1]), c = o.words, h = s.words, l = e.keySize, f = e.iterations; c.length < l;) {
-							var u = i.update(r).finalize(s);
-							i.reset();
-							for (var d = u.words, v = d.length, p = u, _ = 1; _ < f; _++) {
-								p = i.finalize(p), i.reset();
-								for (var y = p.words, g = 0; g < v; g++) d[g] ^= y[g]
-							}
-							o.concat(u), h[0]++
-						}
-						return o.sigBytes = 4 * l, o
-					}
-				});
-			r.PBKDF2 = function(t, r, e) {
-				return c.create(e).compute(t, r)
-			}
-		}(),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.Base,
-				n = e.WordArray,
-				o = r.algo,
-				s = o.MD5,
-				a = o.EvpKDF = i.extend({
-					cfg: i.extend({
-						keySize: 4,
-						hasher: s,
-						iterations: 1
-					}),
-					init: function(t) {
-						this.cfg = this.cfg.extend(t)
-					},
-					compute: function(t, r) {
-						for (var e = this.cfg, i = e.hasher.create(), o = n.create(), s = o.words, a = e.keySize, c = e.iterations; s.length < a;) {
-							h && i.update(h);
-							var h = i.update(t).finalize(r);
-							i.reset();
-							for (var l = 1; l < c; l++) h = i.finalize(h), i.reset();
-							o.concat(h)
-						}
-						return o.sigBytes = 4 * a, o
-					}
-				});
-			r.EvpKDF = function(t, r, e) {
-				return a.create(e).compute(t, r)
-			}
-		}(),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.WordArray,
-				n = r.algo,
-				o = n.SHA256,
-				s = n.SHA224 = o.extend({
-					_doReset: function() {
-						this._hash = new i.init([3238371032, 914150663, 812702999, 4144912697, 4290775857, 1750603025, 1694076839, 3204075428])
-					},
-					_doFinalize: function() {
-						var t = o._doFinalize.call(this);
-						return t.sigBytes -= 4, t
-					}
-				});
-			r.SHA224 = o._createHelper(s), r.HmacSHA224 = o._createHmacHelper(s)
-		}(),
-		function(r) {
-			var e = t,
-				i = e.lib,
-				n = i.Base,
-				o = i.WordArray,
-				s = e.x64 = {};
-			s.Word = n.extend({
-				init: function(t, r) {
-					this.high = t, this.low = r
-				}
-			}), s.WordArray = n.extend({
-				init: function(t, e) {
-					t = this.words = t || [], e != r ? this.sigBytes = e : this.sigBytes = 8 * t.length
-				},
-				toX32: function() {
-					for (var t = this.words, r = t.length, e = [], i = 0; i < r; i++) {
-						var n = t[i];
-						e.push(n.high), e.push(n.low)
-					}
-					return o.create(e, this.sigBytes)
-				},
-				clone: function() {
-					for (var t = n.clone.call(this), r = t.words = this.words.slice(0), e = r.length, i = 0; i < e; i++) r[i] = r[i].clone();
-					return t
-				}
-			})
-		}(),
-		function(r) {
-			var e = t,
-				i = e.lib,
-				n = i.WordArray,
-				o = i.Hasher,
-				s = e.x64,
-				a = s.Word,
-				c = e.algo,
-				h = [],
-				l = [],
-				f = [];
-			! function() {
-				for (var t = 1, r = 0, e = 0; e < 24; e++) {
-					h[t + 5 * r] = (e + 1) * (e + 2) / 2 % 64;
-					var i = r % 5,
-						n = (2 * t + 3 * r) % 5;
-					t = i, r = n
-				}
-				for (var t = 0; t < 5; t++)
-					for (var r = 0; r < 5; r++) l[t + 5 * r] = r + (2 * t + 3 * r) % 5 * 5;
-				for (var o = 1, s = 0; s < 24; s++) {
-					for (var c = 0, u = 0, d = 0; d < 7; d++) {
-						if (1 & o) {
-							var v = (1 << d) - 1;
-							v < 32 ? u ^= 1 << v : c ^= 1 << v - 32
-						}
-						128 & o ? o = o << 1 ^ 113 : o <<= 1
-					}
-					f[s] = a.create(c, u)
-				}
-			}();
-			var u = [];
-			! function() {
-				for (var t = 0; t < 25; t++) u[t] = a.create()
-			}();
-			var d = c.SHA3 = o.extend({
-				cfg: o.cfg.extend({
-					outputLength: 512
-				}),
-				_doReset: function() {
-					for (var t = this._state = [], r = 0; r < 25; r++) t[r] = new a.init;
-					this.blockSize = (1600 - 2 * this.cfg.outputLength) / 32
-				},
-				_doProcessBlock: function(t, r) {
-					for (var e = this._state, i = this.blockSize / 2, n = 0; n < i; n++) {
-						var o = t[r + 2 * n],
-							s = t[r + 2 * n + 1];
-						o = 16711935 & (o << 8 | o >>> 24) | 4278255360 & (o << 24 | o >>> 8), s = 16711935 & (s << 8 | s >>> 24) | 4278255360 & (s << 24 | s >>> 8);
-						var a = e[n];
-						a.high ^= s, a.low ^= o
-					}
-					for (var c = 0; c < 24; c++) {
-						for (var d = 0; d < 5; d++) {
-							for (var v = 0, p = 0, _ = 0; _ < 5; _++) {
-								var a = e[d + 5 * _];
-								v ^= a.high, p ^= a.low
-							}
-							var y = u[d];
-							y.high = v, y.low = p
-						}
-						for (var d = 0; d < 5; d++)
-							for (var g = u[(d + 4) % 5], B = u[(d + 1) % 5], w = B.high, k = B.low, v = g.high ^ (w << 1 | k >>> 31), p = g.low ^ (k << 1 | w >>> 31), _ = 0; _ < 5; _++) {
-								var a = e[d + 5 * _];
-								a.high ^= v, a.low ^= p
-							}
-						for (var S = 1; S < 25; S++) {
-							var a = e[S],
-								m = a.high,
-								x = a.low,
-								b = h[S];
-							if (b < 32) var v = m << b | x >>> 32 - b,
-								p = x << b | m >>> 32 - b;
-							else var v = x << b - 32 | m >>> 64 - b,
-								p = m << b - 32 | x >>> 64 - b;
-							var H = u[l[S]];
-							H.high = v, H.low = p
-						}
-						var z = u[0],
-							A = e[0];
-						z.high = A.high, z.low = A.low;
-						for (var d = 0; d < 5; d++)
-							for (var _ = 0; _ < 5; _++) {
-								var S = d + 5 * _,
-									a = e[S],
-									C = u[S],
-									D = u[(d + 1) % 5 + 5 * _],
-									R = u[(d + 2) % 5 + 5 * _];
-								a.high = C.high ^ ~D.high & R.high, a.low = C.low ^ ~D.low & R.low
-							}
-						var a = e[0],
-							E = f[c];
-						a.high ^= E.high, a.low ^= E.low
-					}
-				},
-				_doFinalize: function() {
-					var t = this._data,
-						e = t.words,
-						i = (8 * this._nDataBytes, 8 * t.sigBytes),
-						o = 32 * this.blockSize;
-					e[i >>> 5] |= 1 << 24 - i % 32, e[(r.ceil((i + 1) / o) * o >>> 5) - 1] |= 128, t.sigBytes = 4 * e.length, this._process();
-					for (var s = this._state, a = this.cfg.outputLength / 8, c = a / 8, h = [], l = 0; l < c; l++) {
-						var f = s[l],
-							u = f.high,
-							d = f.low;
-						u = 16711935 & (u << 8 | u >>> 24) | 4278255360 & (u << 24 | u >>> 8), d = 16711935 & (d << 8 | d >>> 24) | 4278255360 & (d << 24 | d >>> 8), h.push(d), h.push(u)
-					}
-					return new n.init(h, a)
-				},
-				clone: function() {
-					for (var t = o.clone.call(this), r = t._state = this._state.slice(0), e = 0; e < 25; e++) r[e] = r[e].clone();
-					return t
-				}
-			});
-			e.SHA3 = o._createHelper(d), e.HmacSHA3 = o._createHmacHelper(d)
-		}(Math),
-		function() {
-			function r() {
-				return s.create.apply(s, arguments)
-			}
-			var e = t,
-				i = e.lib,
-				n = i.Hasher,
-				o = e.x64,
-				s = o.Word,
-				a = o.WordArray,
-				c = e.algo,
-				h = [r(1116352408, 3609767458), r(1899447441, 602891725), r(3049323471, 3964484399), r(3921009573, 2173295548), r(961987163, 4081628472), r(1508970993, 3053834265), r(2453635748, 2937671579), r(2870763221, 3664609560), r(3624381080, 2734883394), r(310598401, 1164996542), r(607225278, 1323610764), r(1426881987, 3590304994), r(1925078388, 4068182383), r(2162078206, 991336113), r(2614888103, 633803317), r(3248222580, 3479774868), r(3835390401, 2666613458), r(4022224774, 944711139), r(264347078, 2341262773), r(604807628, 2007800933), r(770255983, 1495990901), r(1249150122, 1856431235), r(1555081692, 3175218132), r(1996064986, 2198950837), r(2554220882, 3999719339), r(2821834349, 766784016), r(2952996808, 2566594879), r(3210313671, 3203337956), r(3336571891, 1034457026), r(3584528711, 2466948901), r(113926993, 3758326383), r(338241895, 168717936), r(666307205, 1188179964), r(773529912, 1546045734), r(1294757372, 1522805485), r(1396182291, 2643833823), r(1695183700, 2343527390), r(1986661051, 1014477480), r(2177026350, 1206759142), r(2456956037, 344077627), r(2730485921, 1290863460), r(2820302411, 3158454273), r(3259730800, 3505952657), r(3345764771, 106217008), r(3516065817, 3606008344), r(3600352804, 1432725776), r(4094571909, 1467031594), r(275423344, 851169720), r(430227734, 3100823752), r(506948616, 1363258195), r(659060556, 3750685593), r(883997877, 3785050280), r(958139571, 3318307427), r(1322822218, 3812723403), r(1537002063, 2003034995), r(1747873779, 3602036899), r(1955562222, 1575990012), r(2024104815, 1125592928), r(2227730452, 2716904306), r(2361852424, 442776044), r(2428436474, 593698344), r(2756734187, 3733110249), r(3204031479, 2999351573), r(3329325298, 3815920427), r(3391569614, 3928383900), r(3515267271, 566280711), r(3940187606, 3454069534), r(4118630271, 4000239992), r(116418474, 1914138554), r(174292421, 2731055270), r(289380356, 3203993006), r(460393269, 320620315), r(685471733, 587496836), r(852142971, 1086792851), r(1017036298, 365543100), r(1126000580, 2618297676), r(1288033470, 3409855158), r(1501505948, 4234509866), r(1607167915, 987167468), r(1816402316, 1246189591)],
-				l = [];
-			! function() {
-				for (var t = 0; t < 80; t++) l[t] = r()
-			}();
-			var f = c.SHA512 = n.extend({
-				_doReset: function() {
-					this._hash = new a.init([new s.init(1779033703, 4089235720), new s.init(3144134277, 2227873595), new s.init(1013904242, 4271175723), new s.init(2773480762, 1595750129), new s.init(1359893119, 2917565137), new s.init(2600822924, 725511199), new s.init(528734635, 4215389547), new s.init(1541459225, 327033209)])
-				},
-				_doProcessBlock: function(t, r) {
-					for (var e = this._hash.words, i = e[0], n = e[1], o = e[2], s = e[3], a = e[4], c = e[5], f = e[6], u = e[7], d = i.high, v = i.low, p = n.high, _ = n.low, y = o.high, g = o.low, B = s.high, w = s.low, k = a.high, S = a.low, m = c.high, x = c.low, b = f.high, H = f.low, z = u.high, A = u.low, C = d, D = v, R = p, E = _, M = y, F = g, P = B, W = w, O = k, U = S, I = m, K = x, X = b, L = H, j = z, N = A, T = 0; T < 80; T++) {
-						var Z = l[T];
-						if (T < 16) var q = Z.high = 0 | t[r + 2 * T],
-							G = Z.low = 0 | t[r + 2 * T + 1];
-						else {
-							var J = l[T - 15],
-								$ = J.high,
-								Q = J.low,
-								V = ($ >>> 1 | Q << 31) ^ ($ >>> 8 | Q << 24) ^ $ >>> 7,
-								Y = (Q >>> 1 | $ << 31) ^ (Q >>> 8 | $ << 24) ^ (Q >>> 7 | $ << 25),
-								tt = l[T - 2],
-								rt = tt.high,
-								et = tt.low,
-								it = (rt >>> 19 | et << 13) ^ (rt << 3 | et >>> 29) ^ rt >>> 6,
-								nt = (et >>> 19 | rt << 13) ^ (et << 3 | rt >>> 29) ^ (et >>> 6 | rt << 26),
-								ot = l[T - 7],
-								st = ot.high,
-								at = ot.low,
-								ct = l[T - 16],
-								ht = ct.high,
-								lt = ct.low,
-								G = Y + at,
-								q = V + st + (G >>> 0 < Y >>> 0 ? 1 : 0),
-								G = G + nt,
-								q = q + it + (G >>> 0 < nt >>> 0 ? 1 : 0),
-								G = G + lt,
-								q = q + ht + (G >>> 0 < lt >>> 0 ? 1 : 0);
-							Z.high = q, Z.low = G
-						}
-						var ft = O & I ^ ~O & X,
-							ut = U & K ^ ~U & L,
-							dt = C & R ^ C & M ^ R & M,
-							vt = D & E ^ D & F ^ E & F,
-							pt = (C >>> 28 | D << 4) ^ (C << 30 | D >>> 2) ^ (C << 25 | D >>> 7),
-							_t = (D >>> 28 | C << 4) ^ (D << 30 | C >>> 2) ^ (D << 25 | C >>> 7),
-							yt = (O >>> 14 | U << 18) ^ (O >>> 18 | U << 14) ^ (O << 23 | U >>> 9),
-							gt = (U >>> 14 | O << 18) ^ (U >>> 18 | O << 14) ^ (U << 23 | O >>> 9),
-							Bt = h[T],
-							wt = Bt.high,
-							kt = Bt.low,
-							St = N + gt,
-							mt = j + yt + (St >>> 0 < N >>> 0 ? 1 : 0),
-							St = St + ut,
-							mt = mt + ft + (St >>> 0 < ut >>> 0 ? 1 : 0),
-							St = St + kt,
-							mt = mt + wt + (St >>> 0 < kt >>> 0 ? 1 : 0),
-							St = St + G,
-							mt = mt + q + (St >>> 0 < G >>> 0 ? 1 : 0),
-							xt = _t + vt,
-							bt = pt + dt + (xt >>> 0 < _t >>> 0 ? 1 : 0);
-						j = X, N = L, X = I, L = K, I = O, K = U, U = W + St | 0, O = P + mt + (U >>> 0 < W >>> 0 ? 1 : 0) | 0, P = M, W = F, M = R, F = E, R = C, E = D, D = St + xt | 0, C = mt + bt + (D >>> 0 < St >>> 0 ? 1 : 0) | 0
-					}
-					v = i.low = v + D, i.high = d + C + (v >>> 0 < D >>> 0 ? 1 : 0), _ = n.low = _ + E, n.high = p + R + (_ >>> 0 < E >>> 0 ? 1 : 0), g = o.low = g + F, o.high = y + M + (g >>> 0 < F >>> 0 ? 1 : 0), w = s.low = w + W, s.high = B + P + (w >>> 0 < W >>> 0 ? 1 : 0), S = a.low = S + U, a.high = k + O + (S >>> 0 < U >>> 0 ? 1 : 0), x = c.low = x + K, c.high = m + I + (x >>> 0 < K >>> 0 ? 1 : 0), H = f.low = H + L, f.high = b + X + (H >>> 0 < L >>> 0 ? 1 : 0), A = u.low = A + N, u.high = z + j + (A >>> 0 < N >>> 0 ? 1 : 0)
-				},
-				_doFinalize: function() {
-					var t = this._data,
-						r = t.words,
-						e = 8 * this._nDataBytes,
-						i = 8 * t.sigBytes;
-					r[i >>> 5] |= 128 << 24 - i % 32, r[(i + 128 >>> 10 << 5) + 30] = Math.floor(e / 4294967296), r[(i + 128 >>> 10 << 5) + 31] = e, t.sigBytes = 4 * r.length, this._process();
-					var n = this._hash.toX32();
-					return n
-				},
-				clone: function() {
-					var t = n.clone.call(this);
-					return t._hash = this._hash.clone(), t
-				},
-				blockSize: 32
-			});
-			e.SHA512 = n._createHelper(f), e.HmacSHA512 = n._createHmacHelper(f)
-		}(),
-		function() {
-			var r = t,
-				e = r.x64,
-				i = e.Word,
-				n = e.WordArray,
-				o = r.algo,
-				s = o.SHA512,
-				a = o.SHA384 = s.extend({
-					_doReset: function() {
-						this._hash = new n.init([new i.init(3418070365, 3238371032), new i.init(1654270250, 914150663), new i.init(2438529370, 812702999), new i.init(355462360, 4144912697), new i.init(1731405415, 4290775857), new i.init(2394180231, 1750603025), new i.init(3675008525, 1694076839), new i.init(1203062813, 3204075428)])
-					},
-					_doFinalize: function() {
-						var t = s._doFinalize.call(this);
-						return t.sigBytes -= 16, t
-					}
-				});
-			r.SHA384 = s._createHelper(a), r.HmacSHA384 = s._createHmacHelper(a)
-		}(), t.lib.Cipher || function(r) {
-			var e = t,
-				i = e.lib,
-				n = i.Base,
-				o = i.WordArray,
-				s = i.BufferedBlockAlgorithm,
-				a = e.enc,
-				c = (a.Utf8, a.Base64),
-				h = e.algo,
-				l = h.EvpKDF,
-				f = i.Cipher = s.extend({
-					cfg: n.extend(),
-					createEncryptor: function(t, r) {
-						return this.create(this._ENC_XFORM_MODE, t, r)
-					},
-					createDecryptor: function(t, r) {
-						return this.create(this._DEC_XFORM_MODE, t, r)
-					},
-					init: function(t, r, e) {
-						this.cfg = this.cfg.extend(e), this._xformMode = t, this._key = r, this.reset()
-					},
-					reset: function() {
-						s.reset.call(this), this._doReset()
-					},
-					process: function(t) {
-						return this._append(t), this._process()
-					},
-					finalize: function(t) {
-						t && this._append(t);
-						var r = this._doFinalize();
-						return r
-					},
-					keySize: 4,
-					ivSize: 4,
-					_ENC_XFORM_MODE: 1,
-					_DEC_XFORM_MODE: 2,
-					_createHelper: function() {
-						function t(t) {
-							return "string" == typeof t ? m : w
-						}
-						return function(r) {
-							return {
-								encrypt: function(e, i, n) {
-									return t(i).encrypt(r, e, i, n)
-								},
-								decrypt: function(e, i, n) {
-									return t(i).decrypt(r, e, i, n)
-								}
-							}
-						}
-					}()
-				}),
-				u = (i.StreamCipher = f.extend({
-					_doFinalize: function() {
-						var t = this._process(!0);
-						return t
-					},
-					blockSize: 1
-				}), e.mode = {}),
-				d = i.BlockCipherMode = n.extend({
-					createEncryptor: function(t, r) {
-						return this.Encryptor.create(t, r)
-					},
-					createDecryptor: function(t, r) {
-						return this.Decryptor.create(t, r)
-					},
-					init: function(t, r) {
-						this._cipher = t, this._iv = r
-					}
-				}),
-				v = u.CBC = function() {
-					function t(t, e, i) {
-						var n = this._iv;
-						if (n) {
-							var o = n;
-							this._iv = r
-						} else var o = this._prevBlock;
-						for (var s = 0; s < i; s++) t[e + s] ^= o[s]
-					}
-					var e = d.extend();
-					return e.Encryptor = e.extend({
-						processBlock: function(r, e) {
-							var i = this._cipher,
-								n = i.blockSize;
-							t.call(this, r, e, n), i.encryptBlock(r, e), this._prevBlock = r.slice(e, e + n)
-						}
-					}), e.Decryptor = e.extend({
-						processBlock: function(r, e) {
-							var i = this._cipher,
-								n = i.blockSize,
-								o = r.slice(e, e + n);
-							i.decryptBlock(r, e), t.call(this, r, e, n), this._prevBlock = o
-						}
-					}), e
-				}(),
-				p = e.pad = {},
-				_ = p.Pkcs7 = {
-					pad: function(t, r) {
-						for (var e = 4 * r, i = e - t.sigBytes % e, n = i << 24 | i << 16 | i << 8 | i, s = [], a = 0; a < i; a += 4) s.push(n);
-						var c = o.create(s, i);
-						t.concat(c)
-					},
-					unpad: function(t) {
-						var r = 255 & t.words[t.sigBytes - 1 >>> 2];
-						t.sigBytes -= r
-					}
-				},
-				y = (i.BlockCipher = f.extend({
-					cfg: f.cfg.extend({
-						mode: v,
-						padding: _
-					}),
-					reset: function() {
-						f.reset.call(this);
-						var t = this.cfg,
-							r = t.iv,
-							e = t.mode;
-						if (this._xformMode == this._ENC_XFORM_MODE) var i = e.createEncryptor;
-						else {
-							var i = e.createDecryptor;
-							this._minBufferSize = 1
-						}
-						this._mode && this._mode.__creator == i ? this._mode.init(this, r && r.words) : (this._mode = i.call(e, this, r && r.words), this._mode.__creator = i)
-					},
-					_doProcessBlock: function(t, r) {
-						this._mode.processBlock(t, r)
-					},
-					_doFinalize: function() {
-						var t = this.cfg.padding;
-						if (this._xformMode == this._ENC_XFORM_MODE) {
-							t.pad(this._data, this.blockSize);
-							var r = this._process(!0)
-						} else {
-							var r = this._process(!0);
-							t.unpad(r)
-						}
-						return r
-					},
-					blockSize: 4
-				}), i.CipherParams = n.extend({
-					init: function(t) {
-						this.mixIn(t)
-					},
-					toString: function(t) {
-						return (t || this.formatter).stringify(this)
-					}
-				})),
-				g = e.format = {},
-				B = g.OpenSSL = {
-					stringify: function(t) {
-						var r = t.ciphertext,
-							e = t.salt;
-						if (e) var i = o.create([1398893684, 1701076831]).concat(e).concat(r);
-						else var i = r;
-						return i.toString(c)
-					},
-					parse: function(t) {
-						var r = c.parse(t),
-							e = r.words;
-						if (1398893684 == e[0] && 1701076831 == e[1]) {
-							var i = o.create(e.slice(2, 4));
-							e.splice(0, 4), r.sigBytes -= 16
-						}
-						return y.create({
-							ciphertext: r,
-							salt: i
-						})
-					}
-				},
-				w = i.SerializableCipher = n.extend({
-					cfg: n.extend({
-						format: B
-					}),
-					encrypt: function(t, r, e, i) {
-						i = this.cfg.extend(i);
-						var n = t.createEncryptor(e, i),
-							o = n.finalize(r),
-							s = n.cfg;
-						return y.create({
-							ciphertext: o,
-							key: e,
-							iv: s.iv,
-							algorithm: t,
-							mode: s.mode,
-							padding: s.padding,
-							blockSize: t.blockSize,
-							formatter: i.format
-						})
-					},
-					decrypt: function(t, r, e, i) {
-						i = this.cfg.extend(i), r = this._parse(r, i.format);
-						var n = t.createDecryptor(e, i).finalize(r.ciphertext);
-						return n
-					},
-					_parse: function(t, r) {
-						return "string" == typeof t ? r.parse(t, this) : t
-					}
-				}),
-				k = e.kdf = {},
-				S = k.OpenSSL = {
-					execute: function(t, r, e, i) {
-						i || (i = o.random(8));
-						var n = l.create({
-								keySize: r + e
-							}).compute(t, i),
-							s = o.create(n.words.slice(r), 4 * e);
-						return n.sigBytes = 4 * r, y.create({
-							key: n,
-							iv: s,
-							salt: i
-						})
-					}
-				},
-				m = i.PasswordBasedCipher = w.extend({
-					cfg: w.cfg.extend({
-						kdf: S
-					}),
-					encrypt: function(t, r, e, i) {
-						i = this.cfg.extend(i);
-						var n = i.kdf.execute(e, t.keySize, t.ivSize);
-						i.iv = n.iv;
-						var o = w.encrypt.call(this, t, r, n.key, i);
-						return o.mixIn(n), o
-					},
-					decrypt: function(t, r, e, i) {
-						i = this.cfg.extend(i), r = this._parse(r, i.format);
-						var n = i.kdf.execute(e, t.keySize, t.ivSize, r.salt);
-						i.iv = n.iv;
-						var o = w.decrypt.call(this, t, r, n.key, i);
-						return o
-					}
-				})
-		}(), t.mode.CFB = function() {
-			function r(t, r, e, i) {
-				var n = this._iv;
-				if (n) {
-					var o = n.slice(0);
-					this._iv = void 0
-				} else var o = this._prevBlock;
-				i.encryptBlock(o, 0);
-				for (var s = 0; s < e; s++) t[r + s] ^= o[s]
-			}
-			var e = t.lib.BlockCipherMode.extend();
-			return e.Encryptor = e.extend({
-				processBlock: function(t, e) {
-					var i = this._cipher,
-						n = i.blockSize;
-					r.call(this, t, e, n, i), this._prevBlock = t.slice(e, e + n)
-				}
-			}), e.Decryptor = e.extend({
-				processBlock: function(t, e) {
-					var i = this._cipher,
-						n = i.blockSize,
-						o = t.slice(e, e + n);
-					r.call(this, t, e, n, i), this._prevBlock = o
-				}
-			}), e
-		}(), t.mode.ECB = function() {
-			var r = t.lib.BlockCipherMode.extend();
-			return r.Encryptor = r.extend({
-				processBlock: function(t, r) {
-					this._cipher.encryptBlock(t, r)
-				}
-			}), r.Decryptor = r.extend({
-				processBlock: function(t, r) {
-					this._cipher.decryptBlock(t, r)
-				}
-			}), r
-		}(), t.pad.AnsiX923 = {
-			pad: function(t, r) {
-				var e = t.sigBytes,
-					i = 4 * r,
-					n = i - e % i,
-					o = e + n - 1;
-				t.clamp(), t.words[o >>> 2] |= n << 24 - o % 4 * 8, t.sigBytes += n
-			},
-			unpad: function(t) {
-				var r = 255 & t.words[t.sigBytes - 1 >>> 2];
-				t.sigBytes -= r
-			}
-		}, t.pad.Iso10126 = {
-			pad: function(r, e) {
-				var i = 4 * e,
-					n = i - r.sigBytes % i;
-				r.concat(t.lib.WordArray.random(n - 1)).concat(t.lib.WordArray.create([n << 24], 1))
-			},
-			unpad: function(t) {
-				var r = 255 & t.words[t.sigBytes - 1 >>> 2];
-				t.sigBytes -= r
-			}
-		}, t.pad.Iso97971 = {
-			pad: function(r, e) {
-				r.concat(t.lib.WordArray.create([2147483648], 1)), t.pad.ZeroPadding.pad(r, e)
-			},
-			unpad: function(r) {
-				t.pad.ZeroPadding.unpad(r), r.sigBytes--
-			}
-		}, t.mode.OFB = function() {
-			var r = t.lib.BlockCipherMode.extend(),
-				e = r.Encryptor = r.extend({
-					processBlock: function(t, r) {
-						var e = this._cipher,
-							i = e.blockSize,
-							n = this._iv,
-							o = this._keystream;
-						n && (o = this._keystream = n.slice(0), this._iv = void 0), e.encryptBlock(o, 0);
-						for (var s = 0; s < i; s++) t[r + s] ^= o[s]
-					}
-				});
-			return r.Decryptor = e, r
-		}(), t.pad.NoPadding = {
-			pad: function() {},
-			unpad: function() {}
-		},
-		function(r) {
-			var e = t,
-				i = e.lib,
-				n = i.CipherParams,
-				o = e.enc,
-				s = o.Hex,
-				a = e.format;
-			a.Hex = {
-				stringify: function(t) {
-					return t.ciphertext.toString(s)
-				},
-				parse: function(t) {
-					var r = s.parse(t);
-					return n.create({
-						ciphertext: r
-					})
-				}
-			}
-		}(),
-		function() {
-			var r = t,
-				e = r.lib,
-				i = e.BlockCipher,
-				n = r.algo,
-				o = [],
-				s = [],
-				a = [],
-				c = [],
-				h = [],
-				l = [],
-				f = [],
-				u = [],
-				d = [],
-				v = [];
-			! function() {
-				for (var t = [], r = 0; r < 256; r++) r < 128 ? t[r] = r << 1 : t[r] = r << 1 ^ 283;
-				for (var e = 0, i = 0, r = 0; r < 256; r++) {
-					var n = i ^ i << 1 ^ i << 2 ^ i << 3 ^ i << 4;
-					n = n >>> 8 ^ 255 & n ^ 99, o[e] = n, s[n] = e;
-					var p = t[e],
-						_ = t[p],
-						y = t[_],
-						g = 257 * t[n] ^ 16843008 * n;
-					a[e] = g << 24 | g >>> 8, c[e] = g << 16 | g >>> 16, h[e] = g << 8 | g >>> 24, l[e] = g;
-					var g = 16843009 * y ^ 65537 * _ ^ 257 * p ^ 16843008 * e;
-					f[n] = g << 24 | g >>> 8, u[n] = g << 16 | g >>> 16, d[n] = g << 8 | g >>> 24, v[n] = g, e ? (e = p ^ t[t[t[y ^ p]]], i ^= t[t[i]]) : e = i = 1
-				}
-			}();
-			var p = [0, 1, 2, 4, 8, 16, 32, 64, 128, 27, 54],
-				_ = n.AES = i.extend({
-					_doReset: function() {
-						if (!this._nRounds || this._keyPriorReset !== this._key) {
-							for (var t = this._keyPriorReset = this._key, r = t.words, e = t.sigBytes / 4, i = this._nRounds = e + 6, n = 4 * (i + 1), s = this._keySchedule = [], a = 0; a < n; a++)
-								if (a < e) s[a] = r[a];
-								else {
-									var c = s[a - 1];
-									a % e ? e > 6 && a % e == 4 && (c = o[c >>> 24] << 24 | o[c >>> 16 & 255] << 16 | o[c >>> 8 & 255] << 8 | o[255 & c]) : (c = c << 8 | c >>> 24, c = o[c >>> 24] << 24 | o[c >>> 16 & 255] << 16 | o[c >>> 8 & 255] << 8 | o[255 & c], c ^= p[a / e | 0] << 24), s[a] = s[a - e] ^ c
-								}
-							for (var h = this._invKeySchedule = [], l = 0; l < n; l++) {
-								var a = n - l;
-								if (l % 4) var c = s[a];
-								else var c = s[a - 4];
-								l < 4 || a <= 4 ? h[l] = c : h[l] = f[o[c >>> 24]] ^ u[o[c >>> 16 & 255]] ^ d[o[c >>> 8 & 255]] ^ v[o[255 & c]]
-							}
-						}
-					},
-					encryptBlock: function(t, r) {
-						this._doCryptBlock(t, r, this._keySchedule, a, c, h, l, o)
-					},
-					decryptBlock: function(t, r) {
-						var e = t[r + 1];
-						t[r + 1] = t[r + 3], t[r + 3] = e, this._doCryptBlock(t, r, this._invKeySchedule, f, u, d, v, s);
-						var e = t[r + 1];
-						t[r + 1] = t[r + 3], t[r + 3] = e
-					},
-					_doCryptBlock: function(t, r, e, i, n, o, s, a) {
-						for (var c = this._nRounds, h = t[r] ^ e[0], l = t[r + 1] ^ e[1], f = t[r + 2] ^ e[2], u = t[r + 3] ^ e[3], d = 4, v = 1; v < c; v++) {
-							var p = i[h >>> 24] ^ n[l >>> 16 & 255] ^ o[f >>> 8 & 255] ^ s[255 & u] ^ e[d++],
-								_ = i[l >>> 24] ^ n[f >>> 16 & 255] ^ o[u >>> 8 & 255] ^ s[255 & h] ^ e[d++],
-								y = i[f >>> 24] ^ n[u >>> 16 & 255] ^ o[h >>> 8 & 255] ^ s[255 & l] ^ e[d++],
-								g = i[u >>> 24] ^ n[h >>> 16 & 255] ^ o[l >>> 8 & 255] ^ s[255 & f] ^ e[d++];
-							h = p, l = _, f = y, u = g
-						}
-						var p = (a[h >>> 24] << 24 | a[l >>> 16 & 255] << 16 | a[f >>> 8 & 255] << 8 | a[255 & u]) ^ e[d++],
-							_ = (a[l >>> 24] << 24 | a[f >>> 16 & 255] << 16 | a[u >>> 8 & 255] << 8 | a[255 & h]) ^ e[d++],
-							y = (a[f >>> 24] << 24 | a[u >>> 16 & 255] << 16 | a[h >>> 8 & 255] << 8 | a[255 & l]) ^ e[d++],
-							g = (a[u >>> 24] << 24 | a[h >>> 16 & 255] << 16 | a[l >>> 8 & 255] << 8 | a[255 & f]) ^ e[d++];
-						t[r] = p, t[r + 1] = _, t[r + 2] = y, t[r + 3] = g
-					},
-					keySize: 8
-				});
-			r.AES = i._createHelper(_)
-		}(),
-		function() {
-			function r(t, r) {
-				var e = (this._lBlock >>> t ^ this._rBlock) & r;
-				this._rBlock ^= e, this._lBlock ^= e << t
-			}
-
-			function e(t, r) {
-				var e = (this._rBlock >>> t ^ this._lBlock) & r;
-				this._lBlock ^= e, this._rBlock ^= e << t;
-			}
-			var i = t,
-				n = i.lib,
-				o = n.WordArray,
-				s = n.BlockCipher,
-				a = i.algo,
-				c = [57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4],
-				h = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32],
-				l = [1, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 25, 27, 28],
-				f = [{
-					0: 8421888,
-					268435456: 32768,
-					536870912: 8421378,
-					805306368: 2,
-					1073741824: 512,
-					1342177280: 8421890,
-					1610612736: 8389122,
-					1879048192: 8388608,
-					2147483648: 514,
-					2415919104: 8389120,
-					2684354560: 33280,
-					2952790016: 8421376,
-					3221225472: 32770,
-					3489660928: 8388610,
-					3758096384: 0,
-					4026531840: 33282,
-					134217728: 0,
-					402653184: 8421890,
-					671088640: 33282,
-					939524096: 32768,
-					1207959552: 8421888,
-					1476395008: 512,
-					1744830464: 8421378,
-					2013265920: 2,
-					2281701376: 8389120,
-					2550136832: 33280,
-					2818572288: 8421376,
-					3087007744: 8389122,
-					3355443200: 8388610,
-					3623878656: 32770,
-					3892314112: 514,
-					4160749568: 8388608,
-					1: 32768,
-					268435457: 2,
-					536870913: 8421888,
-					805306369: 8388608,
-					1073741825: 8421378,
-					1342177281: 33280,
-					1610612737: 512,
-					1879048193: 8389122,
-					2147483649: 8421890,
-					2415919105: 8421376,
-					2684354561: 8388610,
-					2952790017: 33282,
-					3221225473: 514,
-					3489660929: 8389120,
-					3758096385: 32770,
-					4026531841: 0,
-					134217729: 8421890,
-					402653185: 8421376,
-					671088641: 8388608,
-					939524097: 512,
-					1207959553: 32768,
-					1476395009: 8388610,
-					1744830465: 2,
-					2013265921: 33282,
-					2281701377: 32770,
-					2550136833: 8389122,
-					2818572289: 514,
-					3087007745: 8421888,
-					3355443201: 8389120,
-					3623878657: 0,
-					3892314113: 33280,
-					4160749569: 8421378
-				}, {
-					0: 1074282512,
-					16777216: 16384,
-					33554432: 524288,
-					50331648: 1074266128,
-					67108864: 1073741840,
-					83886080: 1074282496,
-					100663296: 1073758208,
-					117440512: 16,
-					134217728: 540672,
-					150994944: 1073758224,
-					167772160: 1073741824,
-					184549376: 540688,
-					201326592: 524304,
-					218103808: 0,
-					234881024: 16400,
-					251658240: 1074266112,
-					8388608: 1073758208,
-					25165824: 540688,
-					41943040: 16,
-					58720256: 1073758224,
-					75497472: 1074282512,
-					92274688: 1073741824,
-					109051904: 524288,
-					125829120: 1074266128,
-					142606336: 524304,
-					159383552: 0,
-					176160768: 16384,
-					192937984: 1074266112,
-					209715200: 1073741840,
-					226492416: 540672,
-					243269632: 1074282496,
-					260046848: 16400,
-					268435456: 0,
-					285212672: 1074266128,
-					301989888: 1073758224,
-					318767104: 1074282496,
-					335544320: 1074266112,
-					352321536: 16,
-					369098752: 540688,
-					385875968: 16384,
-					402653184: 16400,
-					419430400: 524288,
-					436207616: 524304,
-					452984832: 1073741840,
-					469762048: 540672,
-					486539264: 1073758208,
-					503316480: 1073741824,
-					520093696: 1074282512,
-					276824064: 540688,
-					293601280: 524288,
-					310378496: 1074266112,
-					327155712: 16384,
-					343932928: 1073758208,
-					360710144: 1074282512,
-					377487360: 16,
-					394264576: 1073741824,
-					411041792: 1074282496,
-					427819008: 1073741840,
-					444596224: 1073758224,
-					461373440: 524304,
-					478150656: 0,
-					494927872: 16400,
-					511705088: 1074266128,
-					528482304: 540672
-				}, {
-					0: 260,
-					1048576: 0,
-					2097152: 67109120,
-					3145728: 65796,
-					4194304: 65540,
-					5242880: 67108868,
-					6291456: 67174660,
-					7340032: 67174400,
-					8388608: 67108864,
-					9437184: 67174656,
-					10485760: 65792,
-					11534336: 67174404,
-					12582912: 67109124,
-					13631488: 65536,
-					14680064: 4,
-					15728640: 256,
-					524288: 67174656,
-					1572864: 67174404,
-					2621440: 0,
-					3670016: 67109120,
-					4718592: 67108868,
-					5767168: 65536,
-					6815744: 65540,
-					7864320: 260,
-					8912896: 4,
-					9961472: 256,
-					11010048: 67174400,
-					12058624: 65796,
-					13107200: 65792,
-					14155776: 67109124,
-					15204352: 67174660,
-					16252928: 67108864,
-					16777216: 67174656,
-					17825792: 65540,
-					18874368: 65536,
-					19922944: 67109120,
-					20971520: 256,
-					22020096: 67174660,
-					23068672: 67108868,
-					24117248: 0,
-					25165824: 67109124,
-					26214400: 67108864,
-					27262976: 4,
-					28311552: 65792,
-					29360128: 67174400,
-					30408704: 260,
-					31457280: 65796,
-					32505856: 67174404,
-					17301504: 67108864,
-					18350080: 260,
-					19398656: 67174656,
-					20447232: 0,
-					21495808: 65540,
-					22544384: 67109120,
-					23592960: 256,
-					24641536: 67174404,
-					25690112: 65536,
-					26738688: 67174660,
-					27787264: 65796,
-					28835840: 67108868,
-					29884416: 67109124,
-					30932992: 67174400,
-					31981568: 4,
-					33030144: 65792
-				}, {
-					0: 2151682048,
-					65536: 2147487808,
-					131072: 4198464,
-					196608: 2151677952,
-					262144: 0,
-					327680: 4198400,
-					393216: 2147483712,
-					458752: 4194368,
-					524288: 2147483648,
-					589824: 4194304,
-					655360: 64,
-					720896: 2147487744,
-					786432: 2151678016,
-					851968: 4160,
-					917504: 4096,
-					983040: 2151682112,
-					32768: 2147487808,
-					98304: 64,
-					163840: 2151678016,
-					229376: 2147487744,
-					294912: 4198400,
-					360448: 2151682112,
-					425984: 0,
-					491520: 2151677952,
-					557056: 4096,
-					622592: 2151682048,
-					688128: 4194304,
-					753664: 4160,
-					819200: 2147483648,
-					884736: 4194368,
-					950272: 4198464,
-					1015808: 2147483712,
-					1048576: 4194368,
-					1114112: 4198400,
-					1179648: 2147483712,
-					1245184: 0,
-					1310720: 4160,
-					1376256: 2151678016,
-					1441792: 2151682048,
-					1507328: 2147487808,
-					1572864: 2151682112,
-					1638400: 2147483648,
-					1703936: 2151677952,
-					1769472: 4198464,
-					1835008: 2147487744,
-					1900544: 4194304,
-					1966080: 64,
-					2031616: 4096,
-					1081344: 2151677952,
-					1146880: 2151682112,
-					1212416: 0,
-					1277952: 4198400,
-					1343488: 4194368,
-					1409024: 2147483648,
-					1474560: 2147487808,
-					1540096: 64,
-					1605632: 2147483712,
-					1671168: 4096,
-					1736704: 2147487744,
-					1802240: 2151678016,
-					1867776: 4160,
-					1933312: 2151682048,
-					1998848: 4194304,
-					2064384: 4198464
-				}, {
-					0: 128,
-					4096: 17039360,
-					8192: 262144,
-					12288: 536870912,
-					16384: 537133184,
-					20480: 16777344,
-					24576: 553648256,
-					28672: 262272,
-					32768: 16777216,
-					36864: 537133056,
-					40960: 536871040,
-					45056: 553910400,
-					49152: 553910272,
-					53248: 0,
-					57344: 17039488,
-					61440: 553648128,
-					2048: 17039488,
-					6144: 553648256,
-					10240: 128,
-					14336: 17039360,
-					18432: 262144,
-					22528: 537133184,
-					26624: 553910272,
-					30720: 536870912,
-					34816: 537133056,
-					38912: 0,
-					43008: 553910400,
-					47104: 16777344,
-					51200: 536871040,
-					55296: 553648128,
-					59392: 16777216,
-					63488: 262272,
-					65536: 262144,
-					69632: 128,
-					73728: 536870912,
-					77824: 553648256,
-					81920: 16777344,
-					86016: 553910272,
-					90112: 537133184,
-					94208: 16777216,
-					98304: 553910400,
-					102400: 553648128,
-					106496: 17039360,
-					110592: 537133056,
-					114688: 262272,
-					118784: 536871040,
-					122880: 0,
-					126976: 17039488,
-					67584: 553648256,
-					71680: 16777216,
-					75776: 17039360,
-					79872: 537133184,
-					83968: 536870912,
-					88064: 17039488,
-					92160: 128,
-					96256: 553910272,
-					100352: 262272,
-					104448: 553910400,
-					108544: 0,
-					112640: 553648128,
-					116736: 16777344,
-					120832: 262144,
-					124928: 537133056,
-					129024: 536871040
-				}, {
-					0: 268435464,
-					256: 8192,
-					512: 270532608,
-					768: 270540808,
-					1024: 268443648,
-					1280: 2097152,
-					1536: 2097160,
-					1792: 268435456,
-					2048: 0,
-					2304: 268443656,
-					2560: 2105344,
-					2816: 8,
-					3072: 270532616,
-					3328: 2105352,
-					3584: 8200,
-					3840: 270540800,
-					128: 270532608,
-					384: 270540808,
-					640: 8,
-					896: 2097152,
-					1152: 2105352,
-					1408: 268435464,
-					1664: 268443648,
-					1920: 8200,
-					2176: 2097160,
-					2432: 8192,
-					2688: 268443656,
-					2944: 270532616,
-					3200: 0,
-					3456: 270540800,
-					3712: 2105344,
-					3968: 268435456,
-					4096: 268443648,
-					4352: 270532616,
-					4608: 270540808,
-					4864: 8200,
-					5120: 2097152,
-					5376: 268435456,
-					5632: 268435464,
-					5888: 2105344,
-					6144: 2105352,
-					6400: 0,
-					6656: 8,
-					6912: 270532608,
-					7168: 8192,
-					7424: 268443656,
-					7680: 270540800,
-					7936: 2097160,
-					4224: 8,
-					4480: 2105344,
-					4736: 2097152,
-					4992: 268435464,
-					5248: 268443648,
-					5504: 8200,
-					5760: 270540808,
-					6016: 270532608,
-					6272: 270540800,
-					6528: 270532616,
-					6784: 8192,
-					7040: 2105352,
-					7296: 2097160,
-					7552: 0,
-					7808: 268435456,
-					8064: 268443656
-				}, {
-					0: 1048576,
-					16: 33555457,
-					32: 1024,
-					48: 1049601,
-					64: 34604033,
-					80: 0,
-					96: 1,
-					112: 34603009,
-					128: 33555456,
-					144: 1048577,
-					160: 33554433,
-					176: 34604032,
-					192: 34603008,
-					208: 1025,
-					224: 1049600,
-					240: 33554432,
-					8: 34603009,
-					24: 0,
-					40: 33555457,
-					56: 34604032,
-					72: 1048576,
-					88: 33554433,
-					104: 33554432,
-					120: 1025,
-					136: 1049601,
-					152: 33555456,
-					168: 34603008,
-					184: 1048577,
-					200: 1024,
-					216: 34604033,
-					232: 1,
-					248: 1049600,
-					256: 33554432,
-					272: 1048576,
-					288: 33555457,
-					304: 34603009,
-					320: 1048577,
-					336: 33555456,
-					352: 34604032,
-					368: 1049601,
-					384: 1025,
-					400: 34604033,
-					416: 1049600,
-					432: 1,
-					448: 0,
-					464: 34603008,
-					480: 33554433,
-					496: 1024,
-					264: 1049600,
-					280: 33555457,
-					296: 34603009,
-					312: 1,
-					328: 33554432,
-					344: 1048576,
-					360: 1025,
-					376: 34604032,
-					392: 33554433,
-					408: 34603008,
-					424: 0,
-					440: 34604033,
-					456: 1049601,
-					472: 1024,
-					488: 33555456,
-					504: 1048577
-				}, {
-					0: 134219808,
-					1: 131072,
-					2: 134217728,
-					3: 32,
-					4: 131104,
-					5: 134350880,
-					6: 134350848,
-					7: 2048,
-					8: 134348800,
-					9: 134219776,
-					10: 133120,
-					11: 134348832,
-					12: 2080,
-					13: 0,
-					14: 134217760,
-					15: 133152,
-					2147483648: 2048,
-					2147483649: 134350880,
-					2147483650: 134219808,
-					2147483651: 134217728,
-					2147483652: 134348800,
-					2147483653: 133120,
-					2147483654: 133152,
-					2147483655: 32,
-					2147483656: 134217760,
-					2147483657: 2080,
-					2147483658: 131104,
-					2147483659: 134350848,
-					2147483660: 0,
-					2147483661: 134348832,
-					2147483662: 134219776,
-					2147483663: 131072,
-					16: 133152,
-					17: 134350848,
-					18: 32,
-					19: 2048,
-					20: 134219776,
-					21: 134217760,
-					22: 134348832,
-					23: 131072,
-					24: 0,
-					25: 131104,
-					26: 134348800,
-					27: 134219808,
-					28: 134350880,
-					29: 133120,
-					30: 2080,
-					31: 134217728,
-					2147483664: 131072,
-					2147483665: 2048,
-					2147483666: 134348832,
-					2147483667: 133152,
-					2147483668: 32,
-					2147483669: 134348800,
-					2147483670: 134217728,
-					2147483671: 134219808,
-					2147483672: 134350880,
-					2147483673: 134217760,
-					2147483674: 134219776,
-					2147483675: 0,
-					2147483676: 133120,
-					2147483677: 2080,
-					2147483678: 131104,
-					2147483679: 134350848
-				}],
-				u = [4160749569, 528482304, 33030144, 2064384, 129024, 8064, 504, 2147483679],
-				d = a.DES = s.extend({
-					_doReset: function() {
-						for (var t = this._key, r = t.words, e = [], i = 0; i < 56; i++) {
-							var n = c[i] - 1;
-							e[i] = r[n >>> 5] >>> 31 - n % 32 & 1
-						}
-						for (var o = this._subKeys = [], s = 0; s < 16; s++) {
-							for (var a = o[s] = [], f = l[s], i = 0; i < 24; i++) a[i / 6 | 0] |= e[(h[i] - 1 + f) % 28] << 31 - i % 6, a[4 + (i / 6 | 0)] |= e[28 + (h[i + 24] - 1 + f) % 28] << 31 - i % 6;
-							a[0] = a[0] << 1 | a[0] >>> 31;
-							for (var i = 1; i < 7; i++) a[i] = a[i] >>> 4 * (i - 1) + 3;
-							a[7] = a[7] << 5 | a[7] >>> 27
-						}
-						for (var u = this._invSubKeys = [], i = 0; i < 16; i++) u[i] = o[15 - i]
-					},
-					encryptBlock: function(t, r) {
-						this._doCryptBlock(t, r, this._subKeys)
-					},
-					decryptBlock: function(t, r) {
-						this._doCryptBlock(t, r, this._invSubKeys)
-					},
-					_doCryptBlock: function(t, i, n) {
-						this._lBlock = t[i], this._rBlock = t[i + 1], r.call(this, 4, 252645135), r.call(this, 16, 65535), e.call(this, 2, 858993459), e.call(this, 8, 16711935), r.call(this, 1, 1431655765);
-						for (var o = 0; o < 16; o++) {
-							for (var s = n[o], a = this._lBlock, c = this._rBlock, h = 0, l = 0; l < 8; l++) h |= f[l][((c ^ s[l]) & u[l]) >>> 0];
-							this._lBlock = c, this._rBlock = a ^ h
-						}
-						var d = this._lBlock;
-						this._lBlock = this._rBlock, this._rBlock = d, r.call(this, 1, 1431655765), e.call(this, 8, 16711935), e.call(this, 2, 858993459), r.call(this, 16, 65535), r.call(this, 4, 252645135), t[i] = this._lBlock, t[i + 1] = this._rBlock
-					},
-					keySize: 2,
-					ivSize: 2,
-					blockSize: 2
-				});
-			i.DES = s._createHelper(d);
-			var v = a.TripleDES = s.extend({
-				_doReset: function() {
-					var t = this._key,
-						r = t.words;
-					this._des1 = d.createEncryptor(o.create(r.slice(0, 2))), this._des2 = d.createEncryptor(o.create(r.slice(2, 4))), this._des3 = d.createEncryptor(o.create(r.slice(4, 6)))
-				},
-				encryptBlock: function(t, r) {
-					this._des1.encryptBlock(t, r), this._des2.decryptBlock(t, r), this._des3.encryptBlock(t, r)
-				},
-				decryptBlock: function(t, r) {
-					this._des3.decryptBlock(t, r), this._des2.encryptBlock(t, r), this._des1.decryptBlock(t, r)
-				},
-				keySize: 6,
-				ivSize: 2,
-				blockSize: 2
-			});
-			i.TripleDES = s._createHelper(v)
-		}(),
-		function() {
-			function r() {
-				for (var t = this._S, r = this._i, e = this._j, i = 0, n = 0; n < 4; n++) {
-					r = (r + 1) % 256, e = (e + t[r]) % 256;
-					var o = t[r];
-					t[r] = t[e], t[e] = o, i |= t[(t[r] + t[e]) % 256] << 24 - 8 * n
-				}
-				return this._i = r, this._j = e, i
-			}
-			var e = t,
-				i = e.lib,
-				n = i.StreamCipher,
-				o = e.algo,
-				s = o.RC4 = n.extend({
-					_doReset: function() {
-						for (var t = this._key, r = t.words, e = t.sigBytes, i = this._S = [], n = 0; n < 256; n++) i[n] = n;
-						for (var n = 0, o = 0; n < 256; n++) {
-							var s = n % e,
-								a = r[s >>> 2] >>> 24 - s % 4 * 8 & 255;
-							o = (o + i[n] + a) % 256;
-							var c = i[n];
-							i[n] = i[o], i[o] = c
-						}
-						this._i = this._j = 0
-					},
-					_doProcessBlock: function(t, e) {
-						t[e] ^= r.call(this)
-					},
-					keySize: 8,
-					ivSize: 0
-				});
-			e.RC4 = n._createHelper(s);
-			var a = o.RC4Drop = s.extend({
-				cfg: s.cfg.extend({
-					drop: 192
-				}),
-				_doReset: function() {
-					s._doReset.call(this);
-					for (var t = this.cfg.drop; t > 0; t--) r.call(this)
-				}
-			});
-			e.RC4Drop = n._createHelper(a)
-		}(), t.mode.CTRGladman = function() {
-			function r(t) {
-				if (255 === (t >> 24 & 255)) {
-					var r = t >> 16 & 255,
-						e = t >> 8 & 255,
-						i = 255 & t;
-					255 === r ? (r = 0, 255 === e ? (e = 0, 255 === i ? i = 0 : ++i) : ++e) : ++r, t = 0, t += r << 16, t += e << 8, t += i
-				} else t += 1 << 24;
-				return t
-			}
-
-			function e(t) {
-				return 0 === (t[0] = r(t[0])) && (t[1] = r(t[1])), t
-			}
-			var i = t.lib.BlockCipherMode.extend(),
-				n = i.Encryptor = i.extend({
-					processBlock: function(t, r) {
-						var i = this._cipher,
-							n = i.blockSize,
-							o = this._iv,
-							s = this._counter;
-						o && (s = this._counter = o.slice(0), this._iv = void 0), e(s);
-						var a = s.slice(0);
-						i.encryptBlock(a, 0);
-						for (var c = 0; c < n; c++) t[r + c] ^= a[c]
-					}
-				});
-			return i.Decryptor = n, i
-		}(),
-		function() {
-			function r() {
-				for (var t = this._X, r = this._C, e = 0; e < 8; e++) a[e] = r[e];
-				r[0] = r[0] + 1295307597 + this._b | 0, r[1] = r[1] + 3545052371 + (r[0] >>> 0 < a[0] >>> 0 ? 1 : 0) | 0, r[2] = r[2] + 886263092 + (r[1] >>> 0 < a[1] >>> 0 ? 1 : 0) | 0, r[3] = r[3] + 1295307597 + (r[2] >>> 0 < a[2] >>> 0 ? 1 : 0) | 0, r[4] = r[4] + 3545052371 + (r[3] >>> 0 < a[3] >>> 0 ? 1 : 0) | 0, r[5] = r[5] + 886263092 + (r[4] >>> 0 < a[4] >>> 0 ? 1 : 0) | 0, r[6] = r[6] + 1295307597 + (r[5] >>> 0 < a[5] >>> 0 ? 1 : 0) | 0, r[7] = r[7] + 3545052371 + (r[6] >>> 0 < a[6] >>> 0 ? 1 : 0) | 0, this._b = r[7] >>> 0 < a[7] >>> 0 ? 1 : 0;
-				for (var e = 0; e < 8; e++) {
-					var i = t[e] + r[e],
-						n = 65535 & i,
-						o = i >>> 16,
-						s = ((n * n >>> 17) + n * o >>> 15) + o * o,
-						h = ((4294901760 & i) * i | 0) + ((65535 & i) * i | 0);
-					c[e] = s ^ h
-				}
-				t[0] = c[0] + (c[7] << 16 | c[7] >>> 16) + (c[6] << 16 | c[6] >>> 16) | 0, t[1] = c[1] + (c[0] << 8 | c[0] >>> 24) + c[7] | 0, t[2] = c[2] + (c[1] << 16 | c[1] >>> 16) + (c[0] << 16 | c[0] >>> 16) | 0, t[3] = c[3] + (c[2] << 8 | c[2] >>> 24) + c[1] | 0, t[4] = c[4] + (c[3] << 16 | c[3] >>> 16) + (c[2] << 16 | c[2] >>> 16) | 0, t[5] = c[5] + (c[4] << 8 | c[4] >>> 24) + c[3] | 0, t[6] = c[6] + (c[5] << 16 | c[5] >>> 16) + (c[4] << 16 | c[4] >>> 16) | 0, t[7] = c[7] + (c[6] << 8 | c[6] >>> 24) + c[5] | 0
-			}
-			var e = t,
-				i = e.lib,
-				n = i.StreamCipher,
-				o = e.algo,
-				s = [],
-				a = [],
-				c = [],
-				h = o.Rabbit = n.extend({
-					_doReset: function() {
-						for (var t = this._key.words, e = this.cfg.iv, i = 0; i < 4; i++) t[i] = 16711935 & (t[i] << 8 | t[i] >>> 24) | 4278255360 & (t[i] << 24 | t[i] >>> 8);
-						var n = this._X = [t[0], t[3] << 16 | t[2] >>> 16, t[1], t[0] << 16 | t[3] >>> 16, t[2], t[1] << 16 | t[0] >>> 16, t[3], t[2] << 16 | t[1] >>> 16],
-							o = this._C = [t[2] << 16 | t[2] >>> 16, 4294901760 & t[0] | 65535 & t[1], t[3] << 16 | t[3] >>> 16, 4294901760 & t[1] | 65535 & t[2], t[0] << 16 | t[0] >>> 16, 4294901760 & t[2] | 65535 & t[3], t[1] << 16 | t[1] >>> 16, 4294901760 & t[3] | 65535 & t[0]];
-						this._b = 0;
-						for (var i = 0; i < 4; i++) r.call(this);
-						for (var i = 0; i < 8; i++) o[i] ^= n[i + 4 & 7];
-						if (e) {
-							var s = e.words,
-								a = s[0],
-								c = s[1],
-								h = 16711935 & (a << 8 | a >>> 24) | 4278255360 & (a << 24 | a >>> 8),
-								l = 16711935 & (c << 8 | c >>> 24) | 4278255360 & (c << 24 | c >>> 8),
-								f = h >>> 16 | 4294901760 & l,
-								u = l << 16 | 65535 & h;
-							o[0] ^= h, o[1] ^= f, o[2] ^= l, o[3] ^= u, o[4] ^= h, o[5] ^= f, o[6] ^= l, o[7] ^= u;
-							for (var i = 0; i < 4; i++) r.call(this)
-						}
-					},
-					_doProcessBlock: function(t, e) {
-						var i = this._X;
-						r.call(this), s[0] = i[0] ^ i[5] >>> 16 ^ i[3] << 16, s[1] = i[2] ^ i[7] >>> 16 ^ i[5] << 16, s[2] = i[4] ^ i[1] >>> 16 ^ i[7] << 16, s[3] = i[6] ^ i[3] >>> 16 ^ i[1] << 16;
-						for (var n = 0; n < 4; n++) s[n] = 16711935 & (s[n] << 8 | s[n] >>> 24) | 4278255360 & (s[n] << 24 | s[n] >>> 8), t[e + n] ^= s[n]
-					},
-					blockSize: 4,
-					ivSize: 2
-				});
-			e.Rabbit = n._createHelper(h)
-		}(), t.mode.CTR = function() {
-			var r = t.lib.BlockCipherMode.extend(),
-				e = r.Encryptor = r.extend({
-					processBlock: function(t, r) {
-						var e = this._cipher,
-							i = e.blockSize,
-							n = this._iv,
-							o = this._counter;
-						n && (o = this._counter = n.slice(0), this._iv = void 0);
-						var s = o.slice(0);
-						e.encryptBlock(s, 0), o[i - 1] = o[i - 1] + 1 | 0;
-						for (var a = 0; a < i; a++) t[r + a] ^= s[a]
-					}
-				});
-			return r.Decryptor = e, r
-		}(),
-		function() {
-			function r() {
-				for (var t = this._X, r = this._C, e = 0; e < 8; e++) a[e] = r[e];
-				r[0] = r[0] + 1295307597 + this._b | 0, r[1] = r[1] + 3545052371 + (r[0] >>> 0 < a[0] >>> 0 ? 1 : 0) | 0, r[2] = r[2] + 886263092 + (r[1] >>> 0 < a[1] >>> 0 ? 1 : 0) | 0, r[3] = r[3] + 1295307597 + (r[2] >>> 0 < a[2] >>> 0 ? 1 : 0) | 0, r[4] = r[4] + 3545052371 + (r[3] >>> 0 < a[3] >>> 0 ? 1 : 0) | 0, r[5] = r[5] + 886263092 + (r[4] >>> 0 < a[4] >>> 0 ? 1 : 0) | 0, r[6] = r[6] + 1295307597 + (r[5] >>> 0 < a[5] >>> 0 ? 1 : 0) | 0, r[7] = r[7] + 3545052371 + (r[6] >>> 0 < a[6] >>> 0 ? 1 : 0) | 0, this._b = r[7] >>> 0 < a[7] >>> 0 ? 1 : 0;
-				for (var e = 0; e < 8; e++) {
-					var i = t[e] + r[e],
-						n = 65535 & i,
-						o = i >>> 16,
-						s = ((n * n >>> 17) + n * o >>> 15) + o * o,
-						h = ((4294901760 & i) * i | 0) + ((65535 & i) * i | 0);
-					c[e] = s ^ h
-				}
-				t[0] = c[0] + (c[7] << 16 | c[7] >>> 16) + (c[6] << 16 | c[6] >>> 16) | 0, t[1] = c[1] + (c[0] << 8 | c[0] >>> 24) + c[7] | 0, t[2] = c[2] + (c[1] << 16 | c[1] >>> 16) + (c[0] << 16 | c[0] >>> 16) | 0, t[3] = c[3] + (c[2] << 8 | c[2] >>> 24) + c[1] | 0, t[4] = c[4] + (c[3] << 16 | c[3] >>> 16) + (c[2] << 16 | c[2] >>> 16) | 0, t[5] = c[5] + (c[4] << 8 | c[4] >>> 24) + c[3] | 0, t[6] = c[6] + (c[5] << 16 | c[5] >>> 16) + (c[4] << 16 | c[4] >>> 16) | 0, t[7] = c[7] + (c[6] << 8 | c[6] >>> 24) + c[5] | 0
-			}
-			var e = t,
-				i = e.lib,
-				n = i.StreamCipher,
-				o = e.algo,
-				s = [],
-				a = [],
-				c = [],
-				h = o.RabbitLegacy = n.extend({
-					_doReset: function() {
-						var t = this._key.words,
-							e = this.cfg.iv,
-							i = this._X = [t[0], t[3] << 16 | t[2] >>> 16, t[1], t[0] << 16 | t[3] >>> 16, t[2], t[1] << 16 | t[0] >>> 16, t[3], t[2] << 16 | t[1] >>> 16],
-							n = this._C = [t[2] << 16 | t[2] >>> 16, 4294901760 & t[0] | 65535 & t[1], t[3] << 16 | t[3] >>> 16, 4294901760 & t[1] | 65535 & t[2], t[0] << 16 | t[0] >>> 16, 4294901760 & t[2] | 65535 & t[3], t[1] << 16 | t[1] >>> 16, 4294901760 & t[3] | 65535 & t[0]];
-						this._b = 0;
-						for (var o = 0; o < 4; o++) r.call(this);
-						for (var o = 0; o < 8; o++) n[o] ^= i[o + 4 & 7];
-						if (e) {
-							var s = e.words,
-								a = s[0],
-								c = s[1],
-								h = 16711935 & (a << 8 | a >>> 24) | 4278255360 & (a << 24 | a >>> 8),
-								l = 16711935 & (c << 8 | c >>> 24) | 4278255360 & (c << 24 | c >>> 8),
-								f = h >>> 16 | 4294901760 & l,
-								u = l << 16 | 65535 & h;
-							n[0] ^= h, n[1] ^= f, n[2] ^= l, n[3] ^= u, n[4] ^= h, n[5] ^= f, n[6] ^= l, n[7] ^= u;
-							for (var o = 0; o < 4; o++) r.call(this)
-						}
-					},
-					_doProcessBlock: function(t, e) {
-						var i = this._X;
-						r.call(this), s[0] = i[0] ^ i[5] >>> 16 ^ i[3] << 16, s[1] = i[2] ^ i[7] >>> 16 ^ i[5] << 16, s[2] = i[4] ^ i[1] >>> 16 ^ i[7] << 16, s[3] = i[6] ^ i[3] >>> 16 ^ i[1] << 16;
-						for (var n = 0; n < 4; n++) s[n] = 16711935 & (s[n] << 8 | s[n] >>> 24) | 4278255360 & (s[n] << 24 | s[n] >>> 8), t[e + n] ^= s[n]
-					},
-					blockSize: 4,
-					ivSize: 2
-				});
-			e.RabbitLegacy = n._createHelper(h)
-		}(), t.pad.ZeroPadding = {
-			pad: function(t, r) {
-				var e = 4 * r;
-				t.clamp(), t.sigBytes += e - (t.sigBytes % e || e)
-			},
-			unpad: function(t) {
-				for (var r = t.words, e = t.sigBytes - 1; !(r[e >>> 2] >>> 24 - e % 4 * 8 & 255);) e--;
-				t.sigBytes = e + 1
-			}
-		}, t
-});
-// # sourceMappingURL=crypto-js.min.js.map
-! function(e, r, o) {
-	"object" == typeof exports ? module.exports = exports = r(require("./core"), require("./sha256"), require("./hmac")) : "function" == typeof define && define.amd ? define(["./core", "./sha256", "./hmac"], r) : r(e.CryptoJS)
-}(this, function(e) {
-	return e.HmacSHA256
-});
-// # sourceMappingURL=hmac-sha256.min.js.map
-! function(r, e) {
-	"object" == typeof exports ? module.exports = exports = e(require("./core")) : "function" == typeof define && define.amd ? define(["./core"], e) : e(r.CryptoJS)
-}(this, function(r) {
-	return function() {
-		function e(r, e, t) {
-			for (var a = [], o = 0, i = 0; i < e; i++)
-				if (i % 4) {
-					var f = t[r.charCodeAt(i - 1)] << i % 4 * 2,
-						c = t[r.charCodeAt(i)] >>> 6 - i % 4 * 2;
-					a[o >>> 2] |= (f | c) << 24 - o % 4 * 8, o++
-				}
-			return n.create(a, o)
-		}
-		var t = r,
-			a = t.lib,
-			n = a.WordArray,
-			o = t.enc;
-		o.Base64 = {
-			stringify: function(r) {
-				var e = r.words,
-					t = r.sigBytes,
-					a = this._map;
-				r.clamp();
-				for (var n = [], o = 0; o < t; o += 3)
-					for (var i = e[o >>> 2] >>> 24 - o % 4 * 8 & 255, f = e[o + 1 >>> 2] >>> 24 - (o + 1) % 4 * 8 & 255, c = e[o + 2 >>> 2] >>> 24 - (o + 2) % 4 * 8 & 255, s = i << 16 | f << 8 | c, h = 0; h < 4 && o + .75 * h < t; h++) n.push(a.charAt(s >>> 6 * (3 - h) & 63));
-				var p = a.charAt(64);
-				if (p)
-					for (; n.length % 4;) n.push(p);
-				return n.join("")
-			},
-			parse: function(r) {
-				var t = r.length,
-					a = this._map,
-					n = this._reverseMap;
-				if (!n) {
-					n = this._reverseMap = [];
-					for (var o = 0; o < a.length; o++) n[a.charCodeAt(o)] = o
-				}
-				var i = a.charAt(64);
-				if (i) {
-					var f = r.indexOf(i);
-					f !== -1 && (t = f)
-				}
-				return e(r, t, n)
-			},
-			_map: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
-		}
-	}(), r.enc.Base64
-});
-// # sourceMappingURL=enc-base64.min.js.map
 if (GmCXt === undefined) var GmCXt = {};
 
 if (GmCXt.requestHandler === undefined) GmCXt.requestHandler = {};
@@ -2940,10 +537,10 @@ GmCXt.isGmElement = function(el) {
     isGmElement = (
         el &&
         (
-            el.parent('wmgPlayerJSPreview_').length ||
-            el.parent('.mgPlayerJSPreview_beacon-icon').length ||
-            el.parent('.mgPlayerJSPreview_smarttip-icon').length ||
-            el.parents('wmgPlayerJSPreview_').length
+            el.parent('wmgPlayerJSProd_').length ||
+            el.parent('.mgPlayerJSProd_beacon-icon').length ||
+            el.parent('.mgPlayerJSProd_smarttip-icon').length ||
+            el.parents('wmgPlayerJSProd_').length
         )
     );
 
@@ -2951,7 +548,7 @@ GmCXt.isGmElement = function(el) {
         var className = el.attr('class');
         var parentClassName = el.parent().attr('class');
 
-        if ((className && className.indexOf('mgPlayerJSPreview_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSPreview_') !== -1))
+        if ((className && className.indexOf('mgPlayerJSProd_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSProd_') !== -1))
             isGmElement = true;
     }
 
@@ -2960,7 +557,7 @@ GmCXt.isGmElement = function(el) {
 
 GmCXt.onImageLoadError = function(obj) {
 
-    var isCDNCheck = obj.hasClass('mgPlayerJSPreview_cdnChecked');
+    var isCDNCheck = obj.hasClass('mgPlayerJSProd_cdnChecked');
     var cn, isMyGuideImage, isSrcEmpty, src;
 
     var updateSign = function() {
@@ -2972,18 +569,18 @@ GmCXt.onImageLoadError = function(obj) {
                 GmCXt.getCdnSignature(true);
             } else {
                 var m = {
-                    action: 'mgPlayerJSPreview_action:get_cdn_signature',
+                    action: 'mgPlayerJSProd_action:get_cdn_signature',
                 };
                 GmCXt.sendToParentWindow(m);
             }
-        } else if (obj.hasClass('mgPlayerJSPreview_dap-card-image')) {
+        } else if (obj.hasClass('mgPlayerJSProd_dap-card-image')) {
             obj.attr('src', GmCXt.conf.staticContentPath + 'technology.jpg');
         }
     };
 
     if (obj && obj.length && (obj[0].tagName === 'IMG' || GmCXt.isGmElement(obj)) && !isCDNCheck) {
 
-        cn = 'mgPlayerJSPreview_custom-image'; // Never do this 'gss'
+        cn = 'mgPlayerJSProd_custom-image'; // Never do this 'gss'
         isMyGuideImage = obj.hasClass(cn);
         if (GmCXt.isGmElement(obj) && obj[0].tagName === 'SOURCE') {
             isMyGuideImage = true;
@@ -2993,7 +590,7 @@ GmCXt.onImageLoadError = function(obj) {
 
         src = obj.attr('src');
 
-        obj.addClass('mgPlayerJSPreview_cdnChecked');
+        obj.addClass('mgPlayerJSProd_cdnChecked');
         updateSign();
     }
 };
@@ -3497,16 +1094,16 @@ GmCXt.sendToParentWindow = function(m) {
             m.data.fromSidePanel = GmCXt.isSidePanelApp;
         }
 
-        if (m.action !== "mgPlayerJSPreview_action:update_custom_labels" &&
-            m.action !== "mgPlayerJSPreview_action:set_lang_content_script" &&
-            m.action !== "mgPlayerJSPreview_action:update:player_mode" &&
-            m.action !== "mgPlayerJSPreview_action:save_user_info" &&
-            m.action !== "mgPlayerJSPreview_action:payload_event_call"
+        if (m.action !== "mgPlayerJSProd_action:update_custom_labels" &&
+            m.action !== "mgPlayerJSProd_action:set_lang_content_script" &&
+            m.action !== "mgPlayerJSProd_action:update:player_mode" &&
+            m.action !== "mgPlayerJSProd_action:save_user_info" &&
+            m.action !== "mgPlayerJSProd_action:payload_event_call"
         ) {
             m.data.user = GmCXt.user;
         }
 
-        if (m.action === "mgPlayerJSPreview_action:payload_event_call") {
+        if (m.action === "mgPlayerJSProd_action:payload_event_call") {
             delete m.data.fromSidePanel;
         }
     }
@@ -3557,7 +1154,7 @@ GmCXt.getPopupLogo = function() {
         brandLogo = logo + GmCXt.getCdnSign();
     }
 
-    return "<img class='mgPlayerJSPreview_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
+    return "<img class='mgPlayerJSProd_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
 };
 
 GmCXt.seggregateRules = function(ruleGroup) {
@@ -3656,7 +1253,7 @@ GmCXt.reloadFailedImages = function() {
     }
 
     if (window.self === window.top) {
-        var msg = "mgPlayerJSPreview_action:reload_images";
+        var msg = "mgPlayerJSProd_action:reload_images";
         GmCXt.sendMessageToApp(msg);
         GmCXt.sendMessageToStepFrame(msg);
     }
@@ -3942,9 +1539,9 @@ GmCXt.redirect = function(to) {
 
 GmCXt.getPosition = function(cssPos) {
     if (cssPos) {
-        return 'mgPlayerJSPreview_fixed-position';
+        return 'mgPlayerJSProd_fixed-position';
     } else {
-        return 'mgPlayerJSPreview_absolute-position';
+        return 'mgPlayerJSProd_absolute-position';
     }
 };
 
@@ -4234,9 +1831,9 @@ GmCXt.initPlayerModeFeatures = function(showPlayer, isMiniPlayer, isPlayerMode) 
     }
 
     if (GmCXt.isMicroPlayer()) {
-        mg$(".mgPlayerJSPreview_panel").addClass('mgPlayerJSPreview_theme-mplayer');
+        mg$(".mgPlayerJSProd_panel").addClass('mgPlayerJSProd_theme-mplayer');
     } else {
-        mg$(".mgPlayerJSPreview_panel").removeClass('mgPlayerJSPreview_theme-mplayer');
+        mg$(".mgPlayerJSProd_panel").removeClass('mgPlayerJSProd_theme-mplayer');
     }
 };
 
@@ -4821,13 +2418,13 @@ GmCXt.cleanPlayer = function() {
 
     GmCXt.cleanPlayerI();
 
-    GmCXt.sendMessageToApp("mgPlayerJSPreview_action:clean_tour_player");
+    GmCXt.sendMessageToApp("mgPlayerJSProd_action:clean_tour_player");
 
     GmCXt.storage().set({
-        'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': null
+        'mgPlayerJSProd_GM_PLAYER_STORAGE_KEY': null
     });
 
-    GmCXt.storage().remove(['mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY']);
+    GmCXt.storage().remove(['mgPlayerJSProd_GM_PLAYER_STORAGE_KEY']);
 };
 
 GmCXt.compareAttributes = function(el, topEl) {
@@ -4846,17 +2443,17 @@ GmCXt.filterParentNodes = function(nodes, text) {
 
     nodes = nodes.filter(function(index, node) {
         if (node.innerText && node.innerText.trim().toLowerCase() === text) {
-            mg$(node).parents().addClass('mgPlayerJSPreview_dummy-class');
+            mg$(node).parents().addClass('mgPlayerJSProd_dummy-class');
             return true;
         }
         return false;
     });
 
     var childNodes = nodes.filter(function(index, node) {
-        return !mg$(node).hasClass('mgPlayerJSPreview_dummy-class');
+        return !mg$(node).hasClass('mgPlayerJSProd_dummy-class');
     });
 
-    mg$('.mgPlayerJSPreview_dummy-class').removeClass('mgPlayerJSPreview_dummy-class');
+    mg$('.mgPlayerJSProd_dummy-class').removeClass('mgPlayerJSProd_dummy-class');
 
     if (childNodes.length === 1) {
         GmCXt.l.add('All nodes resulting from the query are hierachichally linked (parent-child)');
@@ -4925,14 +2522,14 @@ GmCXt.getErrObj = function(msg, data, isAnalytics) {
     return eObj;
 };
 
-// Elements might have classes like 'mgPlayerJSPreview_select-outline' or 'mgPlayerJSPreview_dummy-class'
+// Elements might have classes like 'mgPlayerJSProd_select-outline' or 'mgPlayerJSProd_dummy-class'
 GmCXt.checkMyGuideClass = function(className) {
 
     var mgClass = false;
     if (className && typeof className === 'string') {
         var arrClass = className.split(/\s+/).filter(Boolean);
         mgClass = arrClass.filter(function(cls) {
-            return cls.indexOf('mgPlayerJSPreview_') === 0;
+            return cls.indexOf('mgPlayerJSProd_') === 0;
         })[0];
     }
     return mgClass;
@@ -5101,11 +2698,11 @@ GmCXt.getFontFile = function() {
 };
 
 GmCXt.getCustomFontStyle = function() {
-    var styleElem = document.getElementById('mgPlayerJSPreview_nunito-font-style');
+    var styleElem = document.getElementById('mgPlayerJSProd_nunito-font-style');
     if (!GmCXt.isEmpty(styleElem)) styleElem.remove();
 
     var newStyle = document.createElement('style');
-    newStyle.id = "mgPlayerJSPreview_nunito-font-style";
+    newStyle.id = "mgPlayerJSProd_nunito-font-style";
     var FontName = "Nunito";
     var FontUrl = GmCXt.getFontFile() + "Nunito-Regular.woff";
     newStyle.appendChild(document.createTextNode("@font-face { font-family: '" + FontName + "'; src: url('" + FontUrl + "') format('woff');}"));
@@ -5242,11 +2839,11 @@ GmCXt.getTitleEditor = function(identifier, flag) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSPreview_char_count mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSProd_char_count mgPlayerJSProd_display-flex mgPlayerJSProd_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem2 = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSPreview_title-tool-text-color');
-            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSPreview_title-tool-bg-color');
+            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSProd_title-tool-text-color');
+            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSProd_title-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -5293,15 +2890,15 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
         content_css: "../../common/lib/tinymce/skins/ui/oxide/content.min.css",
         image_class_list: [{
             title: 'Custom Class',
-            value: 'mgPlayerJSPreview_custom-image'
+            value: 'mgPlayerJSProd_custom-image'
         }],
         file_picker_types: "image media",
         file_picker_callback: function(callback, value, meta) {
             if (meta.filetype == 'image') {
-                mg$('#mgPlayerJSPreview_upload-image').val('');
-                mg$('#mgPlayerJSPreview_upload-image').trigger('click');
-                mg$('#mgPlayerJSPreview_upload-image').off('change');
-                mg$('#mgPlayerJSPreview_upload-image').on('change', function() {
+                mg$('#mgPlayerJSProd_upload-image').val('');
+                mg$('#mgPlayerJSProd_upload-image').trigger('click');
+                mg$('#mgPlayerJSProd_upload-image').off('change');
+                mg$('#mgPlayerJSProd_upload-image').on('change', function() {
                     var file = this.files[0];
 
                     if (file) {
@@ -5328,7 +2925,7 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                                         alt: ''
                                     });
                                 }
-                                mg$(".mgPlayerJSPreview_spinner-wrapper").remove();
+                                mg$(".mgPlayerJSProd_spinner-wrapper").remove();
                             }).catch(function(error) {
                                 throw new Error(error);
                             });
@@ -5337,10 +2934,10 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                     }
                 });
             } else if (meta.filetype == 'media') {
-                mg$('#mgPlayerJSPreview_upload-video').val('');
-                mg$('#mgPlayerJSPreview_upload-video').trigger('click');
-                mg$('#mgPlayerJSPreview_upload-video').off('change');
-                mg$('#mgPlayerJSPreview_upload-video').on('change', function() {
+                mg$('#mgPlayerJSProd_upload-video').val('');
+                mg$('#mgPlayerJSProd_upload-video').trigger('click');
+                mg$('#mgPlayerJSProd_upload-video').off('change');
+                mg$('#mgPlayerJSProd_upload-video').on('change', function() {
                     var file = this.files[0];
                     if (file) {
                         var reader = new FileReader();
@@ -5357,11 +2954,11 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSPreview_char_count mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSProd_char_count mgPlayerJSProd_display-flex mgPlayerJSProd_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSPreview_desc-tool-text-color');
-            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSPreview_desc-tool-bg-color');
+            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSProd_desc-tool-text-color');
+            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSProd_desc-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -5399,12 +2996,12 @@ GmCXt.tinymce_getContentLength = function() {
 };
 
 GmCXt.tinymce_updateCharCounter = function(el, len) {
-    mg$('#' + el.id).next().find('.mgPlayerJSPreview_char_count').html('<div id="mgPlayerJSPreview_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
+    mg$('#' + el.id).next().find('.mgPlayerJSProd_char_count').html('<div id="mgPlayerJSProd_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
 
     if (len > el.settings.max_chars) {
-        mg$('#mgPlayerJSPreview_text_count-' + el.id).css('color', 'red');
+        mg$('#mgPlayerJSProd_text_count-' + el.id).css('color', 'red');
     } else {
-        mg$('#mgPlayerJSPreview_text_count-' + el.id).css('color', '');
+        mg$('#mgPlayerJSProd_text_count-' + el.id).css('color', '');
     }
 };
 
@@ -5437,16 +3034,16 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         resetDragEvents();
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSPreview_micro_player_drag .mgPlayerJSPreview_title-tooltip-wrapper").removeAttr("style");
+            mg$("#mgPlayerJSProd_micro_player_drag .mgPlayerJSProd_title-tooltip-wrapper").removeAttr("style");
         }
     }
 
     function dragOutEvent(e) {
         GmCXt.timeout(function() {
-            mg$('.mgPlayerJSPreview_slideshow_drag_over').hide();
+            mg$('.mgPlayerJSProd_slideshow_drag_over').hide();
         }, GmCXt.t.drag);
 
-        if (dragEl.id === 'mgPlayerJSPreview_mPlayer-drag') {
+        if (dragEl.id === 'mgPlayerJSProd_mPlayer-drag') {
             resetDragEvents();
         }
     }
@@ -5474,12 +3071,12 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         }
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSPreview_micro_player_drag .mgPlayerJSPreview_title-tooltip-wrapper").css("display", "none");
+            mg$("#mgPlayerJSProd_micro_player_drag .mgPlayerJSProd_title-tooltip-wrapper").css("display", "none");
         }
     }
 
     function elementDrag(e) {
-        mg$('.mgPlayerJSPreview_slideshow_drag_over').show();
+        mg$('.mgPlayerJSProd_slideshow_drag_over').show();
         e = e || window.event;
         // calculate the new cursor position:
         var wWdth = mg$(window).width();
@@ -5527,7 +3124,7 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         /* stop moving when mouse button is released:*/
         resetDragEvents();
 
-        mg$('.mgPlayerJSPreview_slideshow_drag_over').hide();
+        mg$('.mgPlayerJSProd_slideshow_drag_over').hide();
     }
 };
 
@@ -5676,21 +3273,21 @@ GmCXt.isDefaultIcon = function(str) {
 };
 
 GmCXt.syncPlayerInst = function(m) {
-    if (m === "mgPlayerJSPreview_action:started;task:select_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSPreview_action:started;task:select_dom_element_tooltips" ||
-        m === "mgPlayerJSPreview_action:task:init_new_iframe" ||
-        m === "mgPlayerJSPreview_action:update_player_instance" ||
-        m === "mgPlayerJSPreview_action:play_slideshow" ||
-        m === "mgPlayerJSPreview_action:play_video_step" ||
-        m === "mgPlayerJSPreview_action:play_image_step" ||
-        m === "mgPlayerJSPreview_action:click; on:mgPlayerJSPreview_slideshow-close" ||
-        m === "mgPlayerJSPreview_action:mark_auto_tour_donotshow" ||
-        m === "mgPlayerJSPreview_action:update_player_instance_app" ||
-        m === "mgPlayerJSPreview_action:set_audio_mode_off" ||
-        m === "mgPlayerJSPreview_action:set_audio_mode_on" ||
-        m === "mgPlayerJSPreview_action:close_guide" ||
-        m === "mgPlayerJSPreview_action:set_style_audio_icon_response") {
+    if (m === "mgPlayerJSProd_action:started;task:select_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSProd_action:started;task:select_dom_element_tooltips" ||
+        m === "mgPlayerJSProd_action:task:init_new_iframe" ||
+        m === "mgPlayerJSProd_action:update_player_instance" ||
+        m === "mgPlayerJSProd_action:play_slideshow" ||
+        m === "mgPlayerJSProd_action:play_video_step" ||
+        m === "mgPlayerJSProd_action:play_image_step" ||
+        m === "mgPlayerJSProd_action:click; on:mgPlayerJSProd_slideshow-close" ||
+        m === "mgPlayerJSProd_action:mark_auto_tour_donotshow" ||
+        m === "mgPlayerJSProd_action:update_player_instance_app" ||
+        m === "mgPlayerJSProd_action:set_audio_mode_off" ||
+        m === "mgPlayerJSProd_action:set_audio_mode_on" ||
+        m === "mgPlayerJSProd_action:close_guide" ||
+        m === "mgPlayerJSProd_action:set_style_audio_icon_response") {
         return true;
     } else {
         return false;
@@ -5698,45 +3295,45 @@ GmCXt.syncPlayerInst = function(m) {
 };
 
 GmCXt.syncCreateInst = function(m) {
-    if (m === "mgPlayerJSPreview_action:started;task:highlight_element" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:completed;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSPreview_action:started;task:select_new_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:select_new_dom_element_for_edit_step" ||
-        m === "mgPlayerJSPreview_action:narrow_element_selection" ||
-        m === "mgPlayerJSPreview_action:started;task:narrow_element_selection" ||
-        m === "mgPlayerJSPreview_action:expand_element_selection" ||
-        m === "mgPlayerJSPreview_action:started;task:expand_element_selection" ||
-        m === "mgPlayerJSPreview_action:started;task:select_element_for_message_step" ||
-        m === "mgPlayerJSPreview_action:started;task:select_element_for_branching_step" ||
-        m === "mgPlayerJSPreview_action:started;task:select_new_element_for_dom_select_rule" ||
-        m === "mgPlayerJSPreview_action:started;task:select_new_table_for_dom_select_rule" ||
-        m === "mgPlayerJSPreview_action:started;task:delete_element_for_message_step" ||
-        m === "mgPlayerJSPreview_action:started;task:select_dom_element_for_beacon" ||
-        m === "mgPlayerJSPreview_action:started;task:blackout_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_message_step_select_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:step_blackout_area_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSPreview_action:started:select_new_dom_element_for_smart_tip" ||
-        m === "mgPlayerJSPreview_action:find_element_to_get_precision" ||
-        m === "mgPlayerJSPreview_action:find_element_to_get_precision_for_rules" ||
-        m === "mgPlayerJSPreview_action:started;task:select_dom_element_for_matching_in_rules" ||
-        m === "mgPlayerJSPreview_action:do;task:enable_jQuery_selector" ||
-        m === "mgPlayerJSPreview_action:save_step" ||
-        m === "mgPlayerJSPreview_action:click;on:save-beacon-settings" ||
-        m === "mgPlayerJSPreview_action:reselect_beacon_element" ||
-        m === "mgPlayerJSPreview_action:reselect_element" ||
-        m === "mgPlayerJSPreview_action:select_element" ||
-        m === "mgPlayerJSPreview_action:blackout_element" ||
-        m === "mgPlayerJSPreview_action:delete_step_element" ||
-        m === "mgPlayerJSPreview_action:find_element_precision" ||
-        m === "mgPlayerJSPreview_action:find_element_precision_for_rules" ||
-        m === "mgPlayerJSPreview_action:save_elem" ||
-        m === "mgPlayerJSPreview_action:update_elem_tag" ||
-        m === "mgPlayerJSPreview_action:select_element_tag" ||
-        m === "mgPlayerJSPreview_action:started;task:edit_tag_select_existing_dom_element") {
+    if (m === "mgPlayerJSProd_action:started;task:highlight_element" ||
+        m === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:completed;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSProd_action:started;task:select_new_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:select_new_dom_element_for_edit_step" ||
+        m === "mgPlayerJSProd_action:narrow_element_selection" ||
+        m === "mgPlayerJSProd_action:started;task:narrow_element_selection" ||
+        m === "mgPlayerJSProd_action:expand_element_selection" ||
+        m === "mgPlayerJSProd_action:started;task:expand_element_selection" ||
+        m === "mgPlayerJSProd_action:started;task:select_element_for_message_step" ||
+        m === "mgPlayerJSProd_action:started;task:select_element_for_branching_step" ||
+        m === "mgPlayerJSProd_action:started;task:select_new_element_for_dom_select_rule" ||
+        m === "mgPlayerJSProd_action:started;task:select_new_table_for_dom_select_rule" ||
+        m === "mgPlayerJSProd_action:started;task:delete_element_for_message_step" ||
+        m === "mgPlayerJSProd_action:started;task:select_dom_element_for_beacon" ||
+        m === "mgPlayerJSProd_action:started;task:blackout_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:edit_message_step_select_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:step_blackout_area_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element" ||
+        m === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSProd_action:started:select_new_dom_element_for_smart_tip" ||
+        m === "mgPlayerJSProd_action:find_element_to_get_precision" ||
+        m === "mgPlayerJSProd_action:find_element_to_get_precision_for_rules" ||
+        m === "mgPlayerJSProd_action:started;task:select_dom_element_for_matching_in_rules" ||
+        m === "mgPlayerJSProd_action:do;task:enable_jQuery_selector" ||
+        m === "mgPlayerJSProd_action:save_step" ||
+        m === "mgPlayerJSProd_action:click;on:save-beacon-settings" ||
+        m === "mgPlayerJSProd_action:reselect_beacon_element" ||
+        m === "mgPlayerJSProd_action:reselect_element" ||
+        m === "mgPlayerJSProd_action:select_element" ||
+        m === "mgPlayerJSProd_action:blackout_element" ||
+        m === "mgPlayerJSProd_action:delete_step_element" ||
+        m === "mgPlayerJSProd_action:find_element_precision" ||
+        m === "mgPlayerJSProd_action:find_element_precision_for_rules" ||
+        m === "mgPlayerJSProd_action:save_elem" ||
+        m === "mgPlayerJSProd_action:update_elem_tag" ||
+        m === "mgPlayerJSProd_action:select_element_tag" ||
+        m === "mgPlayerJSProd_action:started;task:edit_tag_select_existing_dom_element") {
         return true;
     } else {
         return false;
@@ -5752,12 +3349,12 @@ GmCXt.setAutoTour = function(id) {
         };
         if (GmCXt.isSidePanelApp) {
             var m = {
-                action: "mgPlayerJSPreview_action:set_auto_tour"
+                action: "mgPlayerJSProd_action:set_auto_tour"
             };
             m.data = data;
             GmCXt.sendToParentWindow(m);
         } else {
-            GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:set_auto_tour', data);
+            GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:set_auto_tour', data);
         }
     }
 };
@@ -6066,7 +3663,7 @@ GmCXt.verifyMsg = function(event) {
     var valid = false;
     var data = message.data;
 
-    var fromSelf = (action.indexOf('mgPlayerJSPreview_action:') !== -1);
+    var fromSelf = (action.indexOf('mgPlayerJSProd_action:') !== -1);
 
     // for salesforce and service now app backword compatibility 
     if (action === "gmPlayerXt_action:init_sfdc_env" ||
@@ -6158,20 +3755,20 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         step.step_type === 'smartTip' ||
         step.step_type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION) {
 
-        message.action = "mgPlayerJSPreview_action:edit_step,type:inline";
+        message.action = "mgPlayerJSProd_action:edit_step,type:inline";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (GmCXt.isAutomationStep(step)) {
-        message.action = "mgPlayerJSPreview_action:edit_step,type:automation";
+        message.action = "mgPlayerJSProd_action:edit_step,type:automation";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (step.step_type === 'message') {
 
-        message.action = "mgPlayerJSPreview_action:edit_step,type:message";
+        message.action = "mgPlayerJSProd_action:edit_step,type:message";
 
         var domElems = step.step_settings.domElems;
         for (var index in domElems) {
@@ -6179,7 +3776,7 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         }
 
     } else if (step.step_type === 'image') {
-        message.action = "mgPlayerJSPreview_action:edit_step,type:image";
+        message.action = "mgPlayerJSProd_action:edit_step,type:image";
     }
 
     GmCXt.sendToParentWindow(message);
@@ -6193,53 +3790,53 @@ GmCXt.toastMsg = function(message) {
 
     return {
         show: function() {
-            mg$("#mgPlayerJSPreview_toast-msg").remove();
+            mg$("#mgPlayerJSProd_toast-msg").remove();
 
-            var html = "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_toast-msg'></wmgPlayerJSPreview_>";
+            var html = "<wmgPlayerJSProd_ id='mgPlayerJSProd_toast-msg'></wmgPlayerJSProd_>";
             if (GmCXt.browserApp === 'ie') {
                 mg$("body").append(html);
             } else {
                 mg$("html").append(html);
             }
 
-            mg$("#mgPlayerJSPreview_toast-msg").html(self.message);
-            mg$("#mgPlayerJSPreview_toast-msg").fadeIn();
+            mg$("#mgPlayerJSProd_toast-msg").html(self.message);
+            mg$("#mgPlayerJSProd_toast-msg").fadeIn();
             GmCXt.timeout(function() {
-                mg$('#mgPlayerJSPreview_toast-msg').fadeOut(500);
+                mg$('#mgPlayerJSProd_toast-msg').fadeOut(500);
             }, GmCXt.t.toastMsg);
         }
     };
 };
 
 GmCXt.showToastMsg = function(message) {
-    mg$("#mgPlayerJSPreview_toast-msg").html(message);
-    mg$("#mgPlayerJSPreview_toast-msg").fadeIn();
+    mg$("#mgPlayerJSProd_toast-msg").html(message);
+    mg$("#mgPlayerJSProd_toast-msg").fadeIn();
 };
 
 GmCXt.hideToastMsg = function() {
-    mg$('#mgPlayerJSPreview_toast-msg').fadeOut(100);
+    mg$('#mgPlayerJSProd_toast-msg').fadeOut(100);
 };
 
 GmCXt.toastMsgPersistent = function(message) {
     return {
         show: function() {
-            var htmlstr = "<div class='mgPlayerJSPreview_toast-msg-wrapper'><div id='mgPlayerJSPreview_toast-msg-close' >x</div>";
-            htmlstr += "<div id='mgPlayerJSPreview_toast-msg-text' >" + message + "</div></div>";
-            mg$("#mgPlayerJSPreview_toast-msg").html(htmlstr);
-            mg$("#mgPlayerJSPreview_toast-msg").fadeIn();
+            var htmlstr = "<div class='mgPlayerJSProd_toast-msg-wrapper'><div id='mgPlayerJSProd_toast-msg-close' >x</div>";
+            htmlstr += "<div id='mgPlayerJSProd_toast-msg-text' >" + message + "</div></div>";
+            mg$("#mgPlayerJSProd_toast-msg").html(htmlstr);
+            mg$("#mgPlayerJSProd_toast-msg").fadeIn();
 
-            mg$("#mgPlayerJSPreview_toast-msg-close").click(function() {
+            mg$("#mgPlayerJSProd_toast-msg-close").click(function() {
                 GmCXt.toastMsgPersistent().hide();
             });
         },
         hide: function() {
-            mg$('#mgPlayerJSPreview_toast-msg').fadeOut(500);
+            mg$('#mgPlayerJSProd_toast-msg').fadeOut(500);
         }
     };
 };
 
 GmCXt.clearScreen = function() {
-    mg$('.mgPlayerJSPreview_inline-step-capture-screen').remove();
+    mg$('.mgPlayerJSProd_inline-step-capture-screen').remove();
 };
 
 GmCXt.unlockScroll = function() {
@@ -6261,7 +3858,7 @@ GmCXt.getNewGroup = function() {
 
 GmCXt.showAlertToastMsg = function(msg) {
     var obj = {
-        action: "mgPlayerJSPreview_action:show_toast_message",
+        action: "mgPlayerJSProd_action:show_toast_message",
         data: msg
     };
     GmCXt.sendToParentWindow(obj);
@@ -6328,34 +3925,34 @@ GmCXt.tinyMcePasteSetup = function(ed) {
         if (GmCXt.tinymce_getContentLength() === 0) {
             var scope = angular.element('.step-create-section-container').scope();
             if (scope) {
-                if (this.name === "#mgPlayerJSPreview_step_title") {
+                if (this.name === "#mgPlayerJSProd_step_title") {
                     scope.step.step_title = "";
-                    mg$("#mgPlayerJSPreview_title-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSProd_title-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSPreview_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSProd_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
-                if (this.name === "#mgPlayerJSPreview_step_description") {
+                if (this.name === "#mgPlayerJSProd_step_description") {
                     scope.step.step_description = "";
-                    mg$("#mgPlayerJSPreview_desc-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSProd_desc-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSPreview_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSProd_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
 
-                if (this.name === "#mgPlayerJSPreview_smart_textarea")
+                if (this.name === "#mgPlayerJSProd_smart_textarea")
                     scope.step.step_settings.smartTip.guidanceMessage = "";
-                if (this.name === "#mgPlayerJSPreview_step_tooltip") {
+                if (this.name === "#mgPlayerJSProd_step_tooltip") {
                     if (scope.stepDomElms) {
                         scope.stepDomElms[scope.elemSelectedIndex].title = "";
                     }
@@ -6395,7 +3992,7 @@ GmCXt.videoReturnListener = function(callback) {
         event = GmCXt.parseJSON(event);
         event = GmCXt.convertMgdata(event);
 
-        if (event.action === "mgPlayerJSPreview_action:save_video_in_background;task:upload_video;completed") {
+        if (event.action === "mgPlayerJSProd_action:save_video_in_background;task:upload_video;completed") {
             GmCXt.removeVidImageLoader();
             callback(event.data.videoUrl + GmCXt.user.cdn_signature, {
                 alt: ''
@@ -6417,7 +4014,7 @@ GmCXt.sendVideoUploadMessage = function(url, cb) {
         data: {
             videoUrl: url,
         },
-        action: "mgPlayerJSPreview_action:save_video_in_background;task:upload_video"
+        action: "mgPlayerJSProd_action:save_video_in_background;task:upload_video"
     };
     GmCXt.videoReturnListener(cb);
     GmCXt.sendMessageToBackgroundService(m);
@@ -6438,19 +4035,19 @@ GmCXt.readFile = function(file, cb) {
             return;
         }
         mg$(".disabledSaveBtn").prop("disabled", true);
-        mg$(".disabledSaveBtn").addClass("mgPlayerJSPreview_disabled");
+        mg$(".disabledSaveBtn").addClass("mgPlayerJSProd_disabled");
         var url = window.URL.createObjectURL(file);
-        var vid = document.getElementById('mgPlayerJSPreview_video-container-currupt-file-test');
+        var vid = document.getElementById('mgPlayerJSProd_video-container-currupt-file-test');
         vid.src = url;
         var promise = vid.play();
         if (promise !== undefined) {
             promise.then(function() {
-                mg$('.mgPlayerJSPreview_screen-container').show();
+                mg$('.mgPlayerJSProd_screen-container').show();
                 GmCXt.vidImageLoader();
                 GmCXt.sendVideoUploadMessage(url, cb);
                 vid.pause();
             }).catch(function() {
-                mg$('.mgPlayerJSPreview_screen-container').hide();
+                mg$('.mgPlayerJSProd_screen-container').hide();
                 GmCXt.showAlertToastMsg(GmCXt.label.curruptVideoFileMsg);
                 return;
             });
@@ -6460,17 +4057,17 @@ GmCXt.readFile = function(file, cb) {
 
 GmCXt.vidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", true);
-    mg$(".disabledSaveBtn").addClass("mgPlayerJSPreview_disabled");
-    mg$(".tox-button").addClass("mgPlayerJSPreview_disabled");
-    var spinner = "<div class='mgPlayerJSPreview_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
+    mg$(".disabledSaveBtn").addClass("mgPlayerJSProd_disabled");
+    mg$(".tox-button").addClass("mgPlayerJSProd_disabled");
+    var spinner = "<div class='mgPlayerJSProd_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
     mg$('.tox-dialog').append(spinner);
 };
 
 GmCXt.removeVidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", false);
-    mg$(".disabledSaveBtn").removeClass("mgPlayerJSPreview_disabled");
-    mg$(".tox-button").removeClass("mgPlayerJSPreview_disabled");
-    mg$('.mgPlayerJSPreview_spinner-wrapper').remove();
+    mg$(".disabledSaveBtn").removeClass("mgPlayerJSProd_disabled");
+    mg$(".tox-button").removeClass("mgPlayerJSProd_disabled");
+    mg$('.mgPlayerJSProd_spinner-wrapper').remove();
 };
 
 GmCXt.getStepSortedByPS = function(PS, stepId) {
@@ -6606,8 +4203,8 @@ GmCXt.escapeHtml = function(str) {
 };
 
 GmCXt.removeNotif = function() {
-    mg$(".mgPlayerJSPreview_overlay-tours-popup").remove();
-    mg$(".mgPlayerJSPreview_overlay-container").remove();
+    mg$(".mgPlayerJSProd_overlay-tours-popup").remove();
+    mg$(".mgPlayerJSProd_overlay-container").remove();
 };
 
 GmCXt.getObjectSize = function(obj) {
@@ -6624,17 +4221,17 @@ GmCXt.updateUserProfileSettings = function(userSettings) {
     var user = GmCXt.user;
     user.settings = userSettings;
 
-    GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_user_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_user_data', {
         user: user
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_organization_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_organization_data', {
         organization: GmCXt.organization
     });
 };
 
 GmCXt.updatePlayedSteps = function(step) {
-    GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_played_step", {
+    GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_played_step", {
         playedStep: step
     });
 };
@@ -6778,7 +4375,7 @@ GmCXt.updatePlayStructureLinkGuide = function(tour, playerInstance, cb) {
     } else if (playerInstance && !GmCXt.playerI) {
         if (cb) cb(finalPS);
     } else {
-        GmCXt.sendMessageToParentWindow("mgPlayerJSPreview_action:update_PI_PS", finalPS);
+        GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:update_PI_PS", finalPS);
     }
 };
 
@@ -6828,7 +4425,7 @@ GmCXt.concatLinkGuideSteps = function(newSteps, tour, step_id, cb) {
         if (GmCXt.playerI.type === GmCXt.TOUR_PLAYER_SLIDESHOW) {
             GmCXt.playerI.tour.steps = steps;
         } else {
-            GmCXt.sendMessageToParentWindow("mgPlayerJSPreview_action:update_PI_steps", steps);
+            GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:update_PI_steps", steps);
         }
         GmCXt.playerI.totalStepCount = steps.length;
         GmCXt.playerI.tour.step_count = steps.length;
@@ -6844,19 +4441,19 @@ GmCXt.stopNotification = function(isPreview) {
     if (!GmCXt.isPlayer() && !isPreview) {
         reason = "app is not a player";
         flag = true;
-    } else if (mg$('.mgPlayerJSPreview_image-step-screen').is(':visible') || mg$('.mgPlayerJSPreview_preview-step-popup-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSProd_image-step-screen').is(':visible') || mg$('.mgPlayerJSProd_preview-step-popup-container').is(':visible')) {
         reason = "step is playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSPreview_user-guide-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSProd_user-guide-container').is(':visible')) {
         reason = "survey is open";
         flag = true;
-    } else if (mg$('.mgPlayerJSPreview_notifcation-popup').is(':visible')) {
+    } else if (mg$('.mgPlayerJSProd_notifcation-popup').is(':visible')) {
         reason = "org notification";
         flag = true;
-    } else if (mg$('.mgPlayerJSPreview_slideshow-panel').is(':visible')) {
+    } else if (mg$('.mgPlayerJSProd_slideshow-panel').is(':visible')) {
         reason = "slideshow playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSPreview_play-pause-toolbar').is(':visible')) {
+    } else if (mg$('.mgPlayerJSProd_play-pause-toolbar').is(':visible')) {
         reason = "pause guide";
         flag = true;
     } else if (GmCXt.APP_PANEL_OPEN && !GmCXt.getAppSetting('keep_player_panel_open')) {
@@ -7150,13 +4747,13 @@ GmCXt.checkLangExist = function(lArr, lang) {
 
 GmCXt.removePreviewFrame = function() {
 
-    mg$('.mgPlayerJSPreview_preview-beacon').remove();
-    mg$('.mgPlayerJSPreview_preview-smarttip').remove();
-    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSPreview_form-submit-preview gssSmarttip-form-submit');
-    mg$('.mgPlayerJSPreview_duct-tape-invisible-preview').removeClass('mgPlayerJSPreview_duct-tape-invisible-preview');
+    mg$('.mgPlayerJSProd_preview-beacon').remove();
+    mg$('.mgPlayerJSProd_preview-smarttip').remove();
+    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSProd_form-submit-preview gssSmarttip-form-submit');
+    mg$('.mgPlayerJSProd_duct-tape-invisible-preview').removeClass('mgPlayerJSProd_duct-tape-invisible-preview');
 
-    if (mg$('.mgPlayerJSPreview_preview-smarttip-pwr-html').length)
-        mg$('.mgPlayerJSPreview_preview-smarttip-pwr-html').val('');
+    if (mg$('.mgPlayerJSProd_preview-smarttip-pwr-html').length)
+        mg$('.mgPlayerJSProd_preview-smarttip-pwr-html').val('');
 };
 
 GmCXt.clearSession = function() {
@@ -7171,8 +4768,8 @@ GmCXt.clearSession = function() {
     GmCXt.playedTour = [];
     GmCXt.storage().remove(['playedTour', 'stepsPlayed']);
 
-    if (mg$('.mgPlayerJSPreview_task-list-button').length > 0) {
-        mg$('.mgPlayerJSPreview_task-list-button').remove();
+    if (mg$('.mgPlayerJSProd_task-list-button').length > 0) {
+        mg$('.mgPlayerJSProd_task-list-button').remove();
     }
 };
 
@@ -7183,8 +4780,8 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         if (idList.length) {
             for (var i = 0; i < idList.length; i++) {
                 GmCXt.log(43, 'Clearing tooltips for tour: ' + idList[i]);
-                mg$('.mgPlayerJSPreview_smarttip-tour-' + idList[i]).remove();
-                mg$('.mgPlayerJSPreview_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSPreview_duct-tape-invisible');
+                mg$('.mgPlayerJSProd_smarttip-tour-' + idList[i]).remove();
+                mg$('.mgPlayerJSProd_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSProd_duct-tape-invisible');
                 delete GmCXt.onScreenTooltipGuideInfo['tour_' + idList[i]];
             }
 
@@ -7198,28 +4795,28 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         }
     } else {
         // Clear all
-        mg$('.mgPlayerJSPreview_smarttip-icon').remove();
+        mg$('.mgPlayerJSProd_smarttip-icon').remove();
         mg$('.smarttip-guidance-msg').remove();
-        mg$('.mgPlayerJSPreview_smarttip').remove();
-        mg$('.mgPlayerJSPreview_smarttip-valid').remove();
-        mg$('.mgPlayerJSPreview_duct-tape').remove();
-        mg$('.mgPlayerJSPreview_duct-tape-invisible').removeClass('mgPlayerJSPreview_duct-tape-invisible');
+        mg$('.mgPlayerJSProd_smarttip').remove();
+        mg$('.mgPlayerJSProd_smarttip-valid').remove();
+        mg$('.mgPlayerJSProd_duct-tape').remove();
+        mg$('.mgPlayerJSProd_duct-tape-invisible').removeClass('mgPlayerJSProd_duct-tape-invisible');
     }
 
-    mg$(".mgPlayerJSPreview_beacon-icon").remove();
+    mg$(".mgPlayerJSProd_beacon-icon").remove();
     GmCXt.beaconsOnScreen = [];
 
     if (!isLogout) {
         GmCXt.closePowerForm();
     }
 
-    GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:forward;remove_active_smarttip_beacon', {
+    GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:forward;remove_active_smarttip_beacon', {
         idList: idList
     });
 };
 
 GmCXt.closePowerForm = function() {
-    GmCXt.sendMessageToApp("mgPlayerJSPreview_action:close_power_form", {});
+    GmCXt.sendMessageToApp("mgPlayerJSProd_action:close_power_form", {});
 };
 
 GmCXt.closeAppPanel = function() {
@@ -7227,22 +4824,22 @@ GmCXt.closeAppPanel = function() {
     GmCXt.displayWidget();
     GmCXt.displayChatIcon();
     var alignment = GmCXt.getWidgetAlignment();
-    mg$(".mgPlayerJSPreview_panel .mgPlayerJSPreview_app").css(alignment, "-9550px");
-    mg$(".mgPlayerJSPreview_panel").css(alignment, "-9550px");
+    mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css(alignment, "-9550px");
+    mg$(".mgPlayerJSProd_panel").css(alignment, "-9550px");
     if (alignment === 'right') {
-        mg$(".mgPlayerJSPreview_panel").css('left', "initial");
+        mg$(".mgPlayerJSProd_panel").css('left', "initial");
     }
 
     if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-        mg$(".mgPlayerJSPreview_panel").css("left", "initial");
-        mg$(".mgPlayerJSPreview_panel").css("top", "50%");
+        mg$(".mgPlayerJSProd_panel").css("left", "initial");
+        mg$(".mgPlayerJSProd_panel").css("top", "50%");
     }
     
-    mg$(".mgPlayerJSPreview_panel").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$("#mgPlayerJSPreview_app").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$(".mgPlayerJSPreview_panel").focus();
+    mg$(".mgPlayerJSProd_panel").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$("#mgPlayerJSProd_app").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$(".mgPlayerJSProd_panel").focus();
 
-    GmCXt.sendMessageToApp("mgPlayerJSPreview_action:app_panel_closed", {});
+    GmCXt.sendMessageToApp("mgPlayerJSProd_action:app_panel_closed", {});
 };
 
 GmCXt.legacyWildChar = function(v) {
@@ -7384,7 +4981,7 @@ GmCXt.sendMessageToDesktopApp = function(msg, d) {
         cb(GmCXt.trackerUtil.tabId);
     } else {
         GmCXt.sendMessageToBackgroundService({
-            action: "mgPlayerJSPreview_action:get_current_tab_id"
+            action: "mgPlayerJSProd_action:get_current_tab_id"
         }, cb);
     }
 };
@@ -7466,25 +5063,25 @@ GmCXt.checkInsightEnabled = function() {
 
 GmCXt.toggleStepSelectionToolbar = function(show, showDone, inlineStepReq) {
     if (show) {
-        mg$('.mgPlayerJSPreview_toolbar-panel').show();
+        mg$('.mgPlayerJSProd_toolbar-panel').show();
 
         if (showDone) {
-            GmCXt.sendMessageToolbar("mgPlayerJSPreview_action:show_done_button", {
+            GmCXt.sendMessageToolbar("mgPlayerJSProd_action:show_done_button", {
                 isQuick: inlineStepReq
             });
         } else {
-            GmCXt.sendMessageToolbar("mgPlayerJSPreview_action:hide_done_button");
+            GmCXt.sendMessageToolbar("mgPlayerJSProd_action:hide_done_button");
         }
 
         var u = GmCXt.user.settings || {};
         if (u.showToolbarTooltip) {
-            mg$('.mgPlayerJSPreview_toolbar-tooltip').show();
+            mg$('.mgPlayerJSProd_toolbar-tooltip').show();
         }
 
     } else {
-        mg$('.mgPlayerJSPreview_toolbar-panel').hide();
-        mg$('.mgPlayerJSPreview_toolbar-tooltip').hide();
-        GmCXt.sendMessageToolbar("mgPlayerJSPreview_action:hide_done_button");
+        mg$('.mgPlayerJSProd_toolbar-panel').hide();
+        mg$('.mgPlayerJSProd_toolbar-tooltip').hide();
+        GmCXt.sendMessageToolbar("mgPlayerJSProd_action:hide_done_button");
         // disable_mouse_hover
         window.removeEventListener('mouseover', stopEventPropagation, true);
     }
@@ -7897,7 +5494,7 @@ GmCXt.takeScreenshot = function() {
             });
         } else if (GmCXt.isExtension()) {
             var m = {
-                action: "mgPlayerJSPreview_action:capture_browser_screen"
+                action: "mgPlayerJSProd_action:capture_browser_screen"
             };
             GmCXt.sendMessageToBackgroundService(m, function(resp) {
                 resolve(resp.imgSrc);
@@ -7911,16 +5508,16 @@ GmCXt.takeScreenshot = function() {
 
 GmCXt.triggerForOtherFunctions = function(id, ev) {
     switch (id) {
-        case "mgPlayerJSPreview_play_step_popup_drag":
-        case "mgPlayerJSPreview_play-step-popup-drag-icon":
+        case "mgPlayerJSProd_play_step_popup_drag":
+        case "mgPlayerJSProd_play-step-popup-drag-icon":
 
             break;
-        case "mgPlayerJSPreview_play-step-audio-off":
+        case "mgPlayerJSProd_play-step-audio-off":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOnAudioMode();
             }
             break;
-        case "mgPlayerJSPreview_play-step-audio-on":
+        case "mgPlayerJSProd_play-step-audio-on":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOffAudioMode();
             }
@@ -7961,8 +5558,8 @@ GmCXt.registerClickListner = function(e) {
 
 GmCXt.isIDinOtherList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSPreview_play_step_popup_drag", "mgPlayerJSPreview_play-step-popup-drag-icon", "mgPlayerJSPreview_play-step-audio-off",
-        "mgPlayerJSPreview_play-step-audio-on"
+    var idList = ["mgPlayerJSProd_play_step_popup_drag", "mgPlayerJSProd_play-step-popup-drag-icon", "mgPlayerJSProd_play-step-audio-off",
+        "mgPlayerJSProd_play-step-audio-on"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -7974,12 +5571,12 @@ GmCXt.isIDinOtherList = function(id) {
 
 GmCXt.isIDinGuidePlayList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSPreview_play_step_pause_classic", "mgPlayerJSPreview_play_step_next", "mgPlayerJSPreview_play_step_next_classic",
-        "mgPlayerJSPreview_play_step_prev", "mgPlayerJSPreview_play_step_prev_classic", "mgPlayerJSPreview_play_step_popup_close",
-        "mgPlayerJSPreview_play_step_pause", "mgPlayerJSPreview_play_step_next_done", "mgPlayerJSPreview_play_step_next_done_classic",
-        "mgPlayerJSPreview_play_step_popup_edit",
-        "mgPlayerJSPreview_play-step-popup-close-svg", "mgPlayerJSPreview_play-step-popup-edit-icon",
-        "mgPlayerJSPreview_play-step-pause-svg"
+    var idList = ["mgPlayerJSProd_play_step_pause_classic", "mgPlayerJSProd_play_step_next", "mgPlayerJSProd_play_step_next_classic",
+        "mgPlayerJSProd_play_step_prev", "mgPlayerJSProd_play_step_prev_classic", "mgPlayerJSProd_play_step_popup_close",
+        "mgPlayerJSProd_play_step_pause", "mgPlayerJSProd_play_step_next_done", "mgPlayerJSProd_play_step_next_done_classic",
+        "mgPlayerJSProd_play_step_popup_edit",
+        "mgPlayerJSProd_play-step-popup-close-svg", "mgPlayerJSProd_play-step-popup-edit-icon",
+        "mgPlayerJSProd_play-step-pause-svg"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -7990,7 +5587,7 @@ GmCXt.isIDinGuidePlayList = function(id) {
 };
 
 GmCXt.tooltipTitle = function(os, pEle) {
-    var tTitleCss = "<div class='mgPlayerJSPreview_tooltip-title-css'><style type='text/css'>" +
+    var tTitleCss = "<div class='mgPlayerJSProd_tooltip-title-css'><style type='text/css'>" +
         "." + pEle + " p:first-child {" + "color: " + os.popupDesign.current.stepTitleColor + " !important; " +
         "font-family: " + os.popupDesign.current.stepTitleFontFamily + " !important; " +
         "font-size: " + os.popupDesign.current.stepTitleFontSize + " !important; " +
@@ -8003,7 +5600,7 @@ GmCXt.tooltipTitle = function(os, pEle) {
 };
 
 GmCXt.tooltipPopupCss = function(os, customEle) {
-    var popUpCSS = "<div class='mgPlayerJSPreview_tooltip-popup-css'><style type='text/css'>" +
+    var popUpCSS = "<div class='mgPlayerJSProd_tooltip-popup-css'><style type='text/css'>" +
         customEle + ".smarttip-guidance-msg-top:before {" +
         "border-top-color:" + os.popupDesign.current.bgColor + " !important;" +
         "}" +
@@ -8078,8 +5675,8 @@ GmCXt.tooltipTheme = function(os, customEle) {
     } else {
         tObj.tooltipBorderC = "border-color:" + os.tooltipColor + " !important; ";
 
-        mg$(".mgPlayerJSPreview_tooltip-popup-css").remove();
-        mg$(".mgPlayerJSPreview_tooltip-title-css").remove();
+        mg$(".mgPlayerJSProd_tooltip-popup-css").remove();
+        mg$(".mgPlayerJSProd_tooltip-title-css").remove();
     }
 
     return tObj;
@@ -8208,7 +5805,7 @@ GmCXt.storeVariableValue = function(varIndex) {
             varTitle: variable.name,
             timeout: Date.now() + GmCXt.t.findElTimeout
         };
-        GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:find_element_for_variable', data);
+        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:find_element_for_variable', data);
     }
 };
 
@@ -8277,11 +5874,11 @@ GmCXt.requestHandler.updateVariableValues = function(message) {
         }
     });
 
-    GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:set_variables', {
+    GmCXt.sendMessageToStepFrame('mgPlayerJSProd_action:set_variables', {
         data: GmCXt.variables
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSPreview_action:set_variables', {
+    GmCXt.sendMessageToApp('mgPlayerJSProd_action:set_variables', {
         variables: GmCXt.variables
     });
 };
@@ -8411,12 +6008,12 @@ GmCXt.trackElNotFound = function(d) {
     // if (window.self === window.top) {
     //     GmCXt.trackerV1.trackElNotFound(d);
     // } else {
-    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:track_element_not_found', d);
+    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:track_element_not_found', d);
     // }
 };
 
 GmCXt.onPopupRerender = function() {
-    if (mg$('#mgPlayerJSPreview_popup-reload').length > 0) {
+    if (mg$('#mgPlayerJSProd_popup-reload').length > 0) {
         var forceClose = !GmCXt.playerI.testAutomation;
         GmCXt.confirmTourClose(forceClose);
     }
@@ -8450,7 +6047,7 @@ GmCXt.getSurveyCompletedData = function(isNotif) {
 
 GmCXt.resetElTracker = function() {
     if (window.self === window.top) {
-        GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:reset_dom_tracker');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:reset_dom_tracker');
     }
 };
 
@@ -8464,7 +6061,7 @@ GmCXt.resetElTrackerVariable = function() {
 GmCXt.logElTracker = function() {
     if (window.self === window.top) {
         GmCXt.logTrackerData = false;
-        GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:request_dom_tracker_info');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:request_dom_tracker_info');
     }
 };
 
@@ -8473,7 +6070,7 @@ GmCXt.shareDomTrackerInfo = function() {
         if (GmCXt.isEmpty(GmCXt.domSelectorTracker)) {
             GmCXt.domSelectorTracker[GmCXt.id] = {};
         }
-        GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
+        GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
     } else {
         GmCXt.combineDomTrackerData();
     }
@@ -8530,9 +6127,9 @@ GmCXt.handleLinkClickEvent = function(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
         if (mediaType === "pdf") {
-            GmCXt.sendMessageToApp("mgPlayerJSPreview_action:open_pdf", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_pdf", e.target.href);
         } else {
-            GmCXt.sendMessageToApp("mgPlayerJSPreview_action:open_video_player", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_video_player", e.target.href);
         }
     } else if (GmCXt.isElectron()) {
         e.preventDefault();
@@ -8589,12 +6186,12 @@ GmCXt.captureScreenForFeedback = function(mailTo) {
     GmCXt.takeScreenshot().then(function(imageSrc) {
 
         if (GmCXt.isEmpty(imageSrc)) {
-            mg$(".mgPlayerJSPreview_feedback-overlay-svg-error").show();
-            mg$(".mgPlayerJSPreview_feedback-re-edit-btn").hide();
+            mg$(".mgPlayerJSProd_feedback-overlay-svg-error").show();
+            mg$(".mgPlayerJSProd_feedback-re-edit-btn").hide();
             mg$("#mg-feedback-screenshot-check").removeAttr("checked");
         } else {
-            mg$(".mgPlayerJSPreview_feedback-overlay-svg-error").hide();
-            mg$(".mgPlayerJSPreview_feedback-re-edit-btn").show();
+            mg$(".mgPlayerJSProd_feedback-overlay-svg-error").hide();
+            mg$(".mgPlayerJSProd_feedback-re-edit-btn").show();
         }
 
         var img = mg$("#mg-feedback-screenshot-image");
@@ -8624,12 +6221,12 @@ GmCXt.onEditScreenshotClick = function() {
 };
 
 GmCXt.onClickFeedbackHighlightArea = function() {
-    var div = document.getElementById('mgPlayerJSPreview_highlight');
+    var div = document.getElementById('mgPlayerJSProd_highlight');
     GmCXt.feedbackMarkArea(div);
 };
 
 GmCXt.onClickFeedbackHideArea = function() {
-    var div = document.getElementById('mgPlayerJSPreview_blackout');
+    var div = document.getElementById('mgPlayerJSProd_blackout');
     GmCXt.feedbackMarkArea(div, true);
 };
 
@@ -8721,13 +6318,13 @@ GmCXt.feedbackMarkArea = function(div, hide) {
 
 GmCXt.drawArea = function(arr, className) {
     var elems = arr;
-    mg$('DIV.mgPlayerJSPreview_selector-' + className).remove();
+    mg$('DIV.mgPlayerJSProd_selector-' + className).remove();
 
     for (var i = 0; i < elems.length && elems[i].id; i++) {
         var el = elems[i].element.position;
 
-        var closeBtn = '<div class="mgPlayerJSPreview_close-area mgPlayerJSPreview_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
-        var blackoutEl = mg$('<div class="mgPlayerJSPreview_selector-' + className + '" id="mgPlayerJSPreview_selector-' + className + '-' + elems[i].id + '">' +
+        var closeBtn = '<div class="mgPlayerJSProd_close-area mgPlayerJSProd_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
+        var blackoutEl = mg$('<div class="mgPlayerJSProd_selector-' + className + '" id="mgPlayerJSProd_selector-' + className + '-' + elems[i].id + '">' +
                 closeBtn +
                 '</div>')
             .appendTo('#mg-feedback-flex-container')
@@ -8739,13 +6336,13 @@ GmCXt.drawArea = function(arr, className) {
             });
     }
 
-    mg$("DIV.mgPlayerJSPreview_" + className + "-close").on('click', function(e) {
+    mg$("DIV.mgPlayerJSProd_" + className + "-close").on('click', function(e) {
         var oArr = [];
         arr.forEach(function(el, i) {
             if (el.id !== e.currentTarget.id) oArr.push(el);
         });
         arr = oArr;
-        mg$("#mgPlayerJSPreview_selector-" + className + "-" + e.currentTarget.id).remove();
+        mg$("#mgPlayerJSProd_selector-" + className + "-" + e.currentTarget.id).remove();
     });
 };
 
@@ -8788,9 +6385,9 @@ GmCXt.sendFeedback = function() {
 
 GmCXt.clearFeedBackView = function() {
     mg$("#mg-feedback-container-wrapper").remove();
-    mg$('.mgPlayerJSPreview_selector-highlight').remove();
+    mg$('.mgPlayerJSProd_selector-highlight').remove();
     GmCXt.sfMarkElements = [];
-    mg$('.mgPlayerJSPreview_selector-blackout-feedback').remove();
+    mg$('.mgPlayerJSProd_selector-blackout-feedback').remove();
     GmCXt.sfHideElements = [];
     GmCXt.mailTo = '';
     GmCXt.openAppPanel();
@@ -9060,12 +6657,12 @@ GmCXt.openAppPanel = function(action, source) {
 
 		if (GmCXt.editStepTout) {
 			clearTimeout(GmCXt.editStepTout);
-			mg$('.mgPlayerJSPreview_edit-step-loader').hide();
+			mg$('.mgPlayerJSProd_edit-step-loader').hide();
 		}
 
 		var byPassRoute = (action === "byPassRoute" || action === "playSlideShow") ? true : false;
 		if (!byPassRoute) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:open_side_panel", {
+			GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_side_panel", {
 				action: action
 			});
 		}
@@ -9083,22 +6680,22 @@ GmCXt.openAppPanel = function(action, source) {
 
 		GmCXt.timeout(function() {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSPreview_panel .mgPlayerJSPreview_app").css(alignment, "0px");
-			mg$(".mgPlayerJSPreview_panel").css(alignment, "0px");
+			mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css(alignment, "0px");
+			mg$(".mgPlayerJSProd_panel").css(alignment, "0px");
 			
 			if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-				mg$(".mgPlayerJSPreview_panel .mgPlayerJSPreview_app").css("right", "50px");
-				mg$(".mgPlayerJSPreview_panel").css("right", "50px");
+				mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css("right", "50px");
+				mg$(".mgPlayerJSProd_panel").css("right", "50px");
 				GmCXt.taskListOpen = false;
 			} else {
-				mg$(".mgPlayerJSPreview_panel").removeClass('mgPlayerJSPreview_theme-mplayer');
-				mg$(".mgPlayerJSPreview_panel").css("top", "0");
+				mg$(".mgPlayerJSProd_panel").removeClass('mgPlayerJSProd_theme-mplayer');
+				mg$(".mgPlayerJSProd_panel").css("top", "0");
 				GmCXt.showPanelCloseBtn();
 			}
 
 			GmCXt.removePreviewTop();
-			mg$(".mgPlayerJSPreview_panel").attr({'aria-hidden':false, 'tabindex':0});
-			mg$("#mgPlayerJSPreview_app").attr({'aria-hidden':false, 'tabindex':0});
+			mg$(".mgPlayerJSProd_panel").attr({'aria-hidden':false, 'tabindex':0});
+			mg$("#mgPlayerJSProd_app").attr({'aria-hidden':false, 'tabindex':0});
 
 		}, GmCXt.t.appPanel);
 
@@ -9113,7 +6710,7 @@ GmCXt.openAppPanel = function(action, source) {
 GmCXt.showPanelDisabledPopup = function() {
 	if (GmCXt.isExtension()) {
 		var m = {
-			action: 'mgPlayerJSPreview_action:to_background;task:show_panel_disabled_popup'
+			action: 'mgPlayerJSProd_action:to_background;task:show_panel_disabled_popup'
 		};
 		GmCXt.sendMessageToBackgroundService(m);
 	}
@@ -9329,57 +6926,57 @@ GmCXt.alert = function(options) {
 	};
 
 	pub.show = function() {
-		var popupType = 'mgPlayerJSPreview_popup-info';
+		var popupType = 'mgPlayerJSProd_popup-info';
 		var popupDescription = "";
 
 		if (self.description) {
-			popupDescription = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-info'>" + self.description + "</wmgPlayerJSPreview_>";
+			popupDescription = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-info'>" + self.description + "</wmgPlayerJSProd_>";
 		}
 
 		var cancelButton = "";
-		var okButton = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-ok mgPlayerJSPreview_btn-default mgPlayerJSPreview_ok-btn mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSPreview_>";
+		var okButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-ok mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSProd_>";
 
 		if (self.type === "confirm") {
-			cancelButton = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-cancel mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-neutral mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSPreview_>";
+			cancelButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-cancel mgPlayerJSProd_btn-default mgPlayerJSProd_btn-neutral mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSProd_>";
 
 		} else if (self.type === "onboarding") {
-			okButton = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-ok mgPlayerJSPreview_btn-default mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSPreview_>";
-			cancelButton = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-cancel mgPlayerJSPreview_btn-default mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSPreview_>";
+			okButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-ok mgPlayerJSProd_btn-default mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSProd_>";
+			cancelButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-cancel mgPlayerJSProd_btn-default mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSProd_>";
 		}
 
-		var html = " <wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-outer'></wmgPlayerJSPreview_>" +
-			" <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup " + popupType + "'>" +
-			"    <div class='mgPlayerJSPreview_popup-header-wrapper'>" +
-			"	    <div class='mgPlayerJSPreview_popup-header-icon-wrapper'><div class='mgPlayerJSPreview_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-outer'></wmgPlayerJSProd_>" +
+			" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
+			"    <div class='mgPlayerJSProd_popup-header-wrapper'>" +
+			"	    <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
 			"     </div>" +
-			" 	  <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'>" + self.title + "</wmgPlayerJSPreview_>" +
+			" 	  <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + self.title + "</wmgPlayerJSProd_>" +
 			popupDescription +
-			"     <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-btn-wrapper'>" +
+			"     <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
 			okButton +
 			cancelButton +
-			"    </wmgPlayerJSPreview_>" +
-			" </wmgPlayerJSPreview_>";
+			"    </wmgPlayerJSProd_>" +
+			" </wmgPlayerJSProd_>";
 
 		mg$("body").append(html);
 
-		mg$(".mgPlayerJSPreview_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
 
-		mg$(".mgPlayerJSPreview_panel-popup-outer").css('height', mg$(document).height());
+		mg$(".mgPlayerJSProd_panel-popup-outer").css('height', mg$(document).height());
 
-		mg$(".mgPlayerJSPreview_panel-popup-ok").on("click", function() {
+		mg$(".mgPlayerJSProd_panel-popup-ok").on("click", function() {
 			if (mg$.isFunction(self.callback))
 				self.callback();
 			pub.close();
 		});
 
-		mg$(".mgPlayerJSPreview_panel-popup-cancel").on("click", function() {
+		mg$(".mgPlayerJSProd_panel-popup-cancel").on("click", function() {
 			pub.close();
 		});
 	};
 
 	pub.close = function() {
-		mg$(".mgPlayerJSPreview_popup").remove();
-		mg$(".mgPlayerJSPreview_panel-popup-outer").remove();
+		mg$(".mgPlayerJSProd_popup").remove();
+		mg$(".mgPlayerJSProd_panel-popup-outer").remove();
 	};
 
 	return pub;
@@ -9437,52 +7034,52 @@ GmCXt.alertV2 = function(options) {
 	pub.show = function() {
 		var alt = GmCXt.getAutoLaunchTourId();
 		var pi = GmCXt.playerI;
-		var popupType = 'mgPlayerJSPreview_popup-info';
+		var popupType = 'mgPlayerJSProd_popup-info';
 
-		var html = " <wmgPlayerJSPreview_ class='mgPlayerJSPreview_overlay-container'></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup " + popupType + "'>" +
-			"   <div class='mgPlayerJSPreview_popup-header-wrapper'>" +
-			"	   <div class='mgPlayerJSPreview_popup-header-icon-wrapper'><div class='mgPlayerJSPreview_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
+			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
+			"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
+			"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
 			"   </div>" +
-			"<wmgPlayerJSPreview_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSPreview_popup-input-field' maxlength='1000' /></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'>" + self.description + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-btn-wrapper'>";
+			"<wmgPlayerJSProd_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSProd_popup-input-field' maxlength='1000' /></wmgPlayerJSProd_>" +
+			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + self.description + "</wmgPlayerJSProd_>" +
+			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>";
 
 		if (self.button1) {
-			html += "<wmgPlayerJSPreview_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSPreview_popup-ok-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_ok-btn mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt'>" + self.button1 + "</wmgPlayerJSPreview_>";
+			html += "<wmgPlayerJSProd_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSProd_popup-ok-btn mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt'>" + self.button1 + "</wmgPlayerJSProd_>";
 		}
 
 		if (self.button3) {
-			html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-play-inapp mgPlayerJSPreview_btn-default mgPlayerJSPreview_ok-btn mgPlayerJSPreview_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSPreview_>";
+			html += "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-play-inapp mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSProd_>";
 		}
 
 		if (self.button2) {
-			html += "<wmgPlayerJSPreview_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSPreview_popup-cancel-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt'>" + self.button2 + "</wmgPlayerJSPreview_>";
+			html += "<wmgPlayerJSProd_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSProd_popup-cancel-btn mgPlayerJSProd_btn-default mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt'>" + self.button2 + "</wmgPlayerJSProd_>";
 		}
 
-		html += "</wmgPlayerJSPreview_>";
+		html += "</wmgPlayerJSProd_>";
 
 		if (pi && alt && alt === pi.tour.tour_id)
-			html += "<wmgPlayerJSPreview_><input type='checkbox' class='mgPlayerJSPreview_popup-checkbox mgPlayerJSPreview_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
+			html += "<wmgPlayerJSProd_><input type='checkbox' class='mgPlayerJSProd_popup-checkbox mgPlayerJSProd_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSProd_>" +
+			"</wmgPlayerJSProd_>";
 
 		mg$("html").append(html);
 
-		mg$(".mgPlayerJSPreview_popup-header-icon").html(GmCXt.svgs.popup_info);
-		mg$(".mgPlayerJSPreview_popup").on("mousedown", function(e) {
+		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSProd_popup").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSPreview_overlay-container").on("mousedown", function(e) {
+		mg$(".mgPlayerJSProd_overlay-container").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSPreview_popup-ok-btn").on("click", function(e) {
+		mg$(".mgPlayerJSProd_popup-ok-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
-			var popupInputFieldValue = mg$('.mgPlayerJSPreview_popup-input-field').val();
+			var popupInputFieldValue = mg$('.mgPlayerJSProd_popup-input-field').val();
 			if (pi && alt && alt === pi.tour.tour_id) {
 
-				var checked = mg$('.mgPlayerJSPreview_popup-checkbox:checkbox:checked').length > 0;
+				var checked = mg$('.mgPlayerJSProd_popup-checkbox:checkbox:checked').length > 0;
 
 				if (checked)
 					GmCXt.setDoNotShowTours(pi.tour);
@@ -9495,21 +7092,21 @@ GmCXt.alertV2 = function(options) {
 				self.button1Callback(popupInputFieldValue);
 		});
 
-		mg$(".mgPlayerJSPreview_popup-play-inapp").on("click", function(e) {
+		mg$(".mgPlayerJSProd_popup-play-inapp").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close();
 			if (mg$.isFunction(self.button3Callback))
 				self.button3Callback();
 		});
 
-		mg$(".mgPlayerJSPreview_popup-cancel-btn").on("click", function(e) {
+		mg$(".mgPlayerJSProd_popup-cancel-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 			if (mg$.isFunction(self.button2Callback))
 				self.button2Callback();
 		});
 
-		mg$(".mgPlayerJSPreview_popup-close-button").on("click", function(e) {
+		mg$(".mgPlayerJSProd_popup-close-button").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 		});
@@ -9530,31 +7127,31 @@ GmCXt.alertV2 = function(options) {
 
 GmCXt.showForceMode = function() {
 	GmCXt.closePopup();
-	var popupType = 'mgPlayerJSPreview_popup-info';
+	var popupType = 'mgPlayerJSProd_popup-info';
 	var html =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_overlay-container'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup " + popupType + "'>" +
-		"   <div class='mgPlayerJSPreview_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSPreview_popup-header-icon-wrapper'><div class='mgPlayerJSPreview_popup-header-icon'></div></div>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
+		"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
 		"   </div>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-btn-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-continue-guide mgPlayerJSPreview_ok-btn mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-neutral mgPlayerJSPreview_btn-exit-guide mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSProd_>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_btn-default mgPlayerJSProd_btn-continue-guide mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSProd_>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_btn-default mgPlayerJSProd_btn-neutral mgPlayerJSProd_btn-exit-guide mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSProd_>" +
+		"</wmgPlayerJSProd_>" +
+		"</wmgPlayerJSProd_>";
 
 	mg$("html").append(html);
 
 	GmCXt.stopAudioTrack();
 
-	mg$(".mgPlayerJSPreview_popup-header-icon").html(GmCXt.svgs.popup_info);
+	mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
 	GmCXt.enforceGuideMePopup = true;
 	GmCXt.pauseAutomation();
 
 	var windowHeight = mg$(window).height();
-	var popupTop = (windowHeight - mg$('.mgPlayerJSPreview_popup').height()) / 2;
-	mg$('.mgPlayerJSPreview_popup').css("top", popupTop);
+	var popupTop = (windowHeight - mg$('.mgPlayerJSProd_popup').height()) / 2;
+	mg$('.mgPlayerJSProd_popup').css("top", popupTop);
 
 	function close(e) {
 		GmCXt.stopPropagation(e);
@@ -9563,9 +7160,9 @@ GmCXt.showForceMode = function() {
 		if (GmCXt.playerI) GmCXt.resumeAutomation();
 	}
 
-	mg$(".mgPlayerJSPreview_btn-continue-guide").on("click", close);
+	mg$(".mgPlayerJSProd_btn-continue-guide").on("click", close);
 
-	mg$(".mgPlayerJSPreview_btn-exit-guide").on("click", function(e) {
+	mg$(".mgPlayerJSProd_btn-exit-guide").on("click", function(e) {
 		if (GmCXt.isExitSurvey()) {
 			GmCXt.showExitSurvey();
 		}
@@ -9575,7 +7172,7 @@ GmCXt.showForceMode = function() {
 		close(e);
 	});
 
-	mg$(".mgPlayerJSPreview_popup-close-button").on("click", close);
+	mg$(".mgPlayerJSProd_popup-close-button").on("click", close);
 };
 
 GmCXt.firstStepAutoLaunch = function() {
@@ -9624,7 +7221,7 @@ GmCXt.resumeAutomation = function() {
 };
 
 GmCXt.sendMessageToSyncPlayerI = function() {
-	var msg = "mgPlayerJSPreview_action:sync_playerinstance_for_automation";
+	var msg = "mgPlayerJSProd_action:sync_playerinstance_for_automation";
 	var data = {};
 	data.playerInstance = GmCXt.playerI;
 	GmCXt.sendMessageToAllWindows(msg, data);
@@ -9684,7 +7281,7 @@ GmCXt.hideTooltipDelay = function(step, options) {
 			stepId: step.step_id,
 			options: options
 		};
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:hide_smarttip_delay', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_smarttip_delay', data);
 	}
 };
 
@@ -9693,7 +7290,7 @@ GmCXt.clearTooltipTimeout = function() {
 	if (window.self === window.top) {
 		clearTimeout(GmCXt.hideTooltipTimeout);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:clear_smarttip_delay_timeout');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:clear_smarttip_delay_timeout');
 	}
 };
 
@@ -9705,10 +7302,10 @@ GmCXt.hideValidationTooltip = function(step, showGuidanceTooltip) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideValidationSmarttip(data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:hide_validation_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_validation_smarttip', data);
 	}
 
-	mg$("#mgPlayerJSPreview_smarttip-valid-" + step.step_id).hide();
+	mg$("#mgPlayerJSProd_smarttip-valid-" + step.step_id).hide();
 };
 
 GmCXt.hideTooltip = function(step, options) {
@@ -9719,7 +7316,7 @@ GmCXt.hideTooltip = function(step, options) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideSmartTip(data, options);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:hide_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_smarttip', data);
 	}
 };
 
@@ -9944,14 +7541,14 @@ GmCXt.alignMessagePreview = function($popup, $container, alignment, stepSettings
 };
 
 GmCXt.closeNotificationPopup = function(isSidePanelOpen) {
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:close_notification_popup', {
+	GmCXt.sendMessageToApp('mgPlayerJSProd_action:close_notification_popup', {
 		isSidePanelOpen: isSidePanelOpen
 	});
 };
 
 GmCXt.removePreviewTop = function() {
 	GmCXt.removePreviewFrame();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:remove_preview");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:remove_preview");
 };
 
 GmCXt.hideSmartTipsIfOptionON = function() {
@@ -9963,37 +7560,37 @@ GmCXt.hideSmartTipsIfOptionON = function() {
 };
 
 GmCXt.hideSmartTips = function() {
-	mg$('.mgPlayerJSPreview_smarttip-icon').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSPreview_smarttip').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSPreview_smarttip-valid').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip-icon').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip-valid').addClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:hide_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:hide_all_smarttip");
 };
 
 GmCXt.showSmartTips = function(forceShow) {
 
 	if ((GmCXt.tourPlayerI && !forceShow) || GmCXt.isSurveyVisible) return;
 
-	mg$('.mgPlayerJSPreview_smarttip-icon').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSPreview_smarttip').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSPreview_smarttip-valid').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip-icon').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip-valid').removeClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:show_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_all_smarttip");
 };
 
 GmCXt.previewSmartTips = function(id) {
-	mg$('.mgPlayerJSPreview_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSPreview_smarttip-icon-wrapper-' + id).show();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:show_preview_smarttip", {
+	mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + id).show();
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_preview_smarttip", {
 		id: id
 	});
 };
 
 GmCXt.hideBeacons = function() {
-	mg$('.mgPlayerJSPreview_beacon-icon').addClass('mgPlayerJSPreview_hidden');
-	mg$('#mgPlayerJSPreview_beacon-icon-pos-select').show();
+	mg$('.mgPlayerJSProd_beacon-icon').addClass('mgPlayerJSProd_hidden');
+	mg$('#mgPlayerJSProd_beacon-icon-pos-select').show();
 	GmCXt.beaconsAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:hide_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:hide_beacons");
 };
 
 GmCXt.showBeacons = function(forceShow) {
@@ -10003,15 +7600,15 @@ GmCXt.showBeacons = function(forceShow) {
 		return;
 	}
 
-	mg$('.mgPlayerJSPreview_beacon-icon').removeClass('mgPlayerJSPreview_hidden');
-	mg$('#mgPlayerJSPreview_beacon-icon-pos-select').hide();
+	mg$('.mgPlayerJSProd_beacon-icon').removeClass('mgPlayerJSProd_hidden');
+	mg$('#mgPlayerJSProd_beacon-icon-pos-select').hide();
 	GmCXt.beaconsAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:show_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_beacons");
 };
 
 GmCXt.previewBeacons = function(id) {
-	mg$('.mgPlayerJSPreview_beacon-icon-tour-' + id).removeClass('mgPlayerJSPreview_hidden');
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:show_preview_beacons", {
+	mg$('.mgPlayerJSProd_beacon-icon-tour-' + id).removeClass('mgPlayerJSProd_hidden');
+	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_preview_beacons", {
 		id: id
 	});
 };
@@ -10040,9 +7637,9 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	// Check for image exist if yes then add popup js
 	var imgSrc = '';
 	GmCXt.setImagePopUp();
-	var fsBtn = "<div class='mgPlayerJSPreview_full-screen-icon-cont'><button class='mgPlayerJSPreview_full-screen-icon'>&#x26F6;</button></div>";
+	var fsBtn = "<div class='mgPlayerJSProd_full-screen-icon-cont'><button class='mgPlayerJSProd_full-screen-icon'>&#x26F6;</button></div>";
 
-	mg$(parentClassName).addClass('mgPlayerJSPreview_play-step-popup-loader');
+	mg$(parentClassName).addClass('mgPlayerJSProd_play-step-popup-loader');
 
 	var stepPopupImgList = mg$(parentClassName + ' img');
 
@@ -10051,24 +7648,24 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	stepPopupImgList.each(function(e) {
 		var stepPopupContent = mg$(parentClassName)[0].innerHTML;
 		var stepImgVar = stepPopupImgList[e].outerHTML;
-		var stepImgOverlay = "<div class='mgPlayerJSPreview_step-img-popup-overlay'></div>";
-		var newStepImgVar = "<div class='mgPlayerJSPreview_display-inline-block mgPlayerJSPreview_position-relative mgPlayerJSPreview_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
+		var stepImgOverlay = "<div class='mgPlayerJSProd_step-img-popup-overlay'></div>";
+		var newStepImgVar = "<div class='mgPlayerJSProd_display-inline-block mgPlayerJSProd_position-relative mgPlayerJSProd_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
 		finalStepPopupContent = stepPopupContent.replace(stepImgVar, newStepImgVar);
 		mg$(parentClassName)[0].innerHTML = finalStepPopupContent;
-	}).addClass('mgPlayerJSPreview_custom-image');
+	}).addClass('mgPlayerJSProd_custom-image');
 
-	mg$(".mgPlayerJSPreview_full-screen-icon").html(GmCXt.svgs.fullscreen);
+	mg$(".mgPlayerJSProd_full-screen-icon").html(GmCXt.svgs.fullscreen);
 
-	mg$('.mgPlayerJSPreview_full-screen-icon').on("click", function(e) {
-		var modalImg = document.getElementById("mgPlayerJSPreview_img_desc");
-		var container = this.closest('.mgPlayerJSPreview_step-img-popup-cont');
+	mg$('.mgPlayerJSProd_full-screen-icon').on("click", function(e) {
+		var modalImg = document.getElementById("mgPlayerJSProd_img_desc");
+		var container = this.closest('.mgPlayerJSProd_step-img-popup-cont');
 		var imgElem = container.getElementsByTagName('img')[0];
 		imgSrc = imgElem.src;
-		var imgWrp = document.getElementsByClassName('mgPlayerJSPreview_image-popup')[0];
+		var imgWrp = document.getElementsByClassName('mgPlayerJSProd_image-popup')[0];
 		GmCXt.stopPropagation(e);
 		imgWrp.style.display = "block";
 		modalImg.src = imgSrc;
-		mg$('.mgPlayerJSPreview_preview-step-popup-container').css({
+		mg$('.mgPlayerJSProd_preview-step-popup-container').css({
 			'z-index': '2147483646'
 		});
 	});
@@ -10077,7 +7674,7 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 
 	mg$(parentClassName + ' img').on("load", function() {
 		if (GmCXt.alignPopupI) GmCXt.alignPopupI.redo();
-		mg$(parentClassName).removeClass('mgPlayerJSPreview_play-step-popup-loader');
+		mg$(parentClassName).removeClass('mgPlayerJSProd_play-step-popup-loader');
 	});
 };
 
@@ -10090,7 +7687,7 @@ GmCXt.getText = function(s) {
 
 GmCXt.singleLineTitle = function(t) {
 	var c = '';
-	if (t && t.length < 28) c = 'mgPlayerJSPreview_nowrap-div';
+	if (t && t.length < 28) c = 'mgPlayerJSProd_nowrap-div';
 	return c;
 };
 
@@ -10129,27 +7726,27 @@ GmCXt.reportPresence = function() {
 };
 
 GmCXt.setOnAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_audio_mode_on');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:set_audio_mode_on');
 };
 
 GmCXt.setOffAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_audio_mode_off');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:set_audio_mode_off');
 };
 
 GmCXt.setOnOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSPreview_tooltip-title-mute').show();
-	mg$('.mgPlayerJSPreview_tooltip-title-unmute').hide();
-	mg$('.mgPlayerJSPreview_onboarding-audio-off').hide();
-	mg$('.mgPlayerJSPreview_onboarding-audio-on').show();
-	mg$('.mgPlayerJSPreview_onboarding-audio').addClass('playing-audio');
+	mg$('.mgPlayerJSProd_tooltip-title-mute').show();
+	mg$('.mgPlayerJSProd_tooltip-title-unmute').hide();
+	mg$('.mgPlayerJSProd_onboarding-audio-off').hide();
+	mg$('.mgPlayerJSProd_onboarding-audio-on').show();
+	mg$('.mgPlayerJSProd_onboarding-audio').addClass('playing-audio');
 };
 
 GmCXt.setOffOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSPreview_tooltip-title-mute').hide();
-	mg$('.mgPlayerJSPreview_tooltip-title-unmute').show();
-	mg$('.mgPlayerJSPreview_onboarding-audio-on').hide();
-	mg$('.mgPlayerJSPreview_onboarding-audio-off').show();
-	mg$('.mgPlayerJSPreview_onboarding-audio').removeClass('playing-audio');
+	mg$('.mgPlayerJSProd_tooltip-title-mute').hide();
+	mg$('.mgPlayerJSProd_tooltip-title-unmute').show();
+	mg$('.mgPlayerJSProd_onboarding-audio-on').hide();
+	mg$('.mgPlayerJSProd_onboarding-audio-off').show();
+	mg$('.mgPlayerJSProd_onboarding-audio').removeClass('playing-audio');
 };
 
 GmCXt.getBoundingRect = function(he) {
@@ -10188,8 +7785,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			yPosMid = (pos.top + pos.height) / 2;
 		}
 
-		disable('.mgPlayerJSPreview_smarttip-icon');
-		disable('.mgPlayerJSPreview_beacon-icon');
+		disable('.mgPlayerJSProd_smarttip-icon');
+		disable('.mgPlayerJSProd_beacon-icon');
 
 		var topEl = document.elementFromPoint(xPosMid, yPosMid);
 
@@ -10197,8 +7794,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			return 'hidden';
 		}
 
-		enable('.mgPlayerJSPreview_smarttip-icon');
-		enable('.mgPlayerJSPreview_beacon-icon');
+		enable('.mgPlayerJSProd_smarttip-icon');
+		enable('.mgPlayerJSProd_beacon-icon');
 
 		if (topEl === null) {
 			topEl = document.elementFromPoint(pos.left, pos.top);
@@ -10516,9 +8113,9 @@ GmCXt.isCurrentHost = function(host) {
 GmCXt.openPowerForm = function(data) {
 
 	if (window.self === window.top) {
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:show_power_form', data);
+		GmCXt.sendMessageToApp('mgPlayerJSProd_action:show_power_form', data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:open_power_form', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:open_power_form', data);
 	}
 };
 
@@ -10526,8 +8123,8 @@ GmCXt.rotateGear = function() {
 	var c = 1;
 	var i = null;
 
-	var id = '#mgPlayerJSPreview_auto-progress-';
-	var cls = 'mgPlayerJSPreview_active-progress';
+	var id = '#mgPlayerJSProd_auto-progress-';
+	var cls = 'mgPlayerJSProd_active-progress';
 
 	i = setInterval(function() {
 		if (c === 1 || mg$(id + (c - 1)).hasClass(cls)) { // check for the previous gear
@@ -10552,11 +8149,11 @@ GmCXt.removeTooltips = function(t) {
 		if (GmCXt.inTopWindow(step.step_settings)) {
 			GmCXt.requestHandler.removeToolip(data);
 		} else {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:remove_tooltip", data);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:remove_tooltip", data);
 		}
 
 		if (t.steps[j].step_settings.smartTip.type === 'injector') {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:remove_power_form", data);
+			GmCXt.sendMessageToApp("mgPlayerJSProd_action:remove_power_form", data);
 		}
 
 	}
@@ -10582,7 +8179,7 @@ GmCXt.updateBeaconsOnScreen = function(tourId, isValid) {
 			jobId: tourId,
 			isValid: isValid
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSPreview_action:update_beacons_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:update_beacons_on_screen", data);
 	}
 };
 
@@ -10698,7 +8295,7 @@ GmCXt.updateOnScreenTooltipGuideInfo = function(tour, tourId, stepId, isValid, s
 			smartTip: smartTip,
 			url: url
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSPreview_action:update_smarttip_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:update_smarttip_on_screen", data);
 	}
 };
 
@@ -10764,7 +8361,7 @@ GmCXt.clearDataOnLogout = function(d) {
 	GmCXt.organization = false;
 
 	GmCXt.clearSession();
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:clear_session');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:clear_session');
 };
 
 GmCXt.startReloginInterval = function() {
@@ -10834,12 +8431,12 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 
 		if (isExitSurvey) {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:exit_survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:exit_survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else if (data.type === "stepPlay") {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else {
@@ -10850,7 +8447,7 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 			GmCXt.checkIfSurveySubmitted(playerInstance, data, isExitSurvey, function(f) {
 				if (f) {
 					GmCXt.isSurveyVisible = true;
-					GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:survey_start;task:show_survey', data);
+					GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:survey_start;task:show_survey', data);
 				}
 				resolve(GmCXt.isSurveyVisible);
 			});
@@ -11000,23 +8597,23 @@ GmCXt.recordGuideEvents = function() {
 
 	if (GmCXt.isLastStep(PI.currentStepId, PI.playStructure) && GmCXt.tourActivity['t:' + PI.tour.tour_id]) {
 		delete GmCXt.tourActivity['t:' + PI.tour.tour_id];
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_tour_activity", {
+		GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_tour_activity", {
 			tourActivity: GmCXt.tourActivity
 		});
 	}
 };
 
 GmCXt.isClickInStepPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSPreview_preview-step-popup-container').length ||
-		mg$(e.target).hasClass('mgPlayerJSPreview_image-popup') ||
-		mg$(e.target).parents('.mgPlayerJSPreview_image-popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSPreview_icon-image-prev-button') ||
-		mg$(e.target).parents('.mgPlayerJSPreview_icon-image-prev-button').length ||
-		mg$(e.target).hasClass('mgPlayerJSPreview_image-step-prev') ||
-		mg$(e.target).parents('.mgPlayerJSPreview_play-pause-toolbar').length ||
-		mg$(e.target).hasClass('mgPlayerJSPreview_popup') ||
-		mg$(e.target).parents('.mgPlayerJSPreview_popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSPreview_overlay-container')
+	if (mg$(e.target).parents('.mgPlayerJSProd_preview-step-popup-container').length ||
+		mg$(e.target).hasClass('mgPlayerJSProd_image-popup') ||
+		mg$(e.target).parents('.mgPlayerJSProd_image-popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSProd_icon-image-prev-button') ||
+		mg$(e.target).parents('.mgPlayerJSProd_icon-image-prev-button').length ||
+		mg$(e.target).hasClass('mgPlayerJSProd_image-step-prev') ||
+		mg$(e.target).parents('.mgPlayerJSProd_play-pause-toolbar').length ||
+		mg$(e.target).hasClass('mgPlayerJSProd_popup') ||
+		mg$(e.target).parents('.mgPlayerJSProd_popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSProd_overlay-container')
 	) {
 		return true;
 	} else {
@@ -11025,7 +8622,7 @@ GmCXt.isClickInStepPopup = function(e) {
 };
 
 GmCXt.isClickInSurveyPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSPreview_survey-popup-wrapper').length) {
+	if (mg$(e.target).parents('.mgPlayerJSProd_survey-popup-wrapper').length) {
 		return true;
 	} else {
 		return false;
@@ -11076,18 +8673,18 @@ GmCXt.requiredWidth = function() {
 };
 
 GmCXt.getPopupHtml = function(msg, ok, cancel) {
-	var popupType = 'mgPlayerJSPreview_popup-info';
-	var html = " <wmgPlayerJSPreview_ class='mgPlayerJSPreview_overlay-container'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup " + popupType + "' id='mgPlayerJSPreview_popup-reload'>" +
-		"   <div class='mgPlayerJSPreview_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSPreview_popup-header-icon-wrapper'><div class='mgPlayerJSPreview_popup-header-icon'></div></div>" +
+	var popupType = 'mgPlayerJSProd_popup-info';
+	var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
+		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "' id='mgPlayerJSProd_popup-reload'>" +
+		"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
 		"   </div>" +
-		" <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'>" + msg + "</wmgPlayerJSPreview_>" +
-		" <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-btn-wrapper'>" +
-		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSPreview_popup-ok-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_ok-btn mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_lbl-btn'>" + ok + "</button>" +
-		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSPreview_popup-cancel-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_lbl-btn'>" + cancel + "</button>" +
-		" </wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
+		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + msg + "</wmgPlayerJSProd_>" +
+		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
+		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSProd_popup-ok-btn mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt mgPlayerJSProd_lbl-btn'>" + ok + "</button>" +
+		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSProd_popup-cancel-btn mgPlayerJSProd_btn-default mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt mgPlayerJSProd_lbl-btn'>" + cancel + "</button>" +
+		" </wmgPlayerJSProd_>" +
+		"</wmgPlayerJSProd_>";
 	return html;
 };
 
@@ -11095,26 +8692,26 @@ GmCXt.getKeyShortPopupHtml = function(tourList) {
 	var tourListStr = "";
 	if (tourList && tourList.length) {
 		for (var i = 0; i < tourList.length; i++) {
-			tourListStr = tourListStr + "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-row-content-wrapper'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-colmn-content-wrapper mgPlayerJSPreview_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSPreview_>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-colmn-content-wrapper mgPlayerJSPreview_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSPreview_></wmgPlayerJSPreview_>";
+			tourListStr = tourListStr + "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-row-content-wrapper'><wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper mgPlayerJSProd_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSProd_>" +
+				"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper mgPlayerJSProd_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSProd_></wmgPlayerJSProd_>";
 		}
 	} else {
-		tourListStr = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-row-content-wrapper'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSPreview_> " +
-			"</wmgPlayerJSPreview_>";
+		tourListStr = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-row-content-wrapper'><wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSProd_> " +
+			"</wmgPlayerJSProd_>";
 	}
 
 
-	var html = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup mgPlayerJSPreview_popup-info mgPlayerJSPreview_popup-keyshort' id='mgPlayerJSPreview_popup-reload'>" +
-		"   <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-header-wrapper'>" +
-		"	   <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSPreview_>" +
-		"	   <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-		"   </wmgPlayerJSPreview_>" +
-		" <wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'> " +
-		" 	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-main-content-wrapper'>" +
+	var html = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup mgPlayerJSProd_popup-info mgPlayerJSProd_popup-keyshort' id='mgPlayerJSProd_popup-reload'>" +
+		"   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-header-wrapper'>" +
+		"	   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSProd_>" +
+		"	   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSProd_>" +
+		"   </wmgPlayerJSProd_>" +
+		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'> " +
+		" 	<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-main-content-wrapper'>" +
 		tourListStr +
-		" 	</wmgPlayerJSPreview_>" +
-		" </wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
+		" 	</wmgPlayerJSProd_>" +
+		" </wmgPlayerJSProd_>" +
+		"</wmgPlayerJSProd_>";
 	return html;
 };
 
@@ -11124,13 +8721,13 @@ GmCXt.stopPropagation = function(e) {
 
 GmCXt.addPopupEvents = function(onOK, onCancel, onClose) {
 
-	mg$(".mgPlayerJSPreview_popup").on("mousedown", GmCXt.stopPropagation);
-	mg$(".mgPlayerJSPreview_overlay-container").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSProd_popup").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSProd_overlay-container").on("mousedown", GmCXt.stopPropagation);
 
-	mg$(".mgPlayerJSPreview_popup-ok-btn").on("click", onOK);
-	mg$(".mgPlayerJSPreview_popup-cancel-btn").on("click", onCancel);
-	mg$(".mgPlayerJSPreview_popup-close-button").on("click", onClose);
-	mg$(".mgPlayerJSPreview_popup-keyshort-close").on("click", onOK);
+	mg$(".mgPlayerJSProd_popup-ok-btn").on("click", onOK);
+	mg$(".mgPlayerJSProd_popup-cancel-btn").on("click", onCancel);
+	mg$(".mgPlayerJSProd_popup-close-button").on("click", onClose);
+	mg$(".mgPlayerJSProd_popup-keyshort-close").on("click", onOK);
 };
 
 GmCXt.showPushOptions = function(opts) {
@@ -11147,11 +8744,11 @@ GmCXt.showPushOptions = function(opts) {
 
 		mg$("html").append(GmCXt.getPopupHtml(msg, ok, cancel));
 
-		mg$(".mgPlayerJSPreview_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
 
 		function closeGuide() {
 			if (opts.slideshow) {
-				GmCXt.sendMessageToApp('mgPlayerJSPreview_action:stop_slideshow');
+				GmCXt.sendMessageToApp('mgPlayerJSProd_action:stop_slideshow');
 				GmCXt.cleanPlayer();
 			} else if (opts.isTour) {
 				var pi = GmCXt.playerI;
@@ -11194,15 +8791,15 @@ GmCXt.showPushOptions = function(opts) {
 };
 
 GmCXt.closePopup = function() {
-	mg$(".mgPlayerJSPreview_popup").remove();
-	mg$(".mgPlayerJSPreview_overlay-container").remove();
+	mg$(".mgPlayerJSProd_popup").remove();
+	mg$(".mgPlayerJSProd_overlay-container").remove();
 };
 
 GmCXt.showExitSurvey = function(opts) {
 
 	var pi = GmCXt.playerI;
 	GmCXt.unlockScroll();
-	mg$(".mgPlayerJSPreview_popup").remove();
+	mg$(".mgPlayerJSProd_popup").remove();
 	GmCXt.getSurveyScreen(pi, true);
 };
 
@@ -11253,7 +8850,7 @@ GmCXt.setLinkGuidePlay = function(text, popClass) {
 							tourId: tourId,
 							initiator: initiator
 						};
-						GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:play_guide_from_link', data);
+						GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:play_guide_from_link', data);
 					}
 				}
 			});
@@ -11352,7 +8949,7 @@ GmCXt.updNotifDataSidePanel = function(toursClosed, tourIdArray) {
 	if (GmCXt.isAnonymousUser()) {
 		data.tourIdArray = tourIdArray;
 	}
-	GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_notification_info", data);
+	GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_notification_info", data);
 };
 
 GmCXt.updateNotification = function(tours) {
@@ -11488,19 +9085,19 @@ GmCXt.setZoomImageFromIframe = function(desc, parentClassName) {
 };
 
 GmCXt.initialiseImagePopUp = function() {
-	GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:initialize_image_iframe_popup', {});
+	GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:initialize_image_iframe_popup', {});
 };
 
 GmCXt.openModalFromTopWindow = function(src) {
 	var data = {};
 	data.imageSrc = src;
-	GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:open_image_iframe_popup', data);
+	GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:open_image_iframe_popup', data);
 };
 
 GmCXt.setImagePopUp = function() {
-	mg$('#mgPlayerJSPreview_image_popup').remove();
+	mg$('#mgPlayerJSProd_image_popup').remove();
 	GmCXt.addImagePopHtml();
-	var modal = document.getElementById('mgPlayerJSPreview_image_popup');
+	var modal = document.getElementById('mgPlayerJSProd_image_popup');
 
 	if (modal) {
 		modal.style.display = "none";
@@ -11508,12 +9105,12 @@ GmCXt.setImagePopUp = function() {
 			GmCXt.stopPropagation(e);
 		};
 	}
-	var closeBtn = document.getElementsByClassName("mgPlayerJSPreview_close-img-popup")[0];
+	var closeBtn = document.getElementsByClassName("mgPlayerJSProd_close-img-popup")[0];
 	if (closeBtn) {
 		closeBtn.onclick = function(e) {
 			GmCXt.stopPropagation(e);
 			modal.style.display = "none";
-			mg$('.mgPlayerJSPreview_preview-step-popup-container').css({
+			mg$('.mgPlayerJSProd_preview-step-popup-container').css({
 				'z-index': '2147483647'
 			});
 		};
@@ -11521,8 +9118,8 @@ GmCXt.setImagePopUp = function() {
 };
 
 GmCXt.openImagePopup = function(data) {
-	var modal = document.getElementById('mgPlayerJSPreview_image_popup');
-	var modalImg = document.getElementById("mgPlayerJSPreview_img_desc");
+	var modal = document.getElementById('mgPlayerJSProd_image_popup');
+	var modalImg = document.getElementById("mgPlayerJSProd_img_desc");
 	modal.style.display = "block";
 	modalImg.src = data.imageSrc;
 };
@@ -11532,7 +9129,7 @@ GmCXt.addEventOnTooltip = function(req) {
 	clearTimeout(GmCXt.tooltipTimeout);
 
 	GmCXt.tooltipTimeout = GmCXt.timeout(function() {
-		var el = mg$('#mgPlayerJSPreview_smarttip-' + req.step.step_id);
+		var el = mg$('#mgPlayerJSProd_smarttip-' + req.step.step_id);
 
 		el.off("click").on('click', function(e) {
 			if (!req.isPreview) {
@@ -11549,29 +9146,29 @@ GmCXt.isEventToolTip = function(event, stepId) {
 	var isSmartipEvent = false;
 
 	switch (targetId) {
-		case 'mgPlayerJSPreview_smarttip-icon-' + stepId:
+		case 'mgPlayerJSProd_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSPreview_smarttip-' + stepId:
+		case 'mgPlayerJSProd_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 	}
 
 	switch (cTargetId) {
-		case 'mgPlayerJSPreview_smarttip-icon-' + stepId:
+		case 'mgPlayerJSProd_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSPreview_smarttip-' + stepId:
+		case 'mgPlayerJSProd_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 			break;
 	}
 
-	if (mg$(event.currentTarget).hasClass("mgPlayerJSPreview_smarttip-icon-wrapper-" + stepId)) {
+	if (mg$(event.currentTarget).hasClass("mgPlayerJSProd_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
-	} else if (mg$(event.target).hasClass("mgPlayerJSPreview_smarttip-icon-wrapper-" + stepId)) {
+	} else if (mg$(event.target).hasClass("mgPlayerJSProd_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
 	}
 
@@ -11591,7 +9188,7 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 		if (window.self === window.top) {
 			GmCXt.openAppPanel('currentPage');
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSPreview_action:open_app_panel");
+			GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:open_app_panel");
 		}
 
 	} else if (tooltip.clickAction === 'openUrl') {
@@ -11614,9 +9211,9 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 			stepId: step.step_id
 		};
 		if (window.self === window.top) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:get_survey_detail_tooltip", data);
+			GmCXt.sendMessageToApp("mgPlayerJSProd_action:get_survey_detail_tooltip", data);
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSPreview_action:get_survey_data_from_sidepanel", data);
+			GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:get_survey_data_from_sidepanel", data);
 		}
 
 	}
@@ -11643,12 +9240,12 @@ GmCXt.isLastStepPlayed = function() {
 };
 
 GmCXt.getNextBtnElem = function() {
-	var nxtBtn = document.getElementById("mgPlayerJSPreview_play_step_next");
-	var doneBtn = document.getElementById("mgPlayerJSPreview_play_step_next_done");
-	var nxtClassic = document.getElementById("mgPlayerJSPreview_play_step_next_classic");
-	var doneClassic = document.getElementById("mgPlayerJSPreview_play_step_next_done_classic");
-	var pauseBtn = document.getElementById("mgPlayerJSPreview_play_step_pause");
-	var pauseClassic = document.getElementById("mgPlayerJSPreview_play_step_pause_classic");
+	var nxtBtn = document.getElementById("mgPlayerJSProd_play_step_next");
+	var doneBtn = document.getElementById("mgPlayerJSProd_play_step_next_done");
+	var nxtClassic = document.getElementById("mgPlayerJSProd_play_step_next_classic");
+	var doneClassic = document.getElementById("mgPlayerJSProd_play_step_next_done_classic");
+	var pauseBtn = document.getElementById("mgPlayerJSProd_play_step_pause");
+	var pauseClassic = document.getElementById("mgPlayerJSProd_play_step_pause_classic");
 	var btn;
 
 	if (mg$(nxtBtn).is(':visible'))
@@ -11867,23 +9464,23 @@ GmCXt.checkProceedToPlay = function(step, tour) {
 
 GmCXt.setPanelTopLeft = function(isClose) {
 	if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-		mg$(".mgPlayerJSPreview_panel").css("left", "initial");
-		mg$(".mgPlayerJSPreview_panel").css("top", "50%");
+		mg$(".mgPlayerJSProd_panel").css("left", "initial");
+		mg$(".mgPlayerJSProd_panel").css("top", "50%");
 		if (GmCXt.APP_PANEL_OPEN) {
-			mg$(".mgPlayerJSPreview_panel").css("right", "50px");
+			mg$(".mgPlayerJSProd_panel").css("right", "50px");
 		}
 	} else {
-		mg$(".mgPlayerJSPreview_panel").css("left", "initial");
-		mg$(".mgPlayerJSPreview_panel").css("top", "0");
+		mg$(".mgPlayerJSProd_panel").css("left", "initial");
+		mg$(".mgPlayerJSProd_panel").css("top", "0");
 		if (GmCXt.APP_PANEL_OPEN) {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSPreview_panel").css(alignment, "0");
+			mg$(".mgPlayerJSProd_panel").css(alignment, "0");
 		}
 	}
 };
 
 GmCXt.myGuideLogout = function() {
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:logout_user');
+	GmCXt.sendMessageToApp('mgPlayerJSProd_action:logout_user');
 };
 
 GmCXt.reloadElectronApp = function() {
@@ -11920,16 +9517,16 @@ GmCXt.getContainerOffSet = function(container) {
 
 GmCXt.removeScreenOverlay = function() {
 	GmCXt.screenOverlayI = undefined;
-	mg$('.mgPlayerJSPreview_screen-blackout').hide();
-	mg$('.mgPlayerJSPreview_screen-blackout').html('');
+	mg$('.mgPlayerJSProd_screen-blackout').hide();
+	mg$('.mgPlayerJSProd_screen-blackout').html('');
 };
 
 GmCXt.getWidgetInstance = function() {
-	return mg$('.mgPlayerJSPreview_start-button');
+	return mg$('.mgPlayerJSProd_start-button');
 };
 
 GmCXt.getChatIconInstance = function() {
-	return mg$('#mgPlayerJSPreview_btn-chat-button');
+	return mg$('#mgPlayerJSProd_btn-chat-button');
 };
 
 GmCXt.hideWidgetIcon = function() {
@@ -12022,8 +9619,8 @@ GmCXt.updateSurveyCompletedData = function(data) {
 };
 
 GmCXt.resetMplayerPos = function() {
-	mg$('.mgPlayerJSPreview_panel').removeAttr("style");
-	mg$('.mgPlayerJSPreview_panel').css({
+	mg$('.mgPlayerJSProd_panel').removeAttr("style");
+	mg$('.mgPlayerJSProd_panel').css({
 		'left': 'initial',
 		'top': '50%',
 		'right': '50px'
@@ -12032,11 +9629,11 @@ GmCXt.resetMplayerPos = function() {
 
 GmCXt.isMyGuideEl = function(el) {
 
-	if (el.nodeName.toLowerCase() === 'wmgPlayerJSPreview_over' ||
-		mg$(el).closest('wmgPlayerJSPreview_').length > 0 ||
+	if (el.nodeName.toLowerCase() === 'wmgPlayerJSProd_over' ||
+		mg$(el).closest('wmgPlayerJSProd_').length > 0 ||
 		(el.name && el.name.includes('guideme-iframe')) ||
-		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSPreview_") === 0 || el.className.indexOf(" mgPlayerJSPreview_") > 0)) ||
-		(el.id && el.id.indexOf("mgPlayerJSPreview_beacon-icon-") === 0)
+		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSProd_") === 0 || el.className.indexOf(" mgPlayerJSProd_") > 0)) ||
+		(el.id && el.id.indexOf("mgPlayerJSProd_beacon-icon-") === 0)
 	) {
 		return true;
 	}
@@ -12311,9 +9908,9 @@ GmCXt.playerIntervalValidator = function(boxUrl) {
 		if (lastRefresh != GmCXt.refreshTime ) {
 			GmCXt.log(70, "START PLAYER DATA REFRESH");
 
-			GmCXt.msgToApp('mgPlayerJSPreview_action:refresh_player', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSProd_action:refresh_player', r, senderTabId);
 		} else {
-			GmCXt.msgToApp('mgPlayerJSPreview_action:update_timestamp_sync_time', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSProd_action:update_timestamp_sync_time', r, senderTabId);
 			GmCXt.log(70, "NO UPDATE FOUND " + new Date());
 		}
 
@@ -12327,7 +9924,7 @@ GmCXt.creatorIntervalValidator = function(boxUrl) {
 
 	GmCXt.getModifiedObjects().then(function(updates) {
 		if (updates.length) {
-			GmCXt.msgToApp('mgPlayerJSPreview_action:creator_updates', {
+			GmCXt.msgToApp('mgPlayerJSProd_action:creator_updates', {
 				updates: updates,
 				refreshTime: GmCXt.creatorRefreshTime
 			}, senderTabId);
@@ -12364,7 +9961,7 @@ GmCXt.startCreatorUpdateInterval = function() {
 	var callSync = function() {
 		GmCXt.getModifiedObjects().then(function(updates) {
 			if (updates.length) {
-				GmCXt.msgToApp('mgPlayerJSPreview_action:creator_updates', {
+				GmCXt.msgToApp('mgPlayerJSProd_action:creator_updates', {
 					updates: updates,
 					refreshTime: GmCXt.creatorRefreshTime
 				}, senderTabId);
@@ -12401,7 +9998,7 @@ GmCXt.sendMessageToApp = function(type, data) {
 };
 
 GmCXt.sendMessageToAppIn = function(type, data) {
-	var appWindow = mg$(".mgPlayerJSPreview_app");
+	var appWindow = mg$(".mgPlayerJSProd_app");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -12487,7 +10084,7 @@ GmCXt.getCdnSignature = function(sendMessage) {
 
 	if (sendMessage) {
 
-		GmCXt.msgToApp('mgPlayerJSPreview_action:get_cdn_signature_from_app');
+		GmCXt.msgToApp('mgPlayerJSProd_action:get_cdn_signature_from_app');
 
 	} else { //this is used in Background.js for player and cretor sync
 		GmCXt.callGetCdnSignature({
@@ -12548,7 +10145,7 @@ GmCXt.getModifiedObjects = function(boxUrl) {
 							GmCXt.creatorRefreshTime = timestamp;
 
 							if (result.code === 1003 || result.code === 2004) {
-								GmCXt.msgToApp('mgPlayerJSPreview_action:logout_user');
+								GmCXt.msgToApp('mgPlayerJSProd_action:logout_user');
 							} else if (result.code === 1007) {
 								GmCXt.getAccessToken().then(function(r) {
 									GmCXt.saveToken(r);
@@ -12759,7 +10356,7 @@ GmCXt.callApi = function(data, api) {
 
 		function sendResponse(m) {
 
-			if (m && m.action === 'mgPlayerJSPreview_action:call_api_response') {
+			if (m && m.action === 'mgPlayerJSProd_action:call_api_response') {
 
 				if (m.data && m.data.id === mid) {
 					window.removeEventListener('message', winListener);
@@ -12793,16 +10390,16 @@ GmCXt.callApi = function(data, api) {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSPreview_action:call_api', d, senderTabId);
+			GmCXt.sendMessageToPanel('mgPlayerJSProd_action:call_api', d, senderTabId);
 
 		} else if (GmCXt.isSidePanelApp) {
 			GmCXt.msgToThisWin({
-				action: 'mgPlayerJSPreview_action:call_api',
+				action: 'mgPlayerJSProd_action:call_api',
 				data: d
 			});
 		} else {
 			window.addEventListener('message', winListener);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:call_api', d);
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:call_api', d);
 		}
 	});
 };
@@ -12887,11 +10484,11 @@ GmCXt.saveToken = function(r) {
 		if (!GmCXt.isBackgroundPage) {
 
 			GmCXt.getWidgetIcon().then(function(wUrl) {
-				mg$(".mgPlayerJSPreview_start-button img").attr('src', wUrl);
+				mg$(".mgPlayerJSProd_start-button img").attr('src', wUrl);
 			});
 		}
 
-		GmCXt.msgToApp('mgPlayerJSPreview_action:update_access_token', data, senderTabId);
+		GmCXt.msgToApp('mgPlayerJSProd_action:update_access_token', data, senderTabId);
 	}
 };
 
@@ -13193,7 +10790,7 @@ GmCXt.getDatafromPanel = function() {
 	return new Promise(function(resolve, reject) {
 
 		function sendResponse(m) {
-			if (m && m.action === 'mgPlayerJSPreview_action:get_data_from_panel_response') {
+			if (m && m.action === 'mgPlayerJSProd_action:get_data_from_panel_response') {
 				removeEventListener('message', chromeListener);
 				resolve(m.data);
 			}
@@ -13209,7 +10806,7 @@ GmCXt.getDatafromPanel = function() {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSPreview_action:get_data_from_panel');
+			GmCXt.sendMessageToPanel('mgPlayerJSProd_action:get_data_from_panel');
 		} else {
 			resolve(false);
 		}
@@ -13321,7 +10918,7 @@ GmCXt.updateTooltipActionInfo = function(tid, sid, smartTip, actionName) {
 			actionName: actionName,
 			tour: tour
 		};
-		var msg = "mgPlayerJSPreview_action:update_tooltip_action_info";
+		var msg = "mgPlayerJSProd_action:update_tooltip_action_info";
 
 		if (GmCXt.isSidePanelApp) {
 
@@ -14063,20 +11660,20 @@ GmCXt.updateDebugMode = function(mode) {
 		};
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToAllWindows)) {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:update_debug_mode", m);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:update_debug_mode", m);
 		}
 
 		if (!GmCXt.isSidePanelApp) {
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_debug_mode', m);
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_debug_mode', m);
 		}
 
 		GmCXt.sendMessageToBackgroundService({
-			action: 'mgPlayerJSPreview_action:update_debug_mode',
+			action: 'mgPlayerJSProd_action:update_debug_mode',
 			data: m
 		});
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToStepFrame)) {
-			GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:update_debug_mode', m);
+			GmCXt.sendMessageToStepFrame('mgPlayerJSProd_action:update_debug_mode', m);
 		}
 	}
 };
@@ -14179,7 +11776,7 @@ GmCXt.log = function(mode, str, opt) {
 
 GmCXt.sendMessageToPrintLog = function(m, s, o) {
 	var message = {
-		action: "mgPlayerJSPreview_action:print_debug_log",
+		action: "mgPlayerJSProd_action:print_debug_log",
 		data: {
 			mode: m,
 			str: s,
@@ -14264,7 +11861,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if(type !== "mgPlayerJSPreview_action:clear_rule_jobs" || type !== "mgPlayerJSPreview_action:remove_tooltip"){
+	if(type !== "mgPlayerJSProd_action:clear_rule_jobs" || type !== "mgPlayerJSProd_action:remove_tooltip"){
 		data.user = GmCXt.user;
 		data.organization = GmCXt.organization;
 	}
@@ -14281,45 +11878,45 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 
 	if (GmCXt.inTopWindow(data.settings)) {
 
-		if (type === "mgPlayerJSPreview_action:started;task:select_existing_dom_element") {
+		if (type === "mgPlayerJSProd_action:started;task:select_existing_dom_element") {
 			GmCXt.requestHandler.selectExistingDomElement(message.data);
 			return;
 		}
 
-		if (type === "mgPlayerJSPreview_action:started;task:edit_step_select_existing_dom_element") {
+		if (type === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditStep(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSPreview_action:started;task:edit_tag_select_existing_dom_element") {
+		if (type === "mgPlayerJSProd_action:started;task:edit_tag_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditTag(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSPreview_action:started;task:select_dom_element_tooltips") {
+		if (type === "mgPlayerJSProd_action:started;task:select_dom_element_tooltips") {
 			GmCXt.requestHandler.selectDomElement(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element") {
+		if (type === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element") {
 			GmCXt.selectorTool = null;
 			GmCXt.requestHandler.selectDomElementBeaconEdit(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSPreview_action:started;task:search_next_step") {
+		if (type === "mgPlayerJSProd_action:started;task:search_next_step") {
 			GmCXt.requestHandler.searchDomElement(message.data);
 			return;
 		}
 
 	} else if (GmCXt.inTopWindow(data.beaconSettings)) {
-		if (type === "mgPlayerJSPreview_action:show_beacon_on_dom_element") {
+		if (type === "mgPlayerJSProd_action:show_beacon_on_dom_element") {
 			GmCXt.highlighter.queueBeacon(message);
 			return;
 		}
 	}
 
-	if (type === "mgPlayerJSPreview_action:started;task:select_dom_element_for_rules") {
+	if (type === "mgPlayerJSProd_action:started;task:select_dom_element_for_rules") {
 
 		if (data.rule && data.rule.element && data.rule.element.meta) {
 			var el = data.rule.element;
@@ -14333,7 +11930,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSPreview_action:started;task:select_dom_element_for_matching_in_rules") {
+	if (type === "mgPlayerJSProd_action:started;task:select_dom_element_for_matching_in_rules") {
 		if (data.element && data.element.meta) {
 			var el = data.element;
 			if (el.meta.inTopWindow === true) {
@@ -14343,7 +11940,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSPreview_action:update_session_info") {
+	if (type === "mgPlayerJSProd_action:update_session_info") {
 		GmCXt.sessionInfo = data.sessionInfo;
 	}
 
@@ -14470,7 +12067,7 @@ GmCXt.sendMessageToolbar = function(type, data) {
 };
 
 GmCXt.sendMessageToolbarIn = function(type, data) {
-	var appWindow = mg$("#mgPlayerJSPreview_toolbar-iframe");
+	var appWindow = mg$("#mgPlayerJSProd_toolbar-iframe");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -14485,8 +12082,8 @@ GmCXt.sendMessageToStepFrame = function(type, data) {
 
 	var sent = false;
 
-	if (mg$("#mgPlayerJSPreview_step-iframe").length) {
-		var newStepFrame = mg$("#mgPlayerJSPreview_step-iframe").get(0).contentWindow;
+	if (mg$("#mgPlayerJSProd_step-iframe").length) {
+		var newStepFrame = mg$("#mgPlayerJSProd_step-iframe").get(0).contentWindow;
 
 		data = data || {};
 		data.config = GmCXt.conf;
@@ -14552,7 +12149,7 @@ GmCXt.getAppStorage = function(keys) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
 				if (message.data && (mid === message.data.id)) {
-					if (message.action && (message.action === 'mgPlayerJSPreview_action:get_local_storage_response')) {
+					if (message.action && (message.action === 'mgPlayerJSProd_action:get_local_storage_response')) {
 						window.removeEventListener('message', listen);
 						resolve(message.data.items);
 					}
@@ -14564,7 +12161,7 @@ GmCXt.getAppStorage = function(keys) {
 				id: mid,
 				keys: keys
 			};
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:get_local_storage', d);
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:get_local_storage', d);
 		});
 	}
 };
@@ -14587,14 +12184,14 @@ GmCXt.setAppStorage = function(data) {
 			function listen(event) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSPreview_action:set_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSProd_action:set_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:set_local_storage', data);
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:set_local_storage', data);
 		});
 	}
 };
@@ -14618,14 +12215,14 @@ GmCXt.removeAppStorage = function(keys) {
 
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSPreview_action:remove_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSProd_action:remove_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:remove_local_storage', keys);
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:remove_local_storage', keys);
 		});
 	}
 };
@@ -26301,7 +23898,7 @@ GmCXt.svgs = {
 		'<path fill-rule="evenodd" clip-rule="evenodd" d="M10.0755 15.5729C10.1334 15.613 10.2007 15.6333 10.2682 15.6333C10.3235 15.6333 10.3789 15.6197 10.4295 15.5922C10.542 15.5312 10.6122 15.4116 10.6122 15.2815V0.985114C10.6122 0.852045 10.5388 0.730341 10.4224 0.670632C10.3062 0.611029 10.1669 0.623485 10.0625 0.703072C10.0229 0.733296 6.12166 3.70627 3.79778 5.31987H1.34404C1.15403 5.31987 1 5.47743 1 5.67172V10.5949C1 10.7892 1.15403 10.9467 1.34404 10.9467H3.79765C4.92723 11.7312 5.91912 12.4876 6.87919 13.2197L6.87993 13.2202C7.87115 13.976 8.89613 14.7576 10.0755 15.5729ZM3.90323 10.2431H1.68808V6.02361H3.90333C3.97204 6.02361 4.03916 6.00256 4.09603 5.96323C5.90625 4.7116 8.7392 2.58106 9.92413 1.68434V14.6139C8.97669 13.9413 8.12158 13.2893 7.29049 12.6555C6.29956 11.8999 5.27491 11.1186 4.09593 10.3034C4.03902 10.2641 3.9719 10.2431 3.90323 10.2431ZM17.9084 6.53378L15.9422 8.50005L17.9084 10.4662C18.0305 10.5883 18.0305 10.7863 17.9084 10.9084C17.8473 10.9695 17.7673 11 17.6873 11C17.6074 11 17.5273 10.9695 17.4662 10.9084L15.5001 8.94211L13.5338 10.9084C13.4727 10.9695 13.3926 11 13.3127 11C13.2327 11 13.1527 10.9695 13.0916 10.9085C12.9695 10.7864 12.9695 10.5884 13.0916 10.4663L15.0579 8.50005L13.0916 6.53378C12.9695 6.41172 12.9695 6.21368 13.0916 6.09162C13.2138 5.96946 13.4116 5.96946 13.5338 6.09162L15.5001 8.05789L17.4662 6.09162C17.5884 5.96946 17.7862 5.96946 17.9084 6.09162C18.0305 6.21368 18.0305 6.41172 17.9084 6.53378Z" fill="#757575" />' +
 		'<path d="M10.0755 15.5729L10.36 15.1617L10.3598 15.1616L10.0755 15.5729ZM10.4295 15.5922L10.1909 15.1528L10.1908 15.1529L10.4295 15.5922ZM10.4224 0.670632L10.6508 0.225813L10.6505 0.225677L10.4224 0.670632ZM10.0625 0.703072L10.3657 1.10066L10.3657 1.10063L10.0625 0.703072ZM3.79778 5.31987V5.81987H3.95435L4.08296 5.73058L3.79778 5.31987ZM3.79765 10.9467L4.08287 10.5361L3.95424 10.4467H3.79765V10.9467ZM6.87919 13.2197L6.57601 13.6173L6.57612 13.6173L6.87919 13.2197ZM6.87993 13.2202L7.1831 12.8226L7.183 12.8225L6.87993 13.2202ZM1.68808 10.2431H1.18808V10.7431H1.68808V10.2431ZM1.68808 6.02361V5.52361H1.18808V6.02361H1.68808ZM4.09603 5.96323L3.81167 5.55196L3.8116 5.55201L4.09603 5.96323ZM9.92413 1.68434H10.4241V0.678921L9.62241 1.28564L9.92413 1.68434ZM9.92413 14.6139L9.6347 15.0216L10.4241 15.582V14.6139H9.92413ZM7.29049 12.6555L7.59367 12.258L7.59367 12.258L7.29049 12.6555ZM4.09593 10.3034L4.38028 9.89217L4.38025 9.89215L4.09593 10.3034ZM15.9422 8.50005L15.5886 8.14651L15.2351 8.50006L15.5886 8.85361L15.9422 8.50005ZM17.9084 6.53378L17.555 6.18009L17.5548 6.18024L17.9084 6.53378ZM17.9084 10.4662L17.5548 10.8198L17.555 10.8199L17.9084 10.4662ZM17.9084 10.9084L17.555 10.5547L17.5548 10.5548L17.9084 10.9084ZM17.4662 10.9084L17.8198 10.5548L17.8198 10.5548L17.4662 10.9084ZM15.5001 8.94211L15.8536 8.58856L15.5001 8.235L15.1465 8.58855L15.5001 8.94211ZM13.5338 10.9084L13.1802 10.5548L13.1802 10.5548L13.5338 10.9084ZM13.0916 10.9085L12.7382 11.2622L12.7384 11.2623L13.0916 10.9085ZM13.0916 10.4663L13.445 10.82L13.4452 10.8199L13.0916 10.4663ZM15.0579 8.50005L15.4115 8.85361L15.765 8.50005L15.4115 8.1465L15.0579 8.50005ZM13.0916 6.53378L13.4452 6.18023L13.445 6.18009L13.0916 6.53378ZM13.0916 6.09162L13.445 6.44532L13.4452 6.44517L13.0916 6.09162ZM13.5338 6.09162L13.1802 6.44517L13.1802 6.44518L13.5338 6.09162ZM15.5001 8.05789L15.1465 8.41145L15.5001 8.765L15.8536 8.41144L15.5001 8.05789ZM17.4662 6.09162L17.1127 5.73807L17.1127 5.73808L17.4662 6.09162ZM17.9084 6.09162L17.5548 6.44517L17.555 6.44532L17.9084 6.09162ZM10.2682 15.1333C10.3011 15.1333 10.3333 15.1433 10.36 15.1617L9.79098 15.9841C9.93362 16.0828 10.1004 16.1333 10.2682 16.1333V15.1333ZM10.1908 15.1529C10.2145 15.14 10.2413 15.1333 10.2682 15.1333V16.1333C10.4056 16.1333 10.5433 16.0994 10.6682 16.0315L10.1908 15.1529ZM10.1122 15.2815C10.1122 15.2324 10.1387 15.1812 10.1909 15.1528L10.6681 16.0316C10.9452 15.8811 11.1122 15.5908 11.1122 15.2815H10.1122ZM10.1122 0.985114V15.2815H11.1122V0.985114H10.1122ZM10.1941 1.11545C10.14 1.08766 10.1122 1.03536 10.1122 0.985114H11.1122C11.1122 0.668733 10.9376 0.373023 10.6508 0.225813L10.1941 1.11545ZM10.3657 1.10063C10.3173 1.13753 10.25 1.14412 10.1944 1.11559L10.6505 0.225677C10.3623 0.0779435 10.0164 0.109434 9.75928 0.305513L10.3657 1.10063ZM4.08296 5.73058C6.41776 4.10938 10.3283 1.12917 10.3657 1.10066L9.75931 0.305489C9.71744 0.337422 5.82555 3.30316 3.51261 4.90917L4.08296 5.73058ZM1.34404 5.81987H3.79778V4.81987H1.34404V5.81987ZM1.5 5.67172C1.5 5.7429 1.44072 5.81987 1.34404 5.81987V4.81987C0.86733 4.81987 0.5 5.21196 0.5 5.67172H1.5ZM1.5 10.5949V5.67172H0.5V10.5949H1.5ZM1.34404 10.4467C1.44072 10.4467 1.5 10.5237 1.5 10.5949H0.5C0.5 11.0546 0.86733 11.4467 1.34404 11.4467V10.4467ZM3.79765 10.4467H1.34404V11.4467H3.79765V10.4467ZM7.18237 12.8221C6.22304 12.0905 5.22283 11.3278 4.08287 10.5361L3.51243 11.3574C4.63163 12.1347 5.6152 12.8846 6.57601 13.6173L7.18237 12.8221ZM7.183 12.8225L7.18226 12.822L6.57612 13.6173L6.57686 13.6179L7.183 12.8225ZM10.3598 15.1616C9.19134 14.3538 8.17504 13.579 7.1831 12.8226L6.57676 13.6178C7.56726 14.3731 8.60092 15.1613 9.79114 15.9842L10.3598 15.1616ZM1.68808 10.7431H3.90323V9.74307H1.68808V10.7431ZM1.18808 6.02361V10.2431H2.18808V6.02361H1.18808ZM3.90333 5.52361H1.68808V6.52361H3.90333V5.52361ZM3.8116 5.55201C3.83767 5.53398 3.86963 5.52361 3.90333 5.52361V6.52361C4.07444 6.52361 4.24065 6.47115 4.38046 6.37444L3.8116 5.55201ZM9.62241 1.28564C8.43606 2.18343 5.61161 4.30744 3.81167 5.55196L4.38039 6.37449C6.2009 5.11576 9.04234 2.97869 10.2259 2.08304L9.62241 1.28564ZM10.4241 14.6139V1.68434H9.42413V14.6139H10.4241ZM6.98731 13.0531C7.81773 13.6864 8.6793 14.3434 9.6347 15.0216L10.2136 14.2062C9.27408 13.5392 8.42544 12.8922 7.59367 12.258L6.98731 13.0531ZM3.81157 10.7147C4.97969 11.5224 5.99566 12.297 6.98731 13.0531L7.59367 12.258C6.60345 11.5029 5.57013 10.7148 4.38028 9.89217L3.81157 10.7147ZM3.90323 10.7431C3.86945 10.7431 3.83755 10.7327 3.8116 10.7147L4.38025 9.89215C4.2405 9.79554 4.07435 9.74307 3.90323 9.74307V10.7431ZM16.2958 8.8536L18.2619 6.88733L17.5548 6.18024L15.5886 8.14651L16.2958 8.8536ZM18.2619 10.1127L16.2957 8.1465L15.5886 8.85361L17.5548 10.8198L18.2619 10.1127ZM18.2618 11.2621C18.5794 10.9447 18.5794 10.4299 18.2618 10.1125L17.555 10.8199C17.4817 10.7467 17.4817 10.6279 17.555 10.5547L18.2618 11.2621ZM17.6873 11.5C17.8946 11.5 18.1034 11.4205 18.2619 11.2619L17.5548 10.5548C17.5912 10.5184 17.64 10.5 17.6873 10.5V11.5ZM17.1127 11.2619C17.2712 11.4205 17.4801 11.5 17.6873 11.5V10.5C17.7347 10.5 17.7834 10.5184 17.8198 10.5548L17.1127 11.2619ZM15.1465 9.29565L17.1127 11.2619L17.8198 10.5548L15.8536 8.58856L15.1465 9.29565ZM13.8873 11.2619L15.8536 9.29566L15.1465 8.58855L13.1802 10.5548L13.8873 11.2619ZM13.3127 11.5C13.5199 11.5 13.7288 11.4205 13.8873 11.2619L13.1802 10.5548C13.2166 10.5184 13.2653 10.5 13.3127 10.5V11.5ZM12.7384 11.2623C12.8968 11.4205 13.1055 11.5 13.3127 11.5V10.5C13.36 10.5 13.4086 10.5184 13.4449 10.5546L12.7384 11.2623ZM12.7382 10.1126C12.4206 10.43 12.4206 10.9448 12.7382 11.2622L13.445 10.5548C13.5183 10.628 13.5183 10.7468 13.445 10.82L12.7382 10.1126ZM14.7044 8.1465L12.7381 10.1128L13.4452 10.8199L15.4115 8.85361L14.7044 8.1465ZM12.7381 6.88734L14.7044 8.85361L15.4115 8.1465L13.4452 6.18023L12.7381 6.88734ZM12.7382 5.73792C12.4206 6.05528 12.4206 6.57013 12.7382 6.88748L13.445 6.18009C13.5183 6.25332 13.5183 6.37208 13.445 6.44532L12.7382 5.73792ZM13.8873 5.73808C13.5699 5.42064 13.0555 5.42064 12.7381 5.73808L13.4452 6.44517C13.3721 6.51828 13.2533 6.51828 13.1802 6.44517L13.8873 5.73808ZM15.8536 7.70434L13.8873 5.73807L13.1802 6.44518L15.1465 8.41145L15.8536 7.70434ZM17.1127 5.73808L15.1465 7.70435L15.8536 8.41144L17.8198 6.44517L17.1127 5.73808ZM18.2619 5.73807C17.9445 5.42064 17.4301 5.42064 17.1127 5.73807L17.8198 6.44517C17.7467 6.51828 17.6279 6.51828 17.5548 6.44517L18.2619 5.73807ZM18.2618 6.88748C18.5794 6.57013 18.5794 6.05528 18.2618 5.73793L17.555 6.44532C17.4817 6.37208 17.4817 6.25332 17.555 6.18009L18.2618 6.88748Z" fill="#757575" mask="url(#path-1-outside-1)" />' +
 		'</svg>',
-	insights_popup_desktop: '<svg version="1.1" id="Layer_1" class="mgPlayerJSPreview_position-center mgPlayerJSPreview_width-height-100" x="0px" y="0px" viewBox="0 0 146.65 139.91" style="enable-background:new 0 0 146.65 139.91;" xml:space="preserve">' +
+	insights_popup_desktop: '<svg version="1.1" id="Layer_1" class="mgPlayerJSProd_position-center mgPlayerJSProd_width-height-100" x="0px" y="0px" viewBox="0 0 146.65 139.91" style="enable-background:new 0 0 146.65 139.91;" xml:space="preserve">' +
         '<style type="text/css">' +
         '.st0 { fill: #A3FEFE; } .st1 { fill: #FFFFFF; } .st2 { fill: #1F37DD; } .st3 { fill: url(#SVGID_1_); }' +
         '</style>' +
@@ -26480,7 +24077,7 @@ GmCXt.svgs = {
 		'<path d="M0.9 10.9997C0.9 16.5696 5.43042 21.1 10.9997 21.1C16.5689 21.1 21.1 16.5696 21.0994 10.9997C21.0994 5.43108 16.5689 0.9 10.9997 0.9C5.43042 0.9 0.9 5.43108 0.9 10.9997ZM2.24299 10.9997C2.24299 6.1713 6.1713 2.24299 10.9997 2.24299C15.8287 2.24299 19.757 6.1713 19.7564 10.9997C19.7564 15.8287 15.8281 19.757 10.9997 19.757C6.1713 19.757 2.24299 15.8287 2.24299 10.9997Z" fill="#666666" stroke="#666666" stroke-width="0.2"/>' +
 		'<path d="M13.5916 14.5418C13.7232 14.6733 13.8945 14.7385 14.0667 14.7385C14.2376 14.7385 14.4096 14.6733 14.5412 14.5418C14.8038 14.2798 14.8036 13.8546 14.5412 13.5922L11.6715 10.7225V4.51258C11.6715 4.1411 11.371 3.84141 11.0003 3.84141C10.629 3.84141 10.3285 4.14175 10.3285 4.51258V11.0002C10.3285 11.1787 10.3989 11.349 10.5252 11.4753L13.5916 14.5418Z" fill="#666666" stroke="#666666" stroke-width="0.2"/>' +
 		'</svg>',
-	tick: '<svg class="mgPlayerJSPreview_position-center mgPlayerJSPreview_width-height-100" viewBox="0 0 14 14" fill="none" >' +
+	tick: '<svg class="mgPlayerJSProd_position-center mgPlayerJSProd_width-height-100" viewBox="0 0 14 14" fill="none" >' +
 		'<circle cx="7" cy="7" r="7" fill="#38b6a0"/>' +
 		'<path d="M6.06335 10.8651C5.98699 10.9517 5.8828 11 5.77457 11C5.66634 11 5.56215 10.9517 5.48579 10.8651L3.17951 8.26584C2.94016 7.99613 2.94016 7.55879 3.17951 7.28959L3.46829 6.96408C3.7077 6.69438 4.09536 6.69438 4.3347 6.96408L5.77457 8.58671L9.6653 4.20228C9.90471 3.93257 10.2927 3.93257 10.5317 4.20228L10.8205 4.52778C11.0598 4.79749 11.0598 5.23475 10.8205 5.50404L6.06335 10.8651Z" fill="white"/>' +
 		'</svg>',
@@ -26516,7 +24113,7 @@ GmCXt.svgs = {
 		'<path d="M2.95457 12.3647H8.34838C8.57787 12.3647 8.79796 12.2735 8.96023 12.1112C9.1225 11.949 9.21367 11.7289 9.21367 11.4994C9.21367 11.2699 9.1225 11.0498 8.96023 10.8875C8.79796 10.7253 8.57787 10.6341 8.34838 10.6341H2.95457L4.91634 8.67234C5.07391 8.50911 5.16106 8.29051 5.15903 8.06363C5.15699 7.83676 5.06593 7.61976 4.90545 7.45938C4.74498 7.29899 4.52793 7.20805 4.30106 7.20615C4.07418 7.20424 3.85564 7.29152 3.69249 7.44918L0.253515 10.8882C0.173142 10.9685 0.109385 11.0639 0.0658863 11.1689C0.0223876 11.2739 0 11.3864 0 11.5001C0 11.6137 0.0223876 11.7263 0.0658863 11.8313C0.109385 11.9363 0.173142 12.0317 0.253515 12.112L3.69249 15.5517C3.77285 15.632 3.86825 15.6958 3.97324 15.7393C4.07823 15.7828 4.19077 15.8051 4.30441 15.8051C4.41806 15.8051 4.53059 15.7828 4.63558 15.7393C4.74058 15.6958 4.83598 15.632 4.91634 15.5517C4.9967 15.4713 5.06044 15.3759 5.10393 15.2709C5.14742 15.1659 5.16981 15.0534 5.16981 14.9397C5.16981 14.8261 5.14742 14.7136 5.10393 14.6086C5.06044 14.5036 4.9967 14.4082 4.91634 14.3278L2.95457 12.3647Z" fill="white" />' +
 		'<path d="M22.9999 11.4994C22.9999 11.3858 22.9775 11.2732 22.9341 11.1682C22.8906 11.0632 22.8269 10.9678 22.7465 10.8875L19.3069 7.44851C19.1431 7.29412 18.9256 7.20961 18.7006 7.21292C18.4755 7.21624 18.2606 7.30711 18.1015 7.46627C17.9423 7.62542 17.8514 7.84032 17.8481 8.06537C17.8448 8.29042 17.9293 8.5079 18.0837 8.67167L20.0462 10.6334H14.6517C14.4222 10.6334 14.2021 10.7246 14.0398 10.8869C13.8775 11.0491 13.7864 11.2692 13.7864 11.4987C13.7864 11.7282 13.8775 11.9483 14.0398 12.1106C14.2021 12.2728 14.4222 12.364 14.6517 12.364H20.0455L18.083 14.3265C18.0003 14.4062 17.9344 14.5017 17.889 14.6073C17.8436 14.7128 17.8197 14.8264 17.8187 14.9412C17.8177 15.0561 17.8395 15.1701 17.883 15.2764C17.9265 15.3828 17.9907 15.4794 18.0719 15.5607C18.1532 15.6419 18.2498 15.7062 18.3561 15.7498C18.4624 15.7933 18.5763 15.8152 18.6912 15.8143C18.8061 15.8133 18.9197 15.7895 19.0253 15.7441C19.1308 15.6988 19.2263 15.6329 19.3062 15.5503L22.7458 12.1106C22.9082 11.9486 22.9996 11.7288 22.9999 11.4994Z" fill="white" />' +
 		'</svg>',
-	mplayer_close: '<svg class="mgPlayerJSPreview_position-center mgPlayerJSPreview_width-height-100" viewBox="0 0 22 22" fill="none" >' +
+	mplayer_close: '<svg class="mgPlayerJSProd_position-center mgPlayerJSProd_width-height-100" viewBox="0 0 22 22" fill="none" >' +
 		'<path d="M3.32401 3.32414C7.55657 -0.908416 14.4435 -0.908 18.6756 3.32414C22.9077 7.55627 22.9077 14.4432 18.6756 18.6757C14.443 22.9083 7.55615 22.9083 3.32402 18.6757C-0.908127 14.4432 -0.908535 7.55669 3.32401 3.32414ZM14.0365 15.4458C14.4257 15.835 15.0565 15.835 15.4457 15.4458C15.8348 15.0567 15.8348 14.4258 15.4457 14.0367L12.409 10.9999L15.2958 8.11304C15.685 7.72388 15.685 7.09305 15.2958 6.70389C14.9067 6.31474 14.2759 6.31474 13.8867 6.70389L10.9998 9.59079L7.96308 6.55405C7.57392 6.1649 6.94309 6.1649 6.55393 6.55405C6.16472 6.94284 6.16484 7.57411 6.55393 7.9632L9.59066 10.9999L6.40452 14.1861C6.01536 14.5752 6.01536 15.2061 6.40452 15.5952C6.79367 15.9844 7.42451 15.9844 7.81366 15.5952L10.9998 12.4091L14.0365 15.4458Z" fill="white" stroke="#7BA827" stroke-width="0.3" />' +
 		'</svg>',
 	close: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
@@ -26552,7 +24149,7 @@ GmCXt.svgs = {
 	close_popup: '<svg width="12" height="12" viewBox="0 0 12 13" fill="none" >' +
 		'<path d="M6.90481 6.67981L11.5191 1.96076C11.8058 1.66783 11.8058 1.19252 11.5191 0.89958C11.2324 0.60639 10.7682 0.60639 10.4815 0.89958L5.86718 5.61863L1.25264 0.89958C0.965959 0.60639 0.501692 0.60639 0.215011 0.89958C-0.0716703 1.19252 -0.0716703 1.66783 0.215011 1.96076L4.82955 6.67981L0.215011 11.3989C-0.0716703 11.6918 -0.0716703 12.1671 0.215011 12.46C0.358352 12.6064 0.546211 12.6797 0.733826 12.6797C0.92144 12.6797 1.1093 12.6064 1.25264 12.4598L5.86718 7.74075L10.4815 12.4598C10.6248 12.6064 10.8127 12.6797 11.0003 12.6797C11.1879 12.6797 11.3758 12.6064 11.5191 12.4598C11.8058 12.1669 11.8058 11.6915 11.5191 11.3986L6.90481 6.67981Z" fill="#666666" fill-opacity="0.9" />' +
 		'</svg>',
-	external_link: '<svg class="mgPlayerJSPreview_position-center mgPlayerJSPreview_width-height-100" viewBox="0 0 17 18" fill="none" >' +
+	external_link: '<svg class="mgPlayerJSProd_position-center mgPlayerJSProd_width-height-100" viewBox="0 0 17 18" fill="none" >' +
 		'<g clip-path="url(#clip)">' +
 		'<path d="M13.0266 5.10103C13.1992 5.13132 13.3496 5.22781 13.4505 5.37282C13.5517 5.51647 13.5909 5.69066 13.5604 5.86336L13.4619 5.84599C13.4877 5.69966 13.4547 5.55242 13.3687 5.4304L13.3684 5.42995C13.2825 5.30656 13.1554 5.22515 13.0094 5.19952L13.0093 5.19951L6.98281 4.13688C6.98279 4.13688 6.98278 4.13687 6.98277 4.13687C6.8371 4.11126 6.69018 4.14394 6.56783 4.22962C6.44567 4.31515 6.36472 4.44211 6.33891 4.58775C6.33891 4.58776 6.33891 4.58777 6.3389 4.58778L6.24258 5.13487L6.24255 5.13501C6.21672 5.28049 6.24947 5.4274 6.33513 5.54973C6.4199 5.6708 6.54116 5.74565 6.68823 5.77146L10.2384 6.39115L10.4768 6.43276L10.2786 6.57157L3.68558 11.1881C3.43578 11.363 3.37455 11.7299 3.55106 11.982L3.86985 12.4372C4.0391 12.679 4.38546 12.7337 4.63939 12.568L4.63756 12.5646L11.2152 7.9589L11.4127 7.82064L11.3711 8.05807L10.7544 11.5783L10.7543 11.5784C10.7287 11.7237 10.7626 11.8729 10.8485 11.9955C10.9343 12.118 11.0621 12.2002 11.2079 12.226L11.755 12.3226C11.755 12.3226 11.755 12.3226 11.755 12.3226C11.9009 12.3483 12.048 12.3158 12.17 12.2304C12.2923 12.1447 12.3734 12.0178 12.3991 11.8722L12.3991 11.8722L13.4619 5.84599L13.0266 5.10103ZM13.0266 5.10103L7.00013 4.03839L13.0266 5.10103Z" fill="#666666" stroke="white" stroke-width="0.2" />' +
 		'</g>' +
@@ -28004,12 +25601,12 @@ GmCXt.ruleEngine = (function() {
 		// From top window, sends to the same window
 
 		if (GmCXt.isSidePanelApp) {
-			message.action = 'mgPlayerJSPreview_action:init;task:select_dom_element_for_rules';
+			message.action = 'mgPlayerJSProd_action:init;task:select_dom_element_for_rules';
 			GmCXt.sendToParentWindow(message);
 
 		} else {
 			GmCXt.sendMessageToAllWindows(
-				'mgPlayerJSPreview_action:started;task:select_dom_element_for_rules',
+				'mgPlayerJSProd_action:started;task:select_dom_element_for_rules',
 				message.data);
 		}
 	};
@@ -28304,2487 +25901,6 @@ var checkTime = function(condition, val) {
 			return false;
 	}
 };
-GmCXt.AUTOMATION_SUITE_PLAY = 'mi_suite_play';
-
-GmCXt.lastTrakerSync = 0;
-
-GmCXt.trackerV1 = {
-	setUrl: function(url) {
-		GmCXt.urlParts.fullUrl = url;
-	},
-
-	getScreenSize: function() {
-		var screen = window.screen;
-		return {
-			width: (screen && screen.width) ? screen.width : '',
-			height: (screen && screen.height) ? screen.height : ''
-		};
-	},
-
-	v1Payload: function(e, date, url, user, eventTime) {
-
-		var objectId = e.objectId;
-		if (typeof(objectId) === 'number') objectId = objectId.toString();
-
-		return {
-			"user_id": user.user_id,
-			"org_id": user.organization_id,
-			"app_code": e.app_code,
-			"client_code": GmCXt.conf.appName + '_v' + GmCXt.conf.version,
-			"role_id": "",
-			"entity_code": objectId,
-			"event_time": eventTime,
-			"event_type": e.eventName,
-			"url": url,
-			"user_agent": GmCXt.browserApp || 'chrome',
-			"screen_size": e.screen_size,
-			"miscellaneous": e.miscellaneous
-		};
-	},
-
-	track: function(gPayload) {
-
-		GmCXt.log(38, "Fn. Track");
-
-		if (GmCXt.onPrem()) return;
-
-		if (!GmCXt.user) {
-
-			if (GmCXt.isBackgroundPage) {
-				GmCXt.sendMessageToPanel('mgPlayerJSPreview_action:fetch_user');
-			}
-			GmCXt.log(45, "Events not Sent, User not found");
-			return;
-		}
-
-		function updateSecret(keys) {
-			if (keys && keys.registerClientId) {
-				GmCXt.trackerUtil.secrets = keys;
-				var jsonData = {
-					"app_client_id": keys.registerClientId,
-					"payload": [],
-					"signature": ''
-				};
-				if (gPayload.length) {
-					jsonData.payload = gPayload;
-					GmCXt.trackerV1.sendPayload(jsonData);
-				}
-
-			} else {
-				var msg = 'mgPlayerJSPreview_action:update_registration_secret';
-				if (GmCXt.isBackgroundPage) {
-					GmCXt.sendMessageToPanel(msg);
-				} else {
-					GmCXt.sendMessageToApp(msg);
-				}
-
-				GmCXt.log(45, 'Secret keys are not present. Unable to track events');
-			}
-		}
-
-		if (!GmCXt.trackerUtil.secrets) {
-			GmCXt.storage().get([
-				'tracker_secrets'
-			]).then(function(res) {
-				var keys = res.tracker_secrets;
-				if (!keys.registerClientId) {
-					keys = GmCXt.parseJSON(keys);
-				}
-				updateSecret(keys);
-			});
-		} else {
-			var keys = GmCXt.trackerUtil.secrets;
-			updateSecret(keys);
-		}
-	},
-
-	sendClientVisit: function() {
-		GmCXt.trackerV1.trackClientVisit();
-		GmCXt.clientVisitSync = GmCXt.getCurrentTimeInSec();
-		GmCXt.storage().set({
-			'clientVisitSync': JSON.stringify(GmCXt.clientVisitSync)
-		});
-	},
-
-	sendPayload: function(jsonData) {
-
-		GmCXt.log(38, "Fn. SendPayload");
-		var keys = GmCXt.trackerUtil.secrets;
-
-		var date = new Date();
-		var currentTimestamp = date.getTime();
-
-		jsonData.event_chain_id = GmCXt.ANALYTICS_EVENT_CHAIN_ID;
-
-		var trackClientTimestamp = currentTimestamp;
-		if (keys && keys.track_client_timestamp) {
-			trackClientTimestamp = parseInt(keys.track_client_timestamp);
-		}
-		var clientSecretAge = parseInt((currentTimestamp - trackClientTimestamp) / 1000);
-
-		keys.track_client_timestamp = currentTimestamp;
-
-		/*
-		 In Push Event we do not have the 'keys.track_client_timestamp' first time.
-		 That time we need to register the client event.
-		*/
-		// event sent without delay
-		/*GmCXt.storage().get(['clientVisitSync']).then(function(res) {
-			if (res.clientVisitSync) {
-				if (GmCXt.getCurrentTimeInSec() - res.clientVisitSync > GmCXt.t.tracking12hr) {
-					GmCXt.trackerV1.sendClientVisit();
-				}
-			} else {
-				GmCXt.trackerV1.sendClientVisit();
-			}
-		});*/
-
-		if (keys.registerClientId) {
-
-			if (jsonData.payload[0].event_type === 'mi_mybot_run') {
-
-				jsonData.signature = md5(md5(JSON.stringify(jsonData.payload)) +
-					keys.app_client_secret).toString();
-
-				// We call an additional API as fallback if the save results API fail.
-				GmCXt.trackerV1.sendGuideAutomationEvent(jsonData);
-				return;
-			}
-
-			var sentimentEvents = jsonData.payload.filter(function(event) {
-				return event && event.event_type === 'mi_sentiment_response';
-			});
-
-			if (sentimentEvents.length) {
-
-				sentimentEvents.forEach(function(p) {
-
-					GmCXt.trackerV1.apiTrackSentiment(p);
-
-					var index = jsonData.payload.indexOf(p);
-					if (index !== -1) {
-						jsonData.payload.splice(index, 1);
-					}
-				});
-			}
-
-			if (jsonData.payload.length) {
-
-				jsonData.signature = md5(md5(JSON.stringify(jsonData.payload)) +
-					keys.app_client_secret).toString();
-
-				GmCXt.log(45, 'SENDING events', jsonData.payload);
-
-				GmCXt.trackerV1.apiV1(jsonData);
-			}
-		}
-	},
-
-	apiV1: function(data) {
-		return GmCXt.api.trackEventV1(data)
-			.then(function(response) {
-				GmCXt.log(45, 'SENT events');
-			})
-			.catch(function(error) {
-				GmCXt.trackerV1.updateTooltipTrackInfo(data);
-			});
-	},
-
-	apiTrackSentiment: function(data) {
-
-		GmCXt.api.trackSentiment(data)
-			.then(function(response) {
-				GmCXt.log(45, 'SENT events');
-			})
-			.catch(function(error) {
-				GmCXt.log(45, 'ERROR, events restored', data);
-				GmCXt.trackerV1.sendPayloadEventCall(data);
-			});
-	},
-
-	apiTrackConversation: function(data) {
-
-		GmCXt.api.trackConversation(data)
-			.then(function(response) {
-				GmCXt.log(45, 'SENT events');
-			})
-			.catch(function(error) {
-				GmCXt.log(45, 'ERROR, events restored', data);
-				GmCXt.trackerV1.sendPayloadEventCall(data);
-			});
-	},
-
-	updateTooltipTrackInfo: function(data) {
-		data.payload.forEach(function(p) {
-			if (p && p.event_type === "mi_tooltip_shown") {
-				sid = "step_" + p.miscellaneous.tooltips_details[0].tooltip_id;
-				GmCXt.tooltipTrackingList[sid].track = true;
-			}
-		});
-	},
-
-	setPayLoad: function(e) {
-
-		if (GmCXt.isAutomationRunning() && e.eventName !== "mi_mybot_run") {
-			GmCXt.log(45, "Tracker is currently stopped", e);
-			return;
-		}
-
-		// Track events only after login
-		if (!GmCXt.user) {
-			GmCXt.log(45, 'SKIP EVENT, no user found ' + e.eventName);
-			return;
-		}
-
-		if (!e.app_code) {
-			return;
-		}
-
-		if (!e) e = {};
-
-		var url = e.url || e.miscellaneous.url;
-
-		if (GmCXt.trackerUtil && GmCXt.trackerUtil.page_url) {
-			if (!url) url = GmCXt.urlParts ? GmCXt.urlParts.fullUrl : GmCXt.trackerUtil.page_url;
-		} else {
-			if (!url) url = GmCXt.urlParts ? GmCXt.urlParts.fullUrl : GmCXt._location().href;
-		}
-
-		var date = new Date();
-
-		if (e.eventName === 'mi_page_visit') {
-			date = new Date(GmCXt.pageVisit.timeStarted);
-			url = GmCXt.pageVisit.url;
-		}
-
-		if (!e.miscellaneous.env_code &&
-			e.eventName !== 'mi_tooltip_shown' &&
-			e.eventName !== 'mi_workflow_play') {
-			e.miscellaneous.env_code = GmCXt.trackerV1.getEnvCode(url);
-		}
-
-		var eventTime = "";
-		if (e.eventName === 'mi_user_pulse') {
-			eventTime = date.getUTCFullYear() + "-" +
-				('0' + (date.getUTCMonth() + 1)).slice(-2) + "-" +
-				('0' + date.getUTCDate()).slice(-2) + " " +
-				'00:00:00';
-		} else {
-			eventTime = date.getUTCFullYear() + "-" +
-				('0' + (date.getUTCMonth() + 1)).slice(-2) + "-" +
-				('0' + date.getUTCDate()).slice(-2) + " " +
-				('0' + date.getUTCHours()).slice(-2) + ":" +
-				('0' + date.getUTCMinutes()).slice(-2) + ":" +
-				('0' + date.getUTCSeconds()).slice(-2);
-		}
-
-		var user = false;
-
-		if (GmCXt.user) user = GmCXt.user;
-
-		var payload = GmCXt.trackerV1.v1Payload(e, date, url, user, eventTime);
-
-		if (GmCXt.trackerUtil.trackPI) {
-			payload.miscellaneous.unique_user_id = user.user_email;
-			payload.miscellaneous.display_name = user.first_name + ' ' + user.last_name;
-		}
-
-		if (payload.event_type !== 'mi_tooltip_shown' && payload.event_type !== 'mi_workflow_play' &&
-			payload.event_type !== "mi_mybot_run") {
-			payload.miscellaneous.env_code = GmCXt.trackerV1.getEnvCode(payload.url);
-		}
-
-		payload.miscellaneous.user_timezone = GmCXt.trackerV1.getTimeZone();
-
-		return payload;
-	},
-
-	sendGuideAutomationEvent: function(data) {
-
-		var onSave = function() {
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:myBot_report_saved');
-			GmCXt.log(37, "Automation Report saved. Init the tracker again.");
-			GmCXt.storage().get(['desktopReq']).then(function(st) {
-				if (st.desktopReq) {
-					GmCXt.deskReq = st.desktopReq;
-					GmCXt.sendMessageToDesktopApp('task_complete', {
-						entity_code: data.payload[0].entity_code
-					});
-				}
-			});
-		};
-
-		GmCXt.api.saveMyBotReport(data)
-			.then(function(response) {
-				GmCXt.log(45, 'SENT events');
-
-
-				onSave();
-			})
-			.catch(function(result) {
-
-				GmCXt.log(45, 'ERROR, events restored');
-
-				GmCXt.trackerV1.apiV1(data).finally(onSave);
-			});
-	},
-
-	getEnvCode: function(url) {
-
-		var env_code = GmCXt.checkDomainInApps(url).app_env;
-
-		if (!env_code) env_code = "";
-
-		return env_code;
-	},
-
-	getTimeZone: function() {
-		return Intl.DateTimeFormat().resolvedOptions().timeZone;
-	},
-
-	getAppCode: function() {
-
-		if (GmCXt.externalAppId) {
-			return GmCXt.externalAppId;
-		} else if (GmCXt.appList && GmCXt.activeAppId) {
-			return GmCXt.appList['app:' + GmCXt.activeAppId].external_id;
-		}
-	},
-
-	getAppSettings: function() {
-		if (GmCXt.appList && GmCXt.activeAppId) {
-			return GmCXt.appList['app:' + GmCXt.activeAppId].settings;
-		}
-	},
-
-	trackPanelOpen: function(s, a) {
-
-		if (GmCXt.trackingDisabled()) return;
-		var eventName = "mi_panel_open";
-		if (a === "chatbot") eventName = "mi_bot_panel_open";
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: eventName,
-			objectId: GmCXt.user.user_key,
-			miscellaneous: {
-				source: s,
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				url: GmCXt.urlParts.fullUrl
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	getPayloadForPlayEvent: function(e) {
-		var returnedPayload = GmCXt.trackerV1.setPayLoad(e);
-		if (returnedPayload) {
-			GmCXt.trackerV1.sendPayloadEventCall(returnedPayload);
-		}
-	},
-
-	sendPayloadEventCall: function(payload) {
-		if (!payload) return;
-		if (GmCXt.isClientJs() || GmCXt.isCreatorJS()) {
-			var message = {
-				action: "mgPlayerJSPreview_action:payload_event_call",
-				data: payload
-			};
-			GmCXt.sendToParentWindow(message);
-
-
-		} else {
-			var m = {
-				action: "mgPlayerJSPreview_action:payload_event_call",
-				data: payload
-			};
-			GmCXt.sendToParentWindow(m);
-		}
-	},
-
-	trackGuidePlayEvent: function() {
-		GmCXt.log(38, "Fn. trackGuidePlayEvent");
-		if (GmCXt.trackingDisabled()) return;
-
-		for (var key in GmCXt.guidePlayTracker) {
-
-			var g = GmCXt.guidePlayTracker[key];
-
-			if (g.steps_details && g.steps_details.length) {
-
-				g.event_end_time = new Date().getTime();
-
-				var length = g.steps_details.length;
-				g.steps_details[length - 1].event_end_time = new Date().getTime();
-
-				var e = {
-					app_code: GmCXt.trackerV1.getAppCode(),
-					eventName: g.mode,
-					objectId: g.guide_id,
-					miscellaneous: g,
-					screen_size: GmCXt.trackerV1.getScreenSize()
-				};
-
-				GmCXt.trackerV1.getPayloadForPlayEvent(e);
-			}
-		}
-	},
-
-	trackGuideSearch: function(o) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_search',
-			objectType: 'global',
-			objectId: GmCXt.user.user_key,
-			miscellaneous: {
-				search_keyword: o.search_text,
-				results_returned: o.results_returned,
-				search_result_clicked: o.search_result_clicked,
-				event_start_time: o.startTime,
-				event_end_time: new Date().getTime(),
-				url: GmCXt.urlParts.fullUrl
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackGuideDownload: function(tour, type) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_guide_download',
-			objectId: tour.tour_id,
-			miscellaneous: {
-				guide_id: tour.tour_id,
-				type: type,
-				play_instance_id: GmCXt.getUUID(),
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				url: GmCXt.urlParts.fullUrl
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackBotInteraction: function(tours) {
-
-		if (GmCXt.trackingDisabled()) return;
-		if (tours && tours.length) {
-			for (var i = 0; i < tours.length; i++) {
-				var e = {
-					app_code: GmCXt.trackerV1.getAppCode(),
-					eventName: 'mi_bot_interaction',
-					objectId: tours[i].tour_id,
-					miscellaneous: {
-						guide_id: tours[i].tour_id,
-						play_instance_id: GmCXt.getUUID(),
-						event_start_time: new Date().getTime(),
-						event_end_time: new Date().getTime(),
-						url: GmCXt.urlParts.fullUrl
-					},
-					screen_size: GmCXt.trackerV1.getScreenSize()
-				};
-
-				var steps_details = [];
-				for (var j = 0; j < tours[i].steps.length; j++) {
-					var sd = {
-						step_id: tours[i].steps[j].step_id,
-						step_index: parseInt(tours[i].steps[j].step_order),
-						step_title: tours[i].steps[j].step_title,
-						event_start_time: new Date().getTime(),
-						event_end_time: new Date().getTime(),
-						page_url: GmCXt.urlParts.fullUrl,
-						error_type: "",
-						audio_muted: GmCXt.stepAudioRunningStatus ? 0 : 1
-					};
-
-					if (tours[i].steps[j].step_settings.automation.enableBot &&
-						tours[i].steps[j].step_settings.automation.botQuestion) {
-						sd.requires_human_intervention = 1;
-						sd.step_skipped = 0;
-						var ans = tours[i].steps[j].step_settings.automation.defaultData;
-						if (ans) {
-							sd.isAnswered = true;
-						} else {
-							sd.isAnswered = false;
-						}
-						sd.botQuestion = tours[i].steps[j].step_settings.automation.botQuestion;
-					} else {
-						sd.requires_human_intervention = 0;
-						sd.step_skipped = 0;
-					}
-					steps_details.push(sd);
-				}
-
-				e.miscellaneous.steps_details = steps_details;
-
-				var payload = GmCXt.trackerV1.setPayLoad(e);
-				GmCXt.trackerV1.sendPayloadEventCall(payload);
-			}
-		}
-	},
-
-	trackGuideShowMe: function(tour, type, i, isAudio, segs, taskId) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var url = (tour.tour_url.indexOf('://') === -1) ? 'https://' + tour.tour_url : tour.tour_url;
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_showme_play',
-			objectId: tour.tour_id,
-			miscellaneous: {
-				guide_id: tour.tour_id,
-				type: type,
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				url: url,
-				trigger_source: GmCXt.getSource(i),
-				audio_muted: isAudio ? 0 : 1,
-				segment_group_id: segs
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		if (taskId) {
-			e.miscellaneous.task_list_id = taskId;
-		}
-
-		e.miscellaneous.play_instance_id = GmCXt.getUUID(tour.tour_id);
-		if (GmCXt.isLastStepPlayedOnShowme) {
-			e.miscellaneous.guide_complete = 1;
-		} else {
-			e.miscellaneous.guide_complete = 0;
-		}
-
-		if (GmCXt.isVideoEndedOnShowme) {
-			e.miscellaneous.guide_complete = 1;
-		}
-
-		if (GmCXt.isGiphyPlayedOnShowme) {
-			e.miscellaneous.guide_complete = 1;
-		}
-
-		GmCXt.trackerV1.getPayloadForPlayEvent(e);
-
-	},
-
-	trackTutGuide: function(tour, type, source, taskid) {
-
-		if (GmCXt.trackingDisabled()) return;
-		var url = (tour.tour_url.indexOf('://') === -1) ? 'https://' + tour.tour_url : tour.tour_url;
-		var segs = [];
-		if (!GmCXt.isEmpty(tour.tour_settings.segment_groups)) {
-			segs = GmCXt.getTourSegmentDetail(tour);
-		}
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_tutorial_guide_play',
-			objectId: tour.tour_id,
-			miscellaneous: {
-				guide_id: tour.tour_id,
-				type: type,
-				trigger_source: source,
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				url: url,
-				guide_open: 1,
-				segment_details: segs
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		if (source === "task_list") {
-			e.miscellaneous.task_list_id = taskid;
-		}
-
-		if (GmCXt.isLastStepPlayedOnCreateTutGuide) {
-			e.miscellaneous.guide_complete = 1;
-		} else {
-			e.miscellaneous.guide_complete = 0;
-		}
-
-		if (GmCXt.pdfPlayedOnUploadTut && GmCXt.fullPdfPlayedOnUploadTutGuide) {
-			e.miscellaneous.guide_complete = 1;
-		}
-
-		if (GmCXt.pdfPlayedOnUploadTutNewTab) {
-			e.miscellaneous.guide_complete = 1;
-		}
-
-		e.miscellaneous.play_instance_id = GmCXt.getUUID(tour.tour_id);
-
-		if (type === 'create_tutorial_guide') {
-
-			GmCXt.storage().get(['tutorial_steps']).then(function(st) {
-				var steps_details = [];
-
-				if (GmCXt.isEmpty(st) && source === "bot") {
-					st = {};
-					st.tutorial_steps = tour.steps;
-				}
-				st.tutorial_steps.forEach(function(step) {
-					var step_details = {
-						step_id: step.step_id,
-						step_index: parseInt(step.step_order),
-						step_title: step.step_description,
-						event_start_time: new Date().getTime(),
-						event_end_time: new Date().getTime(),
-						page_url: GmCXt.urlParts.fullUrl,
-						error_type: "",
-						audio_muted: GmCXt.stepAudioRunningStatus ? 0 : 1
-					};
-					steps_details.push(step_details);
-				});
-				e.miscellaneous.steps_details = steps_details;
-				e.miscellaneous.tutorial_rendered = 'inline';
-				GmCXt.trackerV1.getPayloadForPlayEvent(e);
-			});
-
-		} else if (type === 'upload_tutorial_guide_same_tab' ||
-			type === 'upload_tutorial_guide_new_tab') {
-			e.miscellaneous.tutorial_rendered = 'pdf';
-			var step_details = [{
-				step_id: tour.steps[0].step_id,
-				step_index: parseInt(tour.steps[0].step_order),
-				step_title: tour.steps[0].step_title,
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				page_url: GmCXt.urlParts.fullUrl,
-				error_type: "",
-				audio_muted: GmCXt.stepAudioRunningStatus ? 0 : 1
-			}];
-			e.miscellaneous.steps_details = step_details;
-			GmCXt.trackerV1.getPayloadForPlayEvent(e);
-		}
-	},
-
-	trackClientVisit: function() {
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_client_visit',
-			objectId: GmCXt.user.user_key,
-			miscellaneous: {
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				url: GmCXt.trackerUtil.page_url,
-				is_new_user: false
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	//test me tracker
-	trackTestMe: function(testMe) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_test',
-			objectId: testMe.tourId,
-			miscellaneous: {
-				guide_id: testMe.tourId,
-				test_result: testMe.testResult.toLowerCase(),
-				test_duration: testMe.userTime,
-				test_effectiveness: testMe.testEffectiveness || 0,
-				test_expected_steps: testMe.stepCount,
-				test_steps_performed: testMe.eventCount,
-				test_expected_time: testMe.expectedTime,
-				play_instance_id: GmCXt.getUUID(testMe.tourId),
-				event_start_time: testMe.startTime,
-				event_end_time: new Date().getTime(),
-				url: testMe.url
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackFeatureClick: function(tag) {
-
-		if (!GmCXt.trackerUtil.featureTracking) return;
-
-		GmCXt.log(16, 'TAG CLICK event ', tag);
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_feature_click',
-			objectId: tag.tour_id,
-			miscellaneous: {
-				step_id: tag.step_id,
-				tour_id: tag.tour_id,
-				group_id: tag.group_id,
-				event_start_time: new Date().getTime(),
-				event_end_time: new Date().getTime(),
-				page_url: GmCXt.urlParts.fullUrl,
-				play_instance_id: GmCXt.getUUID(),
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackPageVisit: function(onPageUnload) {
-
-		if (!GmCXt.trackerUtil.pageTracking) return;
-
-		if (!GmCXt.pageVisit) return;
-
-		var timeSpentOnPage = GmCXt.pageVisit.timeSpent ? GmCXt.pageVisit.timeSpent : (new Date().getTime() - GmCXt.pageVisit.timeStarted);
-
-		if (timeSpentOnPage < GmCXt.t_.sec5) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_page_visit',
-			objectId: GmCXt.pageVisit.userKey,
-			miscellaneous: {
-				time_spend_on_page: timeSpentOnPage,
-				page_url: GmCXt.urlParts.fullUrl,
-				page_title: GmCXt.pageVisit.title,
-				page_load_time: GmCXt.pageVisit.pageLoadTime,
-				referrer_url: document.referrer,
-				event_time: new Date().getTime(),
-				play_instance_id: GmCXt.getUUID()
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		GmCXt.log(2, "Page track event saved", e);
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-
-		if (onPageUnload) {
-			GmCXt.storage().set({
-				'trackPageVisit': JSON.stringify(payload)
-			});
-		} else {
-			GmCXt.trackerV1.sendPayloadEventCall(payload);
-		}
-
-	},
-
-	trackUserPulse: function() {
-		if ( GmCXt.trackingDisabled() || GmCXt.isSumtotal() || GmCXt.isSbx() || GmCXt.isLXP() ) return;
-
-		var date = new Date();
-		var currentTimestamp = date.getTime();
-
-		var currentPulsePayloadTime = {
-			time: currentTimestamp,
-			app_code: GmCXt.trackerV1.getAppCode()
-		};
-
-		var triggerPulseTrack = function() {
-			var e = {
-
-				app_code: GmCXt.trackerV1.getAppCode(),
-				eventName: 'mi_user_pulse',
-				objectId: GmCXt.user.user_key,
-				miscellaneous: {},
-				screen_size: GmCXt.trackerV1.getScreenSize()
-			};
-
-			var payload = GmCXt.trackerV1.setPayLoad(e);
-			GmCXt.trackerV1.sendPayloadEventCall(payload);
-		};
-
-		var getAppIndexIfExist = function(d, appCode) {
-			var ind = -1;
-			d.filter(function(value, index) {
-				if (appCode === value.app_code) {
-					ind = index;
-					return ind;
-				}
-
-			});
-			return ind;
-		};
-
-		GmCXt.storage().get([
-			'userPulsePayloadTime'
-		]).then(function(res) {
-			var pulselist = [];
-			if (GmCXt.isEmpty(res)) {
-				triggerPulseTrack();
-				pulselist.push(currentPulsePayloadTime);
-			} else {
-				if (!GmCXt.isEmpty(res) && res.userPulsePayloadTime) {
-
-					pulselist = GmCXt.parseJSON(res.userPulsePayloadTime);
-
-					var appIndex = getAppIndexIfExist(pulselist, GmCXt.trackerV1.getAppCode());
-
-					if (appIndex !== -1) {
-						if (pulselist[appIndex].app_code === GmCXt.trackerV1.getAppCode() &&
-							(currentTimestamp - pulselist[appIndex].time) > GmCXt.t.tracking8hr) {
-							triggerPulseTrack();
-							pulselist[appIndex].time = currentTimestamp;
-						}
-					} else {
-						triggerPulseTrack();
-						pulselist.push(currentPulsePayloadTime);
-					}
-				} else {
-					triggerPulseTrack();
-					pulselist.push(currentPulsePayloadTime);
-				}
-			}
-
-			GmCXt.storage().set({
-				'userPulsePayloadTime': JSON.stringify(pulselist)
-			});
-		});
-	},
-
-	trackTooltips: function(currentTooltip) {
-		if (GmCXt.trackingDisabled()) return;
-
-		if (GmCXt.isEmpty(GmCXt.tooltipTrackingList)) {
-			return;
-		}
-
-		var getCurrTTIndex = function(arr, stepId, actionType) {
-			var ind = -1;
-			arr.filter(function(value, index) {
-				if (stepId === value.ttStepId && actionType === value.ttActionType) {
-					ind = index;
-					return ind;
-				}
-
-			});
-			return ind;
-		};
-
-		var triggerTooltipTrack = function(tt, id) {
-			var e = {};
-			if (tt.track) {
-
-				if (GmCXt.isEmpty(currentTooltip.tooltip_play_instances)) {
-					currentTooltip.tooltip_play_instances.push({
-						event_start_time: GmCXt.getCurrentTimeInMilSec(),
-						event_end_time: GmCXt.getCurrentTimeInMilSec()
-					});
-				}
-
-				var segDet = [];
-				if (currentTooltip.segment_details) {
-					segDet = currentTooltip.segment_details;
-					delete currentTooltip.segment_details;
-				}
-
-				e = {
-					app_code: GmCXt.trackerV1.getAppCode(),
-					eventName: 'mi_tooltip_shown',
-					objectId: tt.tourId,
-					miscellaneous: {
-						url: tt.url,
-						event_start_time: GmCXt.getCurrentTimeInMilSec(),
-						event_end_time: GmCXt.getCurrentTimeInMilSec(),
-						tooltips_details: [currentTooltip],
-						env_code: GmCXt.trackerV1.getEnvCode(tt.url),
-						segment_details: segDet
-					},
-					url: GmCXt.trackerUtil.page_url || GmCXt.urlParts.fullUrl || tt.url,
-					screen_size: tt.screen_size
-				};
-
-
-				GmCXt.trackerUtil.ttPayload["tt_" + tt.tourId] = e;
-				var payload = GmCXt.trackerV1.setPayLoad(e);
-				GmCXt.trackerV1.sendPayloadEventCall(payload);
-
-
-				GmCXt.tooltipTrackingList[id].ttDetails.tooltip_play_instances = [];
-				GmCXt.tooltipTrackingList[id].track = false;
-			}
-		};
-
-		var cb = function() {
-
-			var list = [];
-			var step_id = "step_" + currentTooltip.tooltip_id;
-			var currentTTData = {
-				ttStepId: step_id,
-				ttTime: GmCXt.getCurrentTimeInMilSec(),
-				ttActionType: currentTooltip.action_type[0]
-			};
-
-			if (GmCXt.tooltipTrackingList[step_id].track) {
-				if (GmCXt.tooltipTrackData && !GmCXt.isEmpty(GmCXt.tooltipTrackData)) {
-					list = GmCXt.parseJSON(GmCXt.tooltipTrackData);
-					var ind = getCurrTTIndex(list, step_id, currentTooltip.action_type[0]);
-					if (ind !== -1) {
-						var timeDiff = GmCXt.getCurrentTimeInMilSec() - list[ind].ttTime;
-						if (list[ind].ttStepId === step_id &&
-							list[ind].ttActionType === currentTooltip.action_type[0] &&
-							timeDiff > GmCXt.t.tracking8hr) {
-							triggerTooltipTrack(GmCXt.tooltipTrackingList[step_id], step_id);
-							list[ind].ttTime = GmCXt.getCurrentTimeInMilSec();
-						}
-					} else {
-						triggerTooltipTrack(GmCXt.tooltipTrackingList[step_id], step_id);
-						list.push(currentTTData);
-					}
-				} else {
-					triggerTooltipTrack(GmCXt.tooltipTrackingList[step_id], step_id);
-					list.push(currentTTData);
-				}
-
-				GmCXt.tooltipTrackData = list;
-				GmCXt.storage().set({
-					'tooltipTrackData': JSON.stringify(list)
-				});
-			}
-		};
-
-		cb();
-
-	},
-
-	trackBeacons: function(currentBeaconTour, actionType) {
-		if (GmCXt.trackingDisabled()) return;
-
-		var bTrackList = [];
-
-		var bTrackData = {
-			beacon: currentBeaconTour.tour_id + "_" + actionType,
-			bTime: GmCXt.getCurrentTimeInMilSec(),
-		};
-
-		var segs = [];
-		if (!GmCXt.isEmpty(currentBeaconTour.tour_settings.segment_groups)) {
-			segs = GmCXt.getTourSegmentDetail(currentBeaconTour);
-		}
-
-		var beaconUrl = (currentBeaconTour.tour_url.indexOf('://') === -1) ? 'https://' + currentBeaconTour.tour_url : currentBeaconTour.tour_url;
-
-		GmCXt.storage().get(['beaconTrackData']).then(function(result) {
-			var blist = [];
-			if (!GmCXt.isEmpty(result)) blist = GmCXt.parseJSON(result.beaconTrackData);
-
-			if (GmCXt.isEmpty(blist)) {
-				bTrackList.push(bTrackData);
-				trackBeaconCB();
-			} else {
-				var currentBIndx = blist.findIndex(function(item) {
-					return item.beacon === bTrackData.beacon;
-				});
-				if (currentBIndx === -1) {
-					bTrackList = blist;
-					bTrackList.push(bTrackData);
-					trackBeaconCB();
-				} else {
-					var timeDiff = GmCXt.getCurrentTimeInMilSec() - blist[currentBIndx].bTime;
-					if (timeDiff > GmCXt.t.tracking8hr) {
-						blist[currentBIndx].bTime = GmCXt.getCurrentTimeInMilSec();
-						trackBeaconCB();
-					}
-				}
-			}
-		});
-
-		function trackBeaconCB() {
-			e = {
-				app_code: GmCXt.trackerV1.getAppCode(),
-				eventName: 'mi_beacon_shown',
-				objectId: currentBeaconTour.tour_id,
-				miscellaneous: {
-					env_code: GmCXt.trackerV1.getEnvCode(currentBeaconTour.tour_url),
-					url: beaconUrl,
-					play_instance_id: GmCXt.getUUID(),
-					action_type: [actionType],
-					segment_details: segs,
-					is_new_user: false,
-					event_start_time: GmCXt.getCurrentTimeInMilSec(),
-					event_end_time: GmCXt.getCurrentTimeInMilSec(),
-				},
-				url: GmCXt.trackerUtil.page_url || GmCXt.urlParts.fullUrl || currentBeaconTour.tour_url,
-				screen_size: GmCXt.trackerV1.getScreenSize()
-			};
-
-			var payload = GmCXt.trackerV1.setPayLoad(e);
-			GmCXt.trackerV1.sendPayloadEventCall(payload);
-
-			GmCXt.storage().set({
-				'beaconTrackData': JSON.stringify(bTrackList)
-			});
-		}
-
-	},
-
-	trackPushNotification: function(pTour, actionType) {
-		if (GmCXt.trackingDisabled()) return;
-
-
-		var segs = [];
-		if (!GmCXt.isEmpty(pTour.tour_settings.segment_groups)) {
-			segs = GmCXt.getTourSegmentDetail(pTour);
-		}
-
-		var pushUrl = (pTour.tour_url.indexOf('://') === -1) ? 'https://' + pTour.tour_url : pTour.tour_url;
-
-		e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_push_notification_shown',
-			objectId: pTour.tour_id,
-			miscellaneous: {
-				env_code: GmCXt.trackerV1.getEnvCode(pTour.tour_url),
-				url: pushUrl,
-				play_instance_id: GmCXt.getUUID(),
-				action_type: [actionType],
-				segment_details: segs,
-				is_new_user: false,
-				event_start_time: GmCXt.getCurrentTimeInMilSec(),
-				event_end_time: GmCXt.getCurrentTimeInMilSec(),
-			},
-			url: GmCXt.trackerUtil.page_url || GmCXt.urlParts.fullUrl || pTour.tour_url,
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackLogout: function(source) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_logout',
-			objectId: GmCXt.user.user_key,
-			miscellaneous: {
-				source: source
-			},
-			url: GmCXt.urlParts.fullUrl,
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackSurveyInstantResponse: function(surveyAnswer, d) {
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_sentiment_response',
-			objectType: 'guide',
-			objectId: d.sentimentCode,
-			miscellaneous: {
-				response_code: GmCXt.getUUID(),
-				trigger_source_type: d.trigger_source_type,
-				trigger_source_id: d.trigger_source_id,
-				answers: surveyAnswer,
-				source_url: GmCXt.urlParts.fullUrl,
-				source_page_title: GmCXt.pageTitle
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.apiTrackSentiment(payload);
-	},
-
-	trackConversationResponse: function(convAnswer, d) {
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_conversation_response',
-			objectType: 'bot',
-			objectId: d.conversationCode,
-			miscellaneous: {
-				response_code: GmCXt.getUUID(),
-				trigger_source_type: d.trigger_source_type,
-				trigger_source_id: d.trigger_source_id,
-				answers: convAnswer,
-				source_url: GmCXt.urlParts.fullUrl,
-				source_page_title: GmCXt.pageTitle
-			},
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.apiTrackConversation(payload);
-	},
-
-	trackMyBotEvents: function(data) {
-
-		if (data) {
-			var eventType = 'mi_mybot_run';
-			var e = {
-				app_code: GmCXt.trackerV1.getAppCode(),
-				eventName: eventType,
-				objectId: data.testCode,
-				miscellaneous: {
-					"run_type": data.runType,
-					"status": data.status,
-					"resultStatus": data.resultStatus,
-					"result_sequence": data.resultSequence
-				},
-				screen_size: GmCXt.trackerV1.getScreenSize()
-			};
-
-			var payload = GmCXt.trackerV1.setPayLoad(e);
-			GmCXt.trackerV1.sendGuideAutomationEvent(payload);
-		}
-	},
-
-	trackElNotFound: function(data) {
-
-		if (data) {
-
-			var p = {
-				page_url: GmCXt.urlParts.fullUrl,
-				page_title: GmCXt.pageTitle,
-				event_start_time: GmCXt.getCurrentTimeInMilSec(),
-				event_end_time: GmCXt.getCurrentTimeInMilSec(),
-				step_id: data.step_id || null,
-			};
-
-			var e = {
-				app_code: GmCXt.trackerV1.getAppCode(),
-				eventName: "mi_rule_enhancement",
-				objectId: data.tour_id,
-				miscellaneous: {
-					source: data.source,
-					play_instance_id: GmCXt.getUUID(),
-					element_player_instance: [p]
-				},
-				url: GmCXt.urlParts.fullUrl,
-				screen_size: GmCXt.trackerV1.getScreenSize()
-			};
-
-			GmCXt.trackerUtil.ePayload["el_" + data.tour_id] = e;
-			var payload = GmCXt.trackerV1.setPayLoad(e);
-			GmCXt.trackerV1.sendPayloadEventCall(payload);
-		}
-	},
-
-	sendEvents: function(forcePush) {
-		if (GmCXt.trackerUtil.guidePayload.length) {
-			GmCXt.trackerV1.track(GmCXt.trackerUtil.guidePayload);
-		}
-	}
-};
-
-GmCXt.trackingDisabled = function() {
-	if (GmCXt.trackerUtil.enableTracking)
-		return false;
-	else
-		return true;
-};
-
-GmCXt.trackerV1.startMyBotTracking = function() {
-	GmCXt.log(37, "Stop tracking events");
-	clearInterval(GmCXt.trackerV1.interval);
-	GmCXt.trackerV1.sendEvents();
-};
-/*global GmCXt, mg$ */
-var SMARTTIP_WAIT_TIME_TO_RENDER = 5000;
-
-GmCXt.auto = (function() {
-
-	var pub = {};
-	var self = {};
-	var FAILED = "Failed";
-	var PASSED = "Passed";
-	var SKIPPED = "Skipped";
-	var UNKNOWN = "UNKNOWN";
-	var isTourPlayingOnAnotherTab = false;
-
-	pub.init = function(app) {
-
-		GmCXt.log(36, 'START MYBOT', {
-			app: app
-		});
-		self = {};
-		self.tours = [];
-		self.ignoreTours = [];
-		self.current = 0;
-		self.app = app;
-		self.app.external_id = GmCXt.appList['app:' + self.app.application_id].external_id;
-		self.app.settings = {
-			domains: GmCXt.appList['app:' + self.app.application_id].settings.domains
-		};
-		self.startURLDomain = window.location.host;
-		self.testResultsDataArray = [];
-		self.apiPayloadResultSequence = [];
-		self.trackerObj = {};
-		self.shouldRedirectToTourPage = true;
-		self.smartTipSteps = [];
-		self.showDetailedProgressbar = false;
-
-		pub.setEndTime();
-		pub.startWatcher();
-
-		if (!self.app.categories || self.app.categories.length < 1) {
-			GmCXt.log(36, 'NO DATA FOUND TO RUN MYBOT', 1);
-		}
-		getTours();
-
-		self.totalTours = self.tours.length;
-
-		if (self.totalTours < 1) {
-			GmCXt.log(36, 'NO GUIDE FOUND', 1);
-		}
-
-		GmCXt.testResultsFromCreator = {
-			show: false,
-		};
-
-		pub.showProgress();
-		resetStorageData(function() {
-			redirectToTourPage();
-		});
-
-	};
-
-	var resetStorageData = function(cb) {
-		if (GmCXt.onScreenTooltipGuideInfo) {
-			pub.setTooltipAutoDataToStorage(GmCXt.onScreenTooltipGuideInfo);
-		}
-		var notificationData = getNotificationData();
-		self.automationInProgress = true;
-		GmCXt.storage().set({
-			'testAuto': self,
-			'testNotificationAuto': notificationData,
-			'testAutoResultsFromCreator': GmCXt.testResultsFromCreator
-		}).then(function() {
-			cb();
-		});
-	};
-
-	pub.isAutomationRunning = function() {
-		if (self) {
-			return self.automationInProgress;
-		}
-		return false;
-	};
-
-	pub.getAutomatedCurrentTour = function() {
-		if (self && self.tours.length > 0) {
-			return self.tours[self.current];
-		}
-		return false;
-	};
-
-	pub.fail = function(step, message) {
-		if (!step) {
-			step = {};
-		}
-
-		GmCXt.log(36, "FAILED: STEP TEST AUTOMATION", {
-			stepTitle: step.step_title
-		});
-
-		var errorMessage = message ? message.errorMessage : '';
-		pub.get(function() {
-			if (!self) {
-				return;
-			}
-			var stepTitle = cleanCommasAndHTMLTagsFromString(step.step_title);
-			self.tours[self.current].test = {
-				status: FAILED,
-				stepTitle: stepTitle ? stepTitle : '',
-				stepOrder: step.step_order ? step.step_order : '',
-				errorMessage: errorMessage
-			};
-			self.smartTipSteps = [];
-			step.errorMessage = errorMessage;
-			pub.updateTrackerObj(self.tours[self.current].tour_id, FAILED, step, function() {
-				pub.next();
-			});
-		});
-	};
-
-	pub.newTabStepFound = function(option, isNextStep) {
-		if (option === "new_tab") {
-			isTourPlayingOnAnotherTab = true;
-			mg$('.mgPlayerJSPreview_auto-prog-wrapper').remove();
-		} else {
-			isTourPlayingOnAnotherTab = false;
-			pub.showProgress();
-			if (!isNextStep && option === "reload") {
-				GmCXt.playerI.isPageReloadByLastStep = true;
-
-				GmCXt.storage().set({
-					'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-					'guide_play_event': GmCXt.guidePlayTracker
-				});
-			}
-		}
-	};
-
-	pub.setCurrentBranchDetail = function(stepId, branchIndex, branchName, branchStepId, cb) {
-		GmCXt.log(36, "SET CURRENTLY PLAYING BRANCH DETAIL");
-		var branchTestData = self.tours[self.current].branchTest;
-		if (!branchTestData || branchTestData.length === 0) {
-			branchTestData = [];
-		}
-		branchTestData.push({
-			branchName: branchName,
-			branchStepId: branchStepId,
-			branchIndex: branchIndex,
-			stepId: stepId
-		});
-		self.branchStack.push({
-			branchName: branchName,
-			branchStepId: branchStepId,
-			branchIndex: branchIndex,
-			stepId: stepId
-		});
-		self.tours[self.current].branchTest = branchTestData;
-		pub.set(cb);
-	};
-
-	pub.branchPlaySuccess = function(stepId, cb) {
-		GmCXt.log(36, "TOUR BRANCH PLAYED SUCCESS");
-		var autoBranchTestStatus = self.tours[self.current].branchTest;
-		for (var i = 0; i < autoBranchTestStatus.length; i++) {
-			if (autoBranchTestStatus[i].stepId === stepId) {
-				autoBranchTestStatus[i].status = PASSED;
-				break;
-			}
-		}
-		self.branchStack.pop();
-		pub.set(cb);
-	};
-
-	pub.branchPlayFailed = function(step) {
-		GmCXt.log(36, "TOUR BRANCH PLAYED FAILED");
-		var autoBranchTestStatus = self.tours[self.current].branchTest;
-		for (var i = 0; i < autoBranchTestStatus.length; i++) {
-			if (autoBranchTestStatus[i].stepId === step.step_id) {
-				autoBranchTestStatus[i].status = FAILED;
-				pub.fail(step, {
-					errorMessage: 'Failed at branch - ' + autoBranchTestStatus[i].branchName
-				});
-				break;
-			}
-		}
-	};
-	pub.getPreviousBranch = function() {
-		var previousBranch = {};
-		if (self.branchStack && self.branchStack.length > 0) {
-			previousBranch.index = self.branchStack[self.branchStack.length - 1].branchIndex;
-			previousBranch.step = GmCXt.getCurrentStep(self.branchStack[self.branchStack.length - 1].branchStepId);
-		}
-		return previousBranch;
-	};
-
-	/*
-		*	Both params are optional
-		*/
-	pub.succeed = function() {
-		GmCXt.log(36, "TOUR PLAY SUCCESS");
-		self.tours[self.current].test = {
-			status: PASSED
-		};
-		self.smartTipSteps = [];
-		self.playNext = true;
-		GmCXt.log(37, "Tour Marked as Success");
-		pub.updateTrackerObj(self.tours[self.current].tour_id, PASSED, null, function() {
-			GmCXt.log(37, "Automation - Play Next");
-			pub.next();
-		});
-	};
-
-	pub.skipped = function(step) {
-		GmCXt.log(36, "STEP PLAY SKIPPED");
-		pub.get(function() {
-			self.tours[self.current].test = {
-				status: SKIPPED,
-				stepTitle: step.step_title
-			};
-			self.smartTipSteps = [];
-			pub.updateTrackerObj(self.tours[self.current].tour_id, SKIPPED, step, function() {
-				pub.next();
-			});
-		});
-	};
-
-	pub.updateTrackerObj = function(tour_id, status, step, cb) {
-		if (!cb) {
-			cb = function() {};
-		}
-		tour_id = Number(tour_id);
-
-		var errorMessage = step ? (step.errorMessage || '') : '';
-
-		var trackerCurrentTour = self.trackerObj[tour_id];
-
-		if (!trackerCurrentTour) {
-			GmCXt.log(37, 'INCORRECT GUIDE - This step might open in a new tab/window.' +
-				' Please make sure you have the right option selected while step creation.', 1);
-			return;
-		}
-
-		var totalSteps = trackerCurrentTour.totalSteps;
-		var statusText = status;
-
-		var stepOrder = step ? step.step_order : 0;
-		var stepTitle = step ? cleanCommasAndHTMLTagsFromString(step.step_title) : '';
-
-		if (status === FAILED && stepOrder) {
-			statusText = "Failed at step [" + stepOrder + "). " + stepTitle + "]";
-		} else if (status === SKIPPED) {
-			statusText = "Skipped at step [" + stepOrder + "). " + stepTitle + "]";
-		} else if (status === PASSED) {
-			statusText = (totalSteps + "/" + totalSteps + " Step(s) " + status);
-			if (self.tours[self.current].branchTest && self.tours[self.current].branchTest.length > 0) {
-				var noOfBranchPassed = getNoOfBranchPassed();
-				statusText += '[Played ' + noOfBranchPassed + ' branches in this guide]';
-			}
-			if (self.message) {
-				errorMessage += ' ' + self.message;
-			}
-		} else if (status === UNKNOWN) {
-			statusText = '';
-		}
-
-		self.trackerObj[tour_id].index = self.current;
-		self.trackerObj[tour_id].test = {
-			statusText: statusText,
-			status: status,
-			stepTitle: stepTitle,
-			stepOrder: stepOrder,
-			errorMessage: errorMessage
-		};
-
-		GmCXt.log(37, "TRACKER OBJ UPDATED", self.trackerObj);
-		if (GmCXt.playerI) {
-			var jobId = GmCXt.playerI.currentStepId;
-			GmCXt.tourPlayerI.closeStep(jobId, false);
-			GmCXt.cleanPlayer();
-		}
-
-		// Set to storage so that it can be later hydrated on next pages.
-		pub.set(cb);
-	};
-
-	pub.updateAutomationMessage = function(message, cb) {
-		if (self.message && self.message.includes(message)) {
-			pub.set(cb);
-			return;
-		}
-		if (!self.message) {
-			self.message = "";
-		} else if (self.message !== "") {
-			self.message += ", ";
-		}
-		self.message += message;
-		pub.set(cb);
-	};
-
-	var getNoOfBranchPassed = function() {
-		var autoBranchTestStatus = self.tours[self.current].branchTest;
-		var noOfBranchPassed = 0;
-		for (var i = 0; i < autoBranchTestStatus.length; i++) {
-			if (autoBranchTestStatus[i].status === PASSED) {
-				noOfBranchPassed += 1;
-			}
-		}
-		return noOfBranchPassed;
-	};
-
-	pub.pushCurrentTourToTrackerObj = function(tour, steps, index, cb) {
-
-		GmCXt.log(36, "PUSH CURRENT TOUR TO TRACKER OBJECT");
-
-		self.branchStack = [];
-		var totalSteps = 0;
-		if (steps && steps.length > 0) {
-			steps = GmCXt.filterOutAutomationSteps(steps);
-			totalSteps = steps ? steps.length : 0;
-		}
-
-		self.trackerObj[tour.tour_id] = {
-			index: index,
-			totalSteps: totalSteps,
-			test: {
-				status: UNKNOWN
-			}
-		};
-		self.message = "";
-		// Set to storage so that it can be later hydrated on next pages.
-		pub.set(cb);
-
-		GmCXt.log(37, "PUSHED TO TRACKER OBJ", self.trackerObj);
-	};
-
-	pub.playNextAfterRedirection = function() {
-		if (!self.automationInProgress) {
-			return;
-		}
-		pub.set(function() {
-			if (self.current < self.totalTours) {
-				GmCXt.log(36, "PLAY NEXT TOUR AFTER REDIRECTION");
-				var oldTour = self.tours[self.current - 1];
-				testTour(oldTour.tour_type);
-			} else {
-				pub.stop();
-			}
-		});
-	};
-
-	pub.next = function() {
-		if (!self.automationInProgress) {
-			return;
-		}
-		pub.set(function() {
-			if (self.current < self.totalTours && !isTourPlayingOnAnotherTab) {
-				GmCXt.log(36, "TOUR PLAY NEXT");
-				self.current = self.current + 1;
-
-				redirectToTourPage();
-
-			} else {
-				pub.stop();
-			}
-		});
-	};
-
-	pub.stop = function(isInterrupted) {
-		GmCXt.log(36, "STOP MYBOT");
-		if (!isTourPlayingOnAnotherTab && GmCXt.isAutomationRunning()) {
-			if (GmCXt.playerI) GmCXt.cleanPlayer();
-			pub.get(function() {
-				pub.printReport(isInterrupted);
-				GmCXt.storage().remove(['testAuto']);
-			});
-		}
-	};
-
-	pub.set = function(cb, testAuto) {
-		GmCXt.storage().set({
-			'testAuto': self || testAuto
-		}).then(function() {
-			if (cb) {
-				cb();
-			}
-		});
-	};
-
-	pub.get = function(cb) {
-		GmCXt.storage().get(['testAuto'])
-			.then(function(st) {
-				self = st.testAuto;
-				if (cb) {
-					cb(self);
-				}
-			});
-	};
-
-	pub.setTooltipAutoDataToStorage = function(tooltips) {
-		GmCXt.log(43, "STORE TOOLTIPS", tooltips);
-		pub.getTooltipAutoDataFromStorage(function(tData) {
-			tData = Object.assign(tData, tooltips);
-
-			GmCXt.storage().set({
-				'testTooltipAuto': tData
-			});
-		});
-	};
-
-	pub.getTooltipAutoDataFromStorage = function(cb) {
-		GmCXt.storage().get(['testTooltipAuto'])
-			.then(function(st) {
-				cb(st.testTooltipAuto || {});
-			});
-	};
-
-	pub.setBeaconsAutoDataToStorage = function(beacons) {
-		GmCXt.log(49, "STORE BEACONS", beacons);
-		getBeaconsAutoDataFromStorage(function(data) {
-			if (!data) {
-				data = [];
-			}
-			data = data.concat(beacons);
-			GmCXt.storage().set({
-				'testBeaconsAuto': data
-			});
-		});
-	};
-
-	pub.trackDoNotShowNotificationsForAutomation = function(doNotShowTours, testNotificationAuto, self) {
-		if (!doNotShowTours) {
-			return;
-		}
-		Object.keys(doNotShowTours).forEach(function(tId) {
-			if (self.tours[self.current].tour_id == tId) {
-				testNotificationAuto.all[tId] = {
-					status: PASSED,
-					statusText: 'Notification marked as DO NOT SHOW'
-				};
-				GmCXt.auto.setNotificationAutoDataToStorage(testNotificationAuto);
-			}
-		});
-	};
-
-	pub.trackNotificationForAutomation = function(data) {
-
-		pub.get(function(self) {
-			if (data.isVisible) {
-				pub.trackRenderedNotificationsForAutomation(data.tours, self);
-			} else {
-				pub.getNotificationAutoDataFromStorage(function(testNoti) {
-					var snoozedTours = getSnoozedTours(data.tours, self.tours);
-					GmCXt.auto.trackSnoozedNotificationsForAutomation(snoozedTours, testNoti, self);
-					GmCXt.auto.trackDoNotShowNotificationsForAutomation(data.doNotShowTours, testNoti, self);
-				});
-			}
-		});
-	};
-
-	function getSnoozedTours(toursClosedByUser, tours) {
-		return tours.filter(function(t) {
-			if (toursClosedByUser[parseInt(t.tour_id)]) {
-				return t;
-			}
-		});
-	}
-
-	pub.trackSnoozedNotificationsForAutomation = function(snoozedTours, testNotificationAuto, self) {
-		if (snoozedTours && snoozedTours.length > 0) {
-			snoozedTours.forEach(function(t) {
-				if (self.tours[self.current].tour_id == t.tour_id) {
-					testNotificationAuto.all[t.tour_id] = {
-						status: PASSED,
-						statusText: 'Notification Snoozed'
-					};
-					GmCXt.auto.setNotificationAutoDataToStorage(testNotificationAuto);
-				}
-			});
-		}
-	};
-
-	pub.trackRenderedNotificationsForAutomation = function(tours, self) {
-		pub.getNotificationAutoDataFromStorage(function(data) {
-			if (tours && tours.length > 0) {
-				tours.forEach(function(t) {
-					if (self.tours[self.current].tour_id == t.tour_id) {
-						data.all[t.tour_id] = {
-							status: PASSED,
-							statusText: 'Notification Rendered'
-						};
-						GmCXt.auto.setNotificationAutoDataToStorage(data);
-					}
-				});
-			}
-		});
-
-	};
-
-	pub.setNotificationAutoDataToStorage = function(notAutoData, cb) {
-		pub.getNotificationAutoDataFromStorage(function(d) {
-			if (notAutoData && notAutoData.all) {
-				d.all = Object.assign(d.all || {}, notAutoData.all || {});
-			}
-			GmCXt.storage().set({
-				'testNotificationAuto': d
-			}).then(function() {
-				if (cb) {
-					cb();
-				}
-			});
-		});
-	};
-
-	pub.getNotificationAutoDataFromStorage = function(cb) {
-		GmCXt.storage().get(['testNotificationAuto'])
-			.then(function(st) {
-				if (cb) {
-					cb(st.testNotificationAuto || {});
-				}
-			});
-	};
-
-	pub.resetBeaconsAutoDataToStorage = function() {
-		GmCXt.storage().set({
-			'testBeaconsAuto': []
-		});
-	};
-
-	pub.resetTooltipAutoDataToStorage = function() {
-		GmCXt.storage().set({
-			'testTooltipAuto': {}
-		});
-	};
-
-	pub.resetNotificationAutoDataToStorage = function() {
-		GmCXt.storage().set({
-			'testNotificationAuto': {
-				all: {}
-			}
-		});
-	};
-
-	pub.onCloseTour = function() {
-		pub.get(function(self) {
-			var tourType = self.tours[self.current].tour_type;
-			if (tourType.includes("smartTip")) {
-				pub.trackTooltipStep(self.smartTipSteps);
-			} else if (tourType.includes("onboarding_tour")) {
-				pub.trackTutorialGuide();
-			} else {
-				pub.succeed();
-			}
-		});
-	};
-
-	pub.trackTutorialGuide = function() {
-		// Wait for the notifications to render when Automation is running.
-		GmCXt.timeout(function() {
-			pub.succeed();
-		}, GmCXt.t.waitForNotifications);
-	};
-
-	pub.trackTooltipStep = function(steps) {
-		// Wait for the tooltips to render when Automation is running.
-		GmCXt.timeout(function() {
-			GmCXt.auto.getTooltipAutoDataFromStorage(function(tooltipAutoData) {
-				for (var i = 0; i < steps.length; i++) {
-					var step = steps[i];
-
-					var status = FAILED;
-					if (tooltipAutoData) {
-						var tooltipGuidesStatus = tooltipAutoData['tour_' + step.tour_id];
-						if (tooltipGuidesStatus) {
-							if (tooltipGuidesStatus.visible.indexOf(step.step_id.toString()) !== -1) {
-								status = PASSED;
-							} else {
-								status = FAILED;
-							}
-						}
-					}
-					if (status === FAILED) {
-						pub.fail(step, {
-							errorMessage: 'Tooltip Failed'
-						});
-						break;
-					}
-				}
-				if (status === PASSED) {
-					pub.succeed();
-				}
-			});
-		}, SMARTTIP_WAIT_TIME_TO_RENDER);
-	};
-
-	function getBeaconsAutoDataFromStorage(cb) {
-		GmCXt.storage().get(['testBeaconsAuto'])
-			.then(function(st) {
-				cb(st.testBeaconsAuto || []);
-			});
-	}
-
-	pub.getBranchTestStatus = function() {
-		return self.tours[self.current].branchTest || [];
-	};
-
-	function getContextAutoDataFromStorage(cb) {
-		GmCXt.storage().get(['testTooltipAuto', 'testBeaconsAuto', 'testNotificationAuto'])
-			.then(function(st) {
-				cb(st.testTooltipAuto || {}, st.testBeaconsAuto || [], st.testNotificationAuto || {});
-			});
-	}
-
-	function setTestResultsToStorage(data, cb) {
-		GmCXt.storage().set({
-			'testAutoResultsFromCreator': data
-		}).then(cb || function() {});
-	}
-
-	pub.getTestResultsFromStorage = function(cb) {
-		GmCXt.storage().get(['testAutoResultsFromCreator', 'testAuto'])
-			.then(function(st) {
-				// Rehydrate the object state from storage on page refresh
-				self = st.testAuto;
-				cb(st.testAutoResultsFromCreator);
-			});
-	};
-
-	pub.onRedirectToTourPage = function() {
-		self.shouldRedirectToTourPage = false;
-		if (self.current === 0) {
-			testTour();
-		} else {
-			pub.playNextAfterRedirection();
-		}
-	};
-
-	function redirectToTourPage(linkedTourId, originalTour) {
-		if (!linkedTourId) {
-			var t = self.tours[self.current];
-		} else {
-			var t = {
-				tour_id: linkedTourId,
-			};
-		}
-
-		if (!t) {
-			pub.next();
-			return;
-		}
-		GmCXt.getTourDetails({
-			tour_id: t.tour_id,
-			category_id: t.category_id,
-			isPublic: false
-		}).then(function(tour) {
-			if (!tour || !tour.is_published) {
-
-				GmCXt.log(37, "Tour is not published or might have been deleted");
-				self.ignoreTours.push(t.tour_id); // Ignore Tours if they are not Published or deleted
-				self.totalTours = self.totalTours - 1;
-				self.tours.splice(self.current, 1);
-				redirectToTourPage();
-				return;
-			}
-			if (!originalTour) {
-				originalTour = tour;
-			}
-
-			var firstStepId = tour.tour_settings.play_structure[0].id;
-			var firstStep = GmCXt.getStepFromSteps(firstStepId, tour.steps);
-			if (firstStep.step_type === "guide") {
-				redirectToTourPage(firstStep.step_settings.tour_id.toString(), originalTour);
-				return;
-			}
-			self.shouldRedirectToTourPage = true;
-			self.playNext = false;
-			pub.pushCurrentTourToTrackerObj(originalTour, originalTour.steps, self.current, function() {
-				tour.allDomains = self.app.settings.domains;
-				GmCXt.changeUrl(firstStep.step_url, tour, self.startURLDomain);
-			});
-		});
-	}
-
-	function testTour(previousTourType) {
-		var t = self.tours[self.current];
-
-		if (!t) {
-			pub.next();
-			return;
-		}
-
-		GmCXt.log(36, "START TOUR", {
-			tourTitle: t.tour_title,
-			tour_type: t.tour_type
-		});
-
-		function getAutomationSteps(steps) {
-			return steps.filter(function(s) {
-				return (GmCXt.isAutomationStep(s));
-			});
-		}
-
-		pub.setEndTime();
-
-		GmCXt.getTourDetails({
-			tour_id: t.tour_id,
-			category_id: t.category_id,
-			isPublic: false
-		}).then(function(tour) {
-
-			if (tour.tour_type.includes("smartTip")) {
-				self.smartTipSteps = GmCXt.filterOutAutomationSteps(tour.steps);
-			}
-			tour.previousTourType = previousTourType;
-			var delay = 8000;
-			var automationSteps = getAutomationSteps(tour.steps);
-
-			if (!(tour.tour_type.includes("smartTip")) && !(tour.tour_type.includes("onboarding_tour"))) {
-				GmCXt.timeout(function() {
-					if (self.automationInProgress) {
-						GmCXt.getTourDetailsCallback(tour, self.app.settings.domains, 'automation', 'live');
-					}
-				}, delay);
-			} else {
-				var automationSteps = getAutomationSteps(tour.steps);
-				var ruleMatchDelayTime = tour.tour_settings.ruleDelayTime;
-				if (automationSteps.length > 0) {
-					tour.steps = automationSteps;
-					GmCXt.timeout(function() {
-						GmCXt.getTourDetailsCallback(tour, self.app.settings.domains, 'automation', 'live');
-					}, ruleMatchDelayTime + delay);
-				} else if (tour.tour_type.includes("smartTip")) {
-					pub.showProgress();
-					GmCXt.timeout(function() {
-						pub.trackTooltipStep(self.smartTipSteps);
-					}, ruleMatchDelayTime);
-				} else {
-					pub.trackTutorialGuide();
-				}
-				pub.set();
-			}
-		});
-
-	}
-
-	/*
-		* Set timeout for automation and increment it on every step played.
-		* So that results are always shown even if due to some reasons automation hangs in between
-		*/
-	pub.setEndTime = function() {
-		GmCXt.log(37, "Automation: Set End Time: ", GmCXt.t.autoWaitTime);
-		var t = GmCXt.t.autoWaitTime + GmCXt.t.autoEndTime;
-		self.endTime = new Date().getTime() + t;
-		pub.set();
-	};
-
-	/* 
-		* Watch every 10 seconds for endTime and stop automation for current guide if time exceeds
-		*/
-	pub.startWatcher = function() {
-		var itr = function() {
-			if (!self.automationInProgress) {
-				return;
-			}
-			if ((new Date()).valueOf() < self.endTime) {
-				if (!isTourPlayingOnAnotherTab) {
-					pub.showProgress();
-				}
-				setTimeout(itr, GmCXt.t.guideAutoWatch);
-			} else {
-				GmCXt.log(37, "Stop automation for current guide due to timeout");
-				if (isTourPlayingOnAnotherTab) {
-					return;
-				}
-				pub.setEndTime();
-				var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-				pub.fail(step, {
-					errorMessage: "Stop automation for current guide due to timeout"
-				});
-			}
-		};
-		itr();
-	};
-
-	pub.getDetailedProgressBar = function() {
-		var html =
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-prog-wrapper mgPlayerJSPreview_inline-block-vm'>" +
-			getProgressBarHeader() +
-			"  	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-prog-container-label'>" + GmCXt.label.active + "</wmgPlayerJSPreview_>" +
-			" 	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_active-progress-bar-container'>" +
-			"   	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-progress-bar-loader'></wmgPlayerJSPreview_>" +
-			" 		<span style='padding-left: 10px; margin-top:5px;'>" + GmCXt.label.guide + (self.current + 1) + " : " + self.tours[self.current].tour_title + "</span>" +
-			"	</wmgPlayerJSPreview_>" +
-			"  	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-prog-container-label'>" + GmCXt.label.completed + "</wmgPlayerJSPreview_>" +
-			"  	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_completed-progress-bar-container' style='max-height: 250px'>";
-		for (var i = 1; i < self.current + 1; i++) {
-			html += "<div class='mgPlayerJSPreview_progr-bar-guide-item' style='padding: 5px;'>";
-			if (self.tours[i - 1].test.status === "Passed") {
-				html += "<span>&#9989;</span>";
-			} else {
-				html += "<span>&#10060;</span>";
-			}
-			html += "<span style='padding-left: 10px;'>" + GmCXt.label.guide + i + " : " + self.tours[i - 1].tour_title + "</span> ";
-			html += "</div>";
-		}
-		html += "</wmgPlayerJSPreview_>" +
-			getProgressBarFooter(true) +
-			"</wmgPlayerJSPreview_>";
-
-		return html;
-	};
-
-	pub.getShortProgressBar = function() {
-		return "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-prog-wrapper mgPlayerJSPreview_inline-block-vm' style='height:90px;'>" +
-			getProgressBarHeader() +
-			getProgressBarFooter(false) +
-			"</wmgPlayerJSPreview_>";
-	};
-
-	var getProgressBarHeader = function() {
-		return "" +
-			"  <wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-progress-bar-container'>" +
-			"	 <wmgPlayerJSPreview_ class='mgPlayerJSPreview_prog-count mgPlayerJSPreview_inline-block-vm'>" +
-			GmCXt.label.running + " " + (self.current + 1) + "/" + self.totalTours +
-			"	 </wmgPlayerJSPreview_>" +
-			"    <wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-progress-bar-loader'></wmgPlayerJSPreview_>" +
-			"  </wmgPlayerJSPreview_>";
-	};
-
-	var getProgressBarFooter = function(showLess) {
-		var html = "" +
-			"  <wmgPlayerJSPreview_ style='display:flex; flex-direction:row; justify-content:space-between; height:38px; margin-top:5px; padding:10px; '>";
-
-		if (showLess) {
-			html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_btn-showless' class='mgPlayerJSPreview_auto-prog-expand-options'><a>" + GmCXt.label.lessDetails + "</a></wmgPlayerJSPreview_>";
-		} else {
-			html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_btn-showmore' class='mgPlayerJSPreview_auto-prog-expand-options'><a>" + GmCXt.label.viewMoreDetails + "</a></wmgPlayerJSPreview_>";
-		}
-		html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_btn-default' class='action-btn mgPlayerJSPreview_auto-prog-btn'>" + GmCXt.label.stop + "</wmgPlayerJSPreview_></wmgPlayerJSPreview_>";
-		return html;
-	};
-
-	pub.showProgress = function() {
-
-		if (!self.automationInProgress) {
-			return;
-		}
-
-		// First remove any previously existing element
-		mg$(".mgPlayerJSPreview_auto-prog-wrapper").remove();
-
-		if (self.showDetailedProgressbar) {
-			var progressBar = pub.getDetailedProgressBar();
-
-			mg$("body").append(progressBar);
-			document.getElementById("mgPlayerJSPreview_btn-showless").onmouseup = function() {
-				self.showDetailedProgressbar = false;
-				pub.showProgress();
-			};
-
-		} else {
-			progressBar = pub.getShortProgressBar();
-
-			mg$("body").append(progressBar);
-			document.getElementById("mgPlayerJSPreview_btn-showmore").onmouseup = function() {
-				self.showDetailedProgressbar = true;
-				pub.showProgress();
-			};
-		}
-		pub.set();
-
-		document.getElementById("mgPlayerJSPreview_btn-default").onmouseup = function() {
-			mg$('.mgPlayerJSPreview_auto-prog-wrapper').remove();
-			pub.set();
-			if (GmCXt.tourPlayerI) {
-				GmCXt.tourPlayerI.closeGuide(true);
-			} else {
-				pub.stop(true);
-			}
-		};
-	};
-
-	var onCloseResultPopup = function(e) {
-		mg$('.mgPlayerJSPreview_auto-results-wrapper').remove();
-		pub.destroyAutomation();
-	};
-
-	pub.renderResults = function(data, url) {
-
-		if (data) {
-			GmCXt.testResultsFromCreator = data;
-		}
-
-		// Hydrate the state, so that we can rehydrate it when page is refreshed.
-		// Ideally it should be there already, but it got removed somewhere. So let's add it back.
-		pub.set();
-
-		if (GmCXt.testResultsFromCreator && GmCXt.testResultsFromCreator.show) {
-
-			var showLoader = function() {
-				mg$('#mgPlayerJSPreview_auto-results-loader').show();
-				mg$('#insights_link').hide();
-			};
-
-			var hideLoader = function() {
-				mg$('#mgPlayerJSPreview_auto-results-loader').hide();
-			};
-
-			var onClickInsightsLink = function() {
-
-				showLoader();
-
-				var testCode = GmCXt.testResultsFromCreator.testCode;
-				GmCXt.api.getHandOffToken().then(function(response) {
-
-					if (!response.error && response.data && response.data['handoff-token']) {
-						var token = response.data['handoff-token'];
-						var appCode = self.app.external_id;
-
-						var url = GmCXt.conf.analyticsPortalUrl.replace('v4', 'v3') + '#/automation-insights/automation-detail/' + testCode +
-							'?app_id=' + GmCXt.activeAppId + '&app_code=' + appCode + '&handoff-token=' + token;
-
-						hideLoader();
-						onCloseResultPopup();
-						window.open(url, '_blank');
-					}
-				}).catch(function(e) {
-					GmCXt.log(36, "Unable to get onetime access token for Insights portal");
-					console.error(e);
-					hideLoader();
-				});
-
-			};
-
-			// Remove if already exists
-			mg$('.mgPlayerJSPreview_auto-results-wrapper').remove();
-			mg$('.mgPlayerJSPreview_auto-prog-wrapper').remove();
-
-			var resultMessage = (data.testResultsDataArray[0].status === 'fail') ? GmCXt.label.automationFail : GmCXt.label.automationSuccess;
-
-			var html =
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-results-wrapper mgPlayerJSPreview_inline-block-vm'>" +
-				"	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_auto-results-header'>" +
-				"      <wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-results-header-title'>" + GmCXt.label.testResults + "</wmgPlayerJSPreview_>" +
-				"	   <wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-results-close-btn'>" +
-				"         <wmgPlayerJSPreview_ id='mgPlayerJSPreview_auto-test-result-close-btn'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-				"      </wmgPlayerJSPreview_>" +
-				"   </wmgPlayerJSPreview_>" +
-				"   <wmgPlayerJSPreview_ id='mgPlayerJSPreview_auto-results-loader' class='mgPlayerJSPreview_auto-insights-link-loader-wrapper'>" +
-				"       <wmgPlayerJSPreview_ class='mgPlayerJSPreview_auto-progress-bar-loader mgPlayerJSPreview_auto-insights-link-loader'></wmgPlayerJSPreview_>" +
-				"   </wmgPlayerJSPreview_>" +
-				"   <wmgPlayerJSPreview_ id='insights_link' class='mgPlayerJSPreview_insights-link-wrapper'>" +
-				"       <wmgPlayerJSPreview_ class='mgPlayerJSPreview_automation-success-img-wrapper'>" +
-				"           <img src='" + GmCXt.getExtUrl('common/img/test-success.png') + "' alt='success'/>" +
-				"       </wmgPlayerJSPreview_>" +
-				"       <wmgPlayerJSPreview_ class='mgPlayerJSPreview_automation-success-link-wrapper'>" +
-				"           <div>" + resultMessage + "</div>" +
-				"           <div>" + GmCXt.label.viewResult + "</div>" +
-				"           <a>" + GmCXt.label.autoTestResult + "</a>" +
-				"       </wmgPlayerJSPreview_>" +
-				"   </wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>";
-
-			// Remove any previously existing element
-			mg$(".mgPlayerJSPreview_auto-results-wrapper").remove();
-			mg$("body").append(html);
-			mg$('.mgPlayerJSPreview_result-table-wrapper').hide();
-			mg$('#mgPlayerJSPreview_auto-export').hide();
-			hideLoader();
-			mg$('#insights_link').on('click', 'a', onClickInsightsLink);
-			document.getElementById("mgPlayerJSPreview_auto-test-result-close-btn").onmouseup = onCloseResultPopup;
-		}
-	};
-
-	pub.reportSaved = function() {
-		GmCXt.testResultsFromCreator.show = true;
-		setTestResultsToStorage(GmCXt.testResultsFromCreator, function() {
-			pub.showResults(GmCXt.testResultsFromCreator);
-		});
-	};
-
-	function getNotificationData() {
-		var data = {
-			all: {}
-		};
-		self.tours.forEach(function(t) {
-			if (t.tour_type.indexOf('overlay_tour') > -1) {
-				data.all[String(t.tour_id)] = {
-					status: "Failed",
-					statusText: 'Notification Failed'
-				};
-			}
-		});
-		return data;
-	}
-
-	function getTours() {
-		loopCategories(self.app.categories);
-	}
-
-	function loopCategories(categories) {
-
-		for (var i = 0, j = categories.length; i < j; i++) {
-			var cat = categories[i];
-			cat = GmCXt.validateDataModel(cat, GmCXt.model.category);
-
-			if (cat.sub_categories && cat.sub_categories.length > 0) {
-				loopCategories(cat.sub_categories);
-			} else {
-				self.tours = self.tours.concat(getReducedTour(cat.tours));
-			}
-		}
-	}
-
-	function getReducedTour(tours) {
-		var reducedTour = [];
-		tours.forEach(function(t) {
-			reducedTour.push({
-				tour_id: t.tour_id,
-				tour_type: t.tour_type,
-				tour_title: t.tour_title,
-				category_id: t.category_id
-			});
-		});
-		return reducedTour;
-	}
-
-	pub.showResults = function(testResultsFromCreator) {
-		pub.renderResults(testResultsFromCreator);
-	};
-
-	pub.printReport = function(isInterrupted) {
-		console.dir("**************** Test automation report ****************");
-		getContextAutoDataFromStorage(function(TooltipAutoData, beaconsAutoData, testNotificationAuto) {
-
-			GmCXt.log(37, "From Storage: Tooltip data         : ", TooltipAutoData);
-			GmCXt.log(37, "From Storage: Beacons data         : ", beaconsAutoData);
-			GmCXt.log(37, "From Storage: Notification data    : ", testNotificationAuto);
-
-			if (!self || !self.app) {
-				GmCXt.log(37, "Automation data not available");
-				return;
-			}
-			self.automationInProgress = false;
-
-			var finalResult = {
-				status: 'pass'
-			};
-			var categoryInsights = printCategories(
-				self.app.categories,
-				0,
-				TooltipAutoData,
-				beaconsAutoData,
-				testNotificationAuto, [],
-				finalResult
-			);
-			self.apiPayloadResultSequence = categoryInsights;
-
-			console.dir("-----------------End of test results---------------------");
-
-			// Hide the progress bar
-			mg$('.mgPlayerJSPreview_auto-prog-wrapper').remove();
-
-			if (GmCXt.isEmpty(GmCXt.conf.analyticsPath)) {
-				GmCXt.log(36, "Analytic Path is not configured.");
-
-				GmCXt.storage().remove(['testAutoResultsFromCreator']);
-				pub.destroyAutomation();
-				return;
-			}
-
-			var eventStartTime = formatDateObjForInsights(new Date());
-			var testCode = GmCXt.getUUID();
-			var msg = "mgPlayerJSPreview_action:mybot_results";
-			var data = {
-				resultSequence: categoryInsights,
-				url: window.location.protocol + "//" + window.location.hostname,
-				eventStartTime: eventStartTime,
-				runType: 'manual',
-				status: isInterrupted ? 'interrupted' : 'complete',
-				resultStatus: isInterrupted ? '' : finalResult.status,
-				testCode: testCode
-			};
-			GmCXt.trackerV1.trackMyBotEvents(data);
-
-			GmCXt.testResultsFromCreator.testCode = testCode;
-			setTestResultsToStorage(GmCXt.testResultsFromCreator);
-
-			GmCXt.closeNotificationPopup();
-			GmCXt.clearBeaconsAndTooltips();
-			GmCXt.showWidget();
-		});
-	};
-
-	// Format the date object to "YYYY-MM-DD HH-MM-SS"
-	var formatDateObjForInsights = function(date) {
-		var prependZero = function(d) {
-			if (d < 10) {
-				return "0" + d;
-			}
-			return d;
-		};
-		return date.getFullYear() +
-			"-" + prependZero(date.getMonth() + 1) +
-			"-" + prependZero(date.getDate()) +
-			" " + prependZero(date.getHours()) +
-			"-" + prependZero(date.getMinutes()) +
-			"-" + prependZero(date.getSeconds());
-	};
-
-	function printCategories(categories, level, TooltipAutoData, beaconsAutoData,
-		testNotificationAuto, categoryInsights, finalResult) {
-		for (var i = 0, j = categories.length; i < j; i++) {
-			var cat = categories[i];
-			cat = GmCXt.validateDataModel(cat, GmCXt.model.category);
-			var categoryId = cat.category_id;
-			var resultObj = {
-				"catgory_id": categoryId,
-				"catgory_title": cat.category_title,
-				"guides_tested": [],
-				"children_categories": []
-			};
-
-			if (cat.sub_categories && cat.sub_categories.length > 0) {
-				var childrenInsights = [];
-				childrenInsights = printCategories(cat.sub_categories, level + 1, TooltipAutoData,
-					beaconsAutoData, testNotificationAuto, childrenInsights, finalResult);
-				resultObj.children_categories = childrenInsights;
-			} else if (cat.tours && cat.tours.length > 0) {
-				console.dir("Category: " + cat.category_title);
-				printTours(cat, level, TooltipAutoData, beaconsAutoData, testNotificationAuto, finalResult);
-				var catFilter = function(categoryId, t) {
-					return (t.category_id === categoryId);
-				};
-				catFilter = catFilter.bind(null, categoryId);
-				resultObj.guides_tested = self.testResultsDataArray.filter(catFilter);
-			}
-			categoryInsights.push(resultObj);
-		}
-		return categoryInsights;
-	}
-
-	function getTour(id) {
-		for (var i = 0, j = self.tours.length; i < j; i++) {
-			if (self.tours[i].tour_id === id) {
-				return self.tours[i];
-			}
-		}
-		return null;
-	}
-
-	function getOriginalTour(tours, id) {
-		for (var i = 0, j = tours.length; i < j; i++) {
-			if (tours[i].tour_id === id) {
-				return tours[i];
-			}
-		}
-		return null;
-	}
-
-	function getTestStatus(id, tourType, currentTourTracker, TooltipAutoData, beaconsAutoData, testNotificationAuto) {
-
-		id = String(id);
-
-		if (!currentTourTracker) {
-			return {
-				status: FAILED,
-				statusText: ''
-			};
-		}
-
-		var test = currentTourTracker.test;
-		var status = test.status;
-		var statusText = test.statusText;
-
-		if (beaconsAutoData && GmCXt.inArray(Number(id), beaconsAutoData)) {
-			statusText += " [Beacon Passed]";
-		} else if (tourType.includes("beacon_tour")) {
-			statusText += " [Beacon Failed]";
-			status = FAILED;
-		}
-
-		if (testNotificationAuto && testNotificationAuto.all &&
-			testNotificationAuto.all[id]) {
-			var notificationTourResult = testNotificationAuto.all[id];
-			if (notificationTourResult.status !== PASSED) {
-				status = notificationTourResult.status;
-			}
-			statusText += " [" + notificationTourResult.statusText + "]";
-		}
-
-		return {
-			status: status || FAILED,
-			statusText: statusText || ''
-		};
-	}
-
-	function printTours(category, level, TooltipAutoData, beaconsAutoData, testNotificationAuto, finalResult) {
-
-		var tours = category.tours;
-		for (var i = 0, j = tours.length; i < j; i++) {
-			var currentTour = tours[i];
-			if (self.ignoreTours.includes(currentTour.tour_id)) {
-				continue;
-			}
-			var title = currentTour.tour_title;
-			var tourType = currentTour.tour_type;
-			if (title) {
-				title = title.replaceAll(",", " ");
-				// Clean HTML tags from the string
-				title = mg$('<div>' + title + '</div>').text();
-			}
-			var id = currentTour.tour_id;
-			var currentTourTracker = self.trackerObj[Number(id)];
-
-			var message = '';
-			if (currentTourTracker) {
-				var test = currentTourTracker.test;
-				if (test) {
-					message = test.errorMessage || '';
-				}
-			}
-			var statusObj = getTestStatus(id, tourType, currentTourTracker, TooltipAutoData, beaconsAutoData, testNotificationAuto);
-			var sts = statusObj.status === PASSED ? 'pass' : 'fail';
-
-			if (sts === 'fail') {
-				finalResult.status = sts;
-			}
-			console.dir("Status: " + sts + " | Title: " + title + " | StatusText: " + statusObj.statusText + " | Message: " + message);
-
-			self.testResultsDataArray.push({
-				'category_id': category.category_id,
-				'guide_id': id,
-				'guide_title': title,
-				'status': sts,
-				'status_text': statusObj.statusText,
-				'message_text': message
-			});
-		}
-
-		GmCXt.testResultsFromCreator = {
-			show: false,
-			testResultsDataArray: self.testResultsDataArray
-		};
-		setTestResultsToStorage(GmCXt.testResultsFromCreator);
-	}
-
-	var cleanCommasAndHTMLTagsFromString = function(str) {
-		// Clean HTML tags from the string
-		str = mg$('<div>' + str + '</div>').text();
-		str = str.replaceAll(",", " ");
-		return str;
-	};
-
-	pub.resumeState = function(d) {
-		self = d;
-
-		// After page refresh extension doesn't redirect to route in extension
-		// Application needs to be on home route while guide rules are running
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:go_to_route");
-	};
-
-	pub.destroyAutomation = function() {
-		if (GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI.closeGuide(true);
-		}
-		setTestResultsToStorage({
-			show: false,
-		});
-
-		pub.resetBeaconsAutoDataToStorage();
-		pub.resetNotificationAutoDataToStorage();
-		pub.resetTooltipAutoDataToStorage();
-
-		GmCXt.cleanPlayer();
-		self = {};
-		pub.cleanAllStorageDataForGuideAutomation();
-	};
-
-	pub.cleanAllStorageDataForGuideAutomation = function() {
-		GmCXt.storage().remove(['testAuto']);
-	};
-
-	return pub;
-})();
 GmCXt.model = {};
 
 GmCXt.model.api = {
@@ -33935,14178 +29051,6 @@ GmCXt.model.applications = {
 	_obj: mg$.extend({}, GmCXt.model.application)
 };
 /**
- * @file Guideme blackout viewport module
- * @author Nilesh Pachpande
- */
-
-/**
- * @function Blackout remaining area outside of highlighted elements,
- * we will call it only 'elements'. 
- * Remaining area contains many rectangles that need to blackout, we 
- * call it 'rectangles' in comments inside the function. 
- * @param {object} data - array of Elements highlighted inside DOM
- * @param {object} container - Jquery container object 
- */
-
-if (GmCXt === undefined) {
-	var GmCXt = {};
-}
-
-GmCXt.screenOverlay = function(options) {
-	var pub = {};
-	options = options || {};
-
-	var data = options.data,
-		myContainer = options.containerOffset,
-		stepType = options.stepType;
-
-	pub.start = function() {
-		/**
-		 * Array of rectangles to blackout. 
-		 */
-		var rectangles = [];
-
-		/**
-		 * Array of 0's and 1's. It is a matrix myContainer.width X myContainer.height
-		 * Initialization: 
-		 * Elements corresponding to highlighted area are 1's and remaining elements are all 0's
-		 * After initialization, elements are set to 1 when they are occupied by a rectangle. 
-		 */
-		var containerMatrix = [];
-
-		/**
-		 * @function
-		 * @param {number} left - x coordinate while traversing container
-		 * @param {number} top - y coordinate
-		 * @returns true if (x, y) coordinate is occupied, 
-		 * false if (x, y) coordinate is outside of highlighted area
-		 */
-
-		var checkIfOccupied = function(top, left) {
-
-			var decrementBy = 1;
-
-			for (var i = 0, j = data.length; i < j; i++) {
-				if (data[i] && top > (data[i].top - decrementBy) &&
-					top <= (data[i].top + data[i].height - decrementBy) &&
-					left > (data[i].left - decrementBy) &&
-					left <= (data[i].left + data[i].width - decrementBy)
-				) {
-					return true;
-				}
-			}
-			return false;
-		};
-
-		/**
-		 * @function Saves rectangle
-		 * @param {object} top
-		 * @param {object} left
-		 */
-		var saveRectangle = function(top, left) {
-
-			var countX = 0,
-				countY = 0,
-				width = 0;
-			var decrementWidth = false;
-			for (var i = top; i < myContainer.height; i++) {
-				countX = 0;
-				for (var j = left; j < myContainer.width; j++) {
-					countX++;
-					if (containerMatrix[i][j] == 1 || j == (myContainer.width - 1)) {
-						// Initialize width
-						if (width === 0) {
-							if (containerMatrix[i][j] == 1) {
-								decrementWidth = true;
-							}
-							width = countX;
-						}
-						break;
-					}
-				}
-
-				// If width is set and is changed 
-				if (width > 0 && width != countX) {
-					break;
-				} else {
-					// Start from left until j
-					for (m = left; m < j; m++) {
-						// Set 1 for cells occupied by the rectangle
-						containerMatrix[i][m] = 1;
-					}
-				}
-				countY++;
-			}
-
-			if (decrementWidth === true) {
-				width = width - 1;
-			}
-
-			var rect = {
-				top: top,
-				left: left,
-				width: width,
-				height: countY
-			};
-
-			if (myContainer !== undefined) {
-				rect.top += myContainer.top;
-				rect.left += myContainer.left;
-			}
-
-			var windowScrollTop = mg$('.mgPlayerJSPreview_screen').scrollTop();
-			if (windowScrollTop > 0) {
-				rect.top -= windowScrollTop;
-			}
-			var windowScrollLeft = mg$('.mgPlayerJSPreview_screen').scrollLeft();
-			if (windowScrollLeft > 0) {
-				rect.left -= windowScrollLeft;
-			}
-
-			if (!(rect.width === 0 || rect.height === 0)) {
-				adjustPixels(rect);
-				rectangles.push(rect);
-			}
-		};
-
-		function adjustPixels(rect) {
-			if (GmCXt.browserApp === 'ie') {
-				var ratio = window.devicePixelRatio;
-				var deviceWidth = rect.width * ratio;
-				var diff = deviceWidth - Math.floor(deviceWidth);
-				if (diff >= 0.5) {
-					rect.width = rect.width + 0.5;
-				}
-
-				var deviceHeight = rect.height * ratio;
-				var diff = deviceHeight - Math.floor(deviceHeight);
-				if (diff >= 0.5) {
-					rect.height = rect.height + 0.5;
-				}
-			}
-		}
-
-		/**
-		 * i is traversing from top to bottom. So it represents the top coordinate of any point.
-		 * j is traversing from left to right. So it represents the left coordinate of any point.
-		 */
-
-		function multipleAreaHighlight() {
-			for (var i = 0; i < myContainer.height; i++) {
-				containerMatrix[i] = [];
-				for (var j = 0; j < myContainer.width; j++) {
-					if (checkIfOccupied(i, j)) {
-						containerMatrix[i][j] = 1;
-					} else {
-						containerMatrix[i][j] = 0;
-					}
-				}
-			}
-
-			for (var i = 0; i < myContainer.height; i++) {
-				for (var j = 0; j < (myContainer.width - 1); j++) {
-					/**
-					 * If element is 0, initialize rectangle from the elements 
-					 * (x, y) coordinate as rectangle's top, left coordinates. 
-					 */
-					if (containerMatrix[i][j] === 0) {
-						saveRectangle(i, j);
-					}
-				}
-			}
-		} 
-
-		function singleAreaHighlight(){
-			var el =  data[0];
-
-			var rect1 = {
-				top: 0,
-				left: 0,
-				width: mg$(window).width(),
-				height: el.top
-			};
-			var rect2 = {
-				top: el.top,
-				left: 0,
-				width: el.left,
-				height: el.height
-			}; 
-			var rect3 = {
-				top: el.top,
-				left: el.left+el.width,
-				width: (mg$(window).width() - (el.left + el.width)),
-				height: el.height
-			}; 
-			var rect4 = {
-				top: el.top+el.height,
-				left: 0,
-				width: mg$(window).width(),
-				height: (mg$(document).height() - (el.height + el.top))
-			};   
-
-			rectangles.push(rect1, rect2, rect3, rect4);
-		}
-
-		if(data.length === 1){
-			singleAreaHighlight(); 
-		}else{
-			multipleAreaHighlight(); 
-		}
-
-		var overlayObj = mg$('.mgPlayerJSPreview_screen-blackout');
-		var html = '';
-		var wmgPlayerJSPreview_OverPosition = '';
-		if (stepType === GmCXt.STEP_TYPE_IMAGE) {
-			wmgPlayerJSPreview_OverPosition = 'fixed';
-		}
-		for (var i = 0; i < rectangles.length; i++) {
-			html = html + "<wmgPlayerJSPreview_over style='position:" + wmgPlayerJSPreview_OverPosition + ";top: " + rectangles[i].top + "px;" +
-				"left: " + rectangles[i].left + "px; width: " + rectangles[i].width + "px;" +
-				" height: " + rectangles[i].height + "px;'></wmgPlayerJSPreview_over>";
-		}
-		overlayObj.html(html);
-
-		var cssPosition = "absolute";
-		if (options && options.cssPosition) {
-			cssPosition = "fixed";
-		}
-
-		mg$('.mgPlayerJSPreview_screen-blackout').css({
-			'top': 0,
-			'left': 0,
-			'position': cssPosition
-		});
-		mg$('.mgPlayerJSPreview_screen-blackout').show();
-
-		if (myContainer !== undefined) {
-			mg$('.mgPlayerJSPreview_screen-blackout').css({
-				'top': myContainer.top,
-				'left': myContainer.left
-			});
-		}
-
-		/* Add overlay opacity while playing step*/
-
-		// TODO:- Tested
-		if (GmCXt.playerI && GmCXt.playerI.tour) {
-			var stepCurrentlyPlaying = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-			if (stepCurrentlyPlaying) {
-				var stepSettings = stepCurrentlyPlaying.step_settings;
-				var overlayOpacity = -1;
-				if (GmCXt.isNumeric(stepSettings.overlayOpacity)) {
-					overlayOpacity = parseInt(stepSettings.overlayOpacity);
-					overlayOpacity = (overlayOpacity * 10) / 100;
-					mg$('wmgPlayerJSPreview_over').css('opacity', overlayOpacity);
-				}
-			}
-		}
-
-	};
-
-	return pub;
-};
-/**
- * @file Guideme Popup align module
- * @author Nilesh Pachpande
- */
-
-/** @function 
- * Sets up a popup alignment with respect to highlighted area, if an alignment (see below
- * for supported alignment types) is known. By default, it sets up alignment which fits 
- * first in the order.
- * If none of the supported alignment is set then it aligns popup in the center.
- * 
- * @param {object} options - having properties
- *  1. popup: popup jquery object (used to fetch properties (such as width and height) and 
- *      to set up its css properties)
- *  2. highlightedArea: has properties, left, top, width and height 
- *  3. alignment: any one of the supported alignment types namely left-top, left-bottom,
- *      right-top, right-bottom, top-left, top-right, bottom-left, bottom-right
- *  4. containerOffset: container offset in which popup should be aligned. for example 
- *      image canvas for image type step
- *  5. hardApply: If input alignment should be applied. If not possible then, do nothing.
- *      By default, it is false, tries to set a default alignment if it is not possible
- *      to set the input alignment.
- */
-
-if (GmCXt === undefined) {
-	var GmCXt = {};
-}
-
-GmCXt.alignPopup = function(options) {
-	options = options || {};
-
-	var pub = {};
-	var self = {
-		popup: options.popup,
-		highlightedArea: options.highlightedArea || {},
-		containerOffset: options.containerOffest || {
-			left: 0,
-			top: 0
-		},
-		alignment: options.alignment || '',
-		hardApply: options.hardApply || false,
-		doNotApplyArrow: options.doNotApplyArrow || false,
-		arrowClass: '',
-		left: null,
-		top: null,
-		isSet: false,
-		arrowId: options.tooltipArrowId || "",
-		arrowWidth: options.isBeacon ? 5 : 12, // true after alignment is set
-		isGuidance: options.isGuidance,
-		customPos: options.customPos,
-		isBeacon: options.isBeacon,
-		dynamicPositioning: options.dynamicPositioning
-	};
-
-	if (!self.arrowId) {
-		self.doNotApplyArrow = true;
-	}
-
-	// This value gets set in tour player only
-	// Hence assigning whenever it's not set
-	if (!self.highlightedArea.origTop) {
-		self.highlightedArea.origTop = self.highlightedArea.top;
-	}
-
-	/**
-	 * Verify popup should be a valid jquery selector object
-	 */
-	if (self.popup.length === 0) {
-		return;
-	}
-
-	if (self.arrowId && mg$('#' + self.arrowId).length) {
-		mg$('#' + self.arrowId).remove();
-	}
-
-	if (self.isGuidance && (self.alignment === "top" || self.alignment === "bottom")) {
-		self.arrowWidth = 8;
-	}
-
-	self.popupWidth = self.popup.outerWidth() || 310;
-	self.popupHeight = self.popup.outerHeight() || 50;
-
-	self.highlightedArea.width = self.highlightedArea.width ? self.highlightedArea.width : 0;
-	self.highlightedArea.height = self.highlightedArea.height ? self.highlightedArea.height : 0;
-	self.highlightedArea.left = self.highlightedArea.left ? self.highlightedArea.left : 0;
-	self.highlightedArea.top = self.highlightedArea.top ? self.highlightedArea.top : 0;
-
-	var winHeight = mg$(window).height();
-	var winWidth = mg$(window).width();
-
-	// Available space surrounding highlighted area
-	if (self.highlightedArea.width > 0 && self.highlightedArea.height > 0) {
-		self.availableSpace = {
-			top: self.highlightedArea.origTop,
-			left: self.highlightedArea.left,
-			right: winWidth - (self.highlightedArea.left + self.highlightedArea.width),
-			bottom: winHeight - (self.highlightedArea.origTop + self.highlightedArea.height)
-		};
-	} else {
-		self.availableSpace = {
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
-		};
-	}
-
-	if (!self.highlightedArea.left && !self.highlightedArea.top) {
-		self.availableSpace.top = (self.availableSpace.top) ? self.availableSpace.top : 0;
-		self.availableSpace.left = (self.availableSpace.left) ? self.availableSpace.left : 0;
-		self.availableSpace.right = (self.availableSpace.right) ? self.availableSpace.right : 0;
-		self.availableSpace.bottom = (self.availableSpace.bottom) ? self.availableSpace.bottom : 0;
-	}
-
-	if (self.containerOffset !== undefined) {
-		if (self.containerOffset.top < 0) {
-			self.containerOffset.top = 0;
-		}
-		if (self.containerOffset.left < 0) {
-			self.containerOffset.left = 0;
-		}
-		self.availableSpace.top += self.containerOffset.top;
-		self.availableSpace.left += self.containerOffset.left;
-		self.availableSpace.right -= self.containerOffset.left;
-		self.availableSpace.bottom -= self.containerOffset.top;
-	}
-
-	if (options.playingTour) {
-		GmCXt.log(33, "SURROUNDING SPACE of element", self.availableSpace);
-	} else {
-		GmCXt.log(43, "SURROUNDING SPACE of element", self.availableSpace);
-	}
-
-	if (self.availableSpace.top >= 0) {
-		self.totalHeightMinusTop = winHeight - self.availableSpace.top;
-	}
-	if (self.availableSpace.left >= 0) {
-		self.totalWidthMinusLeft = winWidth - self.availableSpace.left;
-	}
-	if (self.availableSpace.bottom >= 0) {
-		self.totalHeightMinusBottom = winHeight - self.availableSpace.bottom;
-	}
-	if (self.availableSpace.right >= 0) {
-		self.totalWidthMinusRight = winWidth - self.availableSpace.right;
-	}
-
-	function checkLeftMiddle() {
-		if(self.dynamicPositioning){
-			if (Math.abs(self.availableSpace.left) > self.popupWidth && self.highlightedArea.height / 2 < screen.height) {
-				if ((Math.abs(self.availableSpace.top) + self.highlightedArea.height / 2 > self.popupHeight / 2) &&
-					(Math.abs(self.availableSpace.bottom) + self.highlightedArea.height / 2 > self.popupHeight / 2)
-				) {
-					return true;
-	
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignLeftMiddle() {
-		if (checkLeftMiddle()) {
-			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
-			self.top = (self.highlightedArea.top + self.highlightedArea.height / 2) - (self.popupHeight / 2);
-			self.arrowClass = 'mgPlayerJSPreview_arrow-right';
-			self.arrowLeft = self.highlightedArea.left - 12;
-			self.arrowTop = self.top + (self.popupHeight / 2) - 10;
-			self.isSet = true;
-			self.alignment = 'left-middle';
-		}
-	}
-
-	function checkLeftTop() {
-		if(self.dynamicPositioning){
-			if (Math.abs(self.availableSpace.left) > self.popupWidth && self.totalHeightMinusTop > self.popupHeight) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-
-	}
-
-	function alignLeftTop() {
-		if (checkLeftTop()) {
-			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
-			self.top = self.highlightedArea.top;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-right';
-			self.arrowLeft = self.highlightedArea.left - 12;
-			self.arrowTop = self.top + 7;
-			self.isSet = true;
-			self.alignment = 'left-top';
-		}
-	}
-
-	function checkLeftBottom() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.left) > self.popupWidth && self.totalHeightMinusBottom > self.popupHeight) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignLeftBottom() {
-		if (checkLeftBottom()) {
-			self.left = self.highlightedArea.left - self.popupWidth - self.arrowWidth;
-			self.top = (self.highlightedArea.top + self.highlightedArea.height) - self.popupHeight;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-right';
-			self.arrowLeft = self.highlightedArea.left - 12;
-			self.arrowTop = self.top + (self.popupHeight - 30);
-			self.isSet = true;
-			self.alignment = 'left-bottom';
-		}
-	}
-
-	function checkRightMiddle() {
-		if(self.dynamicPositioning) {
-			if (self.availableSpace.right > self.popupWidth && self.highlightedArea.height / 2 < screen.height) {
-				if ((Math.abs(self.availableSpace.top) + self.highlightedArea.height / 2 > self.popupHeight / 2) &&
-					(Math.abs(self.availableSpace.bottom) + self.highlightedArea.height / 2 > self.popupHeight / 2)
-				) {
-					return true;
-	
-				} else {
-					return false;
-				}
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignRightMiddle() {
-		if (checkRightMiddle()) {
-			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
-			self.top = (self.highlightedArea.top + self.highlightedArea.height / 2) - (self.popupHeight / 2);
-			self.arrowClass = 'mgPlayerJSPreview_arrow-left';
-			self.arrowLeft = self.left - 10;
-			self.arrowTop = self.top + (self.popupHeight / 2) - 10;
-			self.isSet = true;
-			self.alignment = 'right-middle';
-		}
-	}
-
-	function checkRightTop() {
-		if(self.dynamicPositioning) {
-			if (self.availableSpace.right > self.popupWidth && self.totalHeightMinusTop > self.popupHeight) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignRightTop() {
-		if (checkRightTop()) {
-			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
-			self.top = self.highlightedArea.top;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-left';
-			self.arrowLeft = self.left - 10;
-			self.arrowTop = self.top + 7;
-			self.isSet = true;
-			self.alignment = 'right-top';
-		}
-	}
-
-	function checkRightBottom() {
-		if(self.dynamicPositioning) {
-			if (self.availableSpace.right > self.popupWidth && self.totalHeightMinusBottom > self.popupHeight) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignRightBottom() {
-		if (checkRightBottom()) {
-			self.left = self.highlightedArea.left + self.highlightedArea.width + self.arrowWidth;
-			self.top = (self.highlightedArea.top + self.highlightedArea.height) - self.popupHeight;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-left';
-			self.arrowLeft = self.left - 10;
-			self.arrowTop = self.top + (self.popupHeight - 30);
-			self.isSet = true;
-			self.alignment = 'right-bottom';
-		}
-	}
-
-	function checkTopMiddle() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.top) > (self.popupHeight + 15) && self.totalWidthMinusLeft > self.popupWidth / 2) {
-				if ((Math.abs(self.availableSpace.left) + self.highlightedArea.width / 2 > self.popupWidth / 2) &&
-					(self.availableSpace.right + self.highlightedArea.width / 2 > self.popupWidth / 2)
-				) {
-					return true;
-	
-				} else {
-					return false;
-				}
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignTopMiddle() {
-		if (checkTopMiddle()) {
-			self.left = (self.highlightedArea.left + self.highlightedArea.width / 2) - self.popupWidth / 2;
-			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-down';
-			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width / 2) - 8;
-			self.arrowTop = self.highlightedArea.top - 12;
-			self.isSet = true;
-			self.alignment = 'top-middle';
-		}
-	}
-
-	function checkTopLeft() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.top) > (self.popupHeight + 15) && self.totalWidthMinusLeft > self.popupWidth) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignTopLeft() {
-		if (checkTopLeft()) {
-			self.left = self.highlightedArea.left;
-			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-down';
-			self.arrowLeft = self.highlightedArea.left + 7;
-			self.arrowTop = self.highlightedArea.top - 12;
-			self.isSet = true;
-			self.alignment = 'top-left';
-		}
-	}
-
-	function checkTopRight() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.top) > (self.popupHeight + 15) && self.totalWidthMinusRight > self.popupWidth) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignTopRight() {
-		if (checkTopRight()) {
-			self.left = (self.highlightedArea.left + self.highlightedArea.width) - self.popupWidth;
-			self.top = self.highlightedArea.top - self.popupHeight - self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-down';
-			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width) - (20 + 7); // 20 is arrow width
-			self.arrowTop = self.highlightedArea.top - 12;
-			self.isSet = true;
-			self.alignment = 'top-right';
-		}
-	}
-
-	function checkBottomMiddle() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.bottom) > self.popupHeight && self.totalWidthMinusLeft > self.popupWidth / 2) {
-				if ((Math.abs(self.availableSpace.left) + self.highlightedArea.width / 2 > self.popupWidth / 2) &&
-					(self.availableSpace.right + self.highlightedArea.width / 2 > self.popupWidth / 2)
-				) {
-					return true;
-	
-				} else {
-					return false;
-				}
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignBottomMiddle() {
-		if (checkBottomMiddle()) {
-			self.left = (self.highlightedArea.left + self.highlightedArea.width / 2) - self.popupWidth / 2;
-			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-up';
-			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width / 2) - 8;
-			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
-			self.isSet = true;
-			self.alignment = 'bottom-middle';
-		}
-	}
-
-	function checkBottomLeft() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.bottom) > self.popupHeight && self.totalWidthMinusLeft > self.popupWidth) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignBottomLeft() {
-		if (checkBottomLeft()) {
-			self.left = self.highlightedArea.left;
-			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-up';
-			self.arrowLeft = self.highlightedArea.left + 7;
-			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
-			self.isSet = true;
-			self.alignment = 'bottom-left';
-		}
-	}
-
-	function checkBottomRight() {
-		if(self.dynamicPositioning) {
-			if (Math.abs(self.availableSpace.bottom) > self.popupHeight && self.totalWidthMinusRight > self.popupWidth) {
-				return true;
-	
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
-
-	function alignBottomRight() {
-		if (checkBottomRight()) {
-			self.left = (self.highlightedArea.left + self.highlightedArea.width) - self.popupWidth;
-			self.top = self.highlightedArea.top + self.highlightedArea.height + self.arrowWidth;
-			self.arrowClass = 'mgPlayerJSPreview_arrow-up';
-			self.arrowLeft = (self.highlightedArea.left + self.highlightedArea.width) - (20 + 7); // 20 is arrow width
-			self.arrowTop = self.highlightedArea.top + self.highlightedArea.height + 2;
-			self.isSet = true;
-			self.alignment = 'bottom-right';
-		}
-	}
-
-	function alignCenter() {
-		self.left = (winWidth - self.popupWidth) / 2;
-		self.left += mg$(window).scrollLeft();
-
-		self.top = (winHeight - self.popupHeight) / 2;
-		self.top += mg$(window).scrollTop();
-
-		self.isSet = true;
-		self.alignment = 'center';
-	}
-
-	function alignCustom() {
-		if(self.customPos.left_pos === "px") {
-			self.left = self.highlightedArea.left + self.customPos.left;
-		} else if(self.customPos.left_pos === "%") {
-			self.left = (self.highlightedArea.left + ((self.highlightedArea.width * self.customPos.left) / 100));
-			if(self.isBeacon) {
-				self.left = self.left - (self.popupWidth/2);
-			}
-		}
-		if(self.customPos.top_pos === "px") {
-			self.top = self.highlightedArea.top + self.customPos.top;
-		} else if(self.customPos.top_pos === "%") {
-			self.top = (self.highlightedArea.top + ((self.highlightedArea.height * self.customPos.top) / 100));
-			if(self.isBeacon) {
-				self.top = self.top - (self.popupHeight/2);
-			}
-		}
-
-		self.isSet = true;
-		self.alignment = 'custom';
-	}
-
-	pub.getAvailablePositions = function() {
-		return {
-			'left-middle': checkLeftMiddle(),
-			'left-top': checkLeftTop(),
-			'left-bottom': checkLeftBottom(),
-
-			'right-middle': checkRightMiddle(),
-			'right-top': checkRightTop(),
-			'right-bottom': checkRightBottom(),
-
-			'top-middle': checkTopMiddle(),
-			'top-left': checkTopLeft(),
-			'top-right': checkTopRight(),
-
-			'bottom-middle': checkBottomMiddle(),
-			'bottom-left': checkBottomLeft(),
-			'bottom-right': checkBottomRight()
-		};
-	};
-
-	pub.start = function() {
-
-		switch (self.alignment) {
-			case 'left':
-				alignLeftMiddle();
-				if (!self.isSet) alignLeftTop();
-				if (!self.isSet) alignLeftBottom();
-				break;
-
-			case 'left-middle':
-				alignLeftMiddle();
-				if (!self.isSet) alignLeftTop();
-				if (!self.isSet) alignLeftBottom();
-				break;
-
-			case 'left-top':
-				alignLeftTop();
-				if (!self.isSet) alignLeftBottom();
-				break;
-
-			case 'left-bottom':
-				alignLeftBottom();
-				if (!self.isSet) alignLeftTop();
-				break;
-
-			case 'right':
-				alignRightMiddle();
-				if (!self.isSet) alignRightTop();
-				if (!self.isSet) alignRightBottom();
-
-				break;
-
-			case 'right-middle':
-				alignRightMiddle();
-				if (!self.isSet) alignRightTop();
-				if (!self.isSet) alignRightBottom();
-				break;
-
-			case 'right-top':
-				alignRightTop();
-				if (!self.isSet) alignRightBottom();
-				break;
-
-			case 'right-bottom':
-				alignRightBottom();
-				if (!self.isSet) alignRightTop();
-				break;
-
-			case 'top':
-				alignTopMiddle();
-				if (!self.isSet) alignTopLeft();
-				if (!self.isSet) alignTopRight();
-				break;
-
-			case 'top-middle':
-				alignTopMiddle();
-				break;
-
-			case 'top-left':
-				alignTopLeft();
-				break;
-
-			case 'top-right':
-				alignTopRight();
-				break;
-
-			case 'bottom':
-				alignBottomMiddle();
-				if (!self.isSet) alignBottomLeft();
-				if (!self.isSet) alignBottomRight();
-				break;
-
-			case 'bottom-middle':
-				alignBottomMiddle();
-				break;
-
-			case 'bottom-left':
-				alignBottomLeft();
-				break;
-
-			case 'bottom-right':
-				alignBottomRight();
-				break;
-
-			case 'center':
-				alignCenter();
-				break;
-
-			case 'custom':
-				alignCustom();
-				break;
-			default:
-		}
-
-		if (self.hardApply === false) {
-
-			if (!self.isSet) alignRightMiddle();
-
-			if (!self.isSet) alignRightTop();
-
-			if (!self.isSet) alignRightBottom();
-
-			if (!self.isSet) alignLeftMiddle();
-
-			if (!self.isSet) alignLeftTop();
-
-			if (!self.isSet) alignLeftBottom();
-
-			if (!self.isSet) alignTopMiddle();
-
-			if (!self.isSet) alignTopLeft();
-
-			if (!self.isSet) alignTopRight();
-
-			if (!self.isSet) alignBottomMiddle();
-
-			if (!self.isSet) alignBottomLeft();
-
-			if (!self.isSet) alignBottomRight();
-
-			if (!self.isSet) alignCenter();
-		}
-
-		if (self.left !== null && self.top !== null) {
-
-			if (self.top < 0) self.top = 10;
-
-			var windowScrollTop = mg$('.mgPlayerJSPreview_screen').scrollTop();
-			if (windowScrollTop > 0) {
-				self.top -= windowScrollTop;
-			}
-			var windowScrollLeft = mg$('.mgPlayerJSPreview_screen').scrollLeft();
-			if (windowScrollLeft > 0) {
-				self.left -= windowScrollLeft;
-			}
-
-			self.popup.css({
-				'left': self.left + self.containerOffset.left,
-				'top': self.top + self.containerOffset.top
-			});
-		}
-
-		if (self.arrowId) {
-			self.arrowClass = self.arrowClass + " mgPlayerJSPreview_tooltip-arrow";
-		}
-
-		mg$(".mgPlayerJSPreview_arrow-down").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-up").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-left").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-right").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-
-		self.arrowLeft += self.containerOffset.left;
-		self.arrowLeft += mg$(window).scrollLeft();
-
-		self.arrowTop += self.containerOffset.top;
-		self.arrowTop += mg$(window).scrollTop();
-
-		if (!self.doNotApplyArrow) {
-			mg$('html').append('<div id= "' + self.arrowId + '" class="' + self.arrowClass + '" style="left:' + self.arrowLeft + 'px;top:' + self.arrowTop + 'px;"></div>');
-		}
-
-		if (self.isSet) return self.alignment;
-		else return false;
-	};
-
-	pub.checkHeight = function() {
-		var popupHeightNew = self.popup.outerHeight();
-
-		if (self.popupHeight !== popupHeightNew)
-			pub.redo();
-	};
-
-	pub.redo = function() {
-		if (self.isGuidance) {
-			self.arrowWidth = 8;
-		}
-		self.popupWidth = self.popup.outerWidth();
-		self.popupHeight = self.popup.outerHeight();
-		pub.start();
-	};
-
-	pub.clear = function() {
-
-		GmCXt.clearPreviewPopupAlignment(self.popup);
-		mg$(".mgPlayerJSPreview_arrow-down").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-up").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-left").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-		mg$(".mgPlayerJSPreview_arrow-right").not(".mgPlayerJSPreview_tooltip-arrow").remove();
-
-		self.popup.css({
-			'left': 0,
-			'top': 0
-		});
-	};
-
-	return pub;
-};
-/**
-	* @file Guideme preview step popup
-	* @author Nilesh Pachpande
-	*/
-
-GmCXt.previewStepPopup = function(options) {
-	options = options || {};
-	var pub = {};
-
-	var self = {
-		id: options.step.step_id,
-		type: options.step.step_type,
-		title: GmCXt.replaceVariableWithValue(options.step.step_title),
-		description: GmCXt.replaceVariableWithValue(options.step.step_description),
-		audioTrack: options.step.step_audio,
-		highlightedArea: options.step.highlightedArea,
-		settings: options.step.step_settings,
-		serialNumber: options.step.order || 0,
-		container: options.container,
-		containerOffest: options.containerOffest || {
-			left: 0,
-			top: 0
-		},
-		totalStepCount: options.totalStepCount,
-		playingTour: options.playingTour || false
-	};
-
-	if (self.playingTour && options.tour) {
-		self.tour = options.tour;
-	} else {
-		self.tour = false;
-	}
-
-	pub.load = function() {
-		GmCXt.addStepPreviewHtml(self);
-
-		if (GmCXt.isMediaPlayerOn) {
-			mg$(".mgPlayerJSPreview_preview-step-popup-container").addClass("mgPlayerJSPreview_preview-step-popup-container-mp");
-		}
-
-		GmCXt.addDragPopUpFunction();
-
-		var promise = new Promise(function(resolve, reject) {
-			var hideStepIcon = false;
-			if (GmCXt.getOrgLevelBrandLogoSetting()) {
-				var hideStepIcon = true;
-			}
-
-			GmCXt.hideWidgetIcon();
-
-			if (GmCXt.isPlayer()) {
-				GmCXt.hideBeacons();
-				GmCXt.hideSmartTipsIfOptionON();
-			}
-
-			var os = GmCXt.getStepSettings();
-            if (options.step.type === GmCXt.STEP_TYPE_WEB_INLINE) {
-                os = options.step.orgSettings;
-            }
-			var popupDesign = os.popupDesign;
-
-			if (popupDesign) {
-				if (popupDesign.type === 'default') {
-					mg$('.preview-step-popup-navigation-wrapper').css({
-						'display': 'none'
-					});
-					mg$('.mgPlayerJSPreview_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
-					mg$('.mgPlayerJSPreview_play-step-popup-logo').css({
-						'display': ''
-					});
-					mg$('.mgPlayerJSPreview_play-total-step-cont').css({
-						'display': ''
-					});
-					mg$('.mgPlayerJSPreview_play-step-navigation').css({
-						'display': ''
-					});
-					mg$(".mgPlayerJSPreview_play-step-popup-footer").css("height", "auto");
-
-				} else if (popupDesign.type === 'classic') {
-					mg$('.preview-step-popup-navigation-wrapper').css({
-						'display': ''
-					});
-					mg$('.mgPlayerJSPreview_preview-step-popup-container').addClass('preview-step-popup-classic-design');
-					mg$('.mgPlayerJSPreview_play-step-popup-logo').css({
-						'display': 'none'
-					});
-					mg$('.mgPlayerJSPreview_play-total-step-cont').css({
-						'display': 'none'
-					});
-					mg$('.mgPlayerJSPreview_play-step-navigation').css({
-						'display': 'none'
-					});
-					mg$(".mgPlayerJSPreview_play-step-popup-footer").css("height", "42px");
-				}
-
-				// For backward compatibility
-				if (popupDesign.popupActiveSettings) {
-					popupDesign.current = popupDesign.popupActiveSettings;
-				}
-
-				var bgColor = popupDesign.current.bgColor;
-				var borderColor = popupDesign.current.borderColor;
-				var closeIconColor = popupDesign.current.closeIconColor;
-				var prevBtnColor = popupDesign.current.prevBtnColor;
-				var nextBtnColor = popupDesign.current.nextBtnColor;
-				var nextBtnBackground = popupDesign.current.nextBtnBackground;
-				var stepTitleColor = popupDesign.current.stepTitleColor;
-				var stepDescColor = popupDesign.current.stepDescColor;
-
-				if (GmCXt.accessibility) {
-					bgColor = "#ffffff";
-					prevBtnColor = "#ffffff";
-					nextBtnColor = "#ffffff";
-					nextBtnBackground = '#276157';
-					borderColor = '#276157';
-					stepTitleColor = '#276157';
-					closeIconColor = '#26273B';
-					stepDescColor = '#a6a6a6';
-
-					mg$(".mgPlayerJSPreview_play-step-navigation").addClass("mgPlayerJSPreview_accessibility-theme");
-					mg$('.mgPlayerJSPreview_play-step-prev').addClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_play-step-next').addClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_play-step-pause').addClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.popup-classic-design-navigation-prev').addClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-next').addClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-pause').addClass("mgPlayerJSPreview_ass-default-btn");
-
-				} else {
-
-					mg$(".mgPlayerJSPreview_play-step-navigation").removeClass("mgPlayerJSPreview_accessibility-theme");
-					mg$('.mgPlayerJSPreview_play-step-prev').removeClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_play-step-next').removeClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_play-step-pause').removeClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.popup-classic-design-navigation-prev').removeClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-next').removeClass("mgPlayerJSPreview_ass-default-btn");
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-pause').removeClass("mgPlayerJSPreview_ass-default-btn");
-
-					mg$('.mgPlayerJSPreview_play-step-prev').css({
-						"background-color": popupDesign.current.prevBtnBackground,
-						"color": popupDesign.current.prevBtnColor,
-						"border-color": popupDesign.current.prevBtnColor
-					});
-
-					mg$('.mgPlayerJSPreview_play-step-next').css({
-						"background-color": popupDesign.current.nextBtnBackground,
-						"color": popupDesign.current.nextBtnColor,
-						"border-color": popupDesign.current.nextBtnColor
-					});
-
-					mg$('.mgPlayerJSPreview_play-step-pause').css({
-						"background-color": popupDesign.current.nextBtnBackground,
-						"color": popupDesign.current.nextBtnColor,
-						"border-color": popupDesign.current.nextBtnColor
-					});
-
-					mg$('.popup-classic-design-navigation-prev').css({
-						"background-color": popupDesign.current.prevBtnBackground,
-						"color": popupDesign.current.prevBtnColor
-					});
-
-					mg$('.popup-classic-design-navigation-prev').css({
-						"background-color": popupDesign.current.prevBtnBackground,
-						"color": popupDesign.current.prevBtnColor
-					});
-
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-next').css({
-						"background-color": popupDesign.current.nextBtnBackground,
-						"color": popupDesign.current.nextBtnColor
-					});
-
-					mg$('.mgPlayerJSPreview_popup-classic-navigation-pause').css({
-						"background-color": popupDesign.current.nextBtnBackground,
-						"color": popupDesign.current.nextBtnColor
-					});
-				}
-
-				mg$('.mgPlayerJSPreview_preview-step-popup-container').css({
-					"background-color": bgColor,
-					"border-radius": popupDesign.current.borderRadius,
-					"border-color": borderColor,
-					"border-width": popupDesign.current.borderWidth,
-					"border-style": "solid",
-					"padding-top": popupDesign.current.padding.top,
-					"padding-bottom": popupDesign.current.padding.bottom,
-					"padding-left": popupDesign.current.padding.left,
-					"padding-right": popupDesign.current.padding.right
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup').css({
-					"border-radius": popupDesign.current.borderRadius
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-s-title').css({
-					"color": stepTitleColor
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-s-title').css({
-					"font-size": popupDesign.current.stepTitleFontSize
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-s-title').css({
-					"font-family": popupDesign.current.stepTitleFontFamily
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-s-title').css({
-					"font-weight": popupDesign.current.stepTitleFontWeight
-				});
-
-				mg$('.mgPlayerJSPreview_play-step-popup-description').css({
-					"color": stepDescColor
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-description').css({
-					"font-size": popupDesign.current.stepDesFontSize
-				});
-				mg$('.mgPlayerJSPreview_play-step-popup-description').css({
-					"font-family": popupDesign.current.stepDesFontFamily
-				});
-				mg$('.mgPlayerJSPreview_play-total-step-cont').css({
-					"background-color": bgColor,
-					"color": stepTitleColor
-				});
-				mg$('.mgPlayerJSPreview_play-total-step').css({
-					"color": popupDesign.current.stepCountColor
-				});
-
-				if (mg$('#mgPlayerJSPreview_popup-arrow').length) {
-					mg$('#mgPlayerJSPreview_popup-arrow').remove();
-				}
-
-				var popUpCSS = "<style id='mgPlayerJSPreview_popup-arrow' type='text/css'>" +
-					".mgPlayerJSPreview_preview-step-popup-container.right-top:after,.mgPlayerJSPreview_preview-step-popup-container.right-middle:after,.mgPlayerJSPreview_preview-step-popup-container.right-bottom:after {" +
-					"border-right-color:" + bgColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.right-top:before,.mgPlayerJSPreview_preview-step-popup-container.right-middle:before, .mgPlayerJSPreview_preview-step-popup-container.right-bottom:before {" +
-					"border-right-color:" + borderColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.left-top:after,.mgPlayerJSPreview_preview-step-popup-container.left-middle:after,.mgPlayerJSPreview_preview-step-popup-container.left-bottom:after {" +
-					"border-left-color:" + bgColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.left-top:before,.mgPlayerJSPreview_preview-step-popup-container.left-middle:before, .mgPlayerJSPreview_preview-step-popup-container.left-bottom:before {" +
-					"border-left-color:" + borderColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.top-left:after,.mgPlayerJSPreview_preview-step-popup-container.top-middle:after,.mgPlayerJSPreview_preview-step-popup-container.top-right:after {" +
-					"border-top-color:" + bgColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.top-left:before,.mgPlayerJSPreview_preview-step-popup-container.top-middle:before, .mgPlayerJSPreview_preview-step-popup-container.top-right:before {" +
-					"border-top-color:" + borderColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.bottom-left:after,.mgPlayerJSPreview_preview-step-popup-container.bottom-middle:after,.mgPlayerJSPreview_preview-step-popup-container.bottom-right:after {" +
-					"border-bottom-color:" + bgColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_preview-step-popup-container.bottom-left:before,.mgPlayerJSPreview_preview-step-popup-container.bottom-middle:before, .mgPlayerJSPreview_preview-step-popup-container.bottom-right:before {" +
-					"border-bottom-color:" + borderColor + " !important;" +
-					"} " +
-					".mgPlayerJSPreview_play-step-audio i {" +
-					"color:" + closeIconColor + " !important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-audio svg path {" +
-					"fill:" + closeIconColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-popup-close i {" +
-					"color:" + closeIconColor + "!important;" +
-					"-webkit-text-stroke-color:" + bgColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-popup-close svg path {" +
-					"fill:" + closeIconColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-popup-drag svg path {" +
-					"fill:" + closeIconColor + "!important;" +
-					"stroke:" + closeIconColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-popup-edit svg path{" +
-					"fill:" + closeIconColor + "!important;" +
-					"stroke:" + closeIconColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-prev svg path {" +
-					"fill:" + prevBtnColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-next svg path {" +
-					"fill:" + nextBtnColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_play-step-pause svg path{" +
-					"fill:" + nextBtnColor + "!important;" +
-					"}" +
-					".popup-classic-design-navigation-prev svg path {" +
-					"fill:" + prevBtnColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_popup-classic-navigation-next svg path {" +
-					"fill:" + nextBtnColor + "!important;" +
-					"}" +
-					".mgPlayerJSPreview_popup-classic-navigation-pause svg path {" +
-					"fill:" + nextBtnColor + "!important;" +
-					"}" +
-					"</style>";
-				mg$("html:first").append(popUpCSS);
-
-			} else {
-				mg$('.preview-step-popup-navigation-wrapper').css({
-					'display': 'none'
-				});
-				mg$('.mgPlayerJSPreview_preview-step-popup-container').removeClass('preview-step-popup-classic-design');
-				mg$('.mgPlayerJSPreview_play-step-popup-logo').css({
-					'display': ''
-				});
-				mg$('.mgPlayerJSPreview_play-total-step-cont').css({
-					'display': ''
-				});
-				mg$('.mgPlayerJSPreview_play-step-navigation').css({
-					'display': ''
-				});
-			}
-
-			var tipPosition = "absolute";
-			if (GmCXt.tourPlayerI && GmCXt.tourPlayerI.cssPosition && self.type !== GmCXt.STEP_TYPE_MESSAGE) {
-				var tipPosition = "fixed";
-			}
-
-			mg$('.mgPlayerJSPreview_preview-step-popup-container, wmgPlayerJSPreview_over').css({
-				'position': tipPosition
-			});
-			
-			mg$(".mgPlayerJSPreview_preview-step-popup-container").show();
-			
-			mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-s-num').html(self.serialNumber);
-
-			self.title = GmCXt.updateOrgAndAddSignature(self.title);	
-			
-			mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_step-title').html(self.title);
-
-			if (!GmCXt.replaceVariableInText(self.title).trim()) {
-				mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_step-title').remove();
-			}
-
-			self.description = GmCXt.updateOrgAndAddSignature(self.description);
-
-			mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description').html(self.description);
-			mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-curr-step').html(self.serialNumber);
-			mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-total-step').html(self.totalStepCount);
-
-			var brandLogoEl = mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-logo img');
-			brandLogoEl.attr('src', GmCXt.brandLogo());
-			var len = mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description img').length;
-			if (len) {
-				for (var i = 0; i < len; i++) {
-					var imgW = mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description img')[i].getAttribute('width');
-					var imgH = mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description img')[i].getAttribute('height');
-
-					mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description img')[i].style.setProperty('width', imgW + 'px', 'important');
-					mg$('.mgPlayerJSPreview_preview-step-popup-container .mgPlayerJSPreview_play-step-popup-description img')[i].style.setProperty('height', imgH + 'px', 'important');
-				}
-			}
-
-			//GmCXt.timeout(function(){
-			mg$(".mgPlayerJSPreview_play-step-popup-drag").focus();
-			//},500);
-
-			var os = GmCXt.getOrgSettings();
-			var cdnSign = GmCXt.getCdnSign();
-
-			if (os.logo && cdnSign) {
-				brandLogoEl.show();
-			} else {
-				brandLogoEl.hide();
-			}
-
-			if (GmCXt.enforceGuideMePopup) {
-				mg$('.mgPlayerJSPreview_preview-step-popup-container').css({
-					'z-index': '2147483646'
-				});
-			}
-
-			GmCXt.zoomImage(self.description, ".mgPlayerJSPreview_play-step-popup-description");
-
-			GmCXt.setLinkClickhandler(self.title, ".mgPlayerJSPreview_step-title");
-			GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSPreview_play-step-popup-description");
-
-			if (self.description.indexOf('target = "gssPlayGuide"' !== -1)) {
-				GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSPreview_play-step-popup-description");
-			}
-			if (self.title.indexOf('target = "gssPlayGuide"' !== -1)) {
-				GmCXt.setLinkGuidePlay(self.title, ".mgPlayerJSPreview_step-title");
-			}
-
-			if (!hideStepIcon) {
-				brandLogoEl.show();
-			} else {
-				brandLogoEl.hide();
-			}
-
-			var popupWrapper = mg$('.mgPlayerJSPreview_play-step-popup-content-wrapper');
-
-			if (self.settings.stepPopupWidth) {
-				popupWrapper.css({
-					"width": self.settings.stepPopupWidth
-				});
-			} else {
-				popupWrapper.css({
-					"width": GmCXt.stepPopupWidth + "px"
-				});
-			}
-
-			if (self.settings.stepPopupHeight) {
-				popupWrapper.css({
-					"max-height": self.settings.stepPopupHeight
-				});
-			} else {
-				popupWrapper.css({
-					"max-height": GmCXt.stepPopupMaxHeight + "px"
-				});
-			}
-			attachDOMEvents();
-
-			if (!self.playingTour) {
-				mg$('.mgPlayerJSPreview_play-step-popup-description').css({
-					'font-size': '16px',
-					'line-height': '19px;'
-				});
-
-				mg$('.mgPlayerJSPreview_play-step-prev').css({
-					'font-size': '15px'
-				});
-
-				mg$('.mgPlayerJSPreview_play-step-next').css({
-					'font-size': '15px'
-				});
-			}
-
-			/**
-				* Blackout area surrounding step DOM element for inline step 
-				* and surrounding highlighted areas for image steps.
-				*/
-			if (self.settings.screenBlackout === true) {
-				var hideIEOverlay = false;
-				if ((self.type == GmCXt.STEP_TYPE_MESSAGE || self.type == GmCXt.STEP_TYPE_IMAGE) && !self.highlightedArea) {
-					self.highlightedArea = [{
-						left: 0,
-						top: 0,
-						height: 0,
-						width: 0
-					}];
-					hideIEOverlay = true;
-				}
-
-				if (self.highlightedArea) {
-
-					var opts = {
-						data: self.highlightedArea,
-						containerOffset: GmCXt.getContainerOffSet(false),
-						stepType: self.type,
-						overlay: true,
-						tour: self.tour,
-						stepIndex: self.serialNumber
-					};
-
-					if (self.type == GmCXt.STEP_TYPE_IMAGE) {
-
-						opts.containerOffset = GmCXt.getContainerOffSet(mg$('#mgPlayerJSPreview_image-canvas'));
-
-						if (self.container) {
-							opts.container = self.container;
-							opts.containerOffset = GmCXt.getContainerOffSet(self.container);
-						}
-					}
-
-					if (self.playingTour === true) {
-						opts.overlay = false;
-					}
-
-					GmCXt.removeScreenOverlay();
-
-					opts.cssPosition = GmCXt.tourPlayerI.cssPosition;
-
-					if (GmCXt.playerI && GmCXt.playerI.tour) {
-
-						var step_ = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-
-						var overlayOpacity = GmCXt.getOpacity(step_);
-
-						if (step_) {
-							var stepSettings = step_.step_settings;
-
-							// Add overlay if force guide mode is ON
-							if (GmCXt.playerI.forceGuideMe === true &&
-								stepSettings.doNotForceGuide !== true &&
-								!stepSettings.onClickAnywhere &&
-								!stepSettings.onPageClickNext &&
-								overlayOpacity === 0
-							) {
-								opts.overlay = true;
-								overlayOpacity = 0.1;
-								opts = forSalesforceCol(stepSettings, opts, true);
-							}
-						}
-
-						if (overlayOpacity) {
-							if (GmCXt.browserApp === 'ie') {
-								if (!hideIEOverlay) {
-									blackoutIEViewPort(self.highlightedArea, overlayOpacity, opts.cssPosition);
-								}
-							} else {
-								GmCXt.screenOverlayI = GmCXt.screenOverlay(opts);
-								GmCXt.screenOverlayI.start();
-							}
-						}
-					} else {
-						GmCXt.screenOverlayI = GmCXt.screenOverlay(opts);
-						GmCXt.screenOverlayI.start();
-					}
-				}
-			}
-
-			/**
-				* Audio button, step serial number is not available 
-				* when preview is shown after step is saved. 
-				* Availale in tour play is active.
-				*/
-
-			if (self.playingTour === true) {
-				mg$('.mgPlayerJSPreview_play-step-popup-s-title').show();
-			} else {
-				mg$('#mgPlayerJSPreview_play_step_audio').hide();
-				mg$('.mgPlayerJSPreview_play-total-step-cont').hide();
-				mg$('.mgPlayerJSPreview_play-step-popup-s-num').hide();
-				mg$('.mgPlayerJSPreview_play-step-navigation').hide();
-				mg$('.mgPlayerJSPreview_play-step-popup-close').hide();
-				mg$('.mgPlayerJSPreview_play-step-audio-loader').hide();
-				mg$('.popup-classic-design-navigation').hide();
-				/*mg$('.mgPlayerJSPreview_play-step-popup-description').css({'font-size': '18px', 'line-height': '21px;'});
-				//mg$('.mgPlayerJSPreview_play-step-popup-s-title').css({'font-size': '22px'});
-				mg$('.mgPlayerJSPreview_play-step-prev').css({'font-size': '18px'});
-				mg$('.mgPlayerJSPreview_play-step-next').css({'font-size': '18px'});*/
-			}
-
-			// Align popup
-			var $popup = mg$(".mgPlayerJSPreview_step-popup");
-			var doAlign = false;
-
-			if (self.type === GmCXt.STEP_TYPE_INLINE || self.type === GmCXt.STEP_TYPE_WEB_INLINE ||
-				self.type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION) {
-				doAlign = true;
-				if (self.settings.headerNext && GmCXt.playerI.forceGuideMe) {
-					options = forSalesforceCol(self.settings, options, false);
-				}
-
-			} else if (self.type == GmCXt.STEP_TYPE_MESSAGE || self.type == GmCXt.STEP_TYPE_IMAGE) {
-				GmCXt.alignMessagePreview($popup, mg$(window), self.settings.alignment, self.settings);
-			}
-
-			if (doAlign) {
-				GmCXt.alignPopupI = GmCXt.alignPopup({
-					popup: $popup,
-					highlightedArea: self.highlightedArea[0],
-					containerOffest: self.containerOffest,
-					alignment: self.settings.alignment,
-					playingTour: self.playingTour,
-					dynamicPositioning: self.settings.dynamicPositioning
-				});
-
-				GmCXt.alignPopupI.clear();
-
-				var alignment = GmCXt.alignPopupI.start();
-
-				if (alignment) {
-					$popup.addClass(alignment);
-				}
-				if (GmCXt.alignPopupI) {
-					GmCXt.timeout(GmCXt.alignPopupI.checkHeight, 1000);
-				}
-			}
-
-			stopMouseOutEvent();
-			resolve();
-		});
-
-		GmCXt.onPopupRerender();
-
-		return promise;
-	};
-
-	var forSalesforceCol = function(settings, opt, flag) {
-		if (settings.headerNext) {
-			var customSettings = settings.element.customSettings;
-			if (flag && customSettings.salesforce.tableHeight) {
-				var tableHeight = customSettings.salesforce.tableHeight;
-				opt.data[0].height = tableHeight;
-			} else if (customSettings.salesforce.tableHeight) {
-				opt.data[0].height = settings.element.position.height;
-			}
-		}
-		return opt;
-	};
-
-	var stopMouseOutEvent = function() {
-
-		if (GmCXt.playerI && GmCXt.playerI.tour) {
-			var previousStepId = GmCXt.playerI.lastPlayedStepId;
-			if (previousStepId) {
-				var prevStep = GmCXt.createDeepCopy(GmCXt.getStepFromPlayerI(previousStepId));
-				if (prevStep) {
-					var settings = prevStep.step_settings;
-					if (settings && (settings.hoverNext === true)) {
-						window.addEventListener('mouseout', stopEventPropagation, true);
-					}
-				}
-			}
-		}
-	};
-
-	var stopEventPropagation = function(e) {
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-	};
-
-	pub.close = function() {
-
-		GmCXt.previewStepPopupInstance = null;
-
-		window.removeEventListener('mouseout', stopEventPropagation, true);
-		mg$('.mgPlayerJSPreview_play-step-audio-iframe').remove();
-		mg$('.mgPlayerJSPreview_preview-step-popup-container').remove();
-
-		mg$('.mgPlayerJSPreview_play-step-audio').show();
-		mg$('.mgPlayerJSPreview_play-step-popup-close').show();
-		mg$('.mgPlayerJSPreview_play-total-step-cont').show();
-		mg$('.mgPlayerJSPreview_play-step-popup-s-num').show();
-
-		//show start button
-		GmCXt.displayWidget();
-
-		if (GmCXt.alignPopupI) {
-			GmCXt.alignPopupI.clear();
-			GmCXt.alignPopupI = null;
-		}
-	};
-
-	var attachDOMEvents = function() {
-		if (self.playingTour === true) {
-			if (document.getElementById('mgPlayerJSPreview_play_step_popup_drag')) {
-				document.getElementById('mgPlayerJSPreview_play_step_popup_drag').addEventListener('touchmove', dragElementOnTouch);
-			}
-		}
-	};
-
-	var dragElementOnTouch = function(e) {
-		var elmnt = document.getElementById("mgPlayerJSPreview_preview-step-popup-container");
-
-		var touch = event.targetTouches[0];
-
-		// set the element's new position:
-		elmnt.style.top = (touch.pageY - 24) + 'px';
-		elmnt.style.left = (touch.pageX - (document.getElementById("mgPlayerJSPreview_preview-step-popup-container").offsetWidth - 76)) + 'px';
-		mg$(elmnt)
-			.removeClass('top-left')
-			.removeClass('top-middle')
-			.removeClass('top-right')
-			.removeClass('right-top')
-			.removeClass('right-middle')
-			.removeClass('right-bottom')
-			.removeClass('bottom-left')
-			.removeClass('bottom-middle')
-			.removeClass('bottom-right')
-			.removeClass('left-top')
-			.removeClass('left-middle')
-			.removeClass('left-bottom');
-	};
-
-	var blackoutIEViewPort = function(rect, opacity, cssPos) {
-		if (!rect || !rect.length) return;
-		if (opacity) opacity = opacity / 10;
-
-		var cssPosition = "absolute";
-		if (cssPos) {
-			cssPosition = "fixed";
-		}
-
-		var overlayObj = mg$('.mgPlayerJSPreview_screen-blackout');
-
-		var html = "<wmgPlayerJSPreview_over style='top:0px; " +
-			"left:0px;" +
-			"width:100%;" +
-			"height: " + rect[0].top + "px;'>" +
-			"</wmgPlayerJSPreview_over>" +
-			"<wmgPlayerJSPreview_over style='top:" + rect[0].top + "px;" +
-			"left: 0px;" +
-			"width: " + rect[0].left + "px;" +
-			"height: " + rect[0].height + "px;'>" +
-			"</wmgPlayerJSPreview_over>" +
-			"<wmgPlayerJSPreview_over style='top:" + rect[0].top + "px;" +
-			"left: " + (rect[0].left + rect[0].width) + "px;" +
-			"width: " + (mg$(window).width() - (rect[0].left + rect[0].width)) + "px;" +
-			"height: " + rect[0].height + "px;'>" +
-			"</wmgPlayerJSPreview_over>" +
-			"<wmgPlayerJSPreview_over style='top:" + (rect[0].top + rect[0].height) + "px;" +
-			"left:0px;" +
-			"width:100%;" +
-			"height: " + (mg$(document).height() - (rect[0].height + rect[0].top)) + "px;'>" +
-			"</wmgPlayerJSPreview_over>";
-
-		overlayObj.html(html);
-
-		mg$('.mgPlayerJSPreview_screen-blackout').css({
-			'top': 0,
-			'left': 0,
-			'width': '100%',
-			'position': cssPosition
-		}).show();
-		mg$('wmgPlayerJSPreview_over').css('opacity', opacity);
-	};
-
-	var setOnAudioMode = function() {
-		GmCXt.playAudioTrack({
-			audioTrack: self.audioTrack
-		});
-		GmCXt.setOnAudioMode();
-
-		GmCXt.stepAudioRunningStatus = true;
-		GmCXt.storage().set({
-			'stepAudioRunningStatus': true
-		});
-	};
-
-	var setOffAudioMode = function() {
-		GmCXt.stopAudioTrack();
-		GmCXt.setOffAudioMode();
-		GmCXt.stepAudioRunningStatus = false;
-		GmCXt.storage().set({
-			'stepAudioRunningStatus': false
-		});
-	};
-
-	pub.forSalesforceCol = forSalesforceCol;
-	pub.stopMouseOutEvent = stopMouseOutEvent;
-	pub.stopEventPropagation = stopEventPropagation;
-	pub.attachDOMEvents = attachDOMEvents;
-	pub.dragElementOnTouch = dragElementOnTouch;
-	pub.blackoutIEViewPort = blackoutIEViewPort;
-	pub.setOnAudioMode = setOnAudioMode;
-	pub.setOffAudioMode = setOffAudioMode;
-
-	return pub;
-};
-/**
- * @file Guideme User guide module
- * @author Nilesh Pachpande
- */
-
-GmCXt.userGuide = function(options) {
-
-	options = options || {};
-	var pub = {};
-
-	var self = {
-		highlightedArea: options.highlightedArea,
-		type: options.type
-	};
-
-	function stepNotFound(stepTitle, stepImage, processedImage) {
-		var popupType = 'mgPlayerJSPreview_popup-info';
-		var popupHeaderIcon = '<svg  width="24" height="24" viewBox="0 0 24 24" fill="none">' +
-			'<circle cx="12" cy="12" r="11.1" stroke="white" stroke-width="1.8"/>' +
-			'<rect x="11" y="11" width="2" height="9" rx="1" fill="white"/>' +
-			'<circle cx="12" cy="7.5" r="1.5" fill="white"/>' +
-			'</svg>';
-
-		var popupTitle = GmCXt.label.elmNotFound;
-		var info = "<div class='mgPlayerJSPreview_popup-content-info'>" + GmCXt.label.elmNotFoundInfo + "</div>";
-
-		if (GmCXt.isWestpac()) {
-			stepTitle = null;
-			popupTitle = GmCXt.label.elmNotFoundWestpac;
-			info = (processedImage) ?
-				"<img class='mgPlayerJSPreview_step-not-found-image' src='" + stepImage.split(".png")[0] + "_cropped.png" + GmCXt.getCdnSign() + "'>" :
-				"<img class='mgPlayerJSPreview_step-not-found-image' src='" + stepImage + "'>";
-		}
-		var str =
-			"<div class='mgPlayerJSPreview_step-not-found-notification mgPlayerJSPreview_popup " + popupType + "'> " +
-			"       <div class='mgPlayerJSPreview_popup-header-wrapper'>" +
-			"	       	<div class='mgPlayerJSPreview_popup-header-icon-wrapper'><div class='mgPlayerJSPreview_popup-header-icon'>" + popupHeaderIcon +
-			"		   	</div>" +
-			"			</div>" +
-			"       </div>" +
-			"		<div class='mgPlayerJSPreview_popup-content-wrapper mgPlayerJSPreview_font-size-17'>" + popupTitle + "</div>" +
-			(stepTitle ? ('   <wmgPlayerJSPreview_ class="mgPlayerJSPreview_no-element-guide-title">' + stepTitle + '</wmgPlayerJSPreview_>') : '') + info +
-			"		<div class='mgPlayerJSPreview_popup-btn-wrapper mgPlayerJSPreview_step-not-found-close-btn'>" +
-			"			<wmgPlayerJSPreview_ class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_no-element-guide-ok mgPlayerJSPreview_ok-btn mgPlayerJSPreview_inline-block-vt'>" + GmCXt.label.close +
-			"			</wmgPlayerJSPreview_>" +
-			"		</div>" +
-			" </div> ";
-
-		return str;
-	}
-
-	function attachDOMEvents() {
-		mg$('.mgPlayerJSPreview_no-element-guide-ok').on('click', function(e) {
-			pub.close();
-			e.stopPropagation();
-		});
-
-		mg$('.mgPlayerJSPreview_overlay-container').on('click', function(e) {
-			pub.close();
-			e.stopPropagation();
-		});
-
-		mg$('.mgPlayerJSPreview_step-not-found-notification').on('click', function(e) {
-			e.stopPropagation();
-		});
-	}
-
-	function hoverTipPlayStepGuide() {
-		return "<ul>" +
-			"<li>" + GmCXt.label.stepPlayIsdefinedPopover + "</li>" +
-			"<li>" + GmCXt.label.kindlyHoverPopup + "</li>" +
-			"</ul>";
-	}
-
-	function hoverTipEditStepGuide() {
-		return "<ul>" +
-			"<li>" + GmCXt.label.stepDefinedPopover + "</li>" +
-			"<li>" + GmCXt.label.kindlyHoverPopup + "</li>" +
-			"</ul>";
-	}
-
-	pub.open = function(stepTitle, stepImage, processedImage, number, stepId, rca, elAttributes) {
-		if (self.type === 'step_not_found') {
-			if (mg$("body").find('.mgPlayerJSPreview_overlay-container').length === 0) {
-				mg$("<wmgPlayerJSPreview_></wmgPlayerJSPreview_>").addClass('mgPlayerJSPreview_overlay-container').appendTo('body');
-			}
-			var overlay = mg$(".mgPlayerJSPreview_overlay-container").empty();
-			overlay.append(stepNotFound(stepTitle, stepImage, processedImage)).show();
-
-		} else if (self.type === 'hoverTipEditStepGuide') {
-			if (mg$("body").find('.mgPlayerJSPreview_user-tip-guide-container').length === 0) {
-				mg$("<wmgPlayerJSPreview_></wmgPlayerJSPreview_>").addClass('mgPlayerJSPreview_user-tip-guide-container').appendTo('body');
-			}
-			mg$(".mgPlayerJSPreview_user-tip-guide-container").empty().append(hoverTipEditStepGuide()).show();
-
-			/**
-			 * Align popup
-			 */
-			GmCXt.alignPopup({
-				popup: mg$(".mgPlayerJSPreview_user-tip-guide-container"),
-				highlightedArea: self.highlightedArea[0]
-			}).start();
-
-		} else if (self.type === 'hoverTipPlayStepGuide') {
-			if (mg$("body").find('.mgPlayerJSPreview_user-tip-guide-container').length === 0) {
-				mg$("<wmgPlayerJSPreview_></wmgPlayerJSPreview_>").addClass('mgPlayerJSPreview_user-tip-guide-container').appendTo('body');
-			}
-			mg$(".mgPlayerJSPreview_user-tip-guide-container").empty().append(hoverTipPlayStepGuide()).show();
-
-			/**
-			 * Align popup
-			 */
-			GmCXt.alignPopup({
-				popup: mg$(".mgPlayerJSPreview_user-tip-guide-container"),
-				highlightedArea: self.highlightedArea[0]
-			}).start();
-		}
-
-		attachDOMEvents();
-	};
-
-	pub.close = function() {
-		mg$('.mgPlayerJSPreview_overlay-container').hide().empty();
-		mg$('.mgPlayerJSPreview_user-guide-container').hide().empty();
-		mg$('.mgPlayerJSPreview_user-tip-guide-container').hide().empty();
-		if (self.type === 'hoverTipPlayStepGuide') {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:stop_dom_highlighter", {});
-		}
-	};
-
-	return pub;
-};
-/**
-	* @file Guideme tour player module
-	* @author Nilesh Pachpande
-	*/
-GmCXt.playedPreviousSteps = [];
-GmCXt.elLookupTime = GmCXt.isWestpac() ? GmCXt.t.elLookupTime10s : GmCXt.t.elLookupTime5m;
-
-GmCXt.tourPlayer = function(data) {
-
-	var pub = {};
-
-	GmCXt.playerI.mode = GmCXt.playerI.mode || 'live';
-	GmCXt.playerI.type = GmCXt.playerI.type || 'live';
-	GmCXt.playerI.currentStepId = GmCXt.playerI.currentStepId || 0;
-	GmCXt.log(33, "Current Step ID Updated(Fn: tourPlayerInit):" + GmCXt.playerI.currentStepId);
-	GmCXt.playerI.totalStepCount = parseInt(GmCXt.playerI.tour.step_count);
-
-	if (!GmCXt.playerI.playNextBranch &&
-		(GmCXt.playerI.currentLoop === undefined || !(GmCXt.playerI.currentLoop && GmCXt.playerI.currentLoop > 0))) {
-		GmCXt.playerI.playStructure = [];
-		if (GmCXt.playerI.tour) {
-			updatePlayStructure(GmCXt.playerI.tour);
-		}
-	}
-
-	var self = {
-		maxWait: 500,
-		ready: true,
-		status: null,
-		DOM_WAITING: 100,
-		DOM_SUCCESS: 200,
-		DOM_FAILURE: 300,
-		ATTR_CLS_FAILURE: 400,
-		isDeskReq: data ? data.isDeskReq : null,
-		windowHostNamePath: GmCXt.getPageHostPathName(),
-		windowHost: GmCXt.getPageDomain()
-	};
-
-	var tourSetting = GmCXt.playerI.tour.tour_settings;
-	var tourStepSetting = tourSetting.step_settings;
-	var delayChecked = false;
-
-	pub.isLastStepVisible = true;
-
-	if (GmCXt.playerI.isAutomation) {
-		GmCXt.playerI.automate = true;
-		GmCXt.playerI.manual = false;
-		GmCXt.playerI.initiator = 'doitforme';
-	} else if (GmCXt.playerI.testAutomation) {
-		GmCXt.playerI.automate = true;
-		GmCXt.playerI.manual = false;
-	} else if (GmCXt.playerI.initiator === 'doitforme') {
-		GmCXt.playerI.manual = false;
-	} else {
-		GmCXt.playerI.manual = true;
-	}
-
-	if (GmCXt.playerI.origin === "keypress")
-		GmCXt.playerI.keyShorts = true;
-	else
-		GmCXt.playerI.keyShorts = false;
-
-	pub.triggerMyGuideClickMouseDown = function(ev) {
-		// prevent blur event that takes focus off of forms etc & collapses/closes the section as a result
-		ev.preventDefault();
-	};
-
-	pub.triggerMyGuideClick = function(idName, ev) {
-		ev.stopPropagation();
-		switch (idName) {
-			case 'mgPlayerJSPreview_play_step_pause_classic':
-			case 'mgPlayerJSPreview_play_step_pause':
-			case 'mgPlayerJSPreview_play-step-pause-svg':
-				stopAutomation();
-				break;
-
-			case 'mgPlayerJSPreview_play_step_next':
-			case 'mgPlayerJSPreview_play_step_next_classic':
-				playNxtStep(ev);
-				break;
-
-			case 'mgPlayerJSPreview_play_step_prev':
-			case 'mgPlayerJSPreview_play_step_prev_classic':
-				pub.playPreviousStep(ev);
-				break;
-
-			case 'mgPlayerJSPreview_play_step_popup_close':
-			case 'mgPlayerJSPreview_play_step_next_done':
-			case 'mgPlayerJSPreview_play_step_next_done_classic':
-			case 'mgPlayerJSPreview_play-step-popup-close-svg':
-				playStepPopupCloseButtonClickEvent();
-				break;
-
-			case 'mgPlayerJSPreview_play_step_popup_edit':
-			case 'mgPlayerJSPreview_play-step-popup-edit-icon':
-				editStepFromPopUp();
-				break;
-		}
-	};
-
-	pub.start = function() {
-
-		if (GmCXt.isAutomationRunning()) {
-			GmCXt.auto.showProgress();
-		}
-		GmCXt.log(33, "Guide player started");
-
-		if (GmCXt.playerI && GmCXt.playerI.initiator === "urlTour") {
-			GmCXt.isPageReloaded = true;
-		}
-
-		window.addEventListener("mouseup", GmCXt.registerClickListner, true);
-		window.addEventListener("mousedown", GmCXt.registerClickListner, true);
-		window.addEventListener("keyup",
-			function(e) {
-				if (e.keyCode === 13) {
-					GmCXt.registerClickListner(e);
-				}
-			}, true);
-		window.addEventListener("keydown", function(e) {
-			if (e.keyCode === 13) {
-				GmCXt.registerClickListner(e);
-			}
-		}, true);
-
-		GmCXt.storage().set({
-			'loopingCompleted': false
-		});
-
-		if (GmCXt.playerI.isAutolaunch) {
-			GmCXt.setAutoTour(GmCXt.playerI.tour.tour_id);
-		} else {
-			GmCXt.setAutoTour(0);
-		}
-
-		if (GmCXt.playerI.currentLoop === undefined || !(GmCXt.playerI.currentLoop && GmCXt.playerI.currentLoop > 0)) {
-			updatePlayStructure(GmCXt.playerI.tour);
-		}
-
-		GmCXt.log(33, "Guide play structure", GmCXt.playerI.playStructure);
-
-		if (!GmCXt.playerI.currentStepId) {
-
-			var firstStepId = GmCXt.getFirstStepId();
-			if (firstStepId) {
-				GmCXt.playerI.currentStepId = firstStepId;
-				GmCXt.log(33, "Current Step ID Updated(Fn: pub.start):" + GmCXt.playerI.currentStepId);
-
-				if (!GmCXt.playerI.startStepId) {
-					GmCXt.playerI.startStepId = GmCXt.playerI.currentStepId;
-				}
-
-			} else if (!GmCXt.isDesktop()) {
-				GmCXt.cleanPlayer();
-				return true;
-			}
-
-		}
-
-		checkPreviousStepIsHoverStep();
-
-		function hideBeaconsAndTips() {
-			GmCXt.hideBeacons();
-			GmCXt.hideSmartTipsIfOptionON();
-			mg$(document).off('keydown').on('keydown', keydownEventListener);
-		}
-
-		if (GmCXt.playerI.guideState === 'pause') {
-			GmCXt.pauseGuide();
-			hideBeaconsAndTips();
-		} else {
-
-			var appDomainMatch = getMatchDomain();
-
-			if (!GmCXt.playerI) return;
-
-			var tourSetting = GmCXt.playerI.tour.tour_settings;
-
-			if (!appDomainMatch && GmCXt.isFQDN()) {
-				GmCXt.log(33, "Domain mismatch. Stop guide play.");
-				hideBeaconsAndTips();
-				return;
-			} else if (GmCXt.playerI) {
-				// PlayerI might not be available due to user interruption while automation. 
-				playStep(GmCXt.playerI.currentStepId);
-			}
-		}
-	};
-
-	function getMatchDomain() {
-		GmCXt.log(33, "Matching domain:");
-		var match = false;
-
-		if (!GmCXt.playerI) {
-			return;
-		}
-		var tour = GmCXt.playerI.tour;
-
-		if (tour.allDomains && tour.allDomains.length > 0) {
-
-			if (GmCXt.isElectron()) {
-				var d = GmCXt.getCurrentMyGuideApp(tour.allDomains);
-			} else {
-				var d = GmCXt.findDomainMatch(tour.allDomains, GmCXt.urlParts.fullUrl);
-			}
-			if (!GmCXt.isEmpty(d)) {
-				match = true;
-			}
-
-		} else {
-			match = true;
-		}
-		GmCXt.log(33, "Match Result: " + match);
-		return match;
-	}
-
-	pub.stop = function(forceClose, keepUserGuide) {
-
-		var pi = GmCXt.playerI;
-
-		if (GmCXt.playerI) {
-			step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-			if (GmCXt.FT.isPlayer && !GmCXt.taskListOpen) {
-				GmCXt.updatePlayedSteps(step);
-			}
-			
-			if (step && (step.step_type === "video" || step.step_type === "image")) {
-				GmCXt.sendMessageToApp("mgPlayerJSPreview_action:remove_video_player");
-			}
-		}
-
-		if (GmCXt.isAutomationRunning()) {
-			if (GmCXt.playerI.isPageReloadByLastStep) {
-				return;
-			} else if (GmCXt.playerI.currentBranchIndex !== undefined && !forceClose) {
-				var node = getNode(GmCXt.playerI.currentBranchStep.step_id);
-				var tail_ = node.branch[GmCXt.playerI.currentBranchIndex].tail;
-
-				var s = findFirstNonAutoStepInBranch(tail_);
-				GmCXt.auto.branchPlaySuccess(s.step_id, function() {
-					GmCXt.playerI.currentBranchIndex++;
-					GmCXt.playerI.playNextBranch = true;
-
-					GmCXt.storage().set({
-						'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-						'guide_play_event': GmCXt.guidePlayTracker
-					});
-
-					var tour = GmCXt.playerI.tour;
-					window.location = GmCXt.getRedirectUrlForAuto(GmCXt.playerI.currentBranchStep.step_url, tour);
-				});
-				return;
-			}
-		}
-		var initiator = pi.initiator;
-		var jobId = pi.currentStepId;
-
-		var isTourCompleted = pi.completeEventTracked;
-
-		if (initiator) isTourCompleted = false;
-
-		clearTimeouts();
-
-		hideWaitMsg();
-
-		GmCXt.restartInParent(true);
-
-		GmCXt.hideResumePopup();
-		GmCXt.storage().get(['botTourPlayList']).then(function(tList) {
-			if (tList && tList.botTourPlayList && tList.botTourPlayList.length && pi && pi.tour) {
-				for (var i = 0; i < tList.botTourPlayList.length; i++) {
-
-					if (tList.botTourPlayList[i].tour_id === pi.tour.tour_id) {
-						nextTourPlayed = tList.botTourPlayList[i + 1];
-						if (nextTourPlayed) {
-							var completeURL = '';
-							if (!nextTourPlayed.tour_url.startsWith('http')) {
-								completeURL = location.protocol + '//' + nextTourPlayed.tour_url;
-							} else {
-								completeURL = nextTourPlayed.tour_url;
-							}
-							GmCXt.log(33, "REDIRECTING TO URL - ", {
-								URL: completeURL
-							});
-							GmCXt.redirect(completeURL);
-
-							var msg = {
-								tour: nextTourPlayed,
-								source: 'bot',
-								automate: true,
-								initiator: 'doitforme',
-								type: 'doitforme'
-							};
-
-							GmCXt.showToastMsg(GmCXt.label.playNextBotTour);
-							GmCXt.timeout(GmCXt.requestHandler.playGuide(msg), 5000);
-
-						}
-						break;
-					}
-				}
-			}
-		});
-
-		if (GmCXt.isDesktop()) {
-			GmCXt.log(74, 'Close guide play');
-			GmCXt.sendMessageToDesktop({
-				requestId: 10000,
-				requestType: 'closeGuidePlay',
-				errCode: 1000
-			});
-		}
-
-		GmCXt.cleanPlayer();
-
-		pub.closeStep(jobId, keepUserGuide);
-
-		onCloseTour(initiator, forceClose);
-
-		if (GmCXt.isPlayer()) {
-			if (((GmCXt.isEmpty(GmCXt.onScreenTooltipGuideIds) || !GmCXt.onScreenTooltipGuideIds.length) &&
-					(GmCXt.isEmpty(GmCXt.beaconsOnScreen) || !GmCXt.beaconsOnScreen.length)) || GmCXt.notificationGuides) {
-				GmCXt.getContextGuides("Guide play complete");
-			}
-
-			GmCXt.showSmartTips();
-			GmCXt.showBeacons();
-		}
-
-	};
-
-	function updatePlayedTours(tour_id) {
-		var PI = GmCXt.playerI;
-
-		if (GmCXt.playedTour.indexOf(tour_id) === -1 &&
-			(PI.totalStepCount === 1 || PI.startStepId !== PI.currentStepId)) {
-
-			GmCXt.playedTour.push(tour_id);
-			GmCXt.storage().set({
-				'playedTour': GmCXt.playedTour
-			});
-		}
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_played_tour", {
-			playedTour: GmCXt.playedTour
-		});
-	}
-
-	pub.closeGuide = function(forceClose, fromShowme) {
-
-		GmCXt.failedStepId = 0;
-
-		var pi = GmCXt.playerI;
-		var step = GmCXt.getCurrentStep(pi.currentStepId);
-		var tour = pi.tour;
-		var ti = GmCXt.tourPlayerI;
-
-		if (self.completionTimeout) {
-			clearTimeout(self.completionTimeout);
-		}
-
-		if (GmCXt.isLastStep(pi.currentStepId, pi.playStructure)) {
-			updatePlayedTours(tour.tour_id);
-			GmCXt.markAutoLaunchTourDoNotShow(tour);
-		} else if (GmCXt.FT.isPlayer) {
-
-			GmCXt.tourActivity['t:' + pi.tour.tour_id] = pi.lastPlayedStepId;
-
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_tour_activity", {
-				tourActivity: GmCXt.tourActivity
-			});
-		}
-
-		if (GmCXt.autoTrigger) {
-			clearTimeout(GmCXt.autoTrigger);
-		}
-
-		if (step) {
-			var completeEventTracked = (pi.completeEventTracked) ? true : false;
-
-			if (!completeEventTracked) {
-				var o = {
-					tour: pi.tour,
-					stepId: pi.currentStepId,
-				};
-
-				if (step.step_type == GmCXt.STEP_TYPE_INLINE && !GmCXt.isTrue(step.step_settings.inlineBranch)) {
-					o.type = "Inline Step";
-				} else if (step.step_type == GmCXt.STEP_TYPE_IMAGE) {
-					o.type = "Image Step";
-				}
-			}
-
-			if (GmCXt.getTail(pi.currentStepId, pi.playStructure) === null) {
-				toggle();
-			}
-		}
-		GmCXt.stopAudioTrack();
-
-		if (!fromShowme) {
-			GmCXt.getSurveyScreen(GmCXt.createDeepCopy(pi));
-		}
-
-		if (pi.taskObj && pi.completeEventTracked && !pi.taskObj.isComplete) {
-			//Guide Played from Task List
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:mark_task_guide_complete", {
-				taskListId: pi.taskObj.taskId,
-				tourId: pi.tour.tour_id,
-				complete_count: pi.taskObj.complete_count,
-				total_count: pi.taskObj.total_count
-			});
-		} else if (GmCXt.isPlayer() && pi.completeEventTracked && GmCXt.taskListCount > 0) {
-			// Guide played outside task list, but it should be marked complete in task list
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:mark_task_guide_complete_played_outside", {
-				tourId: tour.tour_id
-			});
-		}
-
-		ti.stop(forceClose);
-
-		mg$('.mgPlayerJSPreview_image-step-prev').remove();
-		mg$('.mgPlayerJSPreview_image-step-next').remove();
-		mg$('.mgPlayerJSPreview_image-step-done').remove();
-
-		if (step.step_type === "video" || step.step_type === "image") {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:remove_video_player");
-		}
-		if (!GmCXt.isAutomationRunning()) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:close_media_player", {
-				terminate: true
-			});
-		}
-	};
-
-	function redirectTour(tourSetting) {
-
-		GmCXt.storage().set({
-			'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-			'guide_play_event': GmCXt.guidePlayTracker
-		}).then(function() {
-			if (GmCXt.playerI.testAutomation) {
-				if (!showStepRedirect(tourSetting)) {
-					var msg = 'Guide Rules Not Matched.';
-					if (GmCXt.playerI.stepRuleMatch === false) {
-						msg = 'Step Rules Not Matched.';
-					}
-					var s = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-					GmCXt.auto.fail(s, {
-						errorMessage: msg
-					});
-				} else {
-					GmCXt.changeUrl(getStepUrl(), GmCXt.playerI.tour);
-				}
-			} else if (GmCXt.playerI.loops) {
-				//For CSV file reading
-				GmCXt.changeUrl(getStepUrl(), GmCXt.playerI.tour);
-			} else {
-				if (!showStepRedirect(tourSetting)) {
-					GmCXt.cleanPlayer();
-				}
-			}
-		});
-
-	}
-
-	function updatePlayStructure(tour) {
-
-		var playStructure = GmCXt.getGuidePlayStructure(tour);
-
-		if (GmCXt.isDesktop()) {
-			playStructure = tour.steps[0].playStructure;
-		}
-
-		GmCXt.playerI.playStructure = playStructure;
-
-	}
-
-	function checkPreviousStepIsHoverStep() {
-		if (GmCXt.playerI.currentStepId &&
-			(GmCXt.playerI.lastPlayedStepId || GmCXt.playerI.lastPlayedStepId === undefined) &&
-			(GmCXt.playerI.currentStepId !== GmCXt.playerI.lastPlayedStepId) &&
-			(GmCXt.checkPreviousHoverStep === true)) {
-
-			GmCXt.checkPreviousHoverStep = false;
-
-			var previousStepId = GmCXt.playerI.lastPlayedStepId;
-			if (!previousStepId) {
-				previousStepId = GmCXt.getPreviousStepId(GmCXt.playerI.currentStepId);
-			}
-
-			var previousStep = GmCXt.createDeepCopy(GmCXt.getStepFromPlayerI(previousStepId));
-
-			if (previousStep && !GmCXt.isEmpty(previousStep)) {
-
-				if (previousStep.step_settings.hoverNext) {
-					var windowHost = GmCXt.getPageDomain();
-					var previousStepUrlHost = GmCXt.getDomain(previousStep.step_url);
-
-					if (previousStepUrlHost == windowHost) {
-						GmCXt.playerI.currentStepId = previousStepId;
-						GmCXt.log(33, "Current Step ID Updated(Fn: checkPreviousStepIsHoverStep):" + GmCXt.playerI.currentStepId);
-						GmCXt.showTooltipOnPreviousHoverStep = true;
-					}
-				}
-			}
-
-		}
-	}
-
-	function onCloseTour(initiator, forceClose) {
-
-		if (initiator === 'automation') {
-			if (forceClose) {
-				GmCXt.auto.stop(true);
-			} else {
-				GmCXt.auto.onCloseTour();
-			}
-		}
-
-		mg$('.mgPlayerJSPreview_highlighter-span').remove();
-		mg$('.mgPlayerJSPreview_image-step-screen').remove();
-	}
-
-	pub.playNextStep = function(isAutomationSuccess) {
-		if (isAutomationSuccess) {
-			self.ready = true;
-		}
-		pub.closeStep();
-		playNxtStep();
-	};
-
-	pub.closeStep = function(jobId, keepUserGuide) {
-
-		if (GmCXt.playerI) jobId = GmCXt.playerI.currentStepId;
-		var step = {};
-
-		if (GmCXt.playerI) {
-			step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		}
-
-		GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:stop_dom_highlighter", {
-			jobId: jobId
-		});
-		GmCXt.stopAudioTrack();
-
-		if (GmCXt.userGuideInstance && !keepUserGuide) {
-			GmCXt.userGuideInstance.close();
-		}
-
-		if (GmCXt.previewStepPopupInstance) {
-			GmCXt.previewStepPopupInstance.close();
-
-		}
-
-		if (!GmCXt.isEmpty(GmCXt.highlight_elements)) {
-			delete GmCXt.highlight_elements;
-		}
-
-		GmCXt.removeScreenOverlay();
-		mg$('.mgPlayerJSPreview_step-tooltips').remove();
-		mg$('.mgPlayerJSPreview_highlighter-span').remove();
-		var currStepData = false;
-
-		if (self.prevEvent) {
-			currStepData = GmCXt.getPreviousStep();
-		} else {
-			currStepData = GmCXt.getNextStep();
-		}
-
-		if (currStepData && currStepData.step_type !== 'image') {
-			mg$('.mgPlayerJSPreview_image-step-screen').remove();
-		}
-		mg$('#mgPlayerJSPreview_image_popup').hide();
-		mg$('.mgPlayerJSPreview_image-step-prev').remove();
-		mg$('.mgPlayerJSPreview_image-step-next').remove();
-		mg$('.mgPlayerJSPreview_image-step-done').remove();
-
-		if (step && (step.step_type === "video" || step.step_type === "image")) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:remove_video_player");
-		}
-		if (!GmCXt.isAutomationRunning) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:close_media_player", {
-				terminate: GmCXt.playerI ? false : true
-			});
-		}
-
-		GmCXt.unlockScroll();
-
-	};
-
-	pub.setStepCompletionTimeout = function(step) {
-
-		if (step && !step.step_settings)
-			return true;
-
-		// Close current step after 4 sec
-		if (step.step_settings.closeAfterDelay) {
-			var closeTimeout = GmCXt.t.stepComplition;
-
-			if (step.step_settings.completionTime) {
-				closeTimeout = parseInt(step.step_settings.completionTime) * 1000;
-				closeTimeout = (closeTimeout) ? closeTimeout : GmCXt.t.stepComplition;
-			}
-
-			if (closeTimeout) {
-				self.completionTimeout = GmCXt.timeout(function() {
-					if (mg$('.mgPlayerJSPreview_popup').length === 0 &&
-						mg$('.mgPlayerJSPreview_survey-popup-container').length === 0) {
-						playNxtStep();
-					} else {
-						pub.setStepCompletionTimeout(step);
-					}
-				}, closeTimeout);
-			}
-		}
-	};
-
-	function keydownEventListener(e) {
-		if (!GmCXt.playerI)
-			return true;
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var elem = {};
-
-		if (step) {
-			elem = step.step_settings.element;
-			if (elem && elem.selector && elem.selector.js) {
-				elem.tagName = GmCXt.getTagName(elem.selector.js[0]);
-			}
-		}
-
-		function cb() {
-			GmCXt.stopAudioTrack();
-			pub.stop();
-		}
-
-		if (e.which === 27) {
-			// escape key pressed
-			if (isNotLastStep() && GmCXt.isExitSurvey() && GmCXt.isPlayer()) {
-				GmCXt.showExitSurvey();
-			}
-			cb();
-		}
-	}
-
-	var isNotLastStep = function() {
-		if (GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure) !== null)
-			return true;
-		else
-			return false;
-	};
-
-	function playNextStepWrapper(stepId) {
-		if (GmCXt.playerI && GmCXt.playerI.currentStepId === stepId)
-			playNxtStep();
-	}
-
-	function playNxtStep(e) {
-		
-		if (GmCXt.isDesktop()) {
-			var reqType = 'playNextStep';
-			GmCXt.log(74, reqType);
-			desktopPlaySteps(reqType);
-		}
-
-		if (mg$('.mgPlayerJSPreview_popup-info') && mg$('.mgPlayerJSPreview_popup-info').length) return true;
-		self.prevEvent = false;
-
-		var pi = GmCXt.playerI;
-
-		if (!pi) return true;
-
-		GmCXt.markAutoLaunchTourDoNotShow(pi.tour);
-
-		if (self.completionTimeout)
-			clearTimeout(self.completionTimeout);
-
-		if (self.ready === true) {
-			GmCXt.log(33, "playNextStep event, lastStepId: " + pi.currentStepId);
-
-			var nextStepId = GmCXt.getTail(pi.currentStepId, pi.playStructure, e);
-			var nextStep = getStepFromTour(nextStepId, pi.tour);
-
-			if (GmCXt.isAutomationRunning()) {
-
-				if (!GmCXt.isAutomationStep(nextStep) && GmCXt.playerI.runningBranchDecisionAutoSteps === true) {
-					GmCXt.playerI.runningBranchDecisionAutoSteps = false;
-					playStep(pi.currentBranchStep.step_id);
-					return;
-				}
-
-				if (GmCXt.checkForBranchVariationSteps(nextStep)) {
-					GmCXt.playerI.runningBranchDecisionAutoSteps = true;
-				}
-			}
-
-			GmCXt.log(33, "playNextStep event, nextStepId: " + nextStepId);
-
-			if (nextStepId) {
-				self.ready = false;
-
-				pub.closeStep();
-
-				GmCXt.timeout(function() {
-					playStep(nextStepId);
-				}, self.maxWait);
-
-			} else if (GmCXt.isLastStep(pi.currentStepId, pi.playStructure)) {
-
-				if (pi.loops) {
-					GmCXt.log(33, 'Tour Loop: ' + (pi.currentLoop + 1) + ' completed.');
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:tour_loop_completed');
-
-				} else {
-					GmCXt.tourPlayerI.closeGuide();
-				}
-			}
-		}
-
-		mg$('.mgPlayerJSPreview_image-step-prev').remove();
-		mg$('.mgPlayerJSPreview_image-step-next').remove();
-		mg$('.mgPlayerJSPreview_image-step-done').remove();
-	}
-
-	pub.playPreviousStep = function(e) {
-		if (GmCXt.isDesktop()) {
-			var reqType = 'playPreviousStep';
-			GmCXt.log(74, reqType);
-			desktopPlaySteps(reqType);
-		}
-
-		self.prevEvent = true;
-
-		if (GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure) === null) {
-			toggle();
-		}
-
-		if (!GmCXt.playerI) return true;
-
-		if (self.ready === true) {
-
-			var previousStepId = GmCXt.getPreviousStepId(GmCXt.playerI.currentStepId);
-
-			GmCXt.log(33, "playPreviousStep event, previousStepId: " + previousStepId);
-
-			if (previousStepId) {
-				self.ready = false;
-				pub.closeStep();
-
-				GmCXt.timeout(function() {
-					playStep(previousStepId);
-				}, self.maxWait);
-			}
-
-			mg$('.mgPlayerJSPreview_image-step-prev').remove();
-			mg$('.mgPlayerJSPreview_image-step-next').remove();
-			mg$('.mgPlayerJSPreview_image-step-done').remove();
-		}
-	};
-
-	function stopAutomation() {
-		if (GmCXt.playerI) {
-			GmCXt.playerI.automate = false;
-			GmCXt.playerI.pauseAutomate = true;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:update_player_instance_app');
-		}
-		hideAutoIndicator();
-		hideStopButton();
-
-		if (GmCXt.autoTrigger) {
-			clearTimeout(GmCXt.autoTrigger);
-		}
-
-		showNagivation();
-
-		//show next button
-		if (hasNextStep()) {
-			showNextButton();
-			hideDoneButton();
-		}
-
-		var currStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var ss = currStep.step_settings;
-		showPrevBtnToggle(ss);
-	}
-
-	function branchDecicisionPopUp(opt) {
-		var ob = {};
-
-		function selectBranchType() {
-			var html = '';
-
-			mg$.each(opt.branch, function(index, branch) {
-				html +=
-					'<div branchIndex="' + index + '" class="mgPlayerJSPreview_branching-decision-step">' +
-					'<div branchIndex="' + index + '"  class="mgPlayerJSPreview_tour-details-small-thumbnails-wrapper mgPlayerJSPreview_inline-block-vm" ' +
-					'class="mgPlayerJSPreview_branching-decision-step-value">' +
-					'<div branchIndex="' + index + '"  class="mgPlayerJSPreview_tour-title-small-thumbnails mgPlayerJSPreview_font-size-16">' + GmCXt.escapeHtml(branch.branchName) + '</div>' +
-					'</div>';
-
-				if (branch.branchDesc) {
-					html += '<div class="mgPlayerJSPreview_position-relative mgPlayerJSPreview_show-text-tooltip">' + '<div branchIndex="' + index + '"  class="mgPlayerJSPreview_branching-decision-branch-desc mgPlayerJSPreview_font-size-12">' + GmCXt.escapeHtml(branch.branchDesc) + '</div>' +
-						'<div class="mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-left">' +
-						'<div class="mgPlayerJSPreview_tooltip-title">' + branch.branchDesc + '</div>' +
-						'</div>' + '</div>';
-				}
-				html += '</div>' +
-					'</div>';
-			});
-			return html;
-		}
-
-		ob.show = function() {
-			title = GmCXt.label.branchStepMessagePopup;
-			var isOpacity = true;
-			if (opt && opt.step && opt.step.step_title) {
-				title = opt.step.step_title;
-				isOpacity = GmCXt.isDefined(opt.step.step_settings.branchOpacity) ? opt.step.step_settings.branchOpacity : true;
-			}
-
-			var html =
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-outer'></wmgPlayerJSPreview_>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup mgPlayerJSPreview_branching-decision-popup'>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-title '>" +
-				"<span class='mgPlayerJSPreview_branching-decision-title'>" + title + "<span>" +
-				"<span id='mgPlayerJSPreview_play-step-popup-drag-icon' class='mgPlayerJSPreview_branching-drag'></span>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_branching-decision-close mgPlayerJSPreview_inline-block-vm'>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_inline-block-vm'>" +
-				"<span id='mgPlayerJSPreview_branching-decision-close-svg'></span>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-bottom-left'>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-popup-content mgPlayerJSPreview_branching-decision-content mgPlayerJSPreview_no-padding'>" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_branching-decision-content-wrapper'>" +
-				selectBranchType() +
-				"</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>";
-
-			mg$("body").append(html);
-			if (opt.branch.length > 5) {
-				mg$('.mgPlayerJSPreview_branching-decision-content-wrapper').css({
-					'overflow-y': 'auto'
-				});
-			}
-
-			mg$(".mgPlayerJSPreview_panel-popup-outer").css('height', mg$(document).height());
-			if (!isOpacity) {
-				mg$(".mgPlayerJSPreview_panel-popup-outer").css('display', 'none');
-			}
-
-			mg$("#mgPlayerJSPreview_branching-decision-close-svg").html(GmCXt.svgs.popup_close);
-			mg$("#mgPlayerJSPreview_play-step-popup-drag-icon").html(GmCXt.svgs.popup_drag);
-
-			mg$(".mgPlayerJSPreview_branching-decision-step").on("click", function(e) {
-				if (mg$.isFunction(opt.callback))
-					opt.callback(e);
-			});
-
-			mg$(".mgPlayerJSPreview_branching-decision-close").on("click", function() {
-				ob.close();
-				if (GmCXt.firstStepAutoLaunch()) {
-					GmCXt.showAutoLaunchCloseOptions(GmCXt.playerI.tour);
-				}
-				pub.stop();
-			});
-
-			var elmnt = document.getElementsByClassName('mgPlayerJSPreview_branching-decision-popup')[0];
-			var dragEl = document.getElementById('mgPlayerJSPreview_play-step-popup-drag-icon');
-
-			GmCXt.attachDragEvents(elmnt, dragEl);
-		};
-
-		ob.close = function() {
-			mg$(".mgPlayerJSPreview_panel-popup").remove();
-			mg$(".mgPlayerJSPreview_panel-popup-outer").remove();
-		};
-
-		return ob;
-	}
-
-	function findFirstNonAutoStepInBranch(id) {
-		if (!id) {
-			return;
-		}
-		var s = GmCXt.getStepFromPlayerI(id);
-		if (!GmCXt.isAutomationStep(s)) {
-			return s;
-		}
-		var playStructure = GmCXt.playerI.playStructure;
-
-		for (var i = 0; i < playStructure.length; i++) {
-			if (parseInt(playStructure[i].id) === parseInt(id)) {
-				var node = playStructure[i];
-				s = GmCXt.getStepFromPlayerI(node.tail);
-				if (GmCXt.isAutomationStep(s)) {
-					return findFirstNonAutoStepInBranch(s.step_id);
-				} else {
-					return s;
-				}
-			}
-		}
-	}
-
-	function isVariableExistInBranchs(branch) {
-		for (var i = 0, j = branch.length; i < j; i++) {
-			for (var k = 0, l = branch[i].rulesEngine.length; k < l; k++) {
-				if (branch[i].rulesEngine[k].type === 'Variables') {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	function playBranchStep(step) {
-
-		if (GmCXt.isStepInlineBranch(step)) {
-			playInlineStep();
-			return;
-		}
-
-		GmCXt.log(33, 'Play Branching Step');
-
-		var branch = step.step_settings.branch;
-		var counter = 0;
-		var isVariableExistInBranch = isVariableExistInBranchs(branch);
-
-		function validate() {
-			if (isVariableExistInBranch) {
-				GmCXt.timeout(function() {
-					validateRule();
-				}, GmCXt.t.checkVariable);
-			} else {
-				validateRule();
-			}
-		}
-
-		var onValidation = function(r) {
-			GmCXt.log(33, "Rule validation response received for branch " + r.branchIndex + " " + r.valid);
-
-			if (r.valid) {
-				branch[r.branchIndex].valid = true;
-			}
-		};
-
-		function clear() {
-			clearInterval(ruleInterval);
-		}
-
-		function updatePlayStructureIfErrHandler(step_id) {
-			var PS = GmCXt.playerI.playStructure;
-			for (var ind in PS) {
-				if (PS[ind].id === step_id) {
-					PS[ind].tail = step.step_id;
-					break;
-				}
-			}
-		}
-
-		var goToBranch = function(index) {
-			clear();
-			if (!GmCXt.playerI) {
-				return;
-			}
-
-			var node = getNode(GmCXt.playerI.currentStepId);
-			var tail_ = node.branch[index].tail;
-			var testingBranchIndex = GmCXt.playerI.currentBranchIndex;
-
-			var s = findFirstNonAutoStepInBranch(tail_);
-			if (index !== testingBranchIndex && GmCXt.isAutomationRunning()) {
-				tail_ = node.branch[testingBranchIndex].tail;
-				s = findFirstNonAutoStepInBranch(tail_);
-				GmCXt.auto.branchPlayFailed(s);
-				return;
-			}
-
-			if (s) {
-				if (index === 1 && step.step_type === GmCXt.STEP_TYPE_ERROR_HANDLER) {
-					updatePlayStructureIfErrHandler(s.step_id);
-				}
-
-				playStep(s.step_id);
-				//} else if (tail_) {
-				//	playStep(tail_);
-			} else {
-				GmCXt.cleanPlayer();
-			}
-		};
-
-		var goToBotBranchStep = function() {
-			if (step.step_settings.automation.enableBot && step.step_settings.automation.defaultData) {
-				var bdata = step.step_settings.automation.defaultData;
-				var index = 0;
-				for (var i = 0; i < branch.length; i++) {
-					if (branch[i].branchName === bdata.branchName) {
-						index = i;
-						break;
-					}
-				}
-				GmCXt.playerI.currentBranchIndex = index;
-				GmCXt.playerI.currentBranchStep = step;
-				goToBranch(GmCXt.playerI.currentBranchIndex);
-			}
-		};
-
-		var domRuleExists = function() {
-
-			for (var i = 0, j = branch.length; i < j; i++) {
-				if (branch[i].isDefault !== true) {
-					if (GmCXt.numberOfDomRules(branch[i].rulesEngine) > 0)
-						return true;
-				}
-			}
-
-			return false;
-		};
-
-		var validateRule = function() {
-			if (!GmCXt.playerI) {
-				return;
-			}
-
-			counter++;
-
-			GmCXt.log(33, "Validating all branches cycle " + counter);
-
-			for (var i = 0, j = branch.length; i < j; i++) {
-
-				if (branch[i].isDefault !== true) {
-
-					var obj = {
-						branchIndex: i,
-						rules: branch[i].rulesEngine,
-						tour: GmCXt.playerI.tour,
-						timeoutVal: GmCXt.t.ruleTimeOut15ms,
-						timeout: GmCXt.t.ruleTimeOut15ms,
-						cb: onValidation,
-						isTour: false,
-						initiator: 'tourPlay'
-					};
-					GmCXt.ruleEngine.queue(obj);
-				}
-			}
-		};
-
-		var playSelectedBranch = function(ev) {
-			if (ev) {
-				var branchIndex = ev.target.getAttribute("branchIndex");
-				if (branchIndex) {
-					goToBranch(branchIndex);
-					branchDecicisionPopUp().close();
-				}
-			}
-		};
-
-		var takeDecision = function() {
-
-			for (var i = 0, j = branch.length; i < j; i++) {
-
-				if (branch[i].valid === true) {
-					branch[i].valid = false;
-					GmCXt.log(33, "Validation true. Going inside branch: " + i);
-					goToBranch(i);
-					return;
-				}
-			}
-
-			if (Date.now() < intervalEndTime) {
-				validate();
-
-			} else if (Date.now() >= intervalEndTime && branch[0].isDefault === true) {
-				GmCXt.log(33, "Going into default branch.");
-				goToBranch(0);
-			} else {
-				var option = {
-					branch: branch,
-					callback: playSelectedBranch
-				};
-				branchDecicisionPopUp(option).show();
-				clear();
-			}
-		};
-
-		GmCXt.playerI.currentStepId = step.step_id;
-		GmCXt.log(33, "Current Step ID Updated(Fn: playBranchStep):" + GmCXt.playerI.currentStepId);
-		if (step.step_settings.branch_type === "User Selection") {
-			if (GmCXt.isAutomationRunning()) {
-				goToBranch(GmCXt.playerI.currentBranchIndex);
-			} else if (GmCXt.playerI.source === "bot") {
-				goToBotBranchStep();
-			} else {
-				var option = {
-					branch: branch,
-					callback: playSelectedBranch,
-					step: step
-				};
-				branchDecicisionPopUp(option).show();
-				clear();
-			}
-
-		} else {
-			var currentTime = Date.now();
-			var intervalEndTime = currentTime + GmCXt.t.branchDecision;
-			var intervalTimer = GmCXt.t.branchDecisionInterval;
-
-			if (domRuleExists()) {
-				intervalTimer = GmCXt.t.branchDecisionInterval_domRule;
-				if (step.step_settings.branch_type === 'Quick Branch') {
-					intervalEndTime = currentTime + GmCXt.t.branchDecision_domRule_quickBranch;
-				}else if(step.step_settings.branch_type === 'errorHandler'){
-					intervalEndTime = currentTime +  GmCXt.t.branchDecision_errorHandler;
-				} else {
-					intervalEndTime = currentTime + GmCXt.t.branchDecision_domRule;
-				}
-
-			}
-
-			GmCXt.log(33, "Decision Interval set for every " + intervalTimer + "ms for " + (intervalEndTime - currentTime) + "ms.");
-
-			var ruleInterval = setInterval(function() {
-				takeDecision();
-			}, intervalTimer);
-
-			GmCXt.log(33, "Playing branch step: " + step.step_id);
-
-			if (GmCXt.playerI.runningBranchDecisionAutoSteps === true) {
-				goToBranch(index);
-			} else {
-				if (branch[0].isDefault === true && branch.length > 1) {
-					validate();
-
-				} else if (branch[0].isDefault === true && branch.length === 1) {
-
-					GmCXt.log(33, "Going into default branch directly.");
-					goToBranch(0);
-
-				} else {
-					validate();
-				}
-				recordEvent(step);
-			}
-		}
-	}
-
-	function playLinkedGuide(step) {
-
-		GmCXt.trackStepEvent(step);
-		window.addEventListener('message', listen);
-		var ts = [];
-
-		function listen(event) {
-
-			var message = GmCXt.parseMsg(event);
-
-			if (!message) return;
-			if (!message.action || message.action.indexOf('mgPlayerJSPreview_action:') !== 0) return;
-			message = GmCXt.convertMgdata(message);
-
-			if (message.action === 'mgPlayerJSPreview_action:update_PI_steps_done') {
-				playStep(GmCXt.playerI.linkGuideFS);
-				window.removeEventListener('message', listen);
-			}
-
-			if (message.action === 'mgPlayerJSPreview_action:update_PI_PS_done') {
-				cb(ts);
-			}
-
-		}
-
-		function cb(newSteps) {
-
-			if (!newSteps.length) return;
-			GmCXt.concatLinkGuideSteps(newSteps);
-			GmCXt.playerI.tour.tour_settings.play_structure = GmCXt.playerI.playStructure;
-		}
-
-		function skipLinkGuide() {
-			GmCXt.log(33, "SKIPING LINKED GUIDE STEPS, segment not valid");
-			self.ready = true;
-			playNxtStep();
-		}
-
-		GmCXt.failedStepId = step.step_id;
-
-		var d = {
-			tour_id: step.step_settings.tour_id
-		};
-
-		if (step.step_settings.linkGuidePlayMode) {
-			GmCXt.playerI.linkGuidePlayMode = step.step_settings.linkGuidePlayMode;
-		}
-
-		if (GmCXt.apiPlayer) {
-			d.forceJSONApi = true;
-		}
-
-		GmCXt.getSteps(d).then(function(tour) {
-			var lnkGuides = [];
-
-			if (!tour) {
-				skipLinkGuide();
-				return;
-			}
-			//check guide segmentation 
-			GmCXt.checkGuidesBasedOnSegment([tour], function(_tour) {
-
-				if (GmCXt.isEmpty(_tour)) {
-					skipLinkGuide();
-					return;
-				}
-
-				if (GmCXt.isEmpty(GmCXt.playerI.linkedGuides)) {
-					GmCXt.playerI.linkedGuides = [];
-				}
-
-				GmCXt.playerI.linkedGuides.push(tour.tour_id);
-
-				if (GmCXt.playerI.mode === 'live' &&
-					GmCXt.playerI.linkGuidePlayMode &&
-					GmCXt.playerI.linkGuidePlayMode === "PDF" &&
-					!(GmCXt.playerI.initiator && GmCXt.playerI.initiator === "doitforme")) {
-
-					if (!GmCXt.isEmpty(tour.media_files) && tour.media_files[0].pdf) {
-
-						GmCXt.playerI.linkGuidePdfUrl = tour.media_files[0].pdf;
-						GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_player_instance_app');
-
-						GmCXt.sendMessageToApp("mgPlayerJSPreview_action:open_pdf_link_step", {
-							data: GmCXt.playerI.linkGuidePdfUrl
-						});
-						return;
-					}
-				}
-
-				GmCXt.updatePlayStructureLinkGuide(tour);
-
-				ts = tour.steps;
-			});
-
-		});
-	}
-
-	function triggerClickForWD() {
-		// [MG-26104] For editable forms on WD, 'Next' click from step popup is considered as background click
-		// Hence, form goes out of editable state, trigger click to bring to editable state again
-		var index = self.workdayEdit.index;
-		GmCXt.workdayAutoClick(index);
-	}
-
-	function playStep(stepId) {
-
-		if (self.workdayEdit && self.workdayEdit.isTrue) {
-			triggerClickForWD();
-		}
-
-		if (GmCXt.playerI === null || !GmCXt.playerI.tour) {
-			return;
-		}
-
-		GmCXt.playerI.currentStepId = stepId;
-		GmCXt.log(33, "Current Step ID Updated(Fn: PlayStep):" + GmCXt.playerI.currentStepId);
-
-		GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_iframe_id:do', {
-			currentIframeId: null
-		});
-
-		if ((GmCXt.isDefined(GmCXt.playerI.automate) && !GmCXt.playerI.automate) ||
-			!GmCXt.playerI.testAutomation) {
-			GmCXt.playerI.playAudio = true;
-		}
-
-		self.id = null;
-
-		var step = GmCXt.getCurrentStep(stepId);
-
-		if (!step) return;
-
-		clearTimeouts(step.step_type);
-
-		var log = "Playing step...\nID: " + stepId + "\nTitle: " + GmCXt.getText(step.step_title) + "\t";
-		GmCXt.log(33, log, 1);
-
-		var ts = GmCXt.playerI.tour.tour_settings;
-		if (GmCXt.decodeVersion(ts.version) < 2020063000) {
-
-			if (GmCXt.checkForBranchVariationSteps(step)) {
-				if (GmCXt.isAutomationRunning() &&
-					(GmCXt.playerI.runningBranchDecisionAutoSteps === true || GmCXt.playerI.runningBranchDecisionAutoSteps === undefined)) {
-					GmCXt.playerI.currentBranchIndex = 0;
-					GmCXt.playerI.currentBranchStep = step;
-					pub.playBranchStepInAutomation(step);
-				} else {
-					playBranchStep(step);
-				}
-			} else if (step.step_type === GmCXt.STEP_TYPE_GUIDE) playLinkedGuide(step);
-			else playGuideRulesCheck(step);
-
-		} else {
-			playGuideRulesCheck(step);
-		}
-	}
-
-	pub.playBranchStepInAutomation = function(step) {
-
-		GmCXt.auto.showProgress();
-
-		GmCXt.log(36, "Automation - Start testing all branches ");
-
-		var branch = step.step_settings.branch;
-		var branchStepId = step.step_id;
-		var index = GmCXt.playerI.currentBranchIndex;
-
-		if (index !== undefined) {
-			var currentStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-			if (index >= branch.length) { // Boundary Reached
-				GmCXt.log(36, 'Branch end reached for branch - ' + branch.branchName);
-				var previousBranch = GmCXt.auto.getPreviousBranch();
-				if (previousBranch.step && previousBranch.index != null && previousBranch.index != undefined) {
-					GmCXt.playerI.currentBranchStep = previousBranch.step;
-					GmCXt.playerI.currentBranchIndex = previousBranch.index;
-				} else {
-					GmCXt.playerI.currentBranchIndex = undefined;
-				}
-				pub.stop();
-				return;
-			}
-			var currentBranch = branch[index];
-			var branchName = currentBranch.branchName;
-
-			var node = getNode(step.step_id);
-			var tail_ = node.branch[index].tail;
-
-			var s = findFirstNonAutoStepInBranch(tail_);
-			if (currentBranch) {
-				GmCXt.auto.setCurrentBranchDetail(s.step_id, index, branchName, branchStepId, function() {
-					GmCXt.log(36, "Testing branch with index - " + index);
-					var autoStep = getNextAutomationStepForBranch(index, step, GmCXt.playerI.tour);
-					if (autoStep) {
-						GmCXt.playerI.runningBranchDecisionAutoSteps = true;
-						playStep(autoStep.step_id);
-					} else {
-						GmCXt.playerI.runningBranchDecisionAutoSteps = false;
-						playStep(step.step_id);
-					}
-				});
-			} else {
-				GmCXt.playerI.currentBranchIndex = undefined;
-				pub.stop();
-			}
-		}
-	};
-
-	function getStepFromTour(step_id, tour) {
-		if (step_id) {
-			for (var i = 0; i < tour.steps.length; i++) {
-				if (parseInt(tour.steps[i].step_id) === parseInt(step_id)) {
-					return tour.steps[i];
-				}
-			}
-		} else {
-			return false;
-		}
-	}
-
-	function getNextAutomationStepForBranch(index, step, tour) {
-		var cN = getNode(step.step_id); //Current Node
-		if (cN && cN.branch && cN.branch[index]) {
-			var currentBranchNode = cN.branch[index];
-			var nB = getNode(currentBranchNode.tail); //Node Below
-			if (nB) {
-				step = getStepFromTour(nB.id, tour);
-				if (GmCXt.isAutomationStep(step)) {
-					return step;
-				}
-			}
-		}
-	}
-
-	function checkSetupStep(step) {
-
-		var pathname = GmCXt._location().pathname;
-		var steps = GmCXt.playerI.tour.steps;
-		var ctr = 0;
-
-		steps.forEach(function(item, index) {
-			if (item.step_id === step.step_id) {
-				ctr = index + 1;
-			}
-		});
-
-		if (step.step_type === GmCXt.STEP_TYPE_INLINE && !step.step_url.includes(pathname)) {
-			var text = step.step_settings.element.meta.textPropertyValue;
-			var new_step;
-			while (ctr < steps.length && text === "Setup") {
-				new_step = steps[ctr];
-				if (new_step.step_url.includes(pathname)) {
-					step = new_step;
-					GmCXt.playerI.currentStepId = step.step_id;
-					GmCXt.log(33, "Current Step ID Updated(Fn: checkSetupStep):" + GmCXt.playerI.currentStepId);
-					break;
-				}
-				ctr++;
-			}
-		}
-		return step;
-	}
-
-	function editStepFromPopUp() {
-
-		var tour = GmCXt.playerI.tour;
-		var language = GmCXt.playerI.language;
-		var isDefaultLang = GmCXt.playerI.isDefaultLang;
-		var step_id = GmCXt.playerI.currentStepId;
-
-		for (var i = 0; i < tour.steps.length; i++) {
-			if (tour.steps[i].step_id === step_id) {
-				var step = tour.steps[i];
-			}
-		}
-
-		pub.stop();
-		GmCXt.log(33, "EDIT step event received");
-
-		GmCXt.editStepWrapper(tour, step, null, language, isDefaultLang);
-	}
-
-	function getNodeFromTail(id) {
-
-		//This will return the node which has the id passed in its tail
-		var stepToReturn;
-		var PS = GmCXt.playerI.playStructure;
-
-		for (var i = 0; i < PS.length; i++) {
-			if (PS[i].tail === id) {
-				stepToReturn = PS[i];
-				break;
-			} else if (PS[i].branch) {
-				for (var j = 0; j < PS[i].branch.length; j++) {
-					if (PS[i].branch[j].tail === id) {
-						stepToReturn = PS[i];
-						break;
-					}
-				}
-			}
-		}
-
-		return stepToReturn;
-	}
-
-	function getNode(id) {
-
-		var playStructure = GmCXt.playerI.playStructure;
-		var node = null;
-
-		for (var i = 0; i < playStructure.length; i++) {
-			if (parseInt(playStructure[i].id) === parseInt(id)) {
-				node = playStructure[i];
-			}
-		}
-		return node;
-	}
-
-	function playGuideRulesCheck(step) {
-
-		GmCXt.stepAudioPlayed = false;
-		GmCXt.playerI.currentStepId = step.step_id;
-		GmCXt.log(33, "Current Step ID Updated(Fn: playGuideRulesCheck):" + GmCXt.playerI.currentStepId);
-
-		GmCXt.playerI.forceGuideMe = tourStepSetting.forceGuideMe;
-
-		if (GmCXt.playerI.mode === 'live' && GmCXt.playerI.linkedGuides && GmCXt.playerI.linkedGuides.includes(step.tour_id)) {
-			if (GmCXt.playerI.linkGuidePlayMode &&
-				GmCXt.playerI.linkGuidePlayMode === "Show Me" &&
-				!(GmCXt.playerI.initiator && GmCXt.playerI.initiator === "doitforme")) {
-
-				GmCXt.log(33, "Playing slideshow");
-				GmCXt.playerI.originalMode = "live";
-				playSlideshowStep();
-				return true;
-			}
-		}
-
-		if (step.step_type === "image") {
-			playImageStep();
-			return;
-		} else if (step.step_type === "video") {
-			GmCXt.log(33, "Playing video");
-			GmCXt.playerI.originalMode = "live";
-			playVideoStep();
-			return;
-		}
-
-		if (GmCXt.checkSalesForceSite()) {
-			step = checkSetupStep(step);
-		}
-
-		var stepSetting = step.step_settings;
-		var stepRulesExist = (stepSetting.rules && stepSetting.rules.length);
-		var delay = getDelayedPlayTime(step, tourSetting);
-
-		if (stepRulesExist && delay) {
-			delayChecked = true;
-			GmCXt.timeout(cb, delay);
-		} else {
-			delayChecked = false;
-			cb();
-		}
-
-		function cb() {
-			GmCXt.checkProceedToPlay(step, GmCXt.playerI.tour).then(function(y) {
-
-				if (!GmCXt.playerI) return;
-
-				if (y) {
-					if (GmCXt.checkForBranchVariationSteps(step)) {
-						if (GmCXt.isAutomationRunning() &&
-							(GmCXt.playerI.runningBranchDecisionAutoSteps === true || GmCXt.playerI.runningBranchDecisionAutoSteps === undefined)) {
-							GmCXt.playerI.currentBranchIndex = 0;
-							GmCXt.playerI.currentBranchStep = step;
-							pub.playBranchStepInAutomation(step, 0);
-						} else {
-							playBranchStep(step);
-						}
-					} else if (step.step_type === GmCXt.STEP_TYPE_GUIDE) playLinkedGuide(step);
-					else playStepOK(step);
-
-				} else if (!self.failedStep) {
-					self.failedStep = step;
-
-					if (GmCXt.client.isUrlTour) {
-						GmCXt.log(33, 'RULES FAILED: Unable to proceed URL embed tour', self.failedStep);
-					} else {
-						GmCXt.log(33, 'Redirect to step URL', self.failedStep);
-
-						if (!GmCXt.playerI.guideRuleMatch && GmCXt.isFirstNonAutomationStep()) {
-							redirectTour(tourSetting);
-						} else if (!GmCXt.playerI.stepRuleMatch) {
-							redirectTour(tourSetting);
-						}
-					}
-				}
-			});
-		}
-	}
-
-	function playStepOK(step) {
-
-		if (!GmCXt.isWestpac()) {
-			closeTour();
-		}
-
-		GmCXt.closeNotificationPopup();
-
-		if (GmCXt.isAutomationRunning()) {
-			GmCXt.auto.setEndTime();
-		}
-
-		function cb() {
-
-			if (GmCXt.isEmpty(GmCXt.playerI)) return;
-
-			if ((step.step_type === GmCXt.STEP_TYPE_INLINE || step.step_type === GmCXt.STEP_TYPE_WEB_INLINE ||
-					step.step_type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION)) {
-				playInlineStep();
-			} else if (step.step_type === GmCXt.STEP_TYPE_MESSAGE) {
-				playMessageStep();
-			} else if (GmCXt.isAutomationStep(step)) {
-				decideActionForAutomationStep(step);
-			}
-		}
-
-		switch (step.step_type) {
-
-			case GmCXt.STEP_TYPE_INLINE:
-			case GmCXt.STEP_TYPE_WEB_INLINE:
-			case GmCXt.STEP_TYPE_MESSAGE:
-			case GmCXt.STEP_TYPE_AUTOMATION:
-			case GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION: {
-				var delay = getDelayedPlayTime(step, tourSetting);
-
-				if (delay && !delayChecked) {
-					GmCXt.timeout(cb, delay);
-				} else {
-					cb();
-				}
-				break;
-			}
-
-			case GmCXt.STEP_TYPE_IMAGE: {
-				playImageStep();
-				break;
-			}
-
-			case GmCXt.STEP_TYPE_VIDEO:
-				playSlideshowStep();
-				break;
-
-			case GmCXt.STEP_TYPE_SURVEY:
-				playSurveyStep();
-				break;
-		}
-	}
-
-	// Skip Automation step for any mode other than doItForMe
-	function decideActionForAutomationStep(step) {
-		if (!GmCXt.playerI.testAutomation &&
-			GmCXt.playerI.initiator !== "doitforme") {
-			GmCXt.log(33, "SKIP THE AUTOMATION STEP");
-			self.ready = true;
-			pub.playNextStep(step);
-		} else if (step.step_type === GmCXt.STEP_TYPE_IMAGE) {
-			playImageStep();
-		} else {
-			playInlineStep();
-		}
-	}
-
-	function getDelayedPlayTime(step, tourSetting) {
-
-		var delay = 0;
-		var tourDelay = parseInt(tourSetting.stepDelayTime);
-		var stepDelay = parseInt(step.step_settings.stepDelayTime);
-
-		if (!isNaN(tourDelay) && !!tourDelay && GmCXt.playerI.currentStepId !== GmCXt.playerI.startStepId) { // When directly playing a step, omit the tour delay
-			delay = tourDelay;
-		}
-
-		if (!isNaN(stepDelay) && !!stepDelay) {
-			delay = stepDelay;
-		}
-
-		return delay ? delay * 1000 : 0;
-	}
-
-	function getStepUrl() {
-		var url = '';
-		var step;
-		if (self.failedStep) {
-			step = self.failedStep;
-		} else {
-			step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		}
-
-		url = step.step_url;
-		return url;
-	}
-
-	function playSlideshowStep() {
-
-		if (autoModePlay('Slideshow')) return;
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		window.onunload = null;
-		GmCXt.playerI.type = GmCXt.TOUR_PLAYER_SLIDESHOW;
-
-		GmCXt.playedPreviousSteps.push(GmCXt.playerI.currentStepId);
-
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_slideshow');
-
-		GmCXt.nextStepPlayEventReceived = false;
-
-		GmCXt.timeout(function() {
-			self.ready = true;
-			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_player_instance_app');
-		}, 100);
-	}
-
-	function showHoverGuide(highlightedArea) {
-		var options = {
-			type: 'hoverTipPlayStepGuide',
-			highlightedArea: highlightedArea
-		};
-
-		if (GmCXt.userGuideInstance) {
-			GmCXt.userGuideInstance.close();
-		}
-
-		GmCXt.userGuideInstance = GmCXt.userGuide(options);
-		GmCXt.userGuideInstance.open();
-
-		self.ready = true;
-		GmCXt.showTooltipOnPreviousHoverStep = false;
-	}
-
-	pub.onFailureTooltipElementNotFound = function(tooltipId) {
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		if (self.status === self.DOM_WAITING && step.step_settings && step.step_settings.domElems &&
-			tooltipId === step.step_settings.domElems[0].id && step.step_settings.optional) {
-
-			self.ready = true;
-			self.maxWait = 0;
-
-			GmCXt.log(33, "Playing optional step.");
-
-			if (self.prevEvent) {
-				self.prevEvent = false;
-				pub.playPreviousStep();
-			} else {
-				GmCXt.recordGuideEvents();
-				playNxtStep();
-			}
-			self.maxWait = 500;
-		}
-	};
-
-	pub.onFailureElementNotFound = function(isAttrClassCheck, rca) {
-
-		GmCXt.log(37, "ELEMENT NOT FOUND", 1);
-
-		if (GmCXt.isDesktop()) {
-			GmCXt.sendMessageToDesktop({
-				stepId: GmCXt.playerI.tour.steps[0].step_id,
-				status: "stepFailed"
-			});
-		}
-
-		if (self.status === self.DOM_WAITING || isAttrClassCheck) {
-			self.status = isAttrClassCheck ? self.ATTR_CLS_FAILURE : self.DOM_FAILURE;
-
-			if (!GmCXt.playerI.currentStepId) {
-				var firstStepId = GmCXt.playerI.tour.steps[0].step_id;
-
-				if (GmCXt.playerI.playStructure) {
-					firstStepId = GmCXt.playerI.playStructure[0].id;
-				}
-
-				if (firstStepId) {
-					GmCXt.playerI.currentStepId = firstStepId;
-					GmCXt.log(33, "Current Step ID Updated(Fn: onFailureElementNotFound):" + GmCXt.playerI.currentStepId);
-				}
-			}
-
-			var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-			GmCXt.markAutoLaunchTourDoNotShow(GmCXt.playerI.tour); // do not show autoLuanch guide if elem not found
-
-			if (GmCXt.deskReq) {
-				GmCXt.sendMessageToDesktopApp('step_failed', step);
-			}
-
-			if (isAttrClassCheck) {
-				GmCXt.recordGuideEvents();
-				GmCXt.trackStepEvent(step, "Step element did not match attribute/class");
-
-				pub.stop(null, true);
-
-			} else if (step.step_settings.optional) {
-
-				self.ready = true;
-				self.maxWait = 0;
-
-				GmCXt.log(33, "Playing optional step.");
-
-				if (self.prevEvent) {
-					self.prevEvent = false;
-					pub.playPreviousStep();
-				} else {
-					GmCXt.recordGuideEvents();
-					playNxtStep();
-				}
-				self.maxWait = 500;
-			} else {
-
-				if (!GmCXt.failedStepId) GmCXt.failedStepId = step.step_id;
-
-				if (GmCXt.playerI.testAutomation) {
-					GmCXt.auto.fail(step, {
-						errorMessage: 'Step Element Not Found'
-					});
-				} else {
-					if (step.step_type !== GmCXt.STEP_TYPE_BRANCH || GmCXt.isTrue(step.step_settings.inlineBranch)) {
-						GmCXt.recordGuideEvents();
-						GmCXt.trackStepEvent(step, "step element not found");
-					}
-
-					if (GmCXt.playerI.automate) {
-						GmCXt.playerI.automate = false;
-					}
-
-					var options = {
-						type: "step_not_found"
-					};
-
-					GmCXt.userGuideInstance = GmCXt.userGuide(options);
-					var img = !step.screen_url || step.screen_url.startsWith('undefined') ? step.step_screen_temp : step.screen_url;
-					GmCXt.userGuideInstance.open(step.step_title, img, step.is_thumbnail_processed, step.step_order, step.step_id, rca, step.step_settings.element.meta.elAttributes);
-
-					pub.stop(null, true);
-				}
-			}
-		}
-	};
-
-	pub.onImageCompareFailure = function(step) {
-		if (!GmCXt.failedStepId) GmCXt.failedStepId = step.step_id;
-
-		GmCXt.recordGuideEvents();
-		GmCXt.trackStepEvent(step, 'Image Comparison Task Failed');
-		GmCXt.tourPlayerI.stop(null, true);
-	};
-
-	pub.onSuccessElementFound = function(elPos, workdayEdit, id) {
-		hideWaitMsg();
-
-		if (!self.id) {
-			self.id = id;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_iframe_id:do', {
-				currentIframeId: self.id
-			});
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:clear_outline;action:do', {
-				scriptId: self.id
-			});
-		} else if (self.id !== id) {
-			return;
-		}
-
-		if (GmCXt.tourPlayerI.guideState === 'pause') return;
-
-		GmCXt.tourPlayerI.elementFound = true;
-
-		GmCXt.failedStepId = false;
-
-		self.status = self.DOM_SUCCESS;
-		self.prevEvent = false;
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		step.highlightedArea = [elPos];
-
-		GmCXt.nextStepPlayEventReceived = false;
-
-		if (GmCXt.showTooltipOnPreviousHoverStep === true) {
-			showHoverGuide(step.highlightedArea);
-			return;
-		}
-
-		var ss = step.step_settings;
-		if (ss.headerNext && GmCXt.decodeVersion(ss.element.version) < 2020063001) { // for old steps on header humanInteration only reflects on UI
-			ss.automation.hasHumanInteraction = true;
-		}
-
-		self.ready = true;
-		self.workdayEdit = workdayEdit;
-
-		playInlineStepPreview(step);
-
-		recordEvent(step);
-
-		if (step.step_type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION || step.step_settings.autoPlayStep) {
-			GmCXt.sendMessageToDesktopApp('trigger_event', step);
-		}
-	};
-
-	function automationTriggerEvent(step) {
-		var nextStep = GmCXt.getNextStep();
-		if (GmCXt.playerI.automate && (!step.step_settings.automation.hasHumanInteraction || GmCXt.isAutomationStep(nextStep))) {
-			return true;
-		} else {
-			if (GmCXt.isAutomationRunning()) {
-				GmCXt.auto.fail(GmCXt.getCurrentStep(GmCXt.playerI.currentStepId), {
-					errorMessage: "Failed as Human Interaction is not automated"
-				});
-			}
-			return false;
-		}
-	}
-
-	function checkRestartInParent(step) {
-		var stepId = step.step_id;
-		var steps = GmCXt.getStepSortedByPS(GmCXt.playerI.playStructure, stepId);
-		for (var i = 0; i < steps.length; i++) {
-			if (parseInt(stepId) !== parseInt(steps[i].step_id)) {
-				if (steps[i].step_settings.pageReloadOption === "restart_parent") {
-					GmCXt.log(33, "START WATCHING for step " + GmCXt.getText(steps[i].step_title) + "to restart guide in parent window.");
-					return true;
-				} else if (steps[i].step_settings.pageReloadOption === "new_tab") {
-					return false;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	function hideWaitMsg() {
-		clearTimeout(self.waitTimeout);
-		GmCXt.hideToastMsg();
-	}
-
-	function showFindingToastMsg(message) {
-
-		return {
-			show: function() {
-				var htmlstr = "<div class='mgPlayerJSPreview_toast-msg-wrapper'><div id='mgPlayerJSPreview_toast-msg-close' >x</div>";
-				htmlstr += "<div id='mgPlayerJSPreview_toast-msg-text' >" + message + "</div></div>";
-
-				mg$("#mgPlayerJSPreview_toast-msg").html(htmlstr);
-				mg$("#mgPlayerJSPreview_toast-msg").fadeIn();
-
-				mg$("#mgPlayerJSPreview_toast-msg-close").click(function(e) {
-					showFindingToastMsg().hide(e);
-				});
-			},
-			hide: function(e) {
-				mg$('#mgPlayerJSPreview_toast-msg').fadeOut(500);
-				if (GmCXt.playerI && e && e.currentTarget.id === 'mgPlayerJSPreview_toast-msg-close') {
-					pub.stop();
-				}
-			}
-		};
-	}
-
-	function getCountSpan(t) {
-		return "<span class='mgPlayerJSPreview_toast-timer'>" + t + "</span>";
-	}
-
-	function showPleaseWaitMessage(timeout) {
-
-		if (self.status === self.DOM_WAITING && GmCXt.playerI) {
-
-			var now = Date.now();
-			var remainingTime = parseInt((timeout - now) / 1000);
-
-			if (remainingTime) {
-				var msg = GmCXt.label.findingElementMessage + " (" + getCountSpan(remainingTime) + ")";
-				showFindingToastMsg(msg).show();
-
-				clearTimeout(self.waitTimeout);
-				self.waitTimeout = setTimeout(function() {
-					showPleaseWaitMessage(timeout);
-				}, GmCXt.t.plsWaitMsg);
-			} else {
-				showFindingToastMsg().hide();
-			}
-		}
-	}
-
-	function playInlineStep() {
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		if (GmCXt.playerI.initiator === 'doitforme' || step.step_settings.autoPlayStep) {
-			var autoSettings = step.step_settings.automation;
-			if (autoSettings.muteNarration && GmCXt.isFalse(autoSettings.hasHumanInteraction)) {
-				GmCXt.playerI.playAudio = false;
-			}
-		}
-
-		// For automation of the creator app.
-		// If there is a hover step, it should be skipped as such kind cannot be automated.
-		if (step.step_settings.completionEvent === "hoverNext" && GmCXt.playerI.testAutomation) {
-			if (step.step_settings.optional) {
-				self.ready = true;
-				GmCXt.log(37, "SKIP THE HOVER STEP", 1);
-				GmCXt.auto.updateAutomationMessage("Hover step was not tested as it is not supported", function() {
-					playNxtStep();
-				});
-			} else {
-				markStatusFailed(step);
-				GmCXt.auto.fail(step, {
-					errorMessage: "On Hover step is not supported by automation"
-				});
-			}
-
-			return;
-		}
-		var nextStep = GmCXt.getNextStep();
-		var waitFor = getWaitTime(step);
-
-		markStatusFailed(step);
-
-		self.status = self.DOM_WAITING;
-
-		var isLastStep = GmCXt.isLastStep(step.step_id, GmCXt.playerI.playStructure);
-
-		var data = {
-			requestId: step.step_id,
-			settings: step.step_settings,
-			nextStep: nextStep,
-			windowHost: GmCXt.getPageDomain(),
-			task: 'playTour',
-			timeout: Date.now() + parseInt(waitFor),
-			autoRun: GmCXt.playerI.automate,
-			log_stepInfo: GmCXt.getStepInfoLog(step),
-			isLastStep: isLastStep,
-			testAutomation: GmCXt.playerI.testAutomation,
-			iframeAttrs: step.step_settings.element.iframeAttrs,
-			isDeskReq: self.isDeskReq,
-			showLogs: false
-		};
-
-		if (GmCXt.deskReq) {
-			if (data.settings.automation && data.settings.automation.getfromBot) {
-				data.botUsers = GmCXt.deskReq.botUsers;
-			}
-		}
-
-		if (GmCXt.playerI.csvData) {
-			data.csvData = GmCXt.playerI.csvData;
-			data.currentLoop = GmCXt.playerI.currentLoop;
-		}
-
-		if (GmCXt.playerI.manual && !step.step_settings.autoPlayStep) {
-			if (data.settings && data.settings.automation) {
-				data.settings.automation.enableDefaultData = false;
-			}
-		} else if (GmCXt.playerI.automate)
-			data.triggerEvent = automationTriggerEvent(step);
-
-		if (step.step_settings.autoPlayStep) {
-			data.triggerEvent = true;
-		}
-
-		GmCXt.tourPlayerI.elementFound = false;
-		GmCXt.tourPlayerI.currentStepReq = mg$.extend(true, {}, data);
-
-		if (data.settings.pageReloadOption === "new_tab" && checkRestartInParent(step)) {
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:keep_watching_step:inform');
-		}
-
-		GmCXt.log(33, 'Find element: ' + GmCXt.stepLog(step.step_id, GmCXt.playerI.tour.tour_id));
-
-		if (data.settings.element.meta.inTopWindow) {
-			GmCXt.log(33, "FINDING STEP ELEMENT only in TOP window");
-			GmCXt.requestHandler.selectExistingDomElement(data);
-		} else {
-			// Element in iframe
-			if (data.settings.element.criteria.precision_level === "High" && data.settings.element.iframeAttrs) {
-
-				var findInIframe = 2500;
-				data.timeout = Date.now() + findInIframe;
-
-				GmCXt.log(33, "FINDING STEP ELEMENT only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_existing_dom_element:target_frame_only', data);
-
-				GmCXt.findStepTimeout = GmCXt.timeout(function() {
-					if (!GmCXt.currentIframeId) {
-						GmCXt.log(33, "TIMED OUT in Target Frame..\nFINDING STEP ELEMENT in all frames");
-						data.timeout = Date.now() + parseInt(waitFor) - findInIframe;
-						data.checkIframe = true;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_existing_dom_element', data);
-					}
-				}, findInIframe + 250);
-			} else {
-				var tm = 0;
-				GmCXt.timeout(function() {
-					GmCXt.log(33, "FINDING STEP ELEMENT in all frames");
-					GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_existing_dom_element', data);
-				}, tm);
-			}
-		}
-
-		GmCXt.timeout(function() {
-			if (GmCXt.isPlayer() && GmCXt.tourPlayerI && !GmCXt.tourPlayerI.elementFound) {
-				if (!GmCXt.pageTours) {
-					GmCXt.getContextGuides();
-				}
-				GmCXt.showSmartTips(true);
-				GmCXt.showBeacons(true);
-			}
-			GmCXt.displayWidget(true);
-		}, 20000);
-
-		if (GmCXt.isWestpac()) {
-			var timeout = Date.now() + parseInt(GmCXt.elLookupTime);
-
-			self.waitTimeout = setTimeout(function() {
-				showPleaseWaitMessage(timeout);
-			}, 3500);
-		}
-	}
-
-	pub.onSuccessTooltipElementFound = function(elementPos, tooltipId) {
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var tooltip = getTooltipFromId(step, tooltipId);
-
-		self.prevEvent = false;
-		GmCXt.nextStepPlayEventReceived = false;
-
-		var s = step.step_settings;
-
-		if (s.overlayOpacity || (!s.doNotForceGuide && GmCXt.playerI && GmCXt.playerI.forceGuideMe)) {
-			GmCXt.highlight_elements[tooltipId] = [elementPos];
-			GmCXt.applyOverlayMessageStep(GmCXt.highlight_elements);
-		}
-
-		if (self.status === self.DOM_WAITING &&
-			tooltipId === step.step_settings.domElems[0].id &&
-			step.step_settings.optional) {
-			self.status = self.DOM_SUCCESS;
-			playInlineStepPreview(step);
-		}
-
-		if (tooltip.title) {
-
-			var options = {
-				description: tooltip.title,
-				highlightedArea: [elementPos],
-				width: GmCXt.stepPopupWidth,
-				tooltipId: tooltipId,
-				tour: GmCXt.playerI.tour,
-				alignment: tooltip.alignment,
-				stepType: step.step_type
-			};
-
-			GmCXt.showTooltip(options);
-		}
-	};
-
-	function getTooltipFromId(step, id) {
-		var stepData = step.step_settings;
-		var domElems = stepData.domElems;
-
-		for (var i = 0, j = domElems.length; i < j; i++) {
-			if (domElems[i].id === id) {
-				return domElems[i];
-			}
-		}
-
-		return null;
-	}
-
-	function msgToDesktop(step) {
-		GmCXt.sendMessageToDesktop({
-			isHybrid: GmCXt.playerI.isHybrid,
-			isFirstStep: GmCXt.playerI.isFirstStep,
-			isLastStep: GmCXt.playerI.isLastStep,
-			stepDetails: step,
-			ack: GmCXt.playerI.lastStepStatus
-		});
-	}
-
-	function markStatusFailed(step) {
-		if (!step.step_settings.optional && !GmCXt.isEmpty(GmCXt.playerI)) {
-			GmCXt.playerI.lastStepStatus = 'failed';
-		}
-	}
-
-	function checkFailedMessage(step) {
-		if (!GmCXt.isEmpty(step.step_description) && step.step_description.toLowerCase().indexOf("fail") !== -1) {
-
-			var prevStepId = GmCXt.playedPreviousSteps[GmCXt.playedPreviousSteps.length - 1];
-			var prevStep = prevStepId ? GmCXt.createDeepCopy(GmCXt.getStepFromPlayerI(prevStepId)) : null;
-
-			if (prevStep && prevStep.step_type === 'branch') {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	function recordFailedTestCase(step) {
-		GmCXt.log(33, 'Message Step: "Fail" text found in description marking testcase failed');
-		GmCXt.recordGuideEvents();
-		var title = mg$('<span />').html(step.step_title).text().trim();
-		GmCXt.trackStepEvent(step, title);
-
-	}
-
-	function playMessageStep() {
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var nextStep = GmCXt.getNextStep();
-		var stepSettings = GmCXt.createDeepCopy(step.step_settings);
-		var tooltipExists = false;
-		var scrollTopBefore = mg$(window).scrollTop();
-
-		GmCXt.nextStepPlayEventReceived = false;
-
-		markStatusFailed(step);
-
-		var waitFor = GmCXt.t.stepMTimeout;
-
-		if (!stepSettings.optional) {
-			playInlineStepPreview(step);
-		} else {
-			self.status = self.DOM_WAITING;
-			waitFor = 3000;
-		}
-
-		recordEvent(step);
-
-		if (stepSettings) {
-			var auto = stepSettings.automation;
-
-			if (stepSettings.completionEvent === "onClickAnywhere" &&
-				GmCXt.playerI.testAutomation) {
-				if (!auto.hasHumanInteraction) {
-					automatePlayStep();
-				} else {
-					GmCXt.log(33, 'Message Step - Wait for human interaction');
-					if (GmCXt.isAutomationStep(nextStep)) {
-						automatePlayStep();
-					}
-				}
-			} else if (stepSettings.keepNext === true && GmCXt.playerI.testAutomation) {
-				automatePlayStep();
-			} else if (GmCXt.playerI.automate && !auto.hasHumanInteraction) {
-
-				GmCXt.rotateGear();
-				automatePlayStep();
-			}
-
-			var domElems = stepSettings.domElems;
-
-			if (domElems && domElems.length) {
-				GmCXt.highlight_elements = {};
-				tooltipExists = true;
-
-				var data = {
-					requestId: step.step_id,
-					settings: stepSettings,
-					nextStep: nextStep,
-					windowHost: GmCXt.getPageDomain(),
-					task: 'playTour',
-					timeout: Date.now() + parseInt(waitFor),
-					stepType: GmCXt.STEP_TYPE_MESSAGE,
-					isOptional: stepSettings.optional
-				};
-
-				if (GmCXt.playerI.automate)
-					data.triggerEvent = automationTriggerEvent(step);
-
-				var action = 'mgPlayerJSPreview_action:started;task:select_dom_element_tooltips';
-				GmCXt.sendMessageToAllWindows(action, data);
-			}
-		}
-
-		if (tooltipExists === true) {
-			GmCXt.timeout(function() {
-				var scrollTopAfter = mg$(window).scrollTop();
-				if (scrollTopAfter !== scrollTopBefore) {
-
-					var $popup = mg$(".mgPlayerJSPreview_step-popup");
-					GmCXt.alignMessagePreview($popup,
-						mg$(window),
-						stepSettings.alignment,
-						stepSettings);
-				}
-			}, GmCXt.t_.sec1);
-		}
-	}
-
-	function getWaitTime(step) {
-
-		var wait = GmCXt.elLookupTime;
-		var el = step.step_settings.element;
-
-		if (step.step_settings.optional) {
-			wait = 100;
-			// If current and previous step is optional 
-			var prevStep = GmCXt.getPreviousStep();
-			if (prevStep) {
-				if (prevStep.step_settings.optional) wait = 50;
-			}
-			if (el && !el.meta.inTopWindow) {
-				wait = wait * 30;
-			}
-		}
-		var PI = GmCXt.playerI;
-		if (!GmCXt.isWestpac() && PI && PI.currentStepId === PI.startStepId) {
-			wait = 6000;
-		}
-
-		if (PI && PI.loops) {
-			wait = 3000;
-		}
-
-		if (GmCXt.playerI.testAutomation && !step.step_settings.optional) {
-			wait = GmCXt.t.autoWaitTime;
-		}
-
-		return wait;
-	}
-
-	function playInlineStepPreview(step) {
-
-		GmCXt.log(33, "PLAY INLINE STEP PREVIEW");
-
-		if ((GmCXt.playerI.testAutomation || GmCXt.playerI.initiator === 'doitforme') && GmCXt.isAutomationStep(step)) {
-			return;
-		}
-		if (GmCXt.playerI.keyShorts && GmCXt.playerI.initiator === 'doitforme') {
-			return;
-		}
-
-		var options = {
-			step: step,
-			totalStepCount: GmCXt.playerI.totalStepCount,
-			tour: GmCXt.playerI.tour,
-			playingTour: true
-		};
-
-		if (GmCXt.previewStepPopupInstance) {
-			GmCXt.previewStepPopupInstance.close();
-		}
-
-		GmCXt.previewStepPopupInstance = GmCXt.previewStepPopup(options);
-		GmCXt.previewStepPopupInstance.load();
-
-		addEventsOnPreviewPopup(step);
-
-		setUpStepAudio(step);
-
-		setStepComTimeout(step);
-
-		self.ready = true;
-	}
-
-	function recordEvent(step) {
-		GmCXt.recordGuideEvents();
-		GmCXt.trackStepEvent(step);
-
-		var PI = GmCXt.playerI;
-
-		GmCXt.playedPreviousSteps.push(PI.currentStepId);
-
-		PI.lastPlayedStepId = PI.currentStepId;
-		PI.lastStepStatus = 'success';
-		if (GmCXt.isDesktop()) {
-			msgToDesktop(step);
-		}
-
-		GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:update_player_instance");
-
-		GmCXt.storage().remove(['linkClickOnStep']);
-		GmCXt.storage().set({
-			'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': PI,
-			'guide_play_event': GmCXt.guidePlayTracker
-		});
-	}
-
-	function saveImage(imageStr) {
-		return new Promise(function(resolve, reject) {
-			var formData = new FormData();
-			formData.append('image_data', imageStr.replace('data:image/jpeg;base64,', ''));
-
-			var options = {
-				args: formData
-			};
-			GmCXt.api.uploadFileBase64(options).then(function(result) {
-				resolve(result.data.image_id);
-			}).catch(function(result) {
-				reject(result.message);
-			});
-		});
-	}
-
-	function clearTimeouts(stepType) {
-		if (GmCXt.closeTourTimeout) {
-			clearTimeout(GmCXt.closeTourTimeout);
-		}
-
-		if (GmCXt.findStepTimeout) {
-			clearTimeout(GmCXt.findStepTimeout);
-		}
-
-		hideWaitMsg();
-
-	}
-
-	function closeTour() {
-
-		var wait = GmCXt.elLookupTime;
-		GmCXt.log(33, "CLOSE TOUR TIMEOUT initiated for " + wait);
-		if (GmCXt.playerI && GmCXt.playerI.testAutomation) {
-			wait = GmCXt.t.autoWaitTime + 5000;
-		}
-
-		clearTimeouts();
-
-		GmCXt.closeTourTimeout = GmCXt.timeout(function() {
-			if (GmCXt.playerI) {
-				var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-				if (GmCXt.isAutomationRunning()) {
-					GmCXt.auto.fail(step, {
-						errorMessage: "Stop automation for current guide due to timeout"
-					});
-					return;
-				}
-				GmCXt.log(33, "KILLED guide after " + wait);
-				if (!mg$(".mgPlayerJSPreview_slideshow-panel").visible()) {
-					GmCXt.recordGuideEvents();
-					GmCXt.trackStepEvent(step, "Stop current guide due to timeout");
-					pub.stop();
-				}
-			}
-		}, wait);
-	}
-
-	function playImageStep() {
-
-		if (autoModePlay('Image')) return;
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		markStatusFailed(step);
-
-		if (!step.step_settings.displayPreview) {
-
-			window.onunload = null;
-			GmCXt.playerI.type = "image";
-
-			GmCXt.playedPreviousSteps.push(GmCXt.playerI.currentStepId);
-
-			addEventsOnPreviewPopup(step);
-
-			var data = {
-				prev_btn: self.prev_button,
-				next_btn: self.next_button
-			};
-
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_image_step', data);
-
-			GmCXt.nextStepPlayEventReceived = false;
-
-			self.ready = true;
-			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_player_instance_app');
-		} else {
-			GmCXt.lockScroll();
-
-			if (mg$("body").find('.mgPlayerJSPreview_image-step-screen').length === 0) {
-				mg$("<wmgPlayerJSPreview_ class='mgPlayerJSPreview_image-step-screen'><img id='mgPlayerJSPreview_img-step-div' class='mgPlayerJSPreview_custom-image' src='' ></wmgPlayerJSPreview_>").appendTo('body');
-			}
-
-			var container = mg$('#mgPlayerJSPreview_img-step-div');
-
-			container.attr('src', (step.image_url)).one('load', function(e) {
-
-				mg$('.mgPlayerJSPreview_image-step-screen').show();
-				mg$('.mgPlayerJSPreview_highlighter-span').remove();
-				var windowWidth = mg$(window).width();
-				var windowHeight = mg$(window).height();
-				var containerWidth = container.width();
-				var containerHeight = container.height();
-
-				container.css('margin-left', (windowWidth - containerWidth) / 2);
-				container.css('margin-top', (windowHeight - containerHeight) / 2);
-
-				/**
-					* preview popup requires highlightedArea to be set on step object
-					* But in database highlightedArea is in step_settings property of step object
-					*/
-				step.highlightedArea = scaleHighlightedArea(step);
-
-				/**
-					* Select highlighted areas on image canvas
-					*/
-				step.highlightedArea.forEach(function(val, ind) {
-					var offset = mg$("#mgPlayerJSPreview_img-step-div").offset();
-					var bordWidth = "1";
-					var borderColor = "red";
-					if (step.step_settings.highlightedArea) {
-
-						if (step.step_settings.highlightedArea[ind].borderColor) {
-							borderColor = step.step_settings.highlightedArea[ind].borderColor;
-						} else {
-							borderColor = "red";
-						}
-
-						if (step.step_settings.highlightedArea[ind].borderWidth) {
-							bordWidth = step.step_settings.highlightedArea[ind].borderWidth;
-						} else {
-							bordWidth = 1;
-						}
-					}
-					var highlighterHtml = '<wmgPlayerJSPreview_ class="mgPlayerJSPreview_highlighter-span highliter_' + ind + '" style="' +
-						'    width:' + val.width + 'px; ' +
-						'    height:' + val.height + 'px;' +
-						'    top:' + (val.top + offset.top) + 'px;' +
-						'    left:' + (val.left + offset.left) + 'px;' +
-						'    border: ' + bordWidth + 'px solid ' + borderColor + '!important; position: absolute;box-sizing: border-box">' +
-						'</wmgPlayerJSPreview_>';
-					mg$('.mgPlayerJSPreview_image-step-screen').append(highlighterHtml);
-				});
-
-				window.scrollTo(0, 0);
-
-				var options = {
-					step: step,
-					totalStepCount: GmCXt.playerI.totalStepCount,
-					containerOffest: container.offset(),
-					container: container,
-					tour: GmCXt.playerI.tour,
-					playingTour: true
-				};
-				if (GmCXt.isEmpty(step.step_title.trim()) && GmCXt.isEmpty(step.step_description.trim())) {
-					createBlackoutViewPortInstance(options);
-				} else {
-					GmCXt.previewStepPopupInstance = GmCXt.previewStepPopup(options);
-					GmCXt.previewStepPopupInstance.load();
-					addEventsOnPreviewPopup(step);
-				}
-
-				GmCXt.nextStepPlayEventReceived = false;
-
-				recordEvent(step);
-				setUpStepAudio(step);
-				setStepComTimeout(step);
-
-				if (step.step_settings.version) {
-
-					var highlightedAreaScaled = scaleHighlightedArea(step);
-
-					for (var i = 0; i < step.step_settings.highlightedArea.length; i++) {
-
-						var highLightArr = [];
-						var offset = mg$("#mgPlayerJSPreview_img-step-div").offset();
-
-						highlightedAreaScaled[i].left = highlightedAreaScaled[i].left + offset.left;
-						highlightedAreaScaled[i].top = highlightedAreaScaled[i].top + offset.top;
-
-						highLightArr.push(highlightedAreaScaled[i]);
-
-						var options = {
-							description: step.step_settings.highlightedArea[i].title,
-							highlightedArea: highLightArr,
-							width: 250,
-							tooltipId: i,
-							tour: GmCXt.playerI.tour,
-							alignment: step.step_settings.highlightedArea[i].alignment,
-							stepType: step.step_type
-						};
-						if (options.description) GmCXt.showTooltip(options);
-					}
-				}
-
-				mg$("<div class='mgPlayerJSPreview_image-step-done' ><wmgPlayerJSPreview_ class='mgPlayerJSPreview_icon-image-close mgPlayerJSPreview_inline-block-vm'></wmgPlayerJSPreview_></div>").appendTo('html');
-				mg$(".mgPlayerJSPreview_image-step-done").html(GmCXt.svgs.close_slideshow);
-				mg$(".mgPlayerJSPreview_image-step-done").off("click").on("click", playStepPopupCloseButtonClickEvent);
-
-				if (GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure)) {
-					mg$("<div class='mgPlayerJSPreview_image-step-nav-button mgPlayerJSPreview_image-step-next'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_img-step-next-icon mgPlayerJSPreview_inline-block-vm'></wmgPlayerJSPreview_></div>").appendTo('html');
-					mg$(".mgPlayerJSPreview_img-step-next-icon").html(GmCXt.svgs.slideshow_next_button);
-					mg$(".mgPlayerJSPreview_image-step-next").off("click").on("click", playNxtStep);
-				}
-
-				var prevStep = GmCXt.getPreviousStep();
-
-				if (prevStep !== null && showPrevBtnCond(prevStep) && !tourStepSetting.hidePrevBtn) {
-
-					mg$("<div class='mgPlayerJSPreview_image-step-nav-button mgPlayerJSPreview_image-step-prev'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_img-step-prev-icon mgPlayerJSPreview_inline-block-vm'></wmgPlayerJSPreview_></div>").appendTo('html');
-					mg$(".mgPlayerJSPreview_img-step-prev-icon").html(GmCXt.svgs.slideshow_prev_button);
-					mg$(".mgPlayerJSPreview_image-step-prev").off("click").on("click", pub.playPreviousStep);
-				}
-				self.ready = true;
-			});
-		}
-	}
-
-	function playVideoStep() {
-
-		if (autoModePlay('Video')) return;
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		window.onunload = null;
-		GmCXt.playerI.type = "video";
-
-		GmCXt.playedPreviousSteps.push(GmCXt.playerI.currentStepId);
-
-		addEventsOnPreviewPopup(step);
-
-		var data = {
-			prev_btn: self.prev_button,
-			next_btn: self.next_button
-		};
-
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_video_step', data);
-
-		GmCXt.nextStepPlayEventReceived = false;
-
-		GmCXt.timeout(function() {
-			self.ready = true;
-			recordEvent(step);
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:update_player_instance_app');
-		}, 100);
-
-	}
-
-	function scaleHighlightedArea(step) {
-
-		var containerWidth = mg$('#mgPlayerJSPreview_img-step-div').width();
-		var containerHeight = mg$('#mgPlayerJSPreview_img-step-div').height();
-
-		var imageRatio = step.step_settings.imageDimension.width / step.step_settings.imageDimension.height;
-		var containerRatio = containerWidth / containerHeight;
-
-		if (imageRatio <= containerRatio) {
-			var ratio = (containerHeight * 100) / step.step_settings.imageDimension.height;
-		} else {
-			var ratio = (containerWidth * 100) / step.step_settings.imageDimension.width;
-		}
-
-		var arr = [];
-
-		if (step.step_settings.highlightedArea === undefined) {
-			step.step_settings.highlightedArea = [];
-		}
-
-		var highlightedArea = step.step_settings.highlightedArea;
-		highlightedArea.forEach(function(val, ind) {
-			var a = {
-				'left': ((highlightedArea[ind].left * ratio) / 100),
-				'top': (highlightedArea[ind].top * ratio) / 100,
-				'height': (highlightedArea[ind].height * ratio) / 100,
-				'width': (highlightedArea[ind].width * ratio) / 100
-			};
-			arr.push(a);
-		});
-
-		return arr;
-	}
-
-	function setUpStepAudio(step) {
-
-		if (!GmCXt.FT.audio) return;
-		if (GmCXt.isPageReloaded) {
-			GmCXt.setOffAudioMode();
-			GmCXt.isPageReloaded = false;
-			showAudioIcon();
-			return;
-		}
-
-		mg$('.mgPlayerJSPreview_play-step-audio-loader').show();
-		mg$(".mgPlayerJSPreview_play-step-audio").css("opacity", ".5");
-
-		GmCXt.storage().get(['stepAudioRunningStatus']).then(function(items) {
-
-			if (items === undefined) items = {};
-
-			if (!GmCXt.isAutomationRunning() && GmCXt.getAudioPreference(items.stepAudioRunningStatus)) {
-
-				if (step.step_audio) {
-					var message = {
-						audioTrack: step.step_audio,
-						step: step
-					};
-
-					if (GmCXt.playerI && GmCXt.playerI.playAudio) {
-
-						if (!GmCXt.stepAudioPlayed) {
-							GmCXt.stepAudioPlayed = true;
-							GmCXt.playAudioTrack(message);
-						}
-
-						GmCXt.setOnAudioMode();
-
-					} else {
-						GmCXt.setOffAudioMode();
-					}
-
-					showAudioIcon();
-
-				} else {
-					showAudioIcon();
-				}
-
-			} else {
-				GmCXt.stopAudioTrack();
-				GmCXt.setOffAudioMode();
-
-				showAudioIcon();
-			}
-		});
-
-		function showAudioIcon() {
-			mg$('.mgPlayerJSPreview_play-step-audio-loader').hide();
-			mg$(".mgPlayerJSPreview_play-step-audio").css("opacity", "1");
-		}
-	}
-
-	function setStepComTimeout(step) {
-		if (GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI.setStepCompletionTimeout(step);
-		}
-	}
-
-	function playStepPopupCloseButtonClickEvent() {
-		GmCXt.log(33, "STOP guide event received");
-		var forceClose = !GmCXt.playerI.testAutomation;
-		GmCXt.confirmTourClose(forceClose);
-	}
-
-	function isClassicSetting() {
-		return mg$('.mgPlayerJSPreview_preview-step-popup-container').hasClass('preview-step-popup-classic-design');
-	}
-
-	function showPrevButton() {
-		if (isClassicSetting()) {
-			mg$(".popup-classic-design-navigation-prev").show();
-		} else {
-			mg$(".mgPlayerJSPreview_play-step-prev").show();
-		}
-		self.prev_button = true;
-		mg$(".mgPlayerJSPreview_play-step-prev").css({
-			"opacity": "1",
-			"pointer-events": "initial"
-		});
-	}
-
-	function showNextButton() {
-		var currStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		if (onChangeNextStep()) {
-			if (isClassicSetting()) {
-				mg$("#mgPlayerJSPreview_play_step_next_classic").find('span.mgPlayerJSPreview_text-span').text(GmCXt.label.btnSkip);
-			} else {
-				mg$(".mgPlayerJSPreview_play-step-next").find('span').text(GmCXt.label.btnSkip);
-			}
-		}
-
-		if (!onChangeNextStep() || !currStep.step_settings.hideSkip) {
-			if (isClassicSetting()) {
-				mg$(".mgPlayerJSPreview_popup-classic-navigation-next").show();
-			} else {
-				mg$(".mgPlayerJSPreview_play-step-next").show();
-			}
-		}
-
-		self.next_button = true;
-	}
-
-	function hidePrevButton() {
-		if (isClassicSetting()) {
-			mg$(".popup-classic-design-navigation-prev").hide();
-		} else {
-			mg$(".mgPlayerJSPreview_play-step-prev").hide();
-		}
-
-		mg$(".mgPlayerJSPreview_image-step-prev").hide();
-	}
-
-	function hideNextButton() {
-		if (isClassicSetting())
-			mg$(".mgPlayerJSPreview_popup-classic-navigation-next").hide();
-		else
-			mg$(".mgPlayerJSPreview_play-step-next").hide();
-
-		mg$(".mgPlayerJSPreview_image-step-next").remove();
-	}
-
-	function showDoneButton() {
-		var currStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var ss = currStep.step_settings;
-
-		mg$(".mgPlayerJSPreview_play-step").css({
-			"display": "inline-block"
-		});
-
-		if (ss.automation && ss.automation.hasHumanInteraction) {
-			mg$(".mgPlayerJSPreview_play-step").removeClass("mgPlayerJSPreview_hide");
-		}
-		if (isClassicSetting()) {
-			document.getElementsByClassName("mgPlayerJSPreview_play-step-classic-done")[0].style.display = "block";
-			mg$(".mgPlayerJSPreview_play-step").css({
-				"width": "28% !important"
-			});
-		} else {
-			mg$(".mgPlayerJSPreview_play-step").html(GmCXt.label.close);
-			mg$(".mgPlayerJSPreview_play-step").css({
-				"min-width": "50px"
-			});
-		}
-	}
-
-	function hideDoneButton() {
-		mg$(".mgPlayerJSPreview_play-step").hide();
-		mg$(".mgPlayerJSPreview_image-step-done").hide();
-	}
-
-	function showAutoIndicator() {
-		mg$('#mgPlayerJSPreview_play-step-automation-indicator-wrapper').show();
-	}
-
-	function hideAutoIndicator() {
-		mg$('#mgPlayerJSPreview_play-step-automation-indicator-wrapper').hide();
-	}
-
-	function showStopButton() {
-		if (isClassicSetting()) {
-			mg$(".mgPlayerJSPreview_play-step-pause-classic").show();
-		} else {
-			mg$(".mgPlayerJSPreview_play-step-pause").show();
-		}
-	}
-
-	function hideStopButton() {
-		if (isClassicSetting())
-			mg$(".mgPlayerJSPreview_play-step-pause-classic").hide();
-		else
-			mg$(".mgPlayerJSPreview_play-step-pause").hide();
-	}
-
-	function resetNavigationButton() {
-		hidePrevButton();
-		hideNextButton();
-		hideDoneButton();
-		hideStopButton();
-	}
-
-	function showNagivation() {
-		var pi = GmCXt.playerI;
-		mg$(".mgPlayerJSPreview_hide").removeClass("mgPlayerJSPreview_hide");
-		mg$(".preview-step-popup-navigation-wrapper").css("width", "calc(100% - 35px)");
-
-		if (GmCXt.isLastStep(pi.currentStepId, pi.playStructure)) {
-			mg$(".preview-step-popup-navigation-wrapper").css("width", "100%");
-		}
-	}
-
-	function hideButton(selector) {
-		mg$(selector).addClass("mgPlayerJSPreview_hide");
-	}
-
-	function hideNavigation() {
-		hideButton(".mgPlayerJSPreview_play-step-prev");
-		hideButton(".popup-classic-design-navigation-prev");
-		hideButton(".mgPlayerJSPreview_image-step-prev");
-		hideButton(".mgPlayerJSPreview_image-step-next");
-		hideButton(".mgPlayerJSPreview_play-step");
-		hideButton(".mgPlayerJSPreview_image-step-done");
-		mg$(".preview-step-popup-navigation-wrapper").css("width", "100%");
-	}
-
-	function addEventsOnPreviewPopup(step) {
-
-		resetNavigationButton();
-		self.prev_button = false;
-		self.next_button = false;
-		//show next button
-		if (hasNextStep()) {
-			showNextButton();
-			hideDoneButton();
-		}
-
-		// show previous button
-		var currStep = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var ss = currStep.step_settings;
-		var automate = GmCXt.playerI.automate;
-
-		showPrevBtnToggle(ss);
-
-		if (automate) {
-			showAutoIndicator();
-			hideNavigation(); // Except 'Next' button
-
-			if (ss.automation && !ss.automation.hasHumanInteraction) {
-				hideNextButton();
-				showStopButton();
-			}
-		} else {
-			hideAutoIndicator();
-		}
-
-		// show done button
-		if (GmCXt.isLastStep(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure) || (GmCXt.isDesktop() && GmCXt.playerI.isLastStep)) {
-			hideNextButton();
-			showDoneButton();
-		}
-		if ((GmCXt.isDesktop() && !GmCXt.playerI.isLastStep && !automate)) {
-			showNextButton();
-			hideDoneButton();
-		}
-
-		//hide previous button if totalStepCount is one
-		if (parseInt(GmCXt.playerI.totalStepCount) == 1) {
-			hidePrevButton();
-		}
-
-		mg$(".g" + "ss-play-linked-guide")
-			.off("mousedown")
-			.on("mousedown", playGuideOnLinkClick);
-	}
-
-	function showPrevBtn(ss) {
-
-		if (tourStepSetting.hidePrevBtn) {
-			if (ss.showPreviousStep)
-				return true;
-		} else if (!ss.hidePreviousStep) {
-			return true;
-		}
-		return false;
-	}
-
-	function showPrevBtnToggle(ss) {
-		var prevStep = GmCXt.getPreviousStep();
-		if (showPrevBtn(ss)) {
-			if (GmCXt.isDesktop() && !GmCXt.playerI.isFirstStep) {
-				showPrevButton();
-				return;
-			}
-
-			if (!GmCXt.isEmpty(prevStep) && showPrevBtnCond(prevStep)) {
-				if ((mg$.inArray(prevStep.step_id, GmCXt.playedPreviousSteps) !== -1 || prevStep.step_settings.optional) &&
-					pub.isLastStepVisible) {
-					showPrevButton();
-				} else
-					pub.isLastStepVisible = true;
-			}
-		}
-	}
-
-	function showPrevBtnCond(step) {
-		if (step.step_settings.keepNext === true ||
-			step.step_settings.completionEvent === 'closeAfterDelay' ||
-			step.step_type === GmCXt.STEP_TYPE_VIDEO) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function playGuideOnLinkClick(e) {
-		e.stopPropagation();
-		var tourId = mg$(e.currentTarget).attr('href').split('tourId=')[1];
-		if (tourId) {
-			pub.closeStep();
-			GmCXt.requestHandler.playLinkedGuide({
-				tourId: tourId
-			});
-		}
-	}
-
-	var hasNextStep = function() {
-		var pi = GmCXt.playerI;
-		var currStep = GmCXt.getCurrentStep(pi.currentStepId);
-		var ss = currStep.step_settings;
-		var flag = false;
-
-		if (ss.keepNext || ss.onChangeNext || ss.onKeyupNext || self.showNextButtonCV) {
-			if (GmCXt.getTail(pi.currentStepId, pi.playStructure) !== null) {
-				flag = true;
-			}
-		}
-
-		return flag;
-	};
-
-	var onChangeNextStep = function() {
-		var pi = GmCXt.playerI;
-		var currStep = GmCXt.getCurrentStep(pi.currentStepId);
-		var ss = currStep.step_settings;
-		if (!GmCXt.isStepInlineBranch(currStep)) {
-			if (ss.onChangeNext || ss.onKeyupNext) {
-				return true;
-			}
-		}
-		return false;
-	};
-
-	var hasClickNext = function() {
-		var pi = GmCXt.playerI;
-		var currStep = GmCXt.getCurrentStep(pi.currentStepId);
-		var flag = false;
-
-		if (currStep.step_settings.clickNext === true) {
-			if (GmCXt.getTail(pi.currentStepId, pi.playStructure) !== null) {
-				flag = true;
-			}
-		}
-
-		return flag;
-	};
-
-	function toggle() {
-		if (isClassicSetting()) {
-			var next = mg$(".mgPlayerJSPreview_popup-classic-navigation-next");
-			mg$(".mgPlayerJSPreview_popup-classic-navigation-next").hide();
-			if (next.length > 1) {
-				next[1].style.display = "block";
-			} else {
-				mg$(".mgPlayerJSPreview_popup-classic-navigation-next:first").show();
-			}
-		} else {
-			var next = mg$(".mgPlayerJSPreview_play-step-next-done:visible").hide().next();
-			if (next.length > 1)
-				next[1].style.display = "block";
-			else
-				mg$(".mgPlayerJSPreview_play-step-next-done:first").show();
-		}
-	}
-
-	function doneButtonConfiguration() {
-		if (isClassicSetting()) {
-			mg$(".mgPlayerJSPreview_play-step").html(GmCXt.label.close);
-			mg$(".mgPlayerJSPreview_play-step").css({
-				"width": "50px"
-			});
-		} else {
-			mg$(".mgPlayerJSPreview_play-step").css({
-				"width": "49%"
-			});
-		}
-		mg$(".mgPlayerJSPreview_play-step").off("click").on("click", playStepPopupCloseButtonClickEvent);
-	}
-
-	window.onresize = function() {
-		if (GmCXt.playerI && GmCXt.playerI.type === 'live') {
-			var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-			if (step.step_type == "image" && !step.step_settings.isCvStep) {
-				if (!GmCXt.isMediaPlayerOn) {
-					pub.closeStep();
-				}
-				playImageStep();
-			}
-		}
-	};
-
-	function createBlackoutViewPortInstance(options) {
-		/**
-			* Blackout area surrounding step DOM element for inline step 
-			* and surrounding highlighted areas for image steps.
-			*/
-		var ob = {
-			id: options.step.step_id,
-			type: options.step.step_type,
-			title: options.step.step_title,
-			description: options.step.step_description,
-			audioTrack: options.step.step_audio,
-			highlightedArea: options.step.highlightedArea,
-			settings: options.step.step_settings,
-			serialNumber: options.step.order || 0,
-			container: options.container,
-			containerOffest: options.containerOffest || {
-				left: 0,
-				top: 0
-			},
-			totalStepCount: options.totalStepCount,
-			playingTour: options.playingTour || false
-		};
-
-		if (ob.playingTour && options.tour) {
-			ob.tour = options.tour;
-		} else {
-			ob.tour = false;
-		}
-
-		if (ob.settings.screenBlackout === true) {
-
-			if (!ob.highlightedArea) {
-				ob.highlightedArea = [{
-					left: 0,
-					top: 0,
-					height: 0,
-					width: 0
-				}];
-			} else {
-
-				var options = {
-					data: ob.highlightedArea,
-					containerOffset: GmCXt.getContainerOffSet(mg$('#mgPlayerJSPreview_image-canvas')),
-					stepType: GmCXt.STEP_TYPE_IMAGE,
-					overlay: true,
-					tour: ob.tour,
-					stepIndex: ob.serialNumber
-				};
-
-				if (ob.container) {
-					options.containerOffset = GmCXt.getContainerOffSet(ob.container);
-				}
-			}
-
-			options.overlay = false;
-
-			GmCXt.removeScreenOverlay();
-
-			if (GmCXt.browserApp !== 'ie') {
-
-				if (GmCXt.playerI && GmCXt.playerI.tour) {
-
-					var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-					var overlayOpacity = GmCXt.getOpacity(step);
-
-					if (overlayOpacity) {
-						GmCXt.screenOverlayI = GmCXt.screenOverlay(options);
-						GmCXt.screenOverlayI.start();
-					}
-				}
-			}
-		}
-	}
-
-	function triggerAutoClick() {
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		var data = {
-			requestId: step.step_id
-		};
-
-		GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:command; task:trigger_step_click', data);
-	}
-
-	function autoModePlay(stepType) {
-		var ret = false;
-		if (GmCXt.playerI && GmCXt.playerI.automate) {
-			self.ready = true;
-			ret = true;
-			if (GmCXt.isAutomationRunning()) {
-				GmCXt.auto.updateAutomationMessage(stepType + " step was not tested as it is not supported", function() {
-					playNxtStep();
-				});
-			} else {
-				playNxtStep();
-			}
-		}
-
-		return ret;
-	}
-
-	function automatePlayStep() {
-
-		if (GmCXt.autoTrigger) {
-			clearTimeout(GmCXt.autoTrigger);
-		}
-
-		GmCXt.autoTrigger = GmCXt.timeout(function() {
-			if (GmCXt.playerI && !GmCXt.playerI.pauseAutomate) {
-				playNxtStep();
-			}
-		}, 3000);
-	}
-
-	var alertRedirect = function() {
-		var url = getAlertRedirectUrl();
-		window.open(url, '_blank');
-	};
-
-	function getAlertRedirectUrl() {
-		var url = getStepUrl();
-		var stepDomain = GmCXt.getHostnameFromUrl(url);
-
-		if (GmCXt.isFQDN()) {
-			var fullUrl = GmCXt.urlParts.href.split('/');
-
-			if (fullUrl[0]) {
-				url = url.replace(stepDomain, fullUrl[0]);
-			}
-		}
-
-		url = GmCXt.urlParts.scheme + "://" + url;
-		return url;
-	}
-
-	function showStepRedirect(tourSetting) {
-
-		var redirectUrl = getAlertRedirectUrl();
-
-		var redirectUrl_ = GmCXt.filterUrlScheme(redirectUrl);
-		var currUrl = GmCXt.filterUrlScheme(GmCXt.urlParts.fullUrl);
-
-		if ((redirectUrl_ !== currUrl) && !GmCXt.isElectron()) {
-			
-			if (tourSetting.disableRedirect) {
-				GmCXt.log(33, "NO REDIRECT PROMPT since disabled from Guide advanced settings");
-				alertRedirect();
-			} else {
-				GmCXt.log(33, " REDIRECT PROMPT from Guide advanced settings");
-				var option = {
-					description: GmCXt.label.stepNotFoundRedirect,
-					button1Callback: alertRedirect,
-					button1: GmCXt.label.btnYes,
-					button2: GmCXt.label.btnNo,
-					closeTour: true
-				};
-				GmCXt.alertV2(option).show();
-			}
-		} else {
-			GmCXt.log(33, "NO REDIRECT since step URL matches current URL");
-			if (GmCXt.playerI.stepRuleMatch === false) {
-				var msg = GmCXt.label.stepRuleMatchErr;
-				GmCXt.toastMsg(msg).show();
-				GmCXt.log(33, "STEP RULE not matched");
-				return false;
-			} else if (GmCXt.playerI.guideRuleMatch === false) {
-				var msg = GmCXt.label.guideRuleMatchErr;
-				GmCXt.toastMsg(msg).show();
-				GmCXt.log(33, "GUIDE RULE not matched");
-				return false;
-			}
-		}
-		return true;
-	}
-
-	function playSurveyStep() {
-		self.ready = true;
-		if (GmCXt.playerI.initiator === 'doitforme' || !GmCXt.checkInsightEnabled() || GmCXt.isAutomationRunning()) {
-			GmCXt.log(33, "Skip Survey Step since doItForMe.");
-			if (GmCXt.isAutomationRunning()) {
-				GmCXt.auto.updateAutomationMessage("Survey step was not tested as it is not supported", function() {
-					playNxtStep();
-				});
-			} else {
-				GmCXt.tourPlayerI.playNextStep();
-			}
-		} else {
-			var pi = GmCXt.playerI;
-			var step = GmCXt.getCurrentStep(pi.currentStepId);
-			recordEvent(step);
-			GmCXt.getSurveyScreen(GmCXt.createDeepCopy(pi), true);
-		}
-	}
-
-	function desktopPlaySteps(ackMsg) {
-		GmCXt.sendMessageToDesktop({
-			stepId: GmCXt.playerI.currentStepId,
-			requestId: GmCXt.playerI.requestId,
-			ack: ackMsg
-		});
-
-		self.ready = false;
-		pub.closeStep();
-
-		return;
-	}
-
-	return pub;
-};
-/**
- * @file Guideme preview step popup
- * @author Nilesh Pachpande
- */
-
-GmCXt.showTooltip = function(options) {
-	options = options || {};
-
-	var self = {
-		description: GmCXt.replaceVariableWithValue(options.description),
-		highlightedArea: options.highlightedArea,
-		alignment: options.alignment,
-		width: options.width,
-		tour: options.tour,
-		containerOffest: {
-			left: 0,
-			top: 0
-		},
-		tipClass: "gm-tip-" + options.tooltipId,
-		tipId: options.tooltipId
-	};
-
-	self.description = GmCXt.updateOrgAndAddSignature(self.description);
-
-	var brandLogo = GmCXt.brandLogo();
-
-	function add() {
-		var position = false;
-		if (GmCXt.tourPlayerI) {
-			position = GmCXt.tourPlayerI.cssPosition;
-		}
-		var html =
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_preview-step-popup-container mgPlayerJSPreview_step-tooltips " +
-			self.tipClass + " " + GmCXt.getPosition(position) + "' style='zIndex:'2147483647'>" +
-			"	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup'>" +
-			"  		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-tooltip-ctrls-wrapper'>";
-
-		if (options.stepType === GmCXt.STEP_TYPE_MESSAGE) {
-			html +=
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-close mgPlayerJSPreview_tooltip-popup-close' id='" + self.tipId + "'>" +
-				"	<span class='mgPlayerJSPreview_tooltip-popup-close-svg'></span>" +
-				"</wmgPlayerJSPreview_>";
-		}
-
-		html += "</wmgPlayerJSPreview_>" +
-			"		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-header'>" +
-			"			<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-wrapper'>";
-
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_msg-tooltip-description mgPlayerJSPreview_play-step-popup-s-title'>" +
-			self.description +
-			"</wmgPlayerJSPreview_></wmgPlayerJSPreview_></wmgPlayerJSPreview_>" +
-
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-footer'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_brand-logo mgPlayerJSPreview_play-step-popup-logo mgPlayerJSPreview_inline-block-vm'>" +
-			"<img src='" + brandLogo + "' class='mgPlayerJSPreview_custom-image' />" +
-			"</wmgPlayerJSPreview_></wmgPlayerJSPreview_></wmgPlayerJSPreview_></wmgPlayerJSPreview_>";
-
-		mg$("html").append(html);
-
-		mg$(".mgPlayerJSPreview_tooltip-popup-close-svg").html(GmCXt.svgs.close_popup);
-
-		GmCXt.zoomImage(self.description, ".mgPlayerJSPreview_msg-tooltip-description");
-		GmCXt.setLinkClickhandler(self.description, ".mgPlayerJSPreview_msg-tooltip-description");
-		if (self.description.indexOf('target = "gssPlayGuide"' !== -1)) {
-			GmCXt.setLinkGuidePlay(self.description, ".mgPlayerJSPreview_msg-tooltip-description");
-		}
-
-		GmCXt.onPopupRerender();
-	}
-
-	function align() {
-		var $popup = mg$("." + self.tipClass);
-
-		var a = GmCXt.alignPopup({
-			popup: $popup,
-			highlightedArea: self.highlightedArea[0],
-			containerOffest: self.containerOffest,
-			alignment: self.alignment
-		});
-
-		a.clear();
-
-		var alignment = a.start();
-
-		if (alignment) {
-			$popup.addClass(alignment);
-		}
-	}
-
-	function setDesign() {
-		var popupDesign = GmCXt.getStepSettings().popupDesign;
-
-		mg$('.mgPlayerJSPreview_tooltip-wrapper').css('max-height', '400px');
-
-		if (popupDesign.type === 'classic') {
-			mg$('.mgPlayerJSPreview_preview-step-popup-container').addClass('preview-step-popup-classic-design');
-			mg$('.mgPlayerJSPreview_brand-logo').css({
-				'display': 'none'
-			});
-		}
-
-		// For backward compatibility
-		if (popupDesign.popupActiveSettings) {
-			popupDesign.current = popupDesign.popupActiveSettings;
-		}
-
-		mg$('.' + self.tipClass).css({
-			"background-color": popupDesign.current.bgColor,
-			"border-color": popupDesign.current.borderColor,
-			"border-width": popupDesign.current.borderWidth,
-			"border-radius": popupDesign.current.borderRadius,
-			"border-style": "solid",
-			"zIndex": '2147483647',
-			"padding-top": popupDesign.current.padding.top,
-			"padding-bottom": popupDesign.current.padding.bottom,
-			"padding-left": popupDesign.current.padding.left,
-			"padding-right": popupDesign.current.padding.right
-		});
-
-		mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description').css({
-			"color": popupDesign.current.stepTitleColor
-		});
-		var len = mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description img').length;
-		if (len) {
-			for (var i = 0; i < len; i++) {
-				var imgW = mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description img')[i].getAttribute('width');
-				var imgH = mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description img')[i].getAttribute('height');
-
-				mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description img')[i].style.setProperty('width', imgW + 'px', 'important');
-				mg$('.' + self.tipClass + ' .mgPlayerJSPreview_msg-tooltip-description img')[i].style.setProperty('height', imgH + 'px', 'important');
-			}
-		}
-
-		if (GmCXt.getOrgLevelBrandLogoSetting()) {
-			mg$("." + self.tipClass + " .mgPlayerJSPreview_brand-logo img").hide();
-		} else {
-			mg$("." + self.tipClass + " .mgPlayerJSPreview_brand-logo img").show();
-		}
-
-		mg$("." + self.tipClass).css({
-			"width": self.width
-		});
-	}
-
-	function onClose(e) {
-		var currentTip = e.currentTarget.id;
-
-		mg$(".gm-tip-" + currentTip).remove();
-		GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:clear_dom_outline", {
-			id: currentTip
-		});
-		GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:clear_message_tooltip", {
-			id: GmCXt.playerI.currentStepId + '_' + currentTip
-		});
-		changeOpacity(currentTip);
-	}
-
-	function changeOpacity(currentTip) {
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var s = step.step_settings;
-		if (!s.overlayOpacity) return;
-		if (s.highlightedArea && GmCXt.highlight_elements) {
-
-			delete GmCXt.highlight_elements[currentTip];
-			GmCXt.applyOverlayMessageStep(GmCXt.highlight_elements);
-		}
-	}
-
-	mg$("." + self.tipClass).remove();
-	add();
-	mg$("." + self.tipClass).show();
-	mg$('.mgPlayerJSPreview_tooltip-popup-close').off('click').on('click', onClose);
-
-	setDesign();
-	align();
-};
-/**
-	* @author Nilesh Pachpande
-	*/
-
-GmCXt.listenerBackgroud = function(request, sender, sendResponse) {
-
-	request = GmCXt.parseJSON(request);
-	request = GmCXt.convertMgdata(request);
-
-	if (request.action === 'mgPlayerJSPreview_action:browser_action_icon_click' && GmCXt.initialization && GmCXt.initialization.sidePanel) {
-		if (GmCXt.isInspectToolON()) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:stop_inline_step_selection_mode');
-		}
-
-		GmCXt.openAppPanel(null, 'extension');
-	} else if (request.action === 'mgPlayerJSPreview_action:browser_action_icon_click' && GmCXt.isExcludeDomain()) {
-		GmCXt.showPanelDisabledPopup();
-		return true;
-	}
-
-	if (request.action === 'mgPlayerJSPreview_action:user_logged_out') {
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:user_logged_out");
-	}
-
-	return true;
-};
-
-GmCXt.listenTopWinPlayer = function(event) {
-	event = mg$.extend({}, event);
-	if (GmCXt.verifyMsg(event)) {
-		GmCXt.processTopWinPlayer(event);
-		GmCXt.processIframePlayer(event);
-	}
-};
-
-GmCXt.processTopWinPlayer = function(event) {
-
-	var message = event.data;
-
-	switch (message.action) {
-
-		case 'mgPlayerJSPreview_action:payload_event_call':
-			GmCXt.eventApiCall(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:automation_check_reload':
-			if(!GmCXt.playerI) {
-				GmCXt.playerI = message.data.playerInstance;
-			}
-			GmCXt.auto.newTabStepFound(message.data.pageReloadOption, message.data.isNextStep);
-			break;
-
-		case 'mgPlayerJSPreview_action:automation_waiting_for_human_interaction':
-			if (GmCXt.isAutomationRunning()) {
-				GmCXt.auto.fail(GmCXt.getCurrentStep(GmCXt.playerI.currentStepId), {
-					errorMessage: "Failed as Human Interaction is not automated"
-				});
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:new_iframe_found':
-			GmCXt.requestHandler.newIframeFound(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_iframe_id':
-			GmCXt.currentIframeId = message.data.currentIframeId;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_iframe_id:do', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_iframe_id:beacon':
-			GmCXt.beaconIframe[message.data.tour_id].frameId = message.data.frameId;
-			break;
-
-		case 'mgPlayerJSPreview_action:set_iframe_id:tooltip':
-			GmCXt.smartTipIframe[message.data.step_id].frameId = message.data.frameId;
-			break;
-
-		case 'mgPlayerJSPreview_action:set_iframe_id:tag':
-			GmCXt.tagIframe[message.data.step_id].frameId = message.data.frameId;
-			break;
-
-		case 'mgPlayerJSPreview_action:initialization:side_panel_loaded':
-			GmCXt.handleAppInit(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:position_play_pause_toolbar':
-			GmCXt.handlePositionToolbar(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_widget_icon':
-			GmCXt.showWidget();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_chat_icon':
-			GmCXt.showChatIcon();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_cdn_signature':
-			GmCXt.handleUpdateCdnSign(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:get_cdn_signature':
-			GmCXt.getCdnSignature(true);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_outline;action:inform':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:clear_outline;action:do', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:enable_next_button':
-			GmCXt.requestHandler.enableNextButton();
-			break;
-
-		case 'mgPlayerJSPreview_action:close_app_panel':
-			GmCXt.closeAppPanel();
-			mg$('.mgPlayerJSPreview_panel').css({
-				'width': '500px'
-			});
-
-			if (window.matchMedia("(max-width: 480px)").matches && !GmCXt.isMiniPlayer) {
-				mg$('.mgPlayerJSPreview_panel').css({
-					'width': '85%'
-				});
-			}
-
-			if (message.data && message.data.resetPanel) {
-				GmCXt.sendMessageToApp("mgPlayerJSPreview_action:reset_panel_right");
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:show_beacon_smarttip':
-			GmCXt.showBeacons();
-			GmCXt.showSmartTips();
-			break;
-
-		case 'mgPlayerJSPreview_action:open_app_panel':
-			GmCXt.handleOpenApp(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_beacon_position':
-			GmCXt.handleBeaconPosition(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_linked_tour':
-			GmCXt.requestHandler.playLinkedGuide(message.data);
-			break;
-
-		case "mgPlayerJSPreview_action:play_tour":
-			GmCXt.requestHandler.playGuide(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_tour;event:beacon_click':
-			GmCXt.handleEventBeaconClick(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_video_lms':
-			GmCXt.requestHandler.playVideo(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:lms_video_assignment_played':
-			GmCXt.requestHandler.videoAssignmentPlayed();
-			break;
-
-		case 'mgPlayerJSPreview_action:close_step':
-			GmCXt.requestHandler.closeStep();
-			break;
-
-		case 'mgPlayerJSPreview_action:click; on:mgPlayerJSPreview_slideshow-close':
-			mg$('.mgPlayerJSPreview_panel').removeAttr('style');
-			GmCXt.closeAppPanel();
-			GmCXt.requestHandler.closeSlideshow();
-			break;
-
-		case 'mgPlayerJSPreview_action:completed;task:select_dom_element_tooltips':
-			GmCXt.timeout(function() {
-				GmCXt.requestHandler.handleEventSelectDOMElTooltip(event, message.data);
-			}, 500);
-			break;
-
-		case 'mgPlayerJSPreview_action:find_other_msg_step_tooltips':
-			GmCXt.requestHandler.findOtherTooltips(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:completed;task:select_existing_dom_element':
-
-			GmCXt.timeout(function() {
-				GmCXt.requestHandler.handleEventSelectDOMElement(event, message.data);
-			}, 500);
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_widget':
-			GmCXt.hideWidgetIcon();
-			break;
-
-		case 'mgPlayerJSPreview_action:hide-panel-close-btn':
-			GmCXt.hidePanelCloseBtn();
-			break;
-
-		case 'mgPlayerJSPreview_action:show_current_page_guide_indicator':
-
-			GmCXt.ifGuidesOnCurrentPage = true;
-
-			if (message.data.clearRulesJobs) {
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:clear_rule_jobs', {
-					initiator: 'currentPageIndicator',
-					trigger: 'guide_indicator'
-				});
-			}
-
-			GmCXt.showWidget();
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_current_page_guide_indicator':
-			GmCXt.ifGuidesOnCurrentPage = false;
-			GmCXt.hideCurrentPageGuidesIndicator();
-			break;
-
-		case 'mgPlayerJSPreview_action:inform_task_list_guide_count':
-			GmCXt.taskListCount = message.data;
-			break;
-
-		case 'mgPlayerJSPreview_action:show_widget':
-			GmCXt.showWidget();
-			break;
-
-		case 'mgPlayerJSPreview_action:show_chat_icon':
-			GmCXt.showChatIcon();
-			break;
-
-		case 'mgPlayerJSPreview_action:remove_chat_icon':
-			GmCXt.removeChatIcon();
-			break;
-
-		case 'mgPlayerJSPreview_action:show-panel-close-btn':
-			GmCXt.showPanelCloseBtn();
-			break;
-
-		case 'mgPlayerJSPreview_action:get_page_url':
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:get_page_url_response', GmCXt.getCurrentURL());
-			break;
-
-		case 'mgPlayerJSPreview_action:go_to_web_tour':
-			var webUrl = (message.data && message.data.webUrl) ? message.data && message.data.webUrl : false;
-			if (webUrl) {
-				window.open(webUrl, "_blank");
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:save_user_info':
-			GmCXt.updateGlobalUser(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:save_org':
-			GmCXt.updateGlobalOrg(message.data);
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:save_org_in_iframes", {
-				org: message.data
-			});
-			GmCXt.updateGmConfig();
-
-			break;
-
-		case 'mgPlayerJSPreview_action:on_side_panel_init':
-			GmCXt.onSidePanelInit(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_access_token':
-			GmCXt.updateGlobalUser(message.data.user);
-			GmCXt.updateGmConfig();
-			break;
-
-		case 'mgPlayerJSPreview_action:start_step_completion_timeout':
-			if (GmCXt.tourPlayerI && message.data && message.data.step) {
-				GmCXt.tourPlayerI.setStepCompletionTimeout(message.data.step);
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:set_audio_storage':
-			if (message.data && GmCXt.playerI.playAudio) {
-				GmCXt.stepAudioRunningStatus = message.data.stepAudioRunningStatus;
-				GmCXt.storage().set(message.data);
-			}
-
-			GmCXt.updateAudioStatusForTracking();
-
-			break;
-
-		case 'mgPlayerJSPreview_action:set_style_audio_icon':
-			var os = GmCXt.getStepSettings();
-			if (os) {
-				var popupDesign = os.popupDesign;
-
-				if (popupDesign) {
-
-					var popUpCSS = "<style id='mgPlayerJSPreview_popup-arrow' type='text/css'>" +
-						".mgPlayerJSPreview_play-step-audio-on svg path {" +
-						"fill:" + popupDesign.current.closeIconColor + "!important;" +
-						"}" +
-						".mgPlayerJSPreview_play-step-audio-off svg path {" +
-						"fill:" + popupDesign.current.closeIconColor + "!important;" +
-						"}" +
-						"html, body {" +
-						"background:" + popupDesign.current.bgColor + " !important;" +
-						"}" +
-						"</style>";
-
-					GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:set_style_audio_icon_response', {
-						data: popUpCSS
-					});
-
-				}
-			}
-			break;
-		case 'mgPlayerJSPreview_action:hide_pop_audio_ctrl':
-			mg$('.mgPlayerJSPreview_audio-pop-icons').hide();
-			break;
-
-		case 'mgPlayerJSPreview_action:increase_side_panel_width':
-			GmCXt.toggleSidePanel(true);
-			mg$('.mgPlayerJSPreview_panel').css({
-				'width': '100%',
-				'left': '0px',
-				'right': 'initial'
-			});
-
-			if (!GmCXt.isMicroPlayer()) GmCXt.hidePanelCloseBtn();
-			break;
-
-		case 'mgPlayerJSPreview_action:close_notification_popup':
-			GmCXt.closeNotificationPopup();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_custom_labels':
-			GmCXt.updateCustomLabels(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:reduce_side_panel_width':
-			GmCXt.toggleSidePanel(false);
-			if (!GmCXt.isMicroPlayer()) GmCXt.showPanelCloseBtn();
-			break;
-
-		case 'mgPlayerJSPreview_action:toggle_sidepanel_fullscreen':
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:toggle_sidepanel", message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:survey_start;task:show_survey':
-			mg$(window).focus();
-			GmCXt.isSurveyVisible = true;
-			GmCXt.surveyStart(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:exit_survey_start;task:show_survey':
-			mg$(window).focus();
-			GmCXt.isSurveyVisible = true;
-			GmCXt.surveyStart(message.data, true);
-			break;
-
-		case "mgPlayerJSPreview_action:start_tool;testMe":
-			GmCXt.handleStartTest(event);
-			break;
-
-		case "mgPlayerJSPreview_action:record_event;testMe":
-			GmCXt.requestHandler.recordEventTestMe(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:redirectTestMe':
-			GmCXt.storage().set({
-				'testMe': message.data.data
-			}).then(function() {
-				window.open(message.data.currStepUrl, '_blank');
-			});
-			break;
-
-		case 'mgPlayerJSPreview_action:show_toast_message':
-			GmCXt.toastMsg(message.data).show();
-			break;
-
-		case 'mgPlayerJSPreview_action:completed;task:select_dom_element_for_rules':
-			GmCXt.requestHandler.onElementFoundForDomSelectRule(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_next_step':
-			GmCXt.requestHandler.playTourNextStep();
-			break;
-
-		case 'mgPlayerJSPreview_action:play_prev_step':
-			GmCXt.requestHandler.playTourPrevStep();
-			break;
-
-		case 'mgPlayerJSPreview_action:click_event_for_guide':
-			GmCXt.requestHandler.pageClickForGuide(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:select_element_for_branching':
-			GmCXt.requestHandler.selectElementForBranching();
-			break;
-
-		case 'mgPlayerJSPreview_action:select_new_element_for_dom_rule_from_side_panel':
-			GmCXt.requestHandler.sendRequestForDomSelectRule(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:select_new_table_for_dom_rule_from_side_panel':
-			GmCXt.requestHandler.sendRequestForDomSelectTableRule(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:user_logout':
-			GmCXt.clearDataOnLogout(message.data);
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:empty_user_on_logout_in_iframes", {});
-			break;
-
-		case 'mgPlayerJSPreview_action:set_audio_icon_off':
-			GmCXt.setOffAudioMode();
-			break;
-
-		case 'mgPlayerJSPreview_action:set_audio_icon_off_onboar':
-			GmCXt.setOffOnBoarAudioMode();
-			break;
-
-		case 'mgPlayerJSPreview_action:set_audio_icon_on_onboar':
-			GmCXt.setOnOnBoarAudioMode();
-			break;
-
-		case 'mgPlayerJSPreview_action:page_clicked':
-			GmCXt.changeEvent("page_click");
-			break;
-
-		case 'mgPlayerJSPreview_action:track_feature_click':
-			GmCXt.trackerV1.trackFeatureClick(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:start_point_found':
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:start_point_found_app', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:next_step_found':
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:next_step_found_app');
-			break;
-
-		case 'mgPlayerJSPreview_action:update_variables':
-			GmCXt.getVariables();
-			break;
-
-		case 'mgPlayerJSPreview_action:get_survey_data_from_sidepanel':
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:get_survey_detail_tooltip", message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:init;task:select_dom_element_for_rules':
-			GmCXt.sendMessageToAllWindows(
-				'mgPlayerJSPreview_action:started;task:select_dom_element_for_rules',
-				message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:preview_smarttip':
-			GmCXt.handlePreviewTooltip(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:preview_beacon':
-			GmCXt.handlePreviewBeacon(event);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_lang_content_script':
-			GmCXt.setLangPref(message.data.lang);
-			break;
-
-		case 'mgPlayerJSPreview_action:init_app_id':
-			GmCXt.activeAppId = message.data.activeAppId;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:init_app_id_frame', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:tour_loop_completed':
-			GmCXt.requestHandler.playAutoTour();
-			break;
-
-		case 'mgPlayerJSPreview_action:close_guide':
-			if (GmCXt.tourPlayerI) {
-				var fromShowme = message.data.fromShowme;
-				GmCXt.tourPlayerI.closeGuide(false, fromShowme);
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:update_tracking_info':
-			GmCXt.trackerUtil.enableTracking = message.data.enableTracking;
-			GmCXt.trackerUtil.trackPI = message.data.trackPI;
-			GmCXt.trackerUtil.featureTracking = message.data.featureTracking;
-			GmCXt.trackerUtil.pageTracking = message.data.pageTracking;
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:update_tracking_info:frames', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:get_lxp_storage':
-			GmCXt.storage().get(message.data.key).then(function(result) {
-				GmCXt.sendStorageResponseToApp(result, message.data.id);
-			});
-			break;
-		case 'mgPlayerJSPreview_action:set_lxp_storage':
-			var d = message.data;
-			var key = d.key;
-			var data = d.data;
-			var obj = {};
-			obj[key] = data;
-			GmCXt.storage().set(obj);
-			break;
-
-		case 'mgPlayerJSPreview_action:remove_lxp_storage':
-			GmCXt.storage().remove(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:reset_lxp_storage':
-			GmCXt.removeLxpStorageAll();
-			break;
-
-		case 'gmPlayerXt_action:init_sfdc_env': // for backward compatibility
-		case 'mgPlayerJSPreview_action:init_sfdc_env':
-			GmCXt.initSfdc(message.data);
-			break;
-
-		case 'gmPlayerXt_action:sfdc_play_tour': // for backward compatibility
-		case 'mgPlayerJSPreview_action:sfdc_play_tour':
-			GmCXt.playSfdcTour(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:process_active_requests':
-			GmCXt.processActiveReq();
-			break;
-
-		case 'gmPlayerXt_action:init_snow': // for backward compatibility
-		case 'mgPlayerJSPreview_action:init_snow':
-			GmCXt.initSnow(message.data);
-			break;
-
-		case 'gmPlayerXt_action:snow_panel_open': // for backward compatibility
-		case "mgPlayerJSPreview_action:snow_panel_open":
-			if (GmCXt.isPlayer() && GmCXt.serviceNow())
-				GmCXt.openAppPanel();
-			break;
-
-		case 'mgPlayerJSPreview_action:start_test_automation':
-			GmCXt.startAuto(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:myBot_report_saved':
-			GmCXt.auto.reportSaved();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_noti_watch_later':
-			GmCXt.updateNotiWatchLater(message.data.tour_id);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_noti_do_not_show':
-			GmCXt.updateNotiDoNotShow(message.data.tour_id);
-			break;
-
-		case 'mgPlayerJSPreview_action:show_ducttape_alert':
-			GmCXt.showDuctTapeAlert(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:show_smarttip':
-			GmCXt.requestHandler.showSmarttip(message.data, event);
-			break;
-
-		case 'mgPlayerJSPreview_action:show_beacon':
-			GmCXt.requestHandler.setBeaconPosition(message, event);
-			break;
-
-		case 'mgPlayerJSPreview_action:toggle_beacon_visibility':
-			GmCXt.requestHandler.toggleBeacon(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:trigger_next_click':
-			if (GmCXt.playerI && GmCXt.playerI.testAutomation) {
-				GmCXt.tourPlayerI.playNextStep();
-				return;
-			}
-			var btn = GmCXt.getNextBtnElem();
-			GmCXt.triggerClick(btn);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_next_step_automator':
-			GmCXt.tourPlayerI.playNextStep();
-			break;
-
-		case 'mgPlayerJSPreview_action:rotate_gear':
-			GmCXt.rotateGear();
-			break;
-
-		case 'mgPlayerJSPreview_action:complete:get_cards':
-			GmCXt.successCallbackCards(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:open_power_form':
-			GmCXt.openPowerForm(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:insert_power_html_i':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:insert_power_html', message.data);
-			GmCXt.closePowerForm();
-			break;
-
-		case 'mgPlayerJSPreview_action:error:get_cards':
-			GmCXt.errorCallbackCards(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_smarttip_delay':
-			GmCXt.requestHandler.hideSmarttipDelay(message.data, message.data.options);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_smarttip_delay_timeout':
-			GmCXt.clearTooltipTimeout();
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_validation_smarttip':
-			GmCXt.requestHandler.hideValidationSmarttip(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_smarttip':
-			GmCXt.requestHandler.hideSmartTip(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:initialize_image_iframe_popup':
-			GmCXt.setImagePopUp();
-			break;
-
-		case 'mgPlayerJSPreview_action:open_image_iframe_popup':
-			GmCXt.openImagePopup(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_guide_from_link':
-			GmCXt.getTourAndPlay(message.data.tourId, message.data.initiator);
-			break;
-
-		case 'mgPlayerJSPreview_action:play_guide_from_notification':
-			GmCXt.playLiveTour(message.data.tour, 0, 'overlayTourPopup', message.data.isAutolaunchTriggered, 'live');
-			break;
-
-		case 'mgPlayerJSPreview_action:mark_auto_tour_donotshow':
-			GmCXt.markAutoLaunchTourDoNotShow(message.data.tour);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_beacons_on_screen':
-			GmCXt.updateBeaconsOnScreen(message.data.jobId, message.data.isValid);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_smarttip_on_screen':
-			GmCXt.updateOnScreenTooltipGuideInfo(message.data.tour, message.data.tourId, message.data.stepId, message.data.isValid, message.data.smartTip, message.data.url);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_tooltip_action_info':
-			var d = message.data;
-			GmCXt.updateTooltipActionInfo(d.tourId, d.stepId, d.smartTip, d.actionName);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_auto_tour':
-			GmCXt.setAutoTour(message.data.tourId);
-			break;
-
-		case 'mgPlayerJSPreview_action:search_next_step':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:search_next_step', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:search_start_point':
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:search_start_point', message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_player_instance':
-			GmCXt.cleanPlayer();
-			break;
-
-		case 'mgPlayerJSPreview_action:update:player_mode':
-			GmCXt.handleUpdatePlayerMode(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:sync_app_list':
-			GmCXt.appList = message.data.appList;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:init_app_list_frame', message.data);
-			GmCXt.updateAppListSettingsInAllFrames(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:print_debug_log':
-			GmCXt.requestHandler.printDebugLog(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:keep_watching_step:inform':
-			GmCXt.handleRestartInParent();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_PI_PS':
-			GmCXt.requestHandler.updatePIPS(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_PI_steps':
-			GmCXt.requestHandler.updatePISteps(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_tooltip_tracking':
-			GmCXt.tooltipTrackingList = message.data.trackingInfo;
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_inline_step_popup':
-			mg$('.mgPlayerJSPreview_preview-step-popup-container').css({
-				'display': 'none'
-			});
-			mg$('.mgPlayerJSPreview_screen-blackout').hide();
-			GmCXt.stopAudioTrack();
-			var iframe = document.getElementById('mgPlayerJSPreview_play-step-audio-iframe');
-			if (iframe && iframe.src) {
-				iframe.src = iframe.src;
-			}
-			GmCXt.stepAudioPlayed = false;
-			GmCXt.displayWidget();
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_inline_step_popup_tootip':
-			mg$('.gm-tip-' + message.data.id).css({
-				'display': 'none'
-			});
-			break;
-
-		case 'mgPlayerJSPreview_action:step_element_hidden':
-			GmCXt.tourPlayerI.isLastStepVisible = false;
-			GmCXt.stepAudioPlayed = false;
-			GmCXt.stopAudioTrack();
-			break;
-
-		case 'mgPlayerJSPreview_action:check_iframe_visible':
-			if (message.data && message.data.selector) {
-				GmCXt.highlighter.bringElementInViewport({}, message.data.selector, true);
-			}
-			break;
-		case 'mgPlayerJSPreview_action:update_notification_data_content_script':
-			GmCXt.updNotifDataSidePanel(message.data.toursClosedByUser, message.data.tourIdArray);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_notification_data_content_script_snooze_tours':
-			GmCXt.setSnoozedTours(message.data.tour, message.data.msg);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_notification_data_content_script_donot_show':
-			GmCXt.updateNotification(message.data.tours);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_notification_count_content_script':
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_notification_count", {
-				count: message.data.count
-			});
-			break;
-
-		case 'mgPlayerJSPreview_action:track_notification_for_automation':
-			GmCXt.auto.trackNotificationForAutomation(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:stop_automation':
-			GmCXt.auto.stop(true);
-			break;
-
-		case 'mgPlayerJSPreview_action:close_video_step':
-			GmCXt.confirmTourClose();
-			break;
-
-		case 'mgPlayerJSPreview_action:update_click_time':
-			GmCXt.clickTime = message.data.clickTime;
-			break;
-
-		case 'mgPlayerJSPreview_action:update_secrets':
-			GmCXt.trackerUtil.secrets = message.data.secrets;
-			GmCXt.storage().set({
-				'tracker_secrets': JSON.stringify(GmCXt.trackerUtil.secrets)
-			});
-			break;
-
-		case 'mgPlayerJSPreview_action:update_segment_group_data':
-			GmCXt.allSegments = message.data.allSegments;
-			break;
-
-		case 'mgPlayerJSPreview_action:select_element_for_variable':
-			GmCXt.requestHandler.selectElementForVariable();
-			break;
-
-		case 'mgPlayerJSPreview_action:completed;task:find_element_for_variable':
-			GmCXt.requestHandler.updateVariableValues(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_notification_data_content_script_display_frequency':
-			GmCXt.updateGuideDisplayFrequency(message.data.tours);
-			break;
-
-		case 'mgPlayerJSPreview_action:stop_audio':
-			GmCXt.stopAudioTrack();
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_step_popup':
-			mg$(".mgPlayerJSPreview_preview-step-popup-container").addClass("mgPlayerJSPreview_preview-step-popup-container-mp");
-			break;
-
-		case 'mgPlayerJSPreview_action:show_step_popup':
-			mg$(".mgPlayerJSPreview_preview-step-popup-container").removeClass("mgPlayerJSPreview_preview-step-popup-container-mp");
-			break;
-
-		case 'mgPlayerJSPreview_action:track_element_not_found':
-			GmCXt.trackElNotFound(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_player_sync_time':
-			GmCXt.refreshTime = message.data.refreshTime;
-			GmCXt.lastTimeStampSync = message.data.lastTimeStampSync;
-			break;
-
-		case 'mgPlayerJSPreview_action:send_dom_tracker_info':
-			GmCXt.combineDomTrackerData(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_accessibility':
-			GmCXt.updateAccessibility(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:media_player_on':
-			GmCXt.isMediaPlayerOn = message.data.mediaPlayerStatus;
-			break;
-
-		case 'mgPlayerJSPreview_action:reset_micro_player_position':
-			GmCXt.resetMplayerPos();
-			break;
-
-		case 'mgPlayerJSPreview_action:getSurveyScreen':
-			GmCXt.getSurveyScreen(message.data, message.data.guideNotCompleted);
-			break;
-
-		case 'mgPlayerJSPreview_action:showSurveyScreen':
-			GmCXt.showSurveyScreen(message.data, message.data.guideNotCompleted);
-			break;
-
-		case 'mgPlayerJSPreview_action:empty_media_recorder':
-			mediaRecorder = null;
-			GmCXt.storage().remove(['screen_recorder_close']);
-			break;
-
-		case 'mgPlayerJSPreview_action:send_feedback':
-			GmCXt.closeAppPanel();
-			GmCXt.addFeedBackToolbar();
-			GmCXt.timeout(function() {
-				GmCXt.captureScreenForFeedback(message.data.feedback_email);
-			}, 100);
-			break;
-
-		case 'mgPlayerJSPreview_action:preview_sound':
-			GmCXt.sendMessageToDesktop(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:update_played_slideshow_step':
-			GmCXt.updatePlayedSteps(message.data.playedStep);
-			break;
-
-		case 'mgPlayerJSPreview_action:get_key_input_guides':
-			GmCXt.keyInputGuides = message.data.tours;
-			break;
-
-		case 'mgPlayerJSPreview_action:track_beacon_feature':
-			GmCXt.trackerV1.trackBeacons(message.tour, message.eventType);
-			break;
-
-		case 'mgPlayerJSPreview_action:get_context_guides':
-			GmCXt.getContextGuides("Process Guides");
-			break;
-
-		default:
-	}
-};
-
-GmCXt.eventApiCall = function(payload) {
-	var keys = GmCXt.trackerUtil.secrets;
-
-	if (!keys) {
-		GmCXt.storage().get([
-			'tracker_secrets'
-		]).then(function(r) {
-			keys = r.tracker_secrets;
-			if (keys && !keys.registerClientId) {
-				keys = GmCXt.parseJSON(keys);
-			}
-			GmCXt.addPayload(keys, payload);
-		});
-	} else {
-		GmCXt.addPayload(keys, payload);
-	}
-};
-
-GmCXt.addPayload = function(keys, payload) {
-	if (keys && keys.registerClientId) {
-		var jsonData = {
-			"app_client_id": keys.registerClientId,
-			"payload": [],
-			"signature": ''
-		};
-
-		if (payload.event_type === "mi_logout") {
-			GmCXt.isLogoutTrackApi = true;
-		}
-
-		jsonData.event_chain_id = GmCXt.ANALYTICS_EVENT_CHAIN_ID;
-		jsonData.payload.push(payload);
-		jsonData.signature = SHA256(SHA256(JSON.stringify(jsonData.payload)) + keys.app_client_secret).toString();
-		GmCXt.trackerV1.apiV1(jsonData);
-	}
-};
-
-GmCXt.toggleSidePanel = function(fullscreen) {
-
-	if (fullscreen) {
-		if (GmCXt.isMicroPlayer()) {
-			mg$('.mgPlayerJSPreview_panel').css({
-				'width': '100%',
-				'left': '0px',
-				'right': '0px',
-				'height': '100vh',
-				'min-width': '100%'
-			});
-		} else {
-			mg$('.mgPlayerJSPreview_panel').css({
-				'width': '100%',
-				'left': '0px',
-				'right': 'initial',
-				'top': '0',
-			});
-		}
-	} else {
-
-		if (GmCXt.APP_PANEL_OPEN) {
-			if (GmCXt.isMicroPlayer()) {
-				mg$('.mgPlayerJSPreview_panel').removeAttr('style');
-			}
-
-			mg$('.mgPlayerJSPreview_panel').css({
-				'width': '500px',
-				'right': '0px'
-			});
-
-			if (window.matchMedia("(max-width: 480px)").matches && !GmCXt.isMiniPlayer) {
-				mg$('.mgPlayerJSPreview_panel').css({
-					'width': '85%'
-				});
-			}
-
-			mg$('.mgPlayerJSPreview_panel').css({
-				'left': 'initial'
-			});
-
-		} else {
-			mg$('.mgPlayerJSPreview_panel').removeAttr('style');
-			GmCXt.closeAppPanel();
-		}
-	}
-};
-
-GmCXt.updateAppListSettingsInAllFrames = function(d) {
-	if (!GmCXt.isEmpty(GmCXt.appList)) {
-
-		var activeApp = GmCXt.appList['app:' + GmCXt.activeAppId];
-		var d = {};
-
-		if (activeApp && activeApp.settings) {
-			d.activeAppSettings = activeApp.settings;
-		}
-		GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:update_app_settings', d);
-	}
-};
-
-GmCXt.requestHandler.printDebugLog = function(d) {
-	GmCXt.log(d.mode, d.str, d.opt);
-};
-
-GmCXt.requestHandler.updatePIPS = function(d) {
-	GmCXt.playerI.playStructure = d;
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:update_PI_PS_done');
-};
-
-GmCXt.requestHandler.updatePISteps = function(d) {
-	GmCXt.playerI.tour.steps = d;
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:update_PI_steps_done');
-};
-
-GmCXt.updateNotiDoNotShow = function(tour_id) {
-	GmCXt.storage().get(['tourIdArray', 'toursClosed']).then(function(st) {
-		var doNotShowTours = GmCXt.parseJSON(st.tourIdArray);
-		if (doNotShowTours[tour_id]) {
-			delete doNotShowTours[tour_id];
-			GmCXt.storage().set({
-				'tourIdArray': doNotShowTours
-			});
-		}
-		var toursClosedByUser = GmCXt.parseJSON(st.toursClosed);
-		GmCXt.updNotifDataSidePanel(toursClosedByUser, doNotShowTours);
-	});
-};
-
-GmCXt.updateNotiWatchLater = function(tour_id) {
-	GmCXt.storage().get(['tourIdArray', 'toursClosed']).then(function(st) {
-		var toursClosedByUser = GmCXt.parseJSON(st.toursClosed);
-		if (toursClosedByUser[tour_id]) {
-			delete toursClosedByUser[tour_id];
-			GmCXt.storage().set({
-				'toursClosed': toursClosedByUser
-			});
-		}
-		var doNotShowTours = GmCXt.parseJSON(st.tourIdArray);
-		GmCXt.updNotifDataSidePanel(toursClosedByUser, doNotShowTours);
-	});
-};
-
-GmCXt.handleRestartInParent = function() {
-	GmCXt.storage().remove(['restartInParent']);
-	var cb = function() {
-		GmCXt.storage().get(['restartInParent']).then(function(st) {
-			if (st.restartInParent) {
-				clearInterval(intervalId);
-				GmCXt.log(33, "STOP WATCHING and restart guide in parent window.");
-				GmCXt.processActiveReq();
-				GmCXt.storage().remove(['restartInParent']);
-				return;
-			}
-		});
-	};
-	var intervalId = null;
-	clearInterval(intervalId);
-	intervalId = setInterval(cb, 1000);
-};
-
-GmCXt.handleUpdatePlayerMode = function(d) {
-	GmCXt.initPlayerModeFeatures(d.showPlayer, d.isMiniPlayer, d.playerMode);
-	GmCXt.setPanelTopLeft();
-
-	if (GmCXt.isWBMicroPlayer() || GmCXt.isMicroPlayer()) {
-		GmCXt.addDragMicroPlayerFunction();
-		mg$(".mgPlayerJSPreview_panel").removeClass('mgPlayerJSPreview_mobile-view');
-	}
-};
-
-GmCXt.showDuctTapeAlert = function(data) {
-	var options = {
-		title: "",
-		description: GmCXt.updateOrgAndAddSignature(GmCXt.replaceVariableWithValue(data.desc)),
-	};
-
-	GmCXt.alert(options).show();
-	mg$(".mgPlayerJSPreview_popup-content-info").css('max-height', "250px");
-	mg$(".mgPlayerJSPreview_popup-content-info").css('overflow', "auto");
-	mg$(".mgPlayerJSPreview_popup-content-info *").css('width', "auto");
-};
-
-GmCXt.startAuto = function(app) {
-	GmCXt.auto.init(app);
-};
-
-GmCXt.initSfdc = function(m) {
-
-	if (GmCXt.FT.isPlayer) {
-
-		var userData = GmCXt.parseJSON(m);
-		userData.user = GmCXt.validateDataModel(userData.user, GmCXt.model.user);
-
-		GmCXt.isSFDCApp = true;
-
-		var session = false;
-
-		if (!GmCXt.user) {
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_in', {
-				data: userData
-			});
-			session = true;
-		} else if (GmCXt.user.user_email === userData.user.user_email) {
-			session = true;
-		}
-
-		var m = {
-			action: "mgPlayerJSPreview_action:sfdc_app_acknowledgement",
-			data: {
-				session: session
-			}
-		};
-		GmCXt.msgToThisWin(m);
-
-		m.action = "gmPlayerXt_action:sfdc_app_acknowledgement";
-		GmCXt.msgToThisWin(m);
-	}
-};
-
-GmCXt.playSfdcTour = function(data) {
-	if (GmCXt.FT.isPlayer) {
-		var data = GmCXt.parseJSON(data);
-		data.tour = GmCXt.validateDataModel(data.tour, GmCXt.model.guide);
-		GmCXt.requestHandler.playGuide(data);
-	}
-};
-
-GmCXt.initSnow = function(m) {
-	if (GmCXt.isPlayer() && GmCXt.serviceNow()) {
-		GmCXt.snowApp = true;
-
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:snow_sign_in', m);
-
-		message = {
-			action: 'mgPlayerJSPreview_action:snow_app_acknowledgement'
-		};
-		GmCXt.msgToThisWin(message);
-	}
-};
-
-GmCXt.handlePositionToolbar = function(event) {
-	var message = event.data;
-
-	if (message.data.position === 'top') {
-		mg$('.mgPlayerJSPreview_play-pause-toolbar').css({
-			top: '5px'
-		});
-	} else if (message.data.position === 'bottom') {
-		var bpos = mg$(window).height() - 141;
-		mg$('.mgPlayerJSPreview_play-pause-toolbar').css({
-			top: bpos + 'px'
-		});
-	}
-};
-
-GmCXt.handleUpdateCdnSign = function(event) {
-	var message = event.data;
-
-	GmCXt.updateGlobalUser(message.data.user);
-
-	GmCXt.updateGmConfig();
-	GmCXt.showWidget();
-	GmCXt.showChatIcon();
-
-	GmCXt.reloadFailedImages();
-};
-
-GmCXt.handleEventBeaconClick = function(event) {
-	var message = event.data;
-	if (message.data && message.data.tourId) {
-
-		var d = {
-			tour_id: message.data.tourId
-		};
-
-		GmCXt.callApi(d, "tour")
-			.then(function(tour) {
-				GmCXt.playLiveTour(tour, 0, 'beaconTour', false, 'live');
-			});
-	}
-};
-
-GmCXt.handleStartTest = function(event) {
-	var message = event.data;
-
-	var checkCurrentDomain = GmCXt.requestHandler.checkTestMeDomain(message.data);
-	if (checkCurrentDomain) {
-		GmCXt.log(58, "DOMAIN MATCHED, START MyTest");
-		GmCXt.requestHandler.startToolTestMe(message.data);
-	} else {
-		GmCXt.log(58, "DOMAIN DID NOT MATCH, show REDIRECT message");
-		GmCXt.requestHandler.redirectToUrl(message.data);
-	}
-};
-
-GmCXt.handleOpenApp = function(event) {
-	var message = event.data;
-	var byPassRoute = (message.data && message.data.byPassRoute) ? "byPassRoute" : null;
-	GmCXt.openAppPanel(byPassRoute);
-};
-
-GmCXt.handlePreviewTooltip = function(event) {
-	var message = event.data;
-
-	GmCXt.closeAppPanel();
-	GmCXt.hideTips();
-	GmCXt.smartTipPreviewOn = true;
-
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:smarttip_preview_on');
-
-	GmCXt.timeout(function() {
-		GmCXt.renderSmartTips(message.data, true);
-	}, 0);
-};
-
-GmCXt.handlePreviewBeacon = function(event) {
-	var message = event.data;
-
-	GmCXt.closeAppPanel();
-	GmCXt.hideTips();
-
-	GmCXt.timeout(function() {
-		GmCXt.renderBeacons(message.data, true);
-	}, 0);
-};
-
-GmCXt.handleAppInit = function(event) {
-
-	if (event.data && event.data.organization) {
-		GmCXt.organization = event.data.organization;
-	}
-
-	if (GmCXt.isExcludeDomain()) {
-		return;
-	}
-
-	GmCXt.initialization.sidePanel = true;
-
-	if (!GmCXt.mgActiveLang && GmCXt.organization && !GmCXt.isEmpty(GmCXt.organization) &&
-		GmCXt.organization.admin_settings.language_settings &&
-		GmCXt.organization.admin_settings.language_settings.default) {
-		var l = GmCXt.organization.admin_settings.language_settings.default.language;
-
-		if (GmCXt.browserLang && GmCXt.browserLang !== l &&
-			GmCXt.checkLangExist(GmCXt.organization.admin_settings.language_settings.translations, GmCXt.browserLang)) {
-			l = GmCXt.browserLang;
-		}
-		GmCXt.getAllLabels(l);
-	}
-
-	var d = GmCXt.getCurrentURL();
-	d.pageTitle = GmCXt.pageTitle;
-
-	if (GmCXt.FT.isPlayer) {
-		d.baseUrl = GmCXt.conf.baseUrl;
-		d.orgSecKey = window.guideMe ? window.guideMe.orgkey : "";
-	}
-
-	GmCXt.storage().get(['desktopReq']).then(function(st) {
-		if (st.desktopReq) {
-			d.isDesktopReq = true;
-			GmCXt.deskReq = st.desktopReq;
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:connected_from_app', {
-				data: st.desktopReq
-			});
-			GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:connected_from_app_step', {
-				data: st.desktopReq
-			});
-		}
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:init_side_panel_app', d);
-	});
-};
-
-GmCXt.handleBeaconPosition = function(event) {
-	var message = event.data;
-
-	GmCXt.closeAppPanel();
-	GmCXt.hideSmartTips();
-	GmCXt.hideBeacons();
-	GmCXt.stepReq = message;
-	GmCXt.storage().set({
-		'beaconReq': message
-	}).then(function() {
-		GmCXt.requestHandler.selectBeaconPosition(message);
-	});
-};
-
-GmCXt.getUserRolesLXP = function(params) {
-	var d = window.__ED__;
-
-	var profileData = {
-		onboardingCompleted: 'no',
-		orgAnnualSubscriptionPaid: 'no',
-		countryCode: ''
-	};
-
-	var rolesObject = {
-		isManager: 'manager',
-		isMkpAdmin: 'mkpAdmin',
-		isOrgAdmin: 'orgAdmin',
-		isSuperAdmin: 'superAdmin',
-		isAdmin: 'admin'
-	};
-
-	var role = '';
-	for (var l in rolesObject) {
-		if (d[l]) {
-			role = role.length > 0 ? role + ',' + rolesObject[l] : rolesObject[l];
-		}
-	}
-
-	if (role.length === 0) role = 'member';
-
-	profileData.role = role;
-
-	if (d.onboardingCompleted) {
-		profileData.onboardingCompleted = 'yes';
-	}
-
-	if (d.orgAnnualSubscriptionPaid) {
-		profileData.orgAnnualSubscriptionPaid = 'yes';
-	}
-
-	profileData.countryCode = d.countryCode;
-
-	params.profile = JSON.stringify(profileData);
-};
-
-GmCXt.updateUserData = function(params) {
-	var d = null;
-	var subdomain = "";
-
-	if (GmCXt.urlParts.host) {
-		subdomain = GmCXt.urlParts.host.split('.')[0];
-		if (GmCXt.urlParts.pathname.indexOf('admin') !== -1) {
-			subdomain = 'admin' + subdomain;
-		}
-	}
-
-	if (GmCXt.isLXP()) {
-
-		d = window.__ED__;
-		GmCXt.getUserRolesLXP(params);
-
-	} else {
-		d = window.__MG__;
-	}
-
-	if (d && d.email) {
-
-		if (GmCXt.isLXP()) {
-
-			var emailParts = d.email.split('@');
-			params.email_id = emailParts[0] + '+' + subdomain + '@' + emailParts[1];
-
-		} else {
-			params.email_id = d.email;
-		}
-		params.first_name = d.fullName;
-		params.last_name = "";
-
-	} else if (!GmCXt.isWBC()) {
-
-		params.email_id = 'guest-' + subdomain + '@myguide.com';
-		params.first_name = 'guest-' + subdomain;
-	}
-};
-
-GmCXt.loginUsingAuthKey = function() {
-
-	var l = 0;
-	readMyGuideOrgKey();
-
-	function readMyGuideOrgKey() {
-
-		var myGuideOrgKey = window.myGuideOrgKey;
-
-		if (myGuideOrgKey) {
-			var jwOrgKey = GmCXt.getOrgKeyFromJwToken(myGuideOrgKey);
-			GmCXt.log(21, "GOT myGuideOrgKey" + myGuideOrgKey);
-
-			processLogin(jwOrgKey);
-		} else {
-			GmCXt.timeout(function() {
-				if (!GmCXt.user)
-					readMyGuideOrgKey();
-			}, 1000);
-		}
-	}
-
-	function processLogin(jwOrgKey) {
-		GmCXt.storage().get(['myGuideKey', 'user']).then(function(st) {
-
-			if (st.user) {
-
-				var user = st.user;
-
-				if (st.user.val) {
-					user = st.user.val;
-				}
-
-				if (jwOrgKey === st.myGuideKey) {
-
-					GmCXt.log(21, "FOUND USER SESSION for this org key");
-					return;
-				}
-			}
-
-			var params = {
-				myGuideOrgKey: myGuideOrgKey,
-			};
-
-			GmCXt.updateUserData(params);
-			GmCXt.log(21, "SIGN-IN user info", params);
-
-			//sign in using window.myGuideOrgKey
-			GmCXt.api.userApiKeySignin(params).then(function(response) {
-
-				if (response.error) {
-					GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_failed', response);
-					GmCXt.log(21, "ERROR: User signin failed", response.message[0]);
-					return;
-				}
-
-				response.forceLogin = true;
-
-				if (GmCXt.reloginInterval) {
-					clearInterval(GmCXt.reloginInterval);
-				}
-
-				var user = response.data.user;
-
-				if (GmCXt.isSumtotal() && user.user_email.indexOf('anonymous-') !== -1) {  // TODO: GmCXt.isSumtotal() condition need to update as admin per admin setting - enable_anonymous_user_preference
-					var data = {
-						email_id: params.email_id,
-						organization_id: user.organization_id
-					};
-					GmCXt.api.getAnonymousUserPrefrence(data, user.accesstoken).then(function(prefrence) {
-
-						if (!prefrence.error) {
-							response.data.user.signin_user_email = params.email_id;
-							response.data.user.settings = prefrence.data.settings;
-						}
-						GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_in', response);	
-					});
-				} else {
-					GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_in', response);
-				}
-
-				GmCXt.storage().set({
-					myGuideKey: jwOrgKey
-				});
-
-			}).catch(function(e) {
-				GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_failed', e);
-				GmCXt.storage().remove(['myGuideKey']);
-				GmCXt.log(21, "ERROR: exception, user signin failed", e);
-			});
-		});
-	}
-};
-
-GmCXt.pauseGuide = function() {
-
-	if (!GmCXt.playerI) return;
-
-	var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-	if (step && step.step_settings.onPageClickNext === true) {
-
-		GmCXt.playerI.guideState = 'pause';
-		GmCXt.playerI.pausedOn = GmCXt.urlParts.host + GmCXt.urlParts.pathname;
-
-		GmCXt.storage().set({
-			'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-			'guide_play_event': GmCXt.guidePlayTracker
-		});
-
-		if (GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI.guideState = 'pause';
-			GmCXt.tourPlayerI.closeStep();
-		}
-
-		GmCXt.storage().get(['resumeWinDisplayed']).then(function(st) {
-
-			if (!st.resumeWinDisplayed) {
-				mg$('.mgPlayerJSPreview_play-pause-toolbar').show();
-				mg$('#mgPlayerJSPreview_play-pause-toolbar-title').html(GmCXt.label.resumeGuide);
-				mg$('#mgPlayerJSPreview_play-pause-resume-message').html(GmCXt.label.resume);
-				GmCXt.hideWidgetIcon();
-				GmCXt.setResumeWinDisplayed(true);
-			}
-		});
-	}
-};
-
-GmCXt.startTourFromDesktopApp = function() {
-
-	GmCXt.log(33, 'Tour invoked: ' + GmCXt.deskReq.testCaseId);
-	var d = {
-		tour_id: GmCXt.deskReq.testCaseId,
-		isDeskReq: true
-	};
-
-	GmCXt.getTourDetails(d).then(function(tour) {
-		GmCXt.log(33, "Tour received", tour);
-		GmCXt.playLiveTour(tour, 0, 'doitforme', false, 'live');
-	});
-};
-
-GmCXt.isTestMeOn = function(o) {
-
-	if (o && (o.expectedTime || o.tour))
-		return true;
-	else
-		return false;
-};
-
-GmCXt.onSidePanelInit = function(m) {
-
-	GmCXt.refreshTime = m.data.refreshTime;
-	GmCXt.lastTimeStampSync = m.data.lastTimeStampSync;
-
-	GmCXt.updateGlobalUser(m.data.user);
-
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:save_user_in_iframes", {
-		user: GmCXt.user
-	});
-
-	GmCXt.updateGlobalOrg(m.data.organization);
-
-	GmCXt.activeAppId = m.data.activeAppId;
-	GmCXt.appList = m.data.appList;
-
-	GmCXt.externalAppId = GmCXt.appList['app:' + GmCXt.activeAppId].external_id;
-
-	GmCXt.userPrefLang = m.data.userPrefLang;
-
-	var as = GmCXt.getAppSetting();
-	if (GmCXt.organization && !GmCXt.isEmpty(GmCXt.organization) && as) {
-		GmCXt.orgBucket = GmCXt.organization.bucket;
-		var s = GmCXt.organization.settings;
-		var data = {
-			userLabels: s.userLabels,
-			chatLabels: as.chatLabels
-		};
-
-		if (GmCXt.isDefined(as.playAudio)) {
-			GmCXt.FT.audio = as.playAudio;
-		} else if (GmCXt.isDefined(GmCXt.organization.settings.playAudio)) {
-			GmCXt.FT.audio = GmCXt.organization.settings.playAudio;
-		} else {
-			GmCXt.FT.audio = true;
-		}
-
-		GmCXt.updateCustomLabels(data);
-	}
-
-	GmCXt.getVariables();
-
-	if (m.data.reset) {
-		GmCXt.log(21, "Reset Beacon and tooltip data");
-		GmCXt.clearBeaconsAndTooltips();
-		GmCXt.resetBeaconsandTooltips();
-	}
-
-	GmCXt.updateGmConfig();
-	GmCXt.log(21, "Content script initialisation completed", m.data);
-
-	GmCXt.processActiveReq();
-};
-
-GmCXt.processActiveReq = function() {
-
-	GmCXt.log(33, 'PROCESS ACTIVE REQUEST FROM PREVIOUS PAGE');
-
-	var items = ['mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY', 'SHOW_SURVEY', 'stepReq',
-		'testMe', 'linkClickOnStep', 'guide_play_event',
-		'loopingCompleted', 'tourActivity', 'playedTour', 'trackPageVisit',
-		'testAuto', 'guide_play_event', 'desktopReq', 'trackingTours', 'gm_quick_steps', 'isRecording', 'replaceElReq', 'tooltipTrackData'
-	];
-
-	GmCXt.storage().get(items).then(function(st) {
-
-		GmCXt.tooltipTrackData = st.tooltipTrackData ? st.tooltipTrackData : [];
-
-		if (GmCXt.isElectron() && !GmCXt.isEmpty(st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY)) {
-			st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY = null;
-			GmCXt.cleanPlayer();
-		}
-
-		if (st.desktopReq) {
-			GmCXt.deskReq = st.desktopReq;
-		}
-
-		if (st.trackPageVisit) {
-			GmCXt.trackerV1.sendPayloadEventCall(GmCXt.parseJSON(st.trackPageVisit));
-			GmCXt.storage().remove(['trackPageVisit']);
-		}
-
-		if (st.replaceElReq) {
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:FindReplaceElReq", {
-				step: st.replaceElReq
-			});
-			GmCXt.storage().remove(['replaceElReq']);
-		}
-
-		if (st.gm_quick_steps && st.gm_quick_steps.length) {
-			GmCXt.fastSteps = st.gm_quick_steps;
-			// Recording is we are selecting steps
-			// It's false when we are using functions like reselect element before saving step
-			if (st.isRecording) {
-				if (st.stepReq && GmCXt.fastSteps.length &&
-					GmCXt.fastSteps[GmCXt.fastSteps.length - 1].step.step_settings.pageReloadOption === 'neither') {
-					GmCXt.fastSteps[GmCXt.fastSteps.length - 1].step.step_settings.pageReloadOption = 'new_tab';
-				}
-				GmCXt.stepReq = st.stepReq;
-				GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:create_step,type:quick", GmCXt.stepReq.data);
-				return;
-			}
-		}
-
-		if (st.testAuto) {
-			GmCXt.auto.resumeState(st.testAuto);
-			GmCXt.auto.startWatcher();
-			if (st.testAuto.playNext) {
-				GmCXt.auto.next();
-				return;
-			} else if (st.testAuto.shouldRedirectToTourPage) {
-				GmCXt.getContextGuides("Test Auto");
-				GmCXt.auto.onRedirectToTourPage();
-			} else if (st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY) {
-				GmCXt.playerI = st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY;
-				if (!GmCXt.tourPlayerI) {
-					GmCXt.tourPlayerI = GmCXt.tourPlayer();
-				}
-				if (st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.isPageReloadByLastStep) {
-					GmCXt.playerI.isPageReloadByLastStep = false;
-					GmCXt.tourPlayerI.stop();
-					return;
-				} else if (st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.playNextBranch) {
-					GmCXt.playerI.playNextBranch = false;
-					GmCXt.tourPlayerI.playBranchStepInAutomation(GmCXt.playerI.currentBranchStep);
-					return;
-				} else if (st.testAuto.automationInProgress && st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.lastPlayedStepId) {
-					var nextStepId = GmCXt.getTail(st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.lastPlayedStepId, st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.playStructure);
-					if(nextStepId) {
-						GmCXt.playLiveTour(st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.tour, nextStepId, 'automation', false, 'live');
-					}
-					return;
-				}
-				return;
-			}
-		}
-
-		if (GmCXt.isPlayer()) {
-			GmCXt.tourActivity = st.tourActivity || {};
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_tour_activity", {
-				tourActivity: GmCXt.tourActivity
-			});
-
-			GmCXt.playedTour = st.playedTour || [];
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_played_tour", {
-				playedTour: GmCXt.playedTour
-			});
-		}
-
-		if (GmCXt.isLXP()) {
-			GmCXt.setLangFromCS(GmCXt.getLXPLang());
-		} else if (!GmCXt.userPrefLang) {
-			GmCXt.setLangFromCS(GmCXt.browserLang);
-		}
-
-		if (GmCXt.isExtension() && st.stepReq) {
-			GmCXt.handleActiveStepReq(st);
-		} else if (GmCXt.isDomainInActiveApp()) {
-			GmCXt.processGuides(st);
-		}
-
-		if (GmCXt.user) {
-			if (GmCXt.isClientJs() || GmCXt.isCreatorJS()) {
-				GmCXt.processLastActionTime();
-
-			}
-		}
-
-	});
-};
-
-GmCXt.updateCustomLabels = function(data) {
-	var userLabels = data.userLabels;
-	var chatLabels = data.chatLabels;
-	var enLabels = GmCXt.getEngLabels();
-	for (var property in userLabels) {
-		if (GmCXt.label.hasOwnProperty(property) && (userLabels[property] !== enLabels[property])) {
-			GmCXt.label[property] = userLabels[property] || GmCXt.label[property];
-		}
-	}
-
-	for (var property in chatLabels) {
-		if (GmCXt.label.hasOwnProperty(property)) {
-			GmCXt.label[property] = chatLabels[property] || GmCXt.label[property];
-		}
-	}
-};
-
-GmCXt.processGuides = function(d) {
-
-	if (GmCXt.checkPrecedence()) {
-
-		GmCXt.log(21, "Precedence check passed");
-		var tourAppId = d.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.tour.application_id || d.testMe && d.testMe.message && d.testMe.message.tour.application_id || d.testMe && d.testMe.tour && d.testMe.tour.application_id;
-		var pubEnv = d.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY && d.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.tour.tour_settings.app_publish_env;
-		if ((tourAppId === GmCXt.activeAppId) ||
-			(GmCXt.isMirrorApp() && GmCXt.getBaseAppId() === GmCXt.activeAppId)) {
-			//ON APP ID MATCH
-			if (GmCXt.isTestMeOn(d.testMe)) {
-				GmCXt.processTestMe(d.testMe);
-			} else if (GmCXt.checkDomainInPublishedEnv(pubEnv) || !GmCXt.isPlayer()) {
-				GmCXt.runPlayer(d);
-			}
-		}
-
-		if (GmCXt.isPlayer() || d.testAuto) {
-
-			if (d.SHOW_SURVEY && d.SHOW_SURVEY.tourId && !d.linkClickOnStep) {
-				GmCXt.showSurveyScreen({
-					tourId: d.SHOW_SURVEY.tourId,
-					version: d.SHOW_SURVEY.version
-				});
-			}
-
-			GmCXt.getContextGuides("Process Guides");
-		}
-
-		if (!GmCXt.tourPlayerI && GmCXt.client.isUrlTour) {
-			GmCXt.executeUrlTour();
-		}
-
-		if (GmCXt.isPlayer() && GmCXt.getAppSetting('keep_player_panel_open') && !GmCXt.playerI) {
-			GmCXt.openAppPanel();
-		}
-	}
-};
-
-GmCXt.executeUrlTour = function() {
-
-	if (GmCXt.client.executed) return;
-
-	GmCXt.client.executed = true;
-	var initiator = 'urlTour';
-	if (GmCXt.client.automation) {
-		initiator = 'doitforme';
-	}
-	GmCXt.getTourAndPlay(GmCXt.client.tourId, initiator, 'urlTour');
-};
-
-GmCXt.processTestMe = function(d) {
-
-	GmCXt.testMe = d;
-
-	if (d.expectedTime)
-		GmCXt.requestHandler.startTestMeWatcher();
-	else if (d.tour)
-		GmCXt.requestHandler.startToolTestMe(d);
-};
-
-GmCXt.isActiveStepReq = function() {
-	var currentTime = (new Date()).getTime();
-	if (GmCXt.stepReq && (currentTime - GmCXt.stepReq.time) < 60000)
-		return true;
-	else
-		return false;
-};
-
-GmCXt.handleActiveStepReq = function(st) {
-
-	function gotTabId(tabId) {
-		if (req.tabId === tabId) {
-			GmCXt.stepReq = req;
-
-			if (inlineReq) {
-				GmCXt.requestHandler.createInlineStep();
-			} else if (tooltipReq) {
-				GmCXt.requestHandler.createSmartTipStep();
-			} else if (fastSteps) {
-				GmCXt.handleCreateStepInline({
-					data: req
-				});
-			}
-
-		} else {
-			GmCXt.processGuides(st);
-		}
-	}
-
-	if (GmCXt.isDomainInActiveApp() && st.stepReq.appId === GmCXt.activeAppId) {
-		var req = st.stepReq;
-		var inlineReq = (req.action === 'mgPlayerJSPreview_action:create_step,type:inline');
-		var tooltipReq = (req.action === 'mgPlayerJSPreview_action:create_step,type:smartTip');
-		var fastSteps = (req.action === 'mgPlayerJSPreview_action:create_step,type:quick');
-
-		if (inlineReq || tooltipReq || fastSteps) {
-			var m = {
-				action: 'mgPlayerJSPreview_action:get_current_tab_id'
-			};
-			GmCXt.sendMessageToBackgroundService(m, gotTabId);
-		} else {
-			GmCXt.processGuides(st);
-		}
-	} else {
-		GmCXt.storage().remove(['stepReq']);
-	}
-};
-
-GmCXt.runPlayer = function(st) {
-
-	var pi = st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY;
-
-	if (st.loopingCompleted && pi) {
-		pi = null;
-	}
-
-	var next = function() {
-
-		if (!st.linkClickOnStep) {
-			GmCXt.invokeLiveTour();
-		} else {
-			GmCXt.storage().remove(['linkClickOnStep']);
-		}
-	};
-
-	GmCXt.guidePlayTracker = st.guide_play_event || {};
-
-	if (pi) {
-		GmCXt.log(33, 'Page reloaded. Running player.');
-
-		GmCXt.playerI = st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY;
-
-		GmCXt.storage().set({
-			'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-			'guide_play_event': st.guide_play_event
-		});
-
-		GmCXt.isPageReloaded = true;
-
-		var tour = GmCXt.playerI.tour;
-		var ss = tour.tour_settings.segment_groups;
-
-		if (GmCXt.organization.admin_settings.guide_segmentation && ss.length > 0) {
-			GmCXt.checkGuidesBasedOnSegment([tour], function(t) {
-				if (!GmCXt.isEmpty(t)) {
-					next();
-				}
-			}, "guidePlay");
-		} else {
-			next();
-		}
-
-	} else if (!GmCXt.isEmpty(GmCXt.guidePlayTracker)) {
-		GmCXt.trackGuide();
-	}
-};
-
-GmCXt.getContextGuides = function(eventType) {
-
-	if (!GmCXt.checkPrecedence()) {
-		return;
-	}
-
-	if (GmCXt.isDomainInActiveApp()) {
-
-		if (GmCXt.organization || GmCXt.onPrem()) {
-			var options = {
-				url: GmCXt.getUrl(),
-				organization_id: GmCXt.organization.organization_id,
-				title: GmCXt.pageTitle
-			};
-
-			if (GmCXt.getLXPLang()) {
-				options.language = GmCXt.getLXPLang();
-			}
-
-			if (GmCXt.conf.appConfig.hostApp) {
-				options.application_id = GmCXt.activeAppId;
-
-				if (GmCXt.isMirrorApp()) {
-					options.application_id = GmCXt.getBaseAppId();
-				}
-			}
-
-
-
-			GmCXt.callApi(options, "tour/contextual").then(gotCTours);
-		}
-	} else {
-		GmCXt.log(1, "ERROR: Domain not configured in any app");
-	}
-
-	function gotCTours(tours) {
-
-		GmCXt.log(1, "Guides on this domain", tours);
-
-		GmCXt.pageTours = tours;
-
-		if(GmCXt.isAutomationRunning()) {
-			var automatedCurrentTour = GmCXt.getAutomatedCurrentTour();
-			GmCXt.log(37, "Automation running for guide ", automatedCurrentTour);
-			tours = tours.filter((tour) => tour.tour_id === automatedCurrentTour.tour_id);
-			GmCXt.log(37, "After automation filter Context tours left ", tours);
-		}
-
-		GmCXt.renderBeacons(GmCXt.filterBeaconGuides(tours));
-		GmCXt.renderSmartTips(GmCXt.filterSmartTipGuides(tours));
-
-		GmCXt.notificationGuides = mg$.extend([], GmCXt.filterNotifications(tours));
-
-		if (!GmCXt.stopNotification(false) || GmCXt.isAutomationRunning()) {
-			GmCXt.showNotifications(false);
-		}
-
-		if (GmCXt.trackerUtil.featureTracking) {
-			GmCXt.validateFtGuideRules(GmCXt.filterFtTags(tours));
-		}
-		if (GmCXt.trackerUtil.pageTracking) {
-			GmCXt.startPageTracker();
-		}
-
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:refresh_current_page", {
-			eventType: eventType
-		});
-	}
-};
-
-GmCXt.filterTrackingGuides = function(tours) {
-	return tours.filter(function(t) {
-		return GmCXt.isFeatureTags(t);
-	});
-};
-
-GmCXt.renderBeacon = function(tour, isPreview) {
-
-	if (!(tour && tour.tour_id)) return;
-
-	var renderB = function(_t) {
-
-		var settings = _t.tour_settings;
-		var beaconSettings = settings.beacon;
-		var data = {
-			stepData: beaconSettings.selectedDOMElement,
-			beaconSettings: beaconSettings,
-			tour: _t,
-			tourId: _t.tour_id,
-			tourTitle: _t.tour_title,
-			isPreview: isPreview,
-			timeout: Date.now() + GmCXt.getOrgStepWaitTime()
-		};
-
-		if (data.stepData && data.stepData.meta.inTopWindow) {
-			GmCXt.log(49, "FINDING BEACON only in TOP window");
-
-			GmCXt.highlighter.queueBeacon({
-				data: data
-			});
-		} else {
-			// Element in iframe
-			if (data.stepData.criteria.precision_level === "High" && data.stepData.iframeAttrs) {
-
-				var findInIframe = 3000;
-				data.timeout = Date.now() + findInIframe;
-
-				GmCXt.log(49, "FINDING BEACON only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:show_beacon_on_dom_element:target_frame_only', data);
-
-				GmCXt.beaconIframe[_t.tour_id].timeout = GmCXt.timeout(function() {
-					if (!GmCXt.beaconIframe[_t.tour_id].frameId) {
-						GmCXt.log(49, "TIMED OUT in Target Frame..\nFINDING BEACON in all frames");
-						data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:show_beacon_on_dom_element', data);
-					}
-				}, findInIframe + 500);
-			} else {
-				GmCXt.log(49, "FINDING BEACON in all frames");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:show_beacon_on_dom_element', data);
-			}
-		}
-	};
-
-	if (GmCXt.getObjectSize(tour.tour_settings.beacon)) {
-		renderB(tour);
-	}
-};
-
-GmCXt.validateBeaconGuideRules = function(tours, isPreview, clickEvent) {
-
-	GmCXt.log(1, "Beacon tours", tours);
-
-	function queueRule(data, ruleDelayTime) {
-		GmCXt.timeout(function() {
-			GmCXt.ruleEngine.queue(data);
-		}, ruleDelayTime);
-	}
-
-	for (var i = 0, j = tours.length; i < j; i++) {
-		var tour = tours[i];
-		var tid = parseInt(tour.tour_id);
-
-		GmCXt.log(48, "VALIDATING GUIDE RULES for: ", GmCXt.tourLog(tour));
-
-		if (GmCXt.beaconIframe[tid] && GmCXt.beaconIframe[tid].timeout) {
-			clearTimeout(GmCXt.beaconIframe[tid].timeout);
-		}
-		GmCXt.beaconIframe[tid] = {};
-		var beaconNotOnScreen = ((GmCXt.beaconsOnScreen.indexOf(tid) < 0) || isPreview);
-
-		if (tour.is_published &&
-			(beaconNotOnScreen || tour.tour_settings.removeBeaconRulesInvalid || GmCXt.checkRuleOnPageClick(clickEvent, tour))) {
-
-			var waitTime = tour.tour_settings.ruleDelayTime || 0;
-			var timeout = GmCXt.t.ruleTimeOut25ms;
-			if (GmCXt.checkTourCreatedBefore(tour.tour_settings, 2021013001)) {
-				timeout = GmCXt.t.ruleTimeOut10s;
-			}
-
-			if (tour.ruleValidated && !waitTime) { // useful in json player when the tours are returned after validation 
-				onMatch({
-					tour: tour,
-					valid: true
-				});
-			} else {
-				var data = {
-					rules: tour.tour_settings.rules,
-					tour: tour,
-					timeoutVal: timeout,
-					timeout: timeout,
-					cb: onMatch,
-					isTour: true,
-					initiator: 'beacon'
-				};
-
-				queueRule(data, waitTime);
-			}
-		}
-	}
-
-	function onMatch(result) {
-		if (result.valid) {
-
-			delete result.tour.ruleValidated;
-
-			GmCXt.renderBeacon(result.tour, isPreview);
-		} else if (isPreview) {
-			GmCXt.openAppPanel("byPassRoute");
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:beacon_rules_donot_match");
-		} else {
-			GmCXt.removeBeaconElement(result.tour);
-		}
-	}
-};
-
-GmCXt.renderBeacons = function(tours, isPreview, clickEvent) {
-
-	GmCXt.log(48, "Skip already loaded beacons", GmCXt.beaconsOnScreen);
-
-	var segmentCb = function(t) {
-
-		if (!GmCXt.isEmpty(t)) {
-			GmCXt.validateBeaconGuideRules([t], isPreview, clickEvent);
-		}
-	};
-
-	if (GmCXt.organization.admin_settings.guide_segmentation && !isPreview) {
-		GmCXt.checkGuidesBasedOnSegment(tours, segmentCb, "beaconSeg");
-	} else {
-		GmCXt.validateBeaconGuideRules(tours, isPreview, clickEvent);
-	}
-};
-
-GmCXt.removeBeaconElement = function(t) {
-	if (GmCXt.beaconsOnScreen.indexOf(parseInt(t.tour_id)) >= 0) {
-		GmCXt.log(48, "Rules Failed. Removing Beacon for " + t.tour_title, t);
-		GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:remove_beacon_job", {
-			tourId: t.tour_id
-		});
-	}
-};
-
-GmCXt.validateSmartTipGuideRules = function(tours, isPreview, clickEvent) {
-
-	function queueRule(data, ruleDelayTime) {
-		GmCXt.timeout(function() {
-			GmCXt.log(42, "QUEUE TOUR RULE: " + GmCXt.tourLog(tour));
-			GmCXt.ruleEngine.queue(data);
-		}, ruleDelayTime);
-	}
-
-	for (var i = 0, m = tours.length; i < m; i++) {
-		var tour = tours[i];
-
-		GmCXt.log(42, "VALIDATING GUIDE RULES for: ", GmCXt.tourLog(tour));
-
-		var tooltipsLoaded = (GmCXt.onScreenTooltipGuideIds.indexOf(tour.tour_id) !== -1);
-
-		if (tour.is_published &&
-			(!tooltipsLoaded ||
-				tour.tour_settings.watchRulesElement ||
-				GmCXt.checkRuleOnPageClick(clickEvent, tour)
-			)) {
-
-			var waitTime = tour.tour_settings.ruleDelayTime || 0;
-			var timeout = GmCXt.t.ruleTimeOut25ms;
-			if (GmCXt.checkTourCreatedBefore(tour.tour_settings, 2021013001)) {
-				timeout = GmCXt.t.ruleTimeOut10s;
-			}
-
-			if (tour.ruleValidated && !waitTime) { // useful in json player when the tours are returned after validation 
-
-				onMatch({
-					tour: tour,
-					valid: true
-				});
-			} else {
-				var data = {
-					rules: tour.tour_settings.rules,
-					tour: tour,
-					cb: onMatch,
-					timeoutVal: timeout,
-					timeout: timeout,
-					isTour: true,
-					initiator: 'smartTip'
-				};
-
-				queueRule(data, waitTime);
-			}
-
-		} else {
-			GmCXt.log(42, "Skip Tooltip: ", GmCXt.tourLog(tour));
-		}
-	}
-
-	function onMatch(result) {
-		GmCXt.onTooltipMatch(result, isPreview);
-	}
-};
-
-GmCXt.checkRuleOnPageClick = function(clickEvent, t) {
-	if (clickEvent && GmCXt.organization.admin_settings.efficient_rule_mode && t.tour_settings.ruleCheckOnClick) {
-		return true;
-	}
-	return false;
-};
-
-GmCXt.validateFtGuideRules = function(tours) {
-
-	for (var i = 0, m = tours.length; i < m; i++) {
-		var tour = tours[i];
-
-		GmCXt.log(16, "VALIDATING GUIDE RULES for: ", GmCXt.tourLog(tour));
-
-		if (tour.is_published) {
-			var waitTime = tour.tour_settings.ruleDelayTime || 0;
-
-			if (tour.ruleValidated && !waitTime) { // useful in json player when the tours are returned after validation 
-				GmCXt.onTagsMatch({
-					tour: tour,
-					valid: true
-				});
-			} else {
-				var data = {
-					rules: tour.tour_settings.rules,
-					tour: tour,
-					cb: GmCXt.onTagsMatch,
-					timeoutVal: GmCXt.t.ruleTimeOut25ms,
-					timeout: GmCXt.t.ruleTimeOut25ms,
-					isTour: true,
-					initiator: 'ftags'
-				};
-				queueRule(waitTime, tour, data);
-			}
-
-		} else {
-			GmCXt.log(16, "Skip Tag: ", GmCXt.tourLog(tour));
-		}
-	}
-
-	function queueRule(waitTime, tour, data) {
-		GmCXt.timeout(function() {
-			GmCXt.log(16, "QUEUE TOUR RULE: " + GmCXt.tourLog(tour));
-			GmCXt.ruleEngine.queue(data);
-		}, waitTime);
-	}
-};
-
-GmCXt.onTagsMatch = function(data) {
-
-	var tour = data.tour;
-	GmCXt.log(16, "VALID TOUR RULE, showing: " + GmCXt.tourLog(tour));
-
-	delete tour.ruleValidated;
-
-	if (tour.steps.length) {
-		GmCXt.log(17, "FOUND IN CACHE", tour);
-		GmCXt.startFtTag(tour);
-	} else {
-		GmCXt.log(17, "CALL API to get tour");
-
-		var d = {
-			tour_id: tour.tour_id,
-			category_id: tour.category_id
-		};
-		GmCXt.callApi(d, "tour").then(function(_tour) {
-			GmCXt.pageTours.forEach(function(t) {
-				if (t.tour_id === _tour.tour_id) {
-					t.steps = _tour.steps;
-				}
-			});
-
-			// Remove existing tour
-			GmCXt.fTags.forEach(function(t, key) {
-				if (t.tour_id === _tour.tour_id) {
-					GmCXt.fTags.splice(key, 1);
-				}
-			});
-			// Push new tour
-			GmCXt.fTags.push(_tour);
-			GmCXt.startFtTag(_tour);
-		});
-	}
-};
-
-GmCXt.renderSmartTips = function(tours, isPreview, clickEvent) {
-
-	GmCXt.log(42, "Skip already loaded tooltips: ", GmCXt.onScreenTooltipGuideIds);
-
-	var segmentCb = function(t) {
-		if (!GmCXt.isEmpty(t)) {
-			GmCXt.validateSmartTipGuideRules([t], isPreview, clickEvent);
-		}
-		//remove invallid tours
-	};
-
-	if (GmCXt.organization.admin_settings.guide_segmentation && !isPreview) {
-		GmCXt.checkGuidesBasedOnSegment(tours, segmentCb, "smarttipSeg");
-	} else {
-		GmCXt.validateSmartTipGuideRules(tours, isPreview, clickEvent);
-	}
-};
-
-GmCXt.startFtTag = function(tour) {
-
-	var windowHost = GmCXt.getPageDomain();
-
-	for (var j = 0; j < tour.steps.length; j++) {
-
-		var step = mg$.extend({}, tour.steps[j]);
-		var nodes = mg$('.' + GmCXt.tagClassName(step));
-
-		if (nodes.length) return; //Return since already tagged
-
-		if (step.step_settings && step.step_settings.element) {
-
-			GmCXt.log(17, "LOADING STEP " + GmCXt.stepLog(step.step_id, step.tour_id));
-
-			var data = {
-				settings: step.step_settings,
-				windowHost: windowHost,
-				step: step,
-				tour: tour,
-				task: 'showTag',
-				timeout: Date.now() + GmCXt.getOrgStepWaitTime(),
-				iframeAttrs: step.step_settings.element.iframeAttrs,
-				os: GmCXt.getStepSettings()
-			};
-
-			if (GmCXt.tagIframe[step.step_id] && GmCXt.tagIframe[step.step_id].timeout) {
-				clearTimeout(GmCXt.tagIframe[step.step_id].timeout);
-			}
-			GmCXt.tagIframe[step.step_id] = {};
-			searchTag(data, step);
-		}
-	}
-
-	function searchTag(data, step) {
-
-		if (data.settings.element.meta.inTopWindow) {
-			GmCXt.log(17, "FINDING TAG only in TOP window");
-
-			GmCXt.highlighter.queueTag({
-				data: data
-			});
-		} else {
-
-			var findInIframe = 3000;
-			data.timeout = Date.now() + findInIframe;
-
-			GmCXt.log(17, "FINDING TAG only in TARGET frame");
-			GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:find_tag_elm:target_frame_only', data);
-
-			GmCXt.tagIframe[step.step_id].timeout = GmCXt.timeout(function() {
-				if (!GmCXt.tagIframe[step.step_id].frameId) {
-					GmCXt.log(17, "TIMED OUT in Target Frame..\nFINDING TAG in all frames");
-					data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-					GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:find_tag_elm', data);
-				}
-			}, findInIframe + 500);
-		}
-	}
-};
-
-GmCXt.startTooltip = function(tour, isPreview) {
-
-	GmCXt.setOnScreenTooltipGuideInfo(tour);
-
-	for (var j = 0; j < tour.steps.length; j++) {
-
-		var step = mg$.extend({}, tour.steps[j]);
-		var windowHost = GmCXt.getPageDomain();
-
-		if (step.step_settings && step.step_settings.element) {
-
-			GmCXt.log(43, "LOADING STEP " + GmCXt.stepLog(step.step_id, step.tour_id));
-
-			var data = {
-				settings: step.step_settings,
-				windowHost: windowHost,
-				step: step,
-				tour: tour,
-				isPreview: isPreview,
-				task: 'showSmarttip',
-				timeout: Date.now() + GmCXt.getOrgStepWaitTime(),
-				iframeAttrs: step.step_settings.element.iframeAttrs,
-				os: GmCXt.getStepSettings()
-			};
-
-			if (GmCXt.smartTipIframe[step.step_id] && GmCXt.smartTipIframe[step.step_id].timeout) {
-				clearTimeout(GmCXt.smartTipIframe[step.step_id].timeout);
-			}
-			GmCXt.smartTipIframe[step.step_id] = {};
-			searchTooltip(data, step);
-		}
-	}
-
-	function searchTooltip(data, step) {
-
-		if (data.settings.element.meta.inTopWindow) {
-			GmCXt.log(43, "FINDING TOOLTIP only in TOP window");
-
-			GmCXt.highlighter.queueSmarttip({
-				data: data
-			});
-		} else {
-			// Element in iframe
-			if (data.settings.element.criteria.precision_level === "High" && data.iframeAttrs) {
-
-				var findInIframe = 3000;
-				data.timeout = Date.now() + findInIframe;
-
-				GmCXt.log(43, "FINDING TOOLTIP only in TARGET frame");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_dom_element_to_show_tooltip:target_frame_only', data);
-
-				GmCXt.smartTipIframe[step.step_id].timeout = GmCXt.timeout(function() {
-					if (!GmCXt.smartTipIframe[step.step_id].frameId) {
-						GmCXt.log(43, "TIMED OUT in Target Frame..\nFINDING TOOLTIP in all frames");
-						data.timeout = Date.now() + GmCXt.getOrgStepWaitTime() - findInIframe;
-						GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_dom_element_to_show_tooltip', data);
-					}
-				}, findInIframe + 500);
-			} else {
-				GmCXt.log(43, "FINDING TOOLTIP in all frames");
-				GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_dom_element_to_show_tooltip', data);
-			}
-		}
-	}
-};
-
-GmCXt.onTooltipMatch = function(r, isPreview) {
-
-	var tour = r.tour;
-
-	delete tour.ruleValidated;
-
-	var d = {
-		tour_id: tour.tour_id,
-		category_id: tour.category_id
-	};
-
-	function tooltipGetSteps(tour, cb, isPreview, isValid) {
-
-		if (tour.steps.length) {
-			GmCXt.log(43, "FOUND IN CACHE", tour);
-			cb(tour, isPreview);
-
-		} else if (isValid) {
-			GmCXt.log(43, "CALL API to get tour");
-			GmCXt.callApi(d, "tour")
-				.then(function(_tour) {
-
-					if (GmCXt.pageTours) {
-						GmCXt.pageTours.forEach(function(t) {
-							if (t.tour_id === _tour.tour_id) {
-								t.steps = _tour.steps;
-							}
-						});
-					}
-
-					var showTooltip = function(_t) {
-						// Remove existing tour
-						GmCXt.tooltipTours.forEach(function(t, key) {
-							if (t.tour_id === _t.tour_id) {
-								GmCXt.tooltipTours.splice(key, 1);
-							}
-						});
-						// Push new tour
-						GmCXt.tooltipTours.push(_t);
-						cb(_t, isPreview);
-					};
-
-					showTooltip(_tour);
-				});
-		}
-	}
-
-	if (r.valid) {
-
-		GmCXt.log(42, "VALID TOUR RULE, showing: " + GmCXt.tourLog(tour));
-
-		if (isPreview) {
-			GmCXt.startTooltip(tour, isPreview);
-		} else {
-			tooltipGetSteps(tour, GmCXt.startTooltip, isPreview, true);
-		}
-
-	} else if (!r.valid) {
-
-		GmCXt.log(42, "INVALID TOUR RULE: " + GmCXt.tourLog(tour));
-
-		tooltipGetSteps(tour, GmCXt.removeTooltips, isPreview, false);
-
-		if (isPreview) {
-			GmCXt.openAppPanel("byPassRoute");
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:smartTip_rules_donot_match");
-		}
-	}
-};
-
-GmCXt.filterOutSmarttipGuides = function(tours) {
-	var arr = [];
-	tours.filter(function(itm) {
-		if (itm.tour_type.indexOf('smartTip') === -1) {
-			arr.push(itm);
-		}
-	});
-	return arr;
-};
-
-GmCXt.notifyCurrentPageGuideExistence = function() {
-	var m = {
-		action: 'mgPlayerJSPreview_action:get_cguide_count',
-		data: GmCXt.ifGuidesOnCurrentPage
-	};
-	GmCXt.msgToThisWin(m);
-};
-
-GmCXt.hideCurrentPageGuidesIndicator = function() {
-	mg$('.mgPlayerJSPreview_start-button-cnt').hide();
-	GmCXt.notifyCurrentPageGuideExistence();
-
-	GmCXt.showWidget();
-};
-
-GmCXt.showCurrentPageGuidesIndicator = function() {
-
-	if (GmCXt.FT.isPlayer) {
-		var ws = GmCXt.getWidgetSettings();
-
-		var wCnt = mg$('.mgPlayerJSPreview_start-button-cnt');
-		if (GmCXt.ifGuidesOnCurrentPage && ws && ws.guide_count_on_widget) {
-
-			wCnt.css({
-				background: ws.guide_count_widget_color
-			});
-
-			wCnt.show();
-		} else {
-
-			wCnt.hide();
-		}
-	}
-
-	GmCXt.notifyCurrentPageGuideExistence();
-};
-
-GmCXt.showNotifications = function(isPageClicked) {
-
-	var guideMeTourId = GmCXt.getUrlParameter('guideMe-tourId');
-	var delay = GmCXt.getNotificationDelay();
-
-	if (!(GmCXt.isPlayer() || GmCXt.isAutomationRunning())) {
-		return;
-	}
-	if (GmCXt.isSurveyVisible || GmCXt.orgNotificationPopup) {
-		return;
-	}
-
-	if (GmCXt.isAutomationRunning()) {
-		delay = 0; // Render Notification for Automation
-	} else if (GmCXt.tourPlayerI || guideMeTourId) {
-		delay = 5000;
-		GmCXt.log(10, "DELAYED notifications, guide is playing");
-	}
-
-	GmCXt.log(10, "NOTIFICATION ENABLED guides", GmCXt.notificationGuides);
-
-	GmCXt.timeout(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:show_notifications', {
-			notifications: GmCXt.notificationGuides,
-			isAutomationRunning: GmCXt.isAutomationRunning(),
-			isPageClicked: isPageClicked
-		});
-	}, delay);
-};
-
-GmCXt.filterNotifications = function(t) {
-	var arr = [];
-
-	if (!GmCXt.isEmpty(t)) {
-		arr = t.filter(function(_t) {
-			if (_t.tour_type.indexOf('overlay_tour') > -1)
-				return _t;
-		});
-	}
-
-	return arr;
-};
-
-GmCXt.filterSmartTipGuides = function(tours) {
-	var arr = [];
-
-	if (!GmCXt.isEmpty(tours)) {
-		tours.filter(function(itm) {
-			if (itm.tour_type.indexOf('smartTip') > -1) {
-				arr.push(itm);
-			}
-		});
-	}
-
-	GmCXt.tooltipTours = arr;
-
-	GmCXt.log(42, "TOOLTIP guides", arr);
-
-	return arr;
-};
-
-GmCXt.filterFtTags = function(tours) {
-	var arr = [];
-	tours.filter(function(itm) {
-		if (itm.tour_type.indexOf('insights') > -1) {
-			arr.push(itm);
-		}
-	});
-	GmCXt.fTags = arr;
-
-	GmCXt.log(16, "FEATURE TAGS guides", arr);
-
-	return arr;
-};
-
-function filterBeaconTourByDiplayFrequency(tour) {
-	var beaconsViewed = GmCXt.user.settings.display_frequency_beacons;
-	var retVal = true;
-	if (!GmCXt.isEmpty(beaconsViewed)) {
-		var countObj = beaconsViewed[parseInt(tour.tour_id)];
-		if (GmCXt.isDefined(countObj)) {
-			if (parseInt(countObj.version) === parseInt(tour.version)) {
-				if (countObj.playedCount >= tour.tour_settings.beacon.displayFrequencyTimes) {
-					return false;
-				}
-			}
-		}
-	}
-
-	return retVal;
-}
-
-GmCXt.filterBeaconGuides = function(tours) {
-	var arr = [];
-
-	if (!GmCXt.isEmpty(tours)) {
-		tours.filter(function(itm) {
-			if (itm.tour_type.indexOf('beacon_tour') > -1) {
-				if (itm.tour_settings.beacon.displayFrequency) {
-					if (filterBeaconTourByDiplayFrequency(itm)) {
-						arr.push(itm);
-					}
-				} else {
-					arr.push(itm);
-				}
-			}
-		});
-	}
-
-	GmCXt.log(48, "BEACON guides", arr);
-
-	GmCXt.beaconTours = arr;
-	return arr;
-};
-
-GmCXt.requestHandler.sendRequestForDomSelectTableRule = function(request) {
-	GmCXt.clearScreen();
-	GmCXt.unlockScroll();
-	GmCXt.closeAppPanel();
-	GmCXt.toggleStepSelectionToolbar(true);
-	GmCXt.hideBeacons();
-	GmCXt.hideSmartTips();
-
-	var data = {
-		ruleIndex: request.data.ruleIndex,
-		groupIndex: request.data.groupIndex,
-		reSelect: request.data.reSelect
-	};
-
-	var action = "mgPlayerJSPreview_action:started;task:select_new_table_for_dom_select_rule";
-	GmCXt.sendMessageToAllWindows(action, data);
-};
-
-GmCXt.requestHandler.sendRequestForDomSelectRule = function(request) {
-
-	GmCXt.clearScreen();
-	GmCXt.unlockScroll();
-	GmCXt.closeAppPanel();
-	GmCXt.toggleStepSelectionToolbar(true);
-	GmCXt.hideBeacons();
-	GmCXt.hideSmartTips();
-
-	var data = {
-		ruleIndex: request.data.ruleIndex,
-		groupIndex: request.data.groupIndex,
-		reSelect: request.data.reSelect
-	};
-
-	var action = "mgPlayerJSPreview_action:started;task:select_new_element_for_dom_select_rule";
-	GmCXt.sendMessageToAllWindows(action, data);
-};
-
-GmCXt.requestHandler.playLinkedGuide = function(data) {
-	GmCXt.playerI = {
-		tour: null,
-		tourId: data.tourId
-	};
-
-	var d = {
-		tour_id: data.tourId
-	};
-
-	if (GmCXt.getOrgSettings()) {
-		GmCXt.getTourDetails(d)
-			.then(function(tour) {
-
-				GmCXt.playerI.tour = tour;
-				GmCXt.playerI.startStepId = 0;
-
-				GmCXt.storage().set({
-					'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': GmCXt.playerI,
-					'guide_play_event': GmCXt.guidePlayTracker
-				}).then(function() {
-					GmCXt.playTour();
-				});
-			});
-	}
-};
-
-GmCXt.requestHandler.playGuide = function(data) {
-	GmCXt.closeNotificationPopup();
-	if (data.playerInstance)
-		GmCXt.playerI = mg$.extend({}, data.playerInstance);
-	else
-		GmCXt.playerI = mg$.extend({}, data);
-
-	if (GmCXt.isFirstNonAutomationStep())
-		GmCXt.checkPreviousHoverStep = false;
-	else
-		GmCXt.checkPreviousHoverStep = true;
-
-	if (!GmCXt.playerI.currentStepId && !GmCXt.isMicroPlayer()) {
-		var firstStepId = GmCXt.playerI.tour.steps[0].step_id;
-		if (data.tour) {
-			var ts = data.tour.tour_settings;
-			if (ts.play_structure.length) {
-				firstStepId = ts.play_structure[0].id;
-			}
-		}
-
-		if (firstStepId) {
-			GmCXt.playerI.currentStepId = firstStepId;
-		}
-	}
-
-	GmCXt.playerI.startStepId = GmCXt.playerI.currentStepId;
-
-	var PI = GmCXt.playerI;
-
-	GmCXt.storage().set({
-		'mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY': PI,
-		'guide_play_event': GmCXt.guidePlayTracker
-	}).then(function() {
-		GmCXt.playTour();
-	});
-};
-
-GmCXt.updatePlayerI = function() {
-	var PI = GmCXt.playerI;
-
-	if (PI && PI.completeEventTracked) {
-		PI.currentStepId = PI.startStepId;
-		PI.completeEventTracked = false;
-		PI.lastPlayedStepId = 0;
-
-		++PI.currentLoop;
-
-		GmCXt.playerI = PI;
-
-		GmCXt.log(33, 'Player Instance updated for looping.');
-	}
-};
-
-GmCXt.requestHandler.playAutoTour = function() {
-
-	GmCXt.updatePlayerI();
-
-	if (GmCXt.isLooping()) {
-		GmCXt.timeout(function() {
-			if (!GmCXt.tourPlayerI) {
-				GmCXt.tourPlayerI = GmCXt.tourPlayer();
-			}
-			GmCXt.tourPlayerI.start();
-		}, 500);
-
-	} else {
-		GmCXt.log(33, 'Tour Player ' + GmCXt.playerI.loops + ' times.');
-
-		if (GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI.stop();
-		} else {
-			GmCXt.cleanPlayer();
-		}
-
-		GmCXt.storage().set({
-			'loopingCompleted': true
-		});
-	}
-};
-
-GmCXt.requestHandler.newIframeFound = function(iframeIdentifier) {
-
-	if (GmCXt.DomSelectorToolActive === true) {
-		GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:started;task:select_new_dom_element', {
-			enableNavigateTool: GmCXt.enableNavigateTool
-		});
-	}
-
-	GmCXt.log(1, "IFRAME found, ID: " + iframeIdentifier);
-
-	var d = {
-		org: GmCXt.organization,
-		user: GmCXt.user,
-		debugMode: GmCXt.debugMode,
-		urlParts: GmCXt.urlParts,
-		featureTracking: GmCXt.trackerUtil.featureTracking,
-		pageTracking: GmCXt.trackerUtil.pageTracking,
-		sessionInfo: GmCXt.sessionInfo,
-		showPlayer: GmCXt.showPlayer,
-		rules: GmCXt.rulesIframeQueue,
-		receiverId: iframeIdentifier
-	};
-
-	d.domainInApp = GmCXt.isDomainInActiveApp();
-
-	if (GmCXt.tourPlayerI && GmCXt.tourPlayerI.currentStepReq && !GmCXt.isLastStepPlayed()) {
-		d.req = GmCXt.tourPlayerI.currentStepReq;
-	}
-
-	if (!GmCXt.isEmpty(GmCXt.appList)) {
-
-		var activeApp = GmCXt.appList['app:' + GmCXt.activeAppId];
-		d.activeAppSettings = {};
-		if (activeApp && activeApp.settings) {
-			d.activeAppSettings = activeApp.settings;
-		}
-	}
-
-	if (window.self === window.top) {
-		GmCXt.iframeCount++;
-	}
-
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:task:init_new_iframe", d);
-
-	//Gets beacon tour data and sends message to render beacons
-	GmCXt.sendMessageToRenderBeacons();
-	GmCXt.sendMessageToRenderSmartTip();
-};
-
-GmCXt.sendMessageToRenderBeacons = function() {
-
-	if (GmCXt.beaconTours.length) {
-		var tours = mg$.extend([], GmCXt.beaconTours);
-		GmCXt.renderBeacons(tours);
-	}
-};
-
-GmCXt.sendMessageToRenderSmartTip = function() {
-
-	if (GmCXt.tooltipTours.length) {
-		var tours = mg$.extend([], GmCXt.tooltipTours);
-		GmCXt.renderSmartTips(tours);
-	}
-};
-
-GmCXt.addWidgetIcon = function() {
-
-	return new Promise(function(resolve, reject) {
-		GmCXt.getWidgetIcon().then(function(wUrl) {
-
-			var str = "<wmgPlayerJSPreview_ style='display:none' " +
-				" id='mgPlayerJSPreview_btn-start-button' class='mgPlayerJSPreview_start-button " + GmCXt.getStartBtnClass() + "'> " +
-				" <wmgPlayerJSPreview_ class='mgPlayerJSPreview_start-button-cnt' ></wmgPlayerJSPreview_>" +
-				" <img src='" + wUrl + "' class='mgPlayerJSPreview_custom-image' " +
-				" err-src='" + GmCXt.getDefaultIcon() + "'/> " +
-				" </wmgPlayerJSPreview_>";
-
-			mg$("html").append(str);
-			GmCXt.positionWidget();
-			GmCXt.widgetIconCustomize();
-
-			GmCXt.log(8, "WIDGET HTML added");
-			resolve();
-		});
-	});
-};
-
-GmCXt.addChatIcon = function() {
-
-	return new Promise(function(resolve, reject) {
-		GmCXt.getChatIcon().then(function(wUrl) {
-
-			var str = "<wmgPlayerJSPreview_ style='display:none' " +
-				" id='mgPlayerJSPreview_btn-chat-button' class='mgPlayerJSPreview_chat-button " + GmCXt.getStartBtnClass() + "'> " +
-				" <img src='" + wUrl + "' class='mgPlayerJSPreview_custom-image' " +
-				" err-src='" + GmCXt.getChatDefaultIcon() + "'/> " +
-				" </wmgPlayerJSPreview_>";
-
-			mg$("html").append(str);
-			GmCXt.positionChatIcon();
-			GmCXt.chatIconCustomize();
-
-			GmCXt.log(8, "CHAT ICON HTML added");
-			resolve();
-		});
-	});
-};
-
-GmCXt.addWidgetIconEvents = function() {
-
-	dragElement(document.getElementById("mgPlayerJSPreview_btn-start-button"));
-
-	function dragElement(elmnt) {
-		var pos1 = 0,
-			pos2 = 0,
-			pos3 = 0,
-			pos4 = 0,
-			drag = false;
-
-		if (!elmnt) return;
-
-		elmnt.onmousedown = dragMouseDown;
-
-		function dragMouseDown(e) {
-			e = e || window.event;
-			e.preventDefault();
-			// get the mouse cursor position at startup:
-			pos3 = e.clientX;
-			pos4 = e.clientY;
-			document.onmouseup = closeDragElement;
-			// call a function whenever the cursor moves:
-			document.onmousemove = elementDrag;
-
-		}
-
-		function elementDrag(e) {
-			e = e || window.event;
-			e.preventDefault();
-			mg$('iframe').css('pointer-events', 'none');
-			mg$('body').css('pointer-events', 'none');
-			// calculate the new cursor position:
-			pos1 = pos3 - e.clientX;
-			pos2 = pos4 - e.clientY;
-			pos3 = e.clientX;
-			pos4 = e.clientY;
-			// set the element's new position:
-			elmnt.style.setProperty("top", (elmnt.offsetTop - pos2) + "px", "important");
-			elmnt.style.setProperty("left", (elmnt.offsetLeft - pos1) + "px", "important");
-			drag = true;
-		}
-
-		function closeDragElement(e) {
-			/* stop moving when mouse button is released:*/
-
-			mg$('iframe').css('pointer-events', 'initial');
-			mg$('body').css('pointer-events', 'initial');
-			document.onmouseup = null;
-			document.onmousemove = null;
-			if (!drag) {
-				GmCXt.onClickGuideMeIcon(e);
-			}
-			if (elmnt.style.top !== 'initial') {
-				GmCXt.dragWidgetPose.top = elmnt.style.top;
-				GmCXt.dragWidgetPose.left = elmnt.style.left;
-			}
-
-			GmCXt.timeout(function() {
-				drag = false;
-			}, 500);
-		}
-	}
-};
-
-GmCXt.addChatIconEvents = function() {
-
-	dragElement(document.getElementById("mgPlayerJSPreview_btn-chat-button"));
-
-	function dragElement(elmnt) {
-		var pos1 = 0,
-			pos2 = 0,
-			pos3 = 0,
-			pos4 = 0,
-			drag = false;
-
-		if (!elmnt) return;
-
-		elmnt.onmousedown = dragMouseDown;
-
-		function dragMouseDown(e) {
-			e = e || window.event;
-			e.preventDefault();
-			// get the mouse cursor position at startup:
-			pos3 = e.clientX;
-			pos4 = e.clientY;
-			document.onmouseup = closeDragElement;
-			// call a function whenever the cursor moves:
-			document.onmousemove = elementDrag;
-
-		}
-
-		function elementDrag(e) {
-			e = e || window.event;
-			e.preventDefault();
-			mg$('iframe').css('pointer-events', 'none');
-			mg$('body').css('pointer-events', 'none');
-			// calculate the new cursor position:
-			pos1 = pos3 - e.clientX;
-			pos2 = pos4 - e.clientY;
-			pos3 = e.clientX;
-			pos4 = e.clientY;
-			// set the element's new position:
-			elmnt.style.setProperty("top", (elmnt.offsetTop - pos2) + "px", "important");
-			elmnt.style.setProperty("left", (elmnt.offsetLeft - pos1) + "px", "important");
-			drag = true;
-		}
-
-		function closeDragElement(e) {
-			/* stop moving when mouse button is released:*/
-
-			mg$('iframe').css('pointer-events', 'initial');
-			mg$('body').css('pointer-events', 'initial');
-			document.onmouseup = null;
-			document.onmousemove = null;
-			if (!drag) {
-				GmCXt.onClickChatIcon(e);
-			}
-			if (elmnt.style.top !== 'initial') {
-				GmCXt.dragChatPose.top = elmnt.style.top;
-				GmCXt.dragChatPose.left = elmnt.style.left;
-			}
-
-			GmCXt.timeout(function() {
-				drag = false;
-			}, 500);
-		}
-	}
-};
-
-GmCXt.removeWidget = function() {
-	var widget = GmCXt.getWidgetInstance();
-	if (widget.length) widget.remove();
-};
-
-GmCXt.removeChatIcon = function() {
-	var chat = GmCXt.getChatIconInstance();
-	if (chat.length) chat.remove();
-};
-
-// Widget Test Cases
-// 1. Show default widget icon before login
-// 2. Update widget icon and position after login
-// 3. Update widget icon and position after Org settings change
-// 4. Set default widget icon after logout
-// 5. Hide widget if its hidden in Org settings
-
-GmCXt.addingWidgetIcon = false;
-
-GmCXt.showWidget = function() {
-
-	if (GmCXt.APP_PANEL_OPEN) return;
-
-	if (GmCXt.getWidgetVisibility()) {
-
-		var show = function() {
-
-			GmCXt.log(8, "SHOW WIDGET");
-
-			GmCXt.positionWidget();
-			GmCXt.widgetIconCustomize();
-
-			GmCXt.showCurrentPageGuidesIndicator();
-
-			GmCXt.displayWidget();
-		};
-
-		var widget = GmCXt.getWidgetInstance();
-
-		if (widget.length) {
-			GmCXt.getWidgetIcon().then(function(wURl) {
-				mg$(".mgPlayerJSPreview_start-button img").attr('src', wURl);
-				show();
-			});
-
-		} else if (!GmCXt.addingWidgetIcon) {
-
-			GmCXt.addingWidgetIcon = true;
-			GmCXt.addWidgetIcon().then(function() {
-
-				GmCXt.addingWidgetIcon = false;
-				GmCXt.addWidgetIconEvents();
-				show();
-			});
-		}
-
-	} else {
-		GmCXt.removeWidget();
-	}
-};
-
-GmCXt.showChatIcon = function() {
-
-	if (!GmCXt.checkPrecedence()) return;
-	if (GmCXt.APP_PANEL_OPEN) return;
-	if (!GmCXt.organization && GmCXt.isEmpty(GmCXt.organization)) return;
-
-
-	if (GmCXt.isPlayer() && GmCXt.isChatEnable() && GmCXt.getChatIconVisibility()) {
-
-		var show = function() {
-
-			GmCXt.log(8, "SHOW CHAT ICON");
-
-			GmCXt.positionChatIcon();
-			GmCXt.chatIconCustomize();
-
-			GmCXt.displayChatIcon();
-		};
-
-		var chat = GmCXt.getChatIconInstance();
-
-		if (chat.length) {
-			GmCXt.getChatIcon().then(function(wURl) {
-				mg$("#mgPlayerJSPreview_btn-chat-button img").attr('src', wURl);
-				show();
-			});
-
-		} else if (!GmCXt.addingChatIcon) {
-
-			GmCXt.addingChatIcon = true;
-			GmCXt.addChatIcon().then(function() {
-
-				GmCXt.addingChatIcon = false;
-				GmCXt.addChatIconEvents();
-				show();
-			});
-		}
-
-	} else {
-		GmCXt.removeChatIcon();
-	}
-};
-
-GmCXt.resetBeaconsandTooltips = function() {
-
-	for (var prop in GmCXt.onScreenTooltipGuideInfo) delete GmCXt.onScreenTooltipGuideInfo[prop];
-
-	GmCXt.onScreenTooltipGuideIds = [];
-
-	GmCXt.beaconTours = [];
-	GmCXt.beaconsOnScreen = [];
-	GmCXt.tooltipTours = [];
-	GmCXt.partialVisibleTooltipsIds = [];
-};
-
-GmCXt.positionWidget = function() {
-
-	var s = GmCXt.getWidgetSettings();
-	if (GmCXt.isEmpty(s)) return;
-
-	var widget = GmCXt.getWidgetInstance();
-
-	var oldCSS = widget.attr('style');
-	if (oldCSS.length > 0 && oldCSS.lastIndexOf(";") !== oldCSS.length - 1) {
-		oldCSS += ";";
-	}
-	var strCss = '';
-
-	if (GmCXt.dragWidgetPose.left) {
-		strCss = "top:" + GmCXt.dragWidgetPose.top + " !important;" +
-			"left:" + GmCXt.dragWidgetPose.left + " !important;" +
-			"bottom: initial;right: initial";
-	} else {
-		switch (s.widgetIconPos) {
-			case 'top-left':
-				strCss = "top: " + s.widget_icon_pos.widget_icon_top_pos + s.widget_icon_pos.widget_icon_top_pos_unit + " !important;" +
-					"left: " + s.widget_icon_pos.widget_icon_left_pos + s.widget_icon_pos.widget_icon_left_pos_unit + " !important;" +
-					"bottom: initial; right: initial;";
-				break;
-
-			case 'top-right':
-
-				strCss = "top:" + s.widget_icon_pos.widget_icon_top_pos + s.widget_icon_pos.widget_icon_top_pos_unit + " !important;" +
-					"right:" + s.widget_icon_pos.widget_icon_right_pos + s.widget_icon_pos.widget_icon_right_pos_unit + " !important;" +
-					"left: initial; bottom: initial";
-
-				break;
-
-			case 'bottom-left':
-				strCss = "bottom: " + (s.widget_icon_pos.widget_icon_bottom_pos + s.widget_icon_pos.widget_icon_bottom_pos_unit) + " !important;" +
-					"left: " + s.widget_icon_pos.widget_icon_left_pos + s.widget_icon_pos.widget_icon_left_pos_unit + " !important;" +
-					"top: initial; right: initial;";
-				break;
-
-			case 'bottom-right':
-
-				strCss = "bottom: " + s.widget_icon_pos.widget_icon_bottom_pos + s.widget_icon_pos.widget_icon_bottom_pos_unit + " !important;" +
-					"right:" + s.widget_icon_pos.widget_icon_right_pos + s.widget_icon_pos.widget_icon_right_pos_unit + " !important;" +
-					"top: initial; left: initial;";
-
-				break;
-		}
-	}
-
-	widget.attr('style', oldCSS + strCss);
-};
-
-GmCXt.positionChatIcon = function() {
-
-	var s = GmCXt.getAppSetting();
-
-	if (GmCXt.isEmpty(s)) return;
-
-	var chat = GmCXt.getChatIconInstance();
-
-	var oldCSS = chat.attr('style');
-	if (oldCSS.length > 0 && oldCSS.lastIndexOf(";") !== oldCSS.length - 1) {
-		oldCSS += ";";
-	}
-	var strCss = '';
-
-	if (GmCXt.dragChatPose.left) {
-		strCss = "top:" + GmCXt.dragChatPose.top + " !important;" +
-			"left:" + GmCXt.dragChatPose.left + " !important;" +
-			"bottom: 'initial';right: 'initial'";
-	} else {
-		switch (s.chatIconPos) {
-			case 'top-left':
-				strCss = "top: " + s.chat_icon_pos.chat_icon_top_pos + s.chat_icon_pos.chat_icon_top_pos_unit + " !important;" +
-					"left: " + s.chat_icon_pos.chat_icon_left_pos + s.chat_icon_pos.chat_icon_left_pos_unit + " !important;" +
-					"bottom: 'initial'; right: 'initial';";
-				break;
-
-			case 'top-right':
-
-				strCss = "top:" + s.chat_icon_pos.chat_icon_top_pos + s.chat_icon_pos.chat_icon_top_pos_unit + " !important;" +
-					"right:" + s.chat_icon_pos.chat_icon_right_pos + s.chat_icon_pos.chat_icon_right_pos_unit + " !important;" +
-					"left: 'initial'; bottom: 'initial'";
-
-				break;
-
-			case 'bottom-left':
-				strCss = "bottom: " + (s.chat_icon_pos.chat_icon_bottom_pos + s.chat_icon_pos.chat_icon_bottom_pos_unit) + " !important;" +
-					"left: " + s.chat_icon_pos.chat_icon_left_pos + s.chat_icon_pos.chat_icon_left_pos_unit + " !important;" +
-					"top: 'initial'; right: 'initial';";
-				break;
-
-			case 'bottom-right':
-
-				strCss = "bottom: " + s.chat_icon_pos.chat_icon_bottom_pos + s.chat_icon_pos.chat_icon_bottom_pos_unit + " !important;" +
-					"right:" + s.chat_icon_pos.chat_icon_right_pos + s.chat_icon_pos.chat_icon_right_pos_unit + " !important;" +
-					"top: 'initial'; left: 'initial';";
-
-				break;
-		}
-	}
-
-	chat.attr('style', oldCSS + strCss);
-};
-
-GmCXt.requestHandler.selectBeaconPosition = function(request) {
-	GmCXt.hideWidgetIcon();
-
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:started;task:select_dom_element_for_beacon");
-	GmCXt.toggleStepSelectionToolbar(true);
-};
-
-GmCXt.requestHandler.closeStep = function() {
-	GmCXt.closeAppPanel();
-
-	if (GmCXt.tourPlayerI) GmCXt.tourPlayerI.closeStep();
-};
-
-GmCXt.requestHandler.closeSlideshow = function() {
-
-	GmCXt.showSmartTips();
-	GmCXt.showBeacons();
-
-	var pi = GmCXt.playerI;
-
-	if (pi && pi.totalStepCount > 1 && GmCXt.firstStepAutoLaunch()) {
-
-		var options = {
-			tour: pi.tour,
-			slideshow: true
-		};
-		GmCXt.showPushOptions(options).show();
-
-	} else {
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:stop_slideshow');
-
-		if (pi) {
-			GmCXt.markAutoLaunchTourDoNotShow(pi.tour);
-			GmCXt.getSurveyScreen(mg$.extend({}, pi)).then(function(f) {
-				if (!f)
-					GmCXt.openAppPanel();
-			});
-			GmCXt.cleanPlayer();
-		}
-	}
-};
-
-GmCXt.requestHandler.pageClickForGuide = function(msg) {
-	var e = msg.data;
-	var stepPlaying = mg$('.mgPlayerJSPreview_preview-step-popup-container').length;
-
-	if (GmCXt.playerI && stepPlaying && GmCXt.enforceGuideMePopup !== true && !GmCXt.isSurveyVisible) {
-
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-		var watchState = true;
-
-		if (step.step_type === GmCXt.STEP_TYPE_INLINE && e.state && e.state !== 'watch') { //e.state = undefined for iframes
-			watchState = false;
-		}
-
-		if (step && watchState) {
-			var s = step.step_settings;
-			var playNext = false;
-			var notClickOnPageStep = (!s.onClickAnywhere && !s.onPageClickNext && !s.onChangeNext);
-			var forceMode = (s.doNotForceGuide !== true && GmCXt.playerI.forceGuideMe === true);
-
-			if (forceMode && s.onRightClickNext) {
-				if (!e.onRightClickElem) {
-					GmCXt.showForceMode();
-				}
-			} else if (forceMode && notClickOnPageStep && !e.onElem && !e.inColumn) {
-				if (step.step_type === GmCXt.STEP_TYPE_INLINE || step.step_type === GmCXt.STEP_TYPE_MESSAGE) {
-					GmCXt.showForceMode();
-				}
-			} else if (s.onClickTooltip === true && e.onElem) {
-				playNext = true;
-			} else if (s.pageReloadOption === "restart_parent" && (e.onElem || s.onClickAnywhere)) {
-				GmCXt.restartInParent();
-				playNext = true;
-			} else if (s.headerNext && e.inColumn) {
-				playNext = true;
-			} else if (s.onClickAnywhere === true) {
-				playNext = true;
-			} else if (s.onPageClickNext === true) {
-				GmCXt.pauseGuide();
-			}
-
-			if (playNext) {
-
-				if (s.checkOnScreenError) {
-
-					GmCXt.timeout(function() {
-						if (GmCXt.checkForErrorOnScreen()) return;
-						GmCXt.requestHandler.playTourNextStep();
-					}, 3000);
-
-				} else {
-					GmCXt.requestHandler.playTourNextStep();
-				}
-			}
-		}
-	}
-};
-
-GmCXt.requestHandler.playTourNextStep = function() {
-
-	GmCXt.log(33, "Executing play next step handler.");
-
-	if (!GmCXt.isTrue(GmCXt.nextStepPlayEventReceived)) {
-
-		GmCXt.nextStepPlayEventReceived = true;
-
-		if (GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI.currentStepReq = null;
-			GmCXt.tourPlayerI.playNextStep();
-		}
-	}
-};
-
-GmCXt.requestHandler.playTourPrevStep = function() {
-
-	GmCXt.log(33, "Executing play previous step handler.");
-
-	if (GmCXt.tourPlayerI) {
-		GmCXt.tourPlayerI.currentStepReq = null;
-		GmCXt.tourPlayerI.playPreviousStep();
-	}
-};
-
-GmCXt.requestHandler.playVideo = function(data) {
-	GmCXt.closeAppPanel();
-	GmCXt.hideBeacons();
-	GmCXt.hideSmartTips();
-
-	mg$(window).focus();
-
-	GmCXt.playerI = data;
-
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_video');
-};
-
-GmCXt.requestHandler.videoAssignmentPlayed = function() {
-
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:lms_video_assignment_complete');
-
-	GmCXt.showSmartTips();
-	GmCXt.showBeacons();
-
-	GmCXt.openAppPanel("byPassRoute");
-
-	GmCXt.cleanPlayer();
-};
-
-GmCXt.playTour = function(data) {
-	GmCXt.closeAppPanel();
-	GmCXt.playerI.tour.steps = GmCXt.getStepsForPS(GmCXt.playerI.tour.steps);
-
-	var mode = GmCXt.playerI.mode;
-
-	if (!GmCXt.isAutomationRunning()) {
-		GmCXt.hideBeacons();
-	}
-
-	if (mode === 'slideshow' || mode === 'video' || mode === 'blog' || mode === 'giphy') {
-		GmCXt.tourPlayerI = GmCXt.tourPlayer();
-		GmCXt.playerI.tour.steps = GmCXt.playerI.tour.steps.filter(function(step) {
-			return step.step_type !== 'survey';
-		});
-		GmCXt.openAppPanel("playSlideShow");
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_slideshow', {
-			mode: mode
-		});
-
-	} else if (mode === 'vLab') {
-
-		GmCXt.vLabPlayerI = GmCXt.vlabPanel();
-		GmCXt.vLabPlayerI.load();
-
-	} else {
-
-		mg$(window).focus();
-
-		GmCXt.tourPlayerI = GmCXt.tourPlayer(data);
-		GmCXt.tourPlayerI.start();
-	}
-};
-
-GmCXt.checkVisible = function(pos) {
-	var winHeight = mg$(window).height();
-	var winWidth = mg$(window).width();
-
-	return GmCXt.visibleInViewport(pos, winHeight, winWidth);
-};
-
-GmCXt.requestHandler.findOtherTooltips = function(message) {
-	var data = message.data;
-	delete data.isOptional;
-	data.timeout = Date.now() + parseInt(GmCXt.t.tooltipTimeout);
-	data.findOther = true;
-
-	var action = 'mgPlayerJSPreview_action:started;task:select_dom_element_tooltips';
-	GmCXt.sendMessageToAllWindows(action, data);
-};
-
-GmCXt.requestHandler.handleEventSelectDOMElTooltip = function(event, message) {
-	if (window.self === window.top) {
-		var pi = GmCXt.playerI;
-
-		if (!GmCXt.isNotNull(pi) || !GmCXt.isDefined(pi)) {
-			return;
-		}
-
-		var d = message.data;
-
-		if (event && message.status === GmCXt.ELEMENT_FOUND) {
-			var pos = d.element.position;
-			d.element.position = GmCXt.addFrameOffset(event, pos);
-		}
-
-		if (GmCXt.tourPlayerI &&
-			d.requestId === pi.currentStepId && message.status === GmCXt.ELEMENT_FOUND) {
-
-			d.element.position = GmCXt.addScrollOffset(
-				d.element.position,
-				d.element.cssPosition
-			);
-
-			GmCXt.tourPlayerI.cssPosition = d.element.cssPosition;
-			var render = false;
-
-			if (d.watch) {
-				if (d.posChanged) {
-					GmCXt.log(33, "Tooltip element position changed.");
-					render = true;
-				} else if (mg$('.gm-tip-' + d.tooltipId).is(":hidden")) {
-					GmCXt.log(33, "Tooltip PopUp is hidden.");
-					render = true;
-				}
-			} else {
-				GmCXt.log(33, "Show tooltip at first.");
-				render = true;
-			}
-
-			if (render) {
-
-				GmCXt.tourPlayerI.onSuccessTooltipElementFound(d.element.position,
-					d.tooltipId);
-			}
-		} else if (message.status === GmCXt.ELEMENT_NOT_FOUND) {
-			GmCXt.tourPlayerI.onFailureTooltipElementNotFound(d.tooltipId);
-		}
-
-		GmCXt.playerI = pi;
-	}
-};
-
-GmCXt.requestHandler.handleEventSelectDOMElement = function(event, message) {
-
-	if (window.self === window.top) {
-
-		var d = message.data;
-
-		if (event && message.status === GmCXt.ELEMENT_FOUND) {
-			var pos = d.element.position;
-			d.element.position = GmCXt.addFrameOffset(event, pos);
-		}
-
-		if (message.action == 'mgPlayerJSPreview_action:completed;task:select_existing_dom_element') {
-
-			if (message.status === GmCXt.ELEMENT_FOUND && !d.watch) {
-				var visible = GmCXt.checkVisible(d.element.position);
-				if (!visible)
-					GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:bring_element_in_viewport', d);
-			}
-
-			if (GmCXt.isEmpty(GmCXt.playerI)) return;
-
-			if (GmCXt.tourPlayerI && d.requestId === GmCXt.playerI.currentStepId) {
-
-				switch (message.status) {
-
-					case GmCXt.ELEMENT_FOUND:
-
-						d.element.position = GmCXt.addScrollOffset(
-							d.element.position,
-							d.element.cssPosition
-						);
-
-						GmCXt.tourPlayerI.cssPosition = d.element.cssPosition;
-						var render = false;
-
-						if (d.watch) {
-							if (d.posChanged) {
-								GmCXt.log(33, "POS CHANGED element");
-								render = true;
-							} else if (mg$('.mgPlayerJSPreview_preview-step-popup-container').is(":hidden")) {
-								GmCXt.log(33, "SHOW AGAIN. Step popup is hidden");
-								render = true;
-							}
-						} else {
-							GmCXt.log(33, "SHOW step popup");
-							render = true;
-						}
-
-						if (render) {
-							GmCXt.tourPlayerI.onSuccessElementFound(d.element.position, d.workdayEdit, d.id);
-						}
-						GmCXt.hideToastMsg();
-
-						break;
-
-					case GmCXt.ELEMENT_NOT_FOUND:
-						GmCXt.tourPlayerI.onFailureElementNotFound(false, d.rca);
-						break;
-				}
-			}
-		}
-	}
-};
-
-GmCXt.requestHandler.enableNextButton = function(message) {
-	mg$(".mgPlayerJSPreview_play-step-next").css({
-		"opacity": 1,
-		"pointer-events": "initial"
-	});
-};
-
-GmCXt.getTooltipText = function(message) {
-
-	var text = '';
-	var opts = message.options;
-
-	if (message.derivedType === 'validation') {
-
-		// From v1.3.27, added support multiple validations on a tooltip
-		if (opts.rules && opts.rules.message) {
-
-			mg$('.mgPlayerJSPreview_smarttip-valid-' + message.stepId).hide();
-
-			for (var rule in opts.rules) {
-
-				if (opts.validationType && opts.validationType[rule] === true && GmCXt.tooltipValidRulesArr.indexOf(rule) === -1) {
-					text += GmCXt.escapeHtml(opts.rules.message[rule]) + ' <br/> ';
-				}
-			}
-
-		} else if (opts.validationMessage) {
-			text = GmCXt.escapeHtml(opts.validationMessage);
-		}
-
-	} else if (message.derivedType === 'guidance') {
-		text = opts.guidanceMessage;
-	}
-
-	return text;
-};
-
-GmCXt.requestHandler.setBeaconPosition = function(m, ev) {
-	var css_ = GmCXt.addFrameOffset(ev, m.css_);
-	var beaconObj = mg$("#mgPlayerJSPreview_beacon-icon-" + m.tourId);
-
-	if (beaconObj.length) {
-		beaconObj.css(css_);
-
-		if (m.isPreview) {
-			GmCXt.previewBeacons(m.tourId);
-		}
-	} else {
-		var beaconIcon = m.beaconIcon;
-		var beaconImgUrl = beaconIcon;
-
-		if (beaconImgUrl.indexOf('default_beacon') === -1) {
-			beaconImgUrl = beaconIcon + GmCXt.getCdnSign();
-		} else if (GmCXt.onPrem()) {
-			beaconImgUrl = GmCXt.conf.staticContentPath + beaconIcon;
-		}
-
-		var beaconClass = "mgPlayerJSPreview_beacon-icon mgPlayerJSPreview_beacon-icon-tour-" + m.tourId;
-		if (GmCXt.beaconsAreHidden && !m.isPreview) {
-			beaconClass += " mgPlayerJSPreview_hidden";
-		}
-
-		if (m.isPreview) beaconClass += " mgPlayerJSPreview_preview-beacon";
-
-		var titleAlign = m.align;
-		if (m.requestData.beaconSettings.beaconMsgPosition) {
-			titleAlign = m.requestData.beaconSettings.beaconMsgPosition;
-		}
-
-		var t = GmCXt.escapeHtml(m.tourTitle);
-		var c = GmCXt.singleLineTitle(t);
-
-		var html_ = "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_beacon-icon-" + m.tourId +
-			"' class='" + beaconClass + "'>" +
-			"   <img src='" + beaconImgUrl + "' class='mgPlayerJSPreview_custom-image' />" +
-			"   <div class='mgPlayerJSPreview_tour-title-on-beacon " + c + " mgPlayerJSPreview_tour-title-on-beacon-" +
-			titleAlign + "'>" +
-			t +
-			"</div>" +
-			"</wmgPlayerJSPreview_>";
-
-		mg$(html_)
-			.css(css_)
-			.appendTo('html:first')
-			.on('click', function() {
-				if (!m.isPreview) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_tour;event:beacon_click', {
-						tourId: m.tourId,
-						userKey: m.userKey
-					});
-					GmCXt.trackerV1.trackBeacons(m.requestData.tour, 'click');
-				}
-			})
-			.on('mouseover', function() {
-				this.style.zIndex = GmCXt.updateZIndex(this.style.zIndex, true); // passing true for incrementing z-index
-				if (!m.isPreview) {
-					GmCXt.trackerV1.trackBeacons(m.requestData.tour, 'hover');
-				}
-			})
-			.on('mouseout', function() {
-				this.style.zIndex = GmCXt.updateZIndex(this.style.zIndex);
-			});
-
-		if (!m.isPreview) {
-			GmCXt.updateBeaconsOnScreen(m.jobId.slice(1), true);
-			GmCXt.trackerV1.trackBeacons(m.requestData.tour, 'display');
-		}
-	}
-};
-
-GmCXt.requestHandler.toggleBeacon = function(m) {
-	var beaconImg = mg$(".mgPlayerJSPreview_beacon-icon.mgPlayerJSPreview_beacon-icon-tour-" + m.tourId);
-	if (m.remove) {
-		mg$(beaconImg).remove();
-	} else if (!m.show) {
-		mg$(beaconImg).hide();
-	} else {
-		mg$(beaconImg).show();
-	}
-};
-
-//To show validation message and show guidance tooltip on user action
-GmCXt.requestHandler.showSmarttip = function(m, ev) {
-
-	if (!m.options) return;
-
-	if (m.hideTooltip) {
-		GmCXt.requestHandler.hideSmartTip(m);
-	}
-	if (m.options.type == 'disableElement') {
-		var text = m.options.ductTapeDescription;
-	} else {
-		var text = GmCXt.getTooltipText(m);
-	}
-	// disable smarttips in step creation mode
-	if (GmCXt.stepReq &&
-		GmCXt.stepReq.action.indexOf('inline_step') !== -1) {
-		return;
-	}
-
-	var left = m.rect.left,
-		top = m.rect.top,
-		zIndex = m.zIndex,
-		id = 'mgPlayerJSPreview_smarttip-' + m.stepId,
-		className = 'smarttip-guidance-msg mgPlayerJSPreview_hover-smarttip-msg mgPlayerJSPreview_smarttip-tour-' + m.step.tour_id;
-
-	if (m.derivedType === 'validation') {
-		className += ' mgPlayerJSPreview_smarttip-valid';
-		className += ' mgPlayerJSPreview_smarttip-valid-' + m.stepId;
-		left = m.left;
-		top = m.top - m.scrollTop;
-		id = 'mgPlayerJSPreview_smarttip-valid-' + m.stepId;
-	}
-
-	if (m.tipPosition) {
-		className += ' ' + m.tipPosition;
-	}
-
-	if (m.isPreview)
-		className += ' mgPlayerJSPreview_preview-smarttip';
-
-	className += ' mgPlayerJSPreview_guidence-message-' + m.tourId;
-
-	if (m.options.type == 'disableElement') {
-		mg$('#' + id + "-alert").remove();
-	} else {
-		mg$('#' + id).remove();
-	}
-	mg$('.mgPlayerJSPreview_smarttip-hover-element').hide();
-
-	if (ev) {
-		var obj = {
-			left: left,
-			top: top
-		};
-		obj = GmCXt.addFrameOffset(ev, obj);
-		left = obj.left + mg$(window).scrollLeft();
-		top = obj.top + mg$(window).scrollTop();
-	} else {
-		top = m.top;
-	}
-
-	text = GmCXt.updateOrgAndAddSignature(GmCXt.replaceVariableWithValue(text));
-	var c = GmCXt.singleLineTitle(text);
-
-	var alignment = 'top';
-	if (m.alignment) {
-		alignment = m.alignment;
-	}
-
-	if (m.derivedType === 'validation') {
-		if (m.options.rules.alignment)
-			alignment = m.options.rules.alignment;
-
-		if (alignment !== "top" || alignment !== "bottom")
-			className += " smarttip-guidance-msg-" + alignment + " mgPlayerJSPreview_smarttip-valid-" + alignment;
-		else if (alignment !== "bottom")
-			className += " mgPlayerJSPreview_smarttip ";
-
-		className += " mgPlayerJSPreview_smarttip-valid-" + alignment;
-	}
-
-	if (m.actionType === 'hover') {
-		className += " mgPlayerJSPreview_smarttip-hover-element";
-	}
-
-	var popupSize = m.options.popupSize;
-	var popupStyle = "";
-	if (popupSize) {
-		var popupWidth = popupSize.popupWidth ? popupSize.popupWidth : '250';
-		var popupHeight = popupSize.popupHeight ? popupSize.popupHeight : '250';
-		popupStyle = "max-width:" +
-			popupWidth + "px; max-height:" + popupHeight + "px;";
-	}
-
-	var os = m.os;
-	var tTheme = {};
-
-	if (m.derivedType !== 'validation') {
-		tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSPreview_');
-		var popupFooter = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_smarttip-popup-footer mgPlayerJSPreview_width-100 mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center mgPlayerJSPreview_justify-content-flex-start'>" +
-			"                 <img class='mgPlayerJSPreview_custom-image' src='" + GmCXt.brandLogo() + "'>" +
-			"              </wmgPlayerJSPreview_>";
-	}
-
-	if (m.options.type == 'disableElement') {
-
-		id = id + '-alert';
-		mg$("<wmgPlayerJSPreview_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSPreview_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSPreview_>")
-			.css({
-				left: left,
-				zIndex: zIndex,
-				top: top,
-			})
-			.appendTo('html');
-	} else {
-		mg$("<wmgPlayerJSPreview_  class='" + className + " " + c + "' id='" + id + "' style=' " + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + popupStyle + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_hover-smarttip-msg-inner'  style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + text + "</wmgPlayerJSPreview_>" + ((tTheme.tooltipBgColor && tTheme.tooltipBgColor.length > 0) ? popupFooter : '') + "</wmgPlayerJSPreview_>")
-			.css({
-				left: left,
-				zIndex: zIndex,
-				top: top,
-			})
-			.appendTo('html');
-	}
-	GmCXt.imageSizeStyle('#' + id + ' .mgPlayerJSPreview_hover-smarttip-msg-inner img');
-
-	GmCXt.zoomImage(text, ".mgPlayerJSPreview_hover-smarttip-msg-inner");
-
-	if (text.indexOf('target = "gssPlayGuide"' !== -1)) {
-		GmCXt.setLinkGuidePlay(text, ".mgPlayerJSPreview_hover-smarttip-msg-inner");
-	}
-
-	if (GmCXt.isElectron()) {
-		GmCXt.setLinkClickhandler(text, ".mgPlayerJSPreview_hover-smarttip-msg-inner");
-	}
-
-	if (m.zIndex) {
-		mg$('#' + id).css('z-index', parseInt(m.zIndex));
-	}
-
-	var elArea = GmCXt.getRectObject(m.highlightedArea);
-
-	if (ev) {
-		elArea = GmCXt.addFrameOffset(ev, elArea);
-
-		if (m.tipPosition !== 'mgPlayerJSPreview_absolute-position')
-			elArea.top = elArea.top - m.scrollTop;
-
-	} else if (m.tipPosition === 'mgPlayerJSPreview_absolute-position') {
-		elArea.top = elArea.top + m.scrollTop;
-		if (alignment === "bottom")
-			m.highlightedArea.top += 8;
-	}
-
-	var opts = {
-		popup: mg$("#" + id),
-		alignment: alignment,
-		highlightedArea: elArea,
-		doNotApplyArrow: true,
-		isGuidance: true,
-		customPos: m.options.customPosition
-	};
-
-	if (m.derivedType !== 'validation') {
-
-		var alignment = GmCXt.alignPopup(opts).start();
-
-		if (alignment) {
-			mg$("#" + id).addClass(alignment);
-		}
-
-		if (!m.inTopWindow) {
-			mg$("#" + id).css({
-				top: mg$("#" + id).offset().top + mg$(window).scrollTop(),
-				left: mg$("#" + id).offset().left + mg$(window).scrollLeft()
-			});
-		}
-
-		if (m.options.hideAfter !== 'showAlways') {
-			mg$('#' + id).off('mouseover').on('mouseover', function() {
-				GmCXt.clearTooltipTimeout();
-			}).off('mouseout').on('mouseout', function(e) {
-				var topEl = document.elementFromPoint(e.clientX, e.clientY);
-
-				if (!GmCXt.isParentElementId(topEl, id))
-					GmCXt.hideTooltipDelay(m.step, m.options);
-			});
-		}
-
-		var toolTipActionData = {};
-		toolTipActionData.settings = m.step.step_settings;
-		toolTipActionData.step = m.step;
-
-		GmCXt.addEventOnTooltip(toolTipActionData);
-
-		if (!m.isPreview) {
-			GmCXt.updateOnScreenTooltipGuideInfo(m.tour, m.tourId, m.stepId, true, m.options, GmCXt.urlParts.fullUrl);
-		}
-	}
-
-	if (!m.isPreview) {
-		GmCXt.updateTooltipActionInfo(m.tourId, m.stepId, m.options, m.actionType);
-	}
-};
-
-GmCXt.getNotificationDelay = function() {
-
-	var delay = GmCXt.getAppSetting('notificationDelay');
-	delay = parseInt(delay);
-
-	if (!isNaN(delay)) {
-		if (delay) {
-			GmCXt.log(10, "DELAYED notification loading: " + delay + " seconds");
-		}
-		return delay * 1000;
-	} else
-		return 0;
-};
-
-GmCXt.requestHandler.onElementFoundForDomSelectRule = function(message) {
-
-	if (message.data.fromSidePanel) {
-		GmCXt.sendMessageToApp(message.action, message.data);
-	} else {
-		GmCXt.ruleEngine.onSuccessDOMRuleMatch(message.data);
-	}
-};
-
-GmCXt.sendStorageResponseToApp = function(res, id) {
-	var d = {
-		"id": id,
-		"data": res
-	};
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:receive_lxp_storage', d);
-};
-
-GmCXt.removeLxpStorageAll = function() {
-	for (i = 0; i < window.localStorage.length; i++) {
-		key = window.localStorage.key(i);
-		if (key.slice(0, 5) === "mgLxp") {
-			GmCXt.storage().remove(key);
-		}
-	}
-};
-
-GmCXt.addOverlay = function() {
-	var html = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_global-black-overlay' style='display:none' > </wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-};
-
-GmCXt.hideResumePopup = function() {
-	mg$('.mgPlayerJSPreview_play-pause-toolbar').hide();
-	GmCXt.setResumeWinDisplayed(false);
-};
-
-GmCXt.addPauseGuideHtml = function() {
-	var html = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-toolbar' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-toolbar-head'>" +
-		"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_play-pause-toolbar-title' class='mgPlayerJSPreview_play-pause-toolbar-title'>" + GmCXt.label.resumeGuide + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_action-icons-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-position-top'>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-position-bottom'>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-toolbar-close'>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-toolbar-inner mgPlayerJSPreview_inline-block-vm'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-pause-toolbar-resume mgPlayerJSPreview_inline-block-vm'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-resume-icon'>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_play-pause-resume-message' class='mgPlayerJSPreview_label-resume mgPlayerJSPreview_inline-block-vm'>" + GmCXt.label.resume + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-
-	mg$(".mgPlayerJSPreview_play-pause-position-top").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSPreview_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSPreview_play-pause-toolbar-close").html(GmCXt.svgs.close_resume);
-	mg$(".mgPlayerJSPreview_toolbar-resume-icon").html(GmCXt.svgs.resume);
-
-	mg$('.mgPlayerJSPreview_play-pause-toolbar-resume').on("click", function() {
-		GmCXt.hideResumePopup();
-
-		GmCXt.storage().get(['mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY', 'guide_play_event']).then(function(result) {
-
-			GmCXt.guidePlayTracker = result.guide_play_event || {};
-
-			if (result.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY) {
-
-				GmCXt.playerI.currentStepId = result.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY.lastPlayedStepId;
-
-				GmCXt.playerI.guideState = 'live';
-				GmCXt.tourPlayerI.guideState = 'live';
-
-				GmCXt.requestHandler.playTourNextStep();
-			}
-		});
-	});
-
-	mg$('.mgPlayerJSPreview_play-pause-toolbar-close').on("click", function() {
-		GmCXt.hideResumePopup();
-		GmCXt.displayWidget();
-
-		if (GmCXt.tourPlayerI) GmCXt.tourPlayerI.stop();
-	});
-
-	mg$('.mgPlayerJSPreview_play-pause-position-top').on('click', function(e) {
-		mg$('.mgPlayerJSPreview_play-pause-position-top').hide();
-		mg$('.mgPlayerJSPreview_play-pause-position-bottom').show();
-		mg$('.mgPlayerJSPreview_play-pause-position-bottom').css({
-			'display': 'inline-block'
-		});
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:position_play_pause_toolbar', {
-			position: 'top'
-		});
-	});
-
-	mg$('.mgPlayerJSPreview_play-pause-position-bottom').on('click', function(e) {
-		mg$('.mgPlayerJSPreview_play-pause-position-bottom').hide();
-		mg$('.mgPlayerJSPreview_play-pause-position-top').show();
-		mg$('.mgPlayerJSPreview_play-pause-position-top').css({
-			'display': 'inline-block'
-		});
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:position_play_pause_toolbar', {
-			position: 'bottom'
-		});
-	});
-};
-
-GmCXt.addImagePopHtml = function() {
-	var html =
-		"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_image_popup' class='mgPlayerJSPreview_image-popup' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_close-img-popup'>&times;</wmgPlayerJSPreview_>" +
-		"<img class='mgPlayerJSPreview_modal-content mgPlayerJSPreview_custom-image' id='mgPlayerJSPreview_img_desc'>" +
-		"</wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-};
-
-GmCXt.addStepPreviewHtml = function(popupObj) {
-	var t = popupObj.tour;
-	var a = popupObj.settings.automation;
-	var audioIcon = "<span class='mgPlayerJSPreview_popup-audio-on mgPlayerJSPreview_popup-audio-icon'></span>";
-	var os = GmCXt.getStepSettings();
-
-	var popupDesign = os.popupDesign;
-	var labelBtnPrev = ((popupDesign.type === 'classic' &&
-		GmCXt.getAppSetting("userLabels").btnPrev === GmCXt.engLbls.defaultBtnPrev) ? GmCXt.label.btnPrevious : GmCXt.label.btnPrev);
-
-	var html =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_preview-step-popup-container mgPlayerJSPreview_step-popup' id='mgPlayerJSPreview_preview-step-popup-container' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-header'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-s-num mgPlayerJSPreview_inline-block-vm'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-ctrls-wrapper mgPlayerJSPreview_position-relative' > ";
-
-	if (a.hasHumanInteraction) {
-		html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_play-step-automation-indicator-wrapper' class='mgPlayerJSPreview_play-step-automation-indicator-wrapper'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-user-icon'>" +
-			"<img src='" + GmCXt.getBaseUrl('common/icons/mg-user-icon.png') + "'/>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
-	} else {
-		html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_play-step-automation-indicator-wrapper' class='mgPlayerJSPreview_play-step-automation-indicator-wrapper'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-auto-gear mgPlayerJSPreview_inline-block-vm' id='mgPlayerJSPreview_play_step_auto_gear'></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_automation-progress-wrapper'>" +
-			"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_auto-progress-1' class='mgPlayerJSPreview_automation-progress mgPlayerJSPreview_inline-block-vm''></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_auto-progress-2' class='mgPlayerJSPreview_automation-progress mgPlayerJSPreview_inline-block-vm''></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_auto-progress-3' class='mgPlayerJSPreview_automation-progress mgPlayerJSPreview_inline-block-vm''></wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-drag mgPlayerJSPreview_message-popup-drag mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_play-step-popup-icon-common' aria-label='step popup drag button' id='mgPlayerJSPreview_play_step_popup_drag'>" +
-		"<span id='mgPlayerJSPreview_play-step-popup-drag-icon' ></span>" +
-		"</wmgPlayerJSPreview_>";
-
-	var audioPreference = GmCXt.getAudioPreference();
-
-	if (!audioPreference || GmCXt.isPageReloaded) {
-		audioIcon = "<span class='mgPlayerJSPreview_popup-audio-off mgPlayerJSPreview_popup-audio-icon'></span>";
-	}
-
-	if (GmCXt.FT.audio) {
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-audio mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_play-step-popup-icon-common' id='mgPlayerJSPreview_play_step_audio'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_audio-pop-icons' >" +
-			audioIcon +
-			"</wmgPlayerJSPreview_>" +
-			"<iframe id='mgPlayerJSPreview_play-step-audio-iframe' title='Guideme step audio iframe'  class='mgPlayerJSPreview_play-step-audio-iframe' src='" + GmCXt.getBasePath('common/audio/audio.html') + "' ></iframe>" +
-			"</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-audio-loader mgPlayerJSPreview_inline-block-vm'>" +
-			"<img src='" + GmCXt.loader() + "' />" + "</wmgPlayerJSPreview_>";
-	}
-	if (GmCXt.FT.creatorApp && t && !t.is_published && !(GmCXt.isDesktop())) {
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-edit mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_play-step-popup-icon-common' id ='mgPlayerJSPreview_play_step_popup_edit'>" +
-			"<span id='mgPlayerJSPreview_play-step-popup-edit-icon' class='mgPlayerJSPreview_play-step-popup-edit-icon'></span>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	if (!GmCXt.isAutomationRunning()) {
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-close mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_play-step-popup-icon-common' aria-label='step popup close button' id='mgPlayerJSPreview_play_step_popup_close'>" +
-			"<span id='mgPlayerJSPreview_play-step-popup-close-svg' class='mgPlayerJSPreview_play-step-popup-close-svg' ></span>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	html += "</wmgPlayerJSPreview_>";
-
-	html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-content-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-s-title mgPlayerJSPreview_step-title mgPlayerJSPreview_inline-block-vm'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-description'></wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-footer'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-popup-logo mgPlayerJSPreview_inline-block-vm'>" +
-		"<img src='' class='mgPlayerJSPreview_custom-image'  alt='" + GmCXt.label.brandLogo + "'/>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-navigation mgPlayerJSPreview_inline-block-vm'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-prev mgPlayerJSPreview_inline-block-vm' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSPreview_play_step_prev'>" +
-		"<span class='mgPlayerJSPreview_width-auto mgPlayerJSPreview_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-next mgPlayerJSPreview_play-step-next-done mgPlayerJSPreview_inline-block-vm' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSPreview_play_step_next'>" +
-		"<span class='mgPlayerJSPreview_width-auto mgPlayerJSPreview_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-next mgPlayerJSPreview_play-step-next-done mgPlayerJSPreview_play-step mgPlayerJSPreview_inline-block-vm' aria-label='step popup done button' id='mgPlayerJSPreview_play_step_next_done' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
-		"<span id='mgPlayerJSPreview_play-step-next-done-svg' class='mgPlayerJSPreview_width-auto'></span>" +
-		"</wmgPlayerJSPreview_>";
-
-	if (!GmCXt.isAutomationRunning()) {
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_play-step-pause mgPlayerJSPreview_inline-block-vm' aria-label='step popup pause button' id='mgPlayerJSPreview_play_step_pause' style='display:none;text-align:center !important;font-size: 15px !important;'>" +
-			"<span id='mgPlayerJSPreview_play-step-pause-svg' class='mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_width-auto'></span>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	html += "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='preview-step-popup-navigation-wrapper mgPlayerJSPreview_inline-block-vt popup-classic-design-navigation'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-classic-navigation-next mgPlayerJSPreview_play-step-next mgPlayerJSPreview_play-step-next-done mgPlayerJSPreview_play-step mgPlayerJSPreview_play-step-classic-done mgPlayerJSPreview_inline-block-vt' aria-label='step popup " + GmCXt.label.close + " button' id='mgPlayerJSPreview_play_step_next_done_classic' style='display:none;'>" +
-		"<span class='popup-classic-next mgPlayerJSPreview_width-auto' style='margin: 0 !important;'>" + GmCXt.label.close + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-classic-navigation-next mgPlayerJSPreview_play-step-next mgPlayerJSPreview_inline-block-vt' aria-label='step popup " + GmCXt.label.next + " button' id='mgPlayerJSPreview_play_step_next_classic'>" +
-		"<span class='mgPlayerJSPreview_width-auto mgPlayerJSPreview_text-span mgPlayerJSPreview_width-auto mgPlayerJSPreview_text-overflow-ellipsis'>" + GmCXt.label.next + "</span>" +
-		"<span id='mgPlayerJSPreview_popup-classic-navigation-next-svg'  class='mgPlayerJSPreview_width-auto' style='margin: 0 !important;'></span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='popup-classic-design-navigation-prev mgPlayerJSPreview_play-step-prev mgPlayerJSPreview_inline-block-vt' aria-label='step popup " + labelBtnPrev + " button' id='mgPlayerJSPreview_play_step_prev_classic'>" +
-		"<span id='mgPlayerJSPreview_popup-classic-navigation-prev-svg' class='mgPlayerJSPreview_width-auto' style='margin: 0 !important;'></span>" +
-		"<span class='mgPlayerJSPreview_width-auto mgPlayerJSPreview_text-overflow-ellipsis'>" + labelBtnPrev + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-classic-navigation-pause mgPlayerJSPreview_play-step-pause-classic mgPlayerJSPreview_inline-block-vt' aria-label='step popup pause button' id='mgPlayerJSPreview_play_step_pause_classic' style='display:none;'>" +
-		"<span id='mgPlayerJSPreview_popup-classic-nav-pause-svg' class='mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_width-auto'></span>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_clear'></wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	mg$("html:first").append(html);
-
-	mg$("#mgPlayerJSPreview_play-step-popup-drag-icon").html(GmCXt.svgs.iconPopupDrag);
-	mg$("#mgPlayerJSPreview_play_step_auto_gear").html(GmCXt.svgs.iconStepAutoGear);
-	mg$(".mgPlayerJSPreview_popup-audio-on").html(GmCXt.svgs.iconStepPlayAudioOn);
-	mg$(".mgPlayerJSPreview_popup-audio-off").html(GmCXt.svgs.iconStepPlayAudioOff);
-	mg$("#mgPlayerJSPreview_play-step-popup-edit-icon").html(GmCXt.svgs.iconPopupEdit);
-	mg$("#mgPlayerJSPreview_play-step-popup-close-svg").html(GmCXt.svgs.iconClosePopup);
-	mg$("#mgPlayerJSPreview_play-step-pause-svg").html(GmCXt.svgs.iconPause);
-	mg$("#mgPlayerJSPreview_popup-classic-navigation-next-svg").html(GmCXt.svgs.iconClassicNavNext);
-	mg$("#mgPlayerJSPreview_popup-classic-navigation-prev-svg").html(GmCXt.svgs.iconClassicNavPrev);
-	mg$("#mgPlayerJSPreview_play-step-next-done-svg").html(GmCXt.svgs.iconPlayStepNext);
-	mg$("#mgPlayerJSPreview_popup-classic-nav-pause-svg").html(GmCXt.svgs.iconPause);
-
-	if (!GmCXt.FT.audio) {
-		mg$('.mgPlayerJSPreview_play-step-popup-drag').css('right', '30px');
-		mg$('.mgPlayerJSPreview_play-step-popup-edit').css('right', '50px');
-	}
-};
-
-GmCXt.setResumeWinDisplayed = function(status) {
-	GmCXt.storage().set({
-		'resumeWinDisplayed': status
-	});
-};
-
-GmCXt.addVlabHtml = function() {
-	var html =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_vlab-container' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_vlab-screen'>" +
-		"   <img class='mgPlayerJSPreview_vlab-screen-img' src='" + GmCXt.getDefaultGuideIcon() + "' alt='' />" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_vlab-video-screen'>" +
-		"   <video id='mgPlayerJSPreview_vlab-video-container' class='mgPlayerJSPreview_vlab-video-container' autoplay controls ></video>" +
-		"</wmgPlayerJSPreview_>" +
-		"<img alt='loader image' class='mgPlayerJSPreview_vlab-screen-loader' src='" + GmCXt.loader() + "' />" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_vlab-virtual-element'></wmgPlayerJSPreview_>" +
-		"<button class='mgPlayerJSPreview_vlab-next mgPlayerJSPreview_lbl-btn' aria-label='vlab next button' >" +
-		"<img alt='next' src='" + GmCXt.conf.staticContentPath + "white_next.png' />" +
-		"</button>" +
-		"<button class='mgPlayerJSPreview_vlab-prev mgPlayerJSPreview_lbl-btn' aria-label='vlab next button' >" +
-		"<img alt='next' src='" + GmCXt.conf.staticContentPath + "white_next.png' />" +
-		"</button>" +
-		"<button class='mgPlayerJSPreview_vlab-close mgPlayerJSPreview_lbl-btn' aria-label='vlab close button'>" +
-		"<img alt='close' src='" + GmCXt.conf.staticContentPath + "white_close.png' />" +
-		"</button>" +
-		"</wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-};
-
-GmCXt.addStopTestMePanel = function() {
-	var html =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-active' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-active-head'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-active-countdown'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-action-icons-wrapper'>" +
-		"<button class='mgPlayerJSPreview_play-pause-position-top mgPlayerJSPreview_lbl-btn'>" +
-		"</button>" +
-		"<button class='mgPlayerJSPreview_play-pause-position-bottom mgPlayerJSPreview_lbl-btn'>" +
-		"</button>" +
-		"<button class='mgPlayerJSPreview_testme-active-close mgPlayerJSPreview_lbl-btn'>" +
-		"</button>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-active-inner'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-active-title'>" + GmCXt.label.testMeStopMessage + "</wmgPlayerJSPreview_>" +
-		"<button class='mgPlayerJSPreview_testme-active-stop mgPlayerJSPreview_lbl-btn'>" +
-		"<img class='mgPlayerJSPreview_testme-stop-img' src='" + GmCXt.conf.staticContentPath + "white_stop.png'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_testme-stop-label'>" + GmCXt.label.stop + "</wmgPlayerJSPreview_>" +
-		"</button>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-
-	mg$(".mgPlayerJSPreview_play-pause-position-top").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSPreview_play-pause-position-bottom").html(GmCXt.svgs.down_arrow);
-	mg$(".mgPlayerJSPreview_testme-active-close").html(GmCXt.svgs.close_resume);
-
-	function stopTestMe() {
-		GmCXt.requestHandler.stopToolTestMe();
-	}
-
-	mg$('.mgPlayerJSPreview_testme-active-stop').on("click", stopTestMe);
-	mg$('.mgPlayerJSPreview_testme-active-close').on("click", stopTestMe);
-
-	mg$('.mgPlayerJSPreview_play-pause-position-top').on('click', function(e) {
-		mg$(this).hide();
-		mg$('.mgPlayerJSPreview_play-pause-position-bottom').show().css({
-			'display': 'inline-block'
-		});
-		mg$('.mgPlayerJSPreview_testme-active').css({
-			top: '5px'
-		});
-	});
-
-	mg$('.mgPlayerJSPreview_play-pause-position-bottom').on('click', function(e) {
-		mg$(this).hide();
-		mg$('.mgPlayerJSPreview_play-pause-position-top').show().css({
-			'display': 'inline-block'
-		});
-		var bpos = mg$(window).height() - 127;
-		mg$('.mgPlayerJSPreview_testme-active').css({
-			top: bpos + 'px'
-		});
-	});
-};
-
-GmCXt.addFeedBackToolbar = function() {
-	var html = "<wmgPlayerJSPreview_ id='mg-feedback-container-wrapper' style='display:none;'>" +
-		"	<div id='mg-feedback-flex-container' class='mgPlayerJSPreview_feedback-flex-container'>" +
-		"		<div id='mgPlayerJSPreview_blackout' class='mgPlayerJSPreview_blackout'></div>" +
-		"		<div id='mgPlayerJSPreview_highlight' class='mgPlayerJSPreview_highlight'></div>" +
-		"		<div id='mg-feedback-popup' class='mgPlayerJSPreview_feedback-modal-content'>" +
-		"			<div class='mgPlayerJSPreview_feedback-popup-inner-container'>" +
-		"				<div class='mgPlayerJSPreview_feedback-header'>" +
-		"					<div class='mgPlayerJSPreview_feedback-header-text'>" + GmCXt.label.sendFeedback + "</div>" +
-		"				</div>" +
-		"				<textarea class='mgPlayerJSPreview_feedback-textarea' id='mg-feedback' name='feedback' rows='4' cols='5' maxlength='3000' placeholder='" + GmCXt.label.feedbackPlaceholder + "'></textarea>" +
-		"				<div class='mgPlayerJSPreview_feedback-body'>" +
-		"					<div class='mgPlayerJSPreview_feedback-check'>" +
-		"						<input type='checkbox' id='mg-feedback-screenshot-check' class='mgPlayerJSPreview_feedback-checkbox' checked>" +
-		"						<div class='mgPlayerJSPreview_feedback-label'>" + GmCXt.label.includeScreen + "</div>" +
-		"					</div>" +
-		"					<div class='mgPlayerJSPreview_feedback-img-container'>" +
-		"						<button class='mgPlayerJSPreview_feedback-re-edit-btn click-reEditImage'>" +
-		"							<img id='mg-feedback-screenshot-image' class='mgPlayerJSPreview_feedback-img' src=''>" +
-		"							<div class='mgPlayerJSPreview_feedback-overlay-svg'>" +
-		"								<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
-		"									<path d='M16.1 8.43V5.36a1 1 0 1 1 2 0v3.07a1 1 0 0 1-2 0Zm7 3.49a1 1 0 0 0 .71-.29L26 9.46a1 1 0 0 0 0-1.41 1 1 0 0 0-1.41 0l-2.17 2.17a1 1 0 0 0 .7 1.7ZM10.37 22.26 8.2 24.43a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l2.17-2.17a1 1 0 1 0-1.42-1.42ZM9.58 17a1 1 0 0 0-1-1H5.52a1 1 0 0 0 0 2h3.06a1 1 0 0 0 1-1Zm0-8.9A1 1 0 0 0 8.2 9.46l2.17 2.17a1 1 0 0 0 .71.29 1 1 0 0 0 .71-.29 1 1 0 0 0 0-1.41Zm17.57 19.3a1 1 0 0 1-1.41 0l-3.63-3.63-2.58 3.35a1 1 0 0 1-.79.39h-.17a1 1 0 0 1-.78-.68L14.28 15.7a1 1 0 0 1 1.26-1.26L26.61 18a1 1 0 0 1 .31 1.75l-3.35 2.58 3.62 3.62a1 1 0 0 1 0 1.4Zm-5.89-5.8.07-.06.07-.06 2.74-2.11L16.73 17l2.37 7.4Z' />" +
-		"								</svg>" +
-		"								<span class='mgPlayerJSPreview_feedback-svg-text'>" + GmCXt.label.feedbackOptBtn + "</span>" +
-		"							</div>" +
-		"						</button>" +
-		"						<div class='mgPlayerJSPreview_feedback-overlay-svg-error'>" + GmCXt.label.feedbackImgErrorMsg + " </div>" +
-		"					</div>" +
-		"				</div>" +
-		"				<div class='mgPlayerJSPreview_feedback-footer'>" +
-		"					<button type='submit' class='mgPlayerJSPreview_feedback-cancel'>" + GmCXt.label.btnCancel + "</button>" +
-		"					<button type='submit' class='mgPlayerJSPreview_feedback-send-btn'>" + GmCXt.label.send + "</button>" +
-		"				</div>" +
-		"			</div>" +
-		"		</div>" +
-		"		<div id='mg-feedback-selector-toolbar' class='mgPlayerJSPreview_feedback-selector-toolbar mgPlayerJSPreview_feedback-modal-content'>" +
-		"			<button id='mg-feedback-highlight-btn' class='selector-btn btn-border'>" + GmCXt.label.highlight + "</button>" +
-		"			<button id='mg-feedback-hide-btn' class='selector-btn btn-border'>" + GmCXt.label.hide + "</button>" +
-		"			<button id='mg-feedback-done-btn' class='selector-btn'>" + GmCXt.label.done + "</button>" +
-		"		</div>" +
-		"	</div>" +
-		"</wmgPlayerJSPreview_>";
-
-	mg$("html").append(html);
-
-	mg$('.mgPlayerJSPreview_feedback-send-btn').off('click').on('click', function() {
-		GmCXt.sendFeedback();
-	});
-	mg$('.mgPlayerJSPreview_feedback-cancel').off('click').on('click', function() {
-		GmCXt.clearFeedBackView();
-	});
-	mg$('.click-reEditImage').off('click').on('click', function() {
-		GmCXt.onEditScreenshotClick();
-	});
-	mg$('#mg-feedback-highlight-btn').off('click').on('click', function() {
-		GmCXt.onClickFeedbackHighlightArea();
-	});
-	mg$('#mg-feedback-hide-btn').off('click').on('click', function() {
-		GmCXt.onClickFeedbackHideArea();
-	});
-	mg$('#mg-feedback-done-btn').off('click').on('click', function() {
-		GmCXt.onClickFeedbackEditDone();
-	});
-};
-
-GmCXt.addListenersToDesktopApp = function() {
-
-	if (GmCXt.isEnt()) {
-		document.addEventListener('start_creator_session', createSession);
-
-		document.addEventListener('start_guide_automation', function(e) {
-			GmCXt.log(37, "input data", e.detail.playJSON);
-			var data = GmCXt.parseJSON(e.detail.playJSON);
-			syncDesktopRequest(e).then(function() {
-				GmCXt.sendMessageToApp('mgPlayerJSPreview_action:switch_app', {
-					app: GmCXt.appList['app:' + data.application_id]
-				});
-				GmCXt.startAuto(data);
-			});
-		});
-	}
-
-	if (GmCXt.isPlayer()) {
-		document.addEventListener('start_player_session', createSession);
-	}
-
-	function syncDesktopRequest(e) {
-
-		var deskReq = e.detail;
-		return GmCXt.storage().get(['desktopReq']).then(function(st) {
-			if (st && st.desktopReq) {
-				deskReq = Object.assign({}, st.desktopReq, deskReq);
-			}
-			GmCXt.deskReq = deskReq;
-			GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:connected_from_app_step', {
-				data: deskReq
-			});
-
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:connected_from_app', {
-				data: deskReq
-			});
-			return deskReq;
-		});
-	}
-
-	function startTour(e) {
-		return syncDesktopRequest(e).then(GmCXt.startTourFromDesktopApp);
-	}
-
-	function createSession(e) {
-		return syncDesktopRequest(e).then(function() {
-			if (!e.detail.user) {
-				return;
-			}
-			var data = {};
-			data.user = GmCXt.validateDataModel(GmCXt.parseJSON(e.detail.user), GmCXt.model.user);
-			if (!GmCXt.user && data.user && !GmCXt.isEmpty(data.user)) {
-				GmCXt.sendMessageToApp('mgPlayerJSPreview_action:user_signed_in', {
-					data: data
-				});
-			}
-		});
-	}
-};
-
-GmCXt.addDragPopUpFunction = function() {
-	var elmnt = document.getElementById("mgPlayerJSPreview_preview-step-popup-container");
-	var dragEl = document.getElementById('mgPlayerJSPreview_play_step_popup_drag');
-
-	GmCXt.attachDragEvents(elmnt, dragEl);
-};
-
-GmCXt.addDragMicroPlayerFunction = function() {
-	var elmnt = document.getElementsByClassName('mgPlayerJSPreview_panel mgPlayerJSPreview_theme-mplayer')[0];
-	var dragEl = document.getElementById('mgPlayerJSPreview_mPlayer-drag');
-
-	GmCXt.attachDragEvents(elmnt, dragEl);
-};
-
-GmCXt.addStepToolbar = function() {
-
-	var cname = 'mgPlayerJSPreview_toolbar-iframe';
-	if (GmCXt.isEnt()) {
-		cname += ' ' + GmCXt.conf.appName + '-step-toolbar';
-	}
-
-	var html = "<div class='mgPlayerJSPreview_toolbar-panel'>" +
-		"<iframe id='mgPlayerJSPreview_toolbar-iframe' class='" + cname + "' name='guideme-iframe' title='Guideme toolbar iframe' src='" +
-		GmCXt.getBaseUrl("content_script/toolbar/toolbar.html") +
-		"' width='100%' marginwidth='0' marginheight='0' scrolling='no' frameborder='0'></iframe> " +
-		"</div>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip mgPlayerJSPreview_toolbar-top-pos' style='display:none;'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-close'>" +
-		"<span class='mgPlayerJSPreview_toolbar-tooltip-close-svg'></span>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-bottom-left'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-capture'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-title'>" + GmCXt.label.captureModeNow + "</li></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnables + "</li></wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-navigation'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-title'>" + GmCXt.label.navigateMode + "</li></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-instruction'>" + GmCXt.label.captureNavigateMode + "</li></wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-delay-capture'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-title'>" + GmCXt.label.captureDelayModeNow + "</li></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_toolbar-tooltip-instruction'>" + GmCXt.label.modeEnablesPage + "</li></wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='ok-got-it'>" + GmCXt.label.gotIt + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-	mg$("html").append(html);
-
-	mg$(".mgPlayerJSPreview_toolbar-tooltip-close-svg").html(GmCXt.svgs.popup_close);
-
-	mg$(".mgPlayerJSPreview_toolbar-tooltip .ok-got-it").click(function() {
-		mg$(".mgPlayerJSPreview_toolbar-tooltip").hide();
-	});
-};
-
-GmCXt.getStepCreatorIframe = function() {
-	if (GmCXt.FT.creatorApp) {
-		var appName = GmCXt.conf.appName;
-		return "<div class='mgPlayerJSPreview_step-panel " + appName + "-step-container'>" +
-			"<iframe id='mgPlayerJSPreview_step-iframe' name='" + appName + "-guideme-iframe' title='Guideme step iframe' class='" + appName + "-step-iframe mgPlayerJSPreview_step-iframe' src='" +
-			GmCXt.getBaseUrl("content_script/step/step.html") +
-			"' marginwidth='0' marginheight='0' scrolling='no' frameborder='0' allow='microphone; camera'></iframe> " +
-			"</div>";
-	} else {
-		return "";
-	}
-};
-
-GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/src/index_1723122380932.html") + "?domainName=" + GmCXt.getPageDomain();
-	var aria_hidden = "aria-hidden = 'true' tabindex = '-1'";
-	var html = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel mgPlayerJSPreview_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSPreview_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSPreview_theme-mplayer' : '') + "' " + aria_hidden + ">";
-
-	if (GmCXt.isWBMicroPlayer()) {
-		html +=
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_panel-micro-header mgPlayerJSPreview_position-relative'>" +
-			"	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_player-title-wrapper mgPlayerJSPreview_wb-micro-font-family'>" +
-			GmCXt.label.wbMplayerTitle + "</wmgPlayerJSPreview_>" +
-			"	<wmgPlayerJSPreview_ id='mgPlayerJSPreview_micro_player_drag' class='mgPlayerJSPreview_player-drag-wrapper'>" +
-			" 		<span id='mgPlayerJSPreview_micro_player_drag-svg'></span> " +
-			"  		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-top-left'>" +
-			"     		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title mgPlayerJSPreview_wb-micro-font-family'>" + GmCXt.label.wbDragTooltip + "</wmgPlayerJSPreview_>" +
-			"		</wmgPlayerJSPreview_>" +
-			"	</wmgPlayerJSPreview_>" +
-			"	<wmgPlayerJSPreview_ class='mgPlayerJSPreview_player-close-wrapper'>" +
-			"       <span id='mgPlayerJSPreview_mplayer-close-svg'></span>" +
-			"		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-top-left'>" +
-			"		<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title mgPlayerJSPreview_wb-micro-font-family'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-			"		</wmgPlayerJSPreview_>" +
-			"	</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
-
-	} else {
-		html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_panel-close' class='mgPlayerJSPreview_panel-close " + ((GmCXt.isMicroPlayer()) ? 'mgPlayerJSPreview_display-none' : '') + "' aria-label='panel close button'>" +
-			"<button class='mgPlayerJSPreview_panel-close-btn-wrapper mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center mgPlayerJSPreview_lbl-btn'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_close-lbl'>" + GmCXt.label.close + " </wmgPlayerJSPreview_> <span id='mgPlayerJSPreview_close-lbl-svg' class='mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center mgPlayerJSPreview_justify-content-center'></span> </button>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	// micro player drag element 
-	html += "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_mPlayer-drag'> </wmgPlayerJSPreview_>";
-
-	var cname = 'mgPlayerJSPreview_app';
-	if (GmCXt.isWBMicroPlayer()) {
-		cname += ' mgPlayerJSPreview_app-micro';
-	}
-
-	if (GmCXt.isEnt() || GmCXt.isPlayer()) {
-		cname += ' ' + GmCXt.conf.appName + '-side-panel';
-	}
-
-	var scormText = "";
-	if (GmCXt.FT.isPlayer && window.location.hostname === "cloud.scorm.com") {
-		scormText = 'onload="updateIframesLoadedCount()"';
-	}
-
-	html += "<iframe id='mgPlayerJSPreview_app' name='guideme-iframe' title='Guideme sidepanel iframe' " +
-		"	class='" + cname + "'" + aria_hidden +
-		"	src='" + u + "' allowfullscreen='true' allow='microphone; camera' " + scormText + "></iframe> " +
-		"</wmgPlayerJSPreview_>";
-
-	return html;
-};
-
-function initialiseTestAutomationData() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:construct_test_automation');
-}
-
-GmCXt.bootApplication = function() {
-
-	GmCXt.log(33, "BOOT APP", 1);
-	var lang = GmCXt.mgActiveLang;
-
-	if (!GmCXt.mgActiveLang && GmCXt.browserLang) {
-		lang = GmCXt.browserLang;
-		GmCXt.mgActiveLang = lang;
-	}
-
-	GmCXt.getAllLabels(lang);
-	GmCXt.addOverlay();
-	GmCXt.addPauseGuideHtml();
-	GmCXt.addVlabHtml();
-	GmCXt.addStopTestMePanel();
-	initialiseTestAutomationData();
-
-	var imgStepLoader = '';
-	var editStepLoader = '';
-
-	if (GmCXt.FT.creatorApp) {
-		editStepLoader = "<div class='mgPlayerJSPreview_edit-step-loader'>" +
-			"<img src='" + GmCXt.loader() + "' /></div>";
-		imgStepLoader = "<div class='mgPlayerJSPreview_image-step-loader'>" +
-			"<img src='" + GmCXt.loader() + "' /></div>";
-
-		GmCXt.addStepToolbar();
-	}
-
-	var html = GmCXt.getSidePanelIframe() +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_screen-blackout'></wmgPlayerJSPreview_>" +
-		editStepLoader +
-		imgStepLoader +
-		GmCXt.getStepCreatorIframe() +
-		"<wmgPlayerJSPreview_ id='mgPlayerJSPreview_toast-msg'></wmgPlayerJSPreview_>";
-
-	if (GmCXt.browserApp === 'ie') {
-		mg$("body").append(html);
-	} else {
-		mg$("html").append(html);
-	}
-
-	mg$("#mgPlayerJSPreview_micro_player_drag-svg").html(GmCXt.svgs.micro_drag);
-	mg$("#mgPlayerJSPreview_mplayer-close-svg").html(GmCXt.svgs.mplayer_close);
-	mg$("#mgPlayerJSPreview_close-lbl-svg").html(GmCXt.svgs.close);
-	mg$("#mgPlayerJSPreview_slideshow_drag").html(GmCXt.svgs.slideshow_drag);
-
-	GmCXt.initialization.sidePanel = false;
-
-	mg$(".mgPlayerJSPreview_panel-close .mgPlayerJSPreview_panel-close-btn-wrapper").click(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:close_video');
-		GmCXt.closeAppPanel();
-	});
-
-	mg$(".mgPlayerJSPreview_player-close-wrapper").click(function() {
-		GmCXt.sendMessageToApp('mgPlayerJSPreview_action:close_video');
-		GmCXt.closeAppPanel();
-	});
-
-	var newStyle = GmCXt.getCustomFontStyle();
-	mg$("html:first").append(newStyle);
-
-	// Guide Automation result popup should be visible even if user did a page refresh.
-	// It should show until user clicked the Insights link in it or closed it.
-	if (GmCXt.auto) {
-		GmCXt.auto.getTestResultsFromStorage(function(response) {
-			GmCXt.auto.showResults(response);
-		});
-	}
-};
-
-GmCXt.isSumtotalCalendarIframe = function(name) {
-	if (GmCXt.isSumtotal() && name.toLowerCase().indexOf('calendar') !== -1) {
-		return true;
-	}
-	return false;
-};
-
-GmCXt.isSabaSCORMIframe = function(name) {
-	if (GmCXt.isSbx() && name.toLowerCase().indexOf('sco') !== -1) {
-		return true;
-	}
-	return false;
-};
-
-GmCXt.isAllowedIframe = function(name) {
-	var isAllowed = true;
-	if (name.indexOf('guideme-iframe') !== -1 || GmCXt.isSumtotalCalendarIframe(name) || GmCXt.isSabaSCORMIframe(name)) {
-		isAllowed = false;
-	}
-	return isAllowed;
-};
-
-GmCXt.injectGuideMeInIframes = function(windowInstance) {
-
-	var frames_ = windowInstance.frames;
-	var randomNumGenerated = function() {
-		return crypto.getRandomValues(new Uint32Array(1))[0] / Math.pow(2, 32);
-	};
-	for (var i = 0; i < frames_.length; i++) {
-
-		try {
-			if (!frames_[i].name) {
-				frames_[i].name = 'name_' + randomNumGenerated();
-			}
-
-			if (GmCXt.isAllowedIframe(frames_[i].name)) {
-
-				if (!frames_[i].GmCXt && (frames_[i].innerWidth > 1) && (frames_[i].innerHeight > 1)) {
-					var embedScript = document.createTextNode(GmCXt.getEmbedCode());
-
-					var newScript = document.createElement("script");
-					newScript.appendChild(embedScript);
-
-					var frameContent = frames_[i].document.head;
-					frameContent.appendChild(newScript);
-
-				}
-
-				if (frames_[i].window.frames.length) {
-					GmCXt.injectGuideMeInIframes(frames_[i].window);
-				}
-			}
-		} catch (e) {}
-	}
-};
-
-GmCXt.showCookieDisabledPopup = function() {
-	var m = {
-		action: 'mgPlayerJSPreview_action:to_background;task:show_cookie_disabled_popup'
-	};
-	GmCXt.sendMessageToBackgroundService(m);
-
-	if (GmCXt.FT.isPlayer) {
-		console.dir("Cookies are disabled in this browser. To use MyGuide, please enable cookies");
-	}
-};
-
-GmCXt.setSession = function() {
-	var mgInfo = sessionStorage.getItem('mgInfo');
-
-	if (mgInfo) {
-		GmCXt.sessionInfo = GmCXt.parseJSON(mgInfo);
-	} else {
-
-		var mgInfo = {
-			session_id: GmCXt.getUUID()
-		};
-
-		//new session
-		sessionStorage.setItem(
-			'mgInfo', JSON.stringify(mgInfo)
-		);
-	}
-
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:update_session_info", {
-		sessionInfo: GmCXt.parseJSON(mgInfo)
-	});
-};
-
-GmCXt.main = function() {
-
-	if (!navigator.cookieEnabled) {
-		GmCXt.showCookieDisabledPopup();
-		return;
-	}
-
-	if (GmCXt.isHumana() && GmCXt.isSalesForcePopOutSide()) {
-		return;
-	}
-
-	GmCXt.initDebugMode();
-
-	GmCXt.isPageRefresh = GmCXt.convertType(localStorage.getItem('mg_pageRefreshEvent'));
-	localStorage.setItem("mg_pageRefreshEvent", false);
-
-	GmCXt.setSession();
-
-	var m = {
-		action: 'mgPlayerJSPreview_action:to_background;task:disable_browser_action_popup'
-	};
-	GmCXt.sendMessageToBackgroundService(m, function() {});
-
-	if (GmCXt.conf.appConfig.requireLogin && !GmCXt.isClientJs()) {
-		GmCXt.storage().get(['login_state']).then(function(o) {
-			if (o.login_state) {
-				GmCXt.reportPresence();
-			}
-		});
-	} else {
-		GmCXt.reportPresence();
-	}
-
-	GmCXt.addListenersToDesktopApp();
-
-	GmCXt.bootApplication();
-
-	// Close side panel on Escape keypress
-	mg$(document).on('keydown', function(e) {
-		if (e.which === 27) GmCXt.closeAppPanel();
-	});
-
-	if (GmCXt.isLXP()) {
-		var lxpBtn = mg$('[aria-label="MyGuide"]')[0];
-		mg$(lxpBtn).off('click').on('click', function() {
-
-			if (!GmCXt.APP_PANEL_OPEN) {
-				GmCXt.trackerV1.trackPanelOpen('client');
-			}
-		});
-	}
-
-	GmCXt.readExternalVars();
-
-	if (GmCXt.FT.isPlayer) {
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_guideme_config");
-		window.addEventListener('message', GmCXt.listenTopWinPlayer, false);
-	} else {
-		window.addEventListener('message', GmCXt.listenTopWinCreator);
-	}
-
-	if (GmCXt.isExtension()) {
-		if (GmCXt.browserApp === 'chrome') {
-			chrome.runtime.onMessage.addListener(GmCXt.listenerBackgroud);
-		} else if (GmCXt.browserApp === 'Safari') {
-			safari.self.addEventListener("message", GmCXt.listenerBackgroud);
-		} else {
-			browser.runtime.onMessage.addListener(GmCXt.listenerBackgroud);
-		}
-	}
-};
-
-GmCXt.readExternalVars = function() {
-
-	if (GmCXt.FT.isPlayer) {
-		if (window.guideMe) {
-
-			GmCXt.client.tourId = window.guideMe.tourId;
-			GmCXt.client.liveTourInvocation = window.guideMe.type;
-			GmCXt.client.orgkey = window.guideMe.orgkey;
-
-			GmCXt.conf.orgSecrret = GmCXt.client.orgkey;
-			localStorage.setItem(GmCXt.storagePrefix + "orgkey", GmCXt.client.orgkey);
-
-		} else {
-			window.guideMe = {};
-		}
-
-		GmCXt.loginUsingAuthKey();
-	}
-
-	var tourId = GmCXt.getUrlParameter('guideMe-tourId');
-	var automation = GmCXt.getUrlParameter('automation');
-
-	if (tourId) {
-		GmCXt.client.tourId = tourId;
-		GmCXt.client.automation = automation === "true" ? true : false;
-		GmCXt.client.isUrlTour = true;
-	}
-};
-
-GmCXt.updateGmConfig = function() {
-	GmCXt.sendMessageToolbar("mgPlayerJSPreview_action:update_guideme_config");
-	GmCXt.sendMessageToStepFrame("mgPlayerJSPreview_action:update_guideme_config");
-};
-
-GmCXt.onClickGuideMeIcon = function(e) {
-	e.stopPropagation();
-
-	if (!GmCXt.initialization.sidePanel) return true;
-
-	GmCXt.openAppPanel(null, 'widget');
-};
-
-GmCXt.onClickChatIcon = function(e) {
-	e.stopPropagation();
-
-	if (!GmCXt.initialization.sidePanel) return true;
-
-	GmCXt.openAppPanel('chatbot', 'chatbotWidget');
-};
-
-GmCXt.getStartBtnClass = function() {
-
-	// This class is only used to set position 
-
-	var n = "mgPlayerJSPreview_start-button-creator";
-
-	if (GmCXt.FT.isPlayer) {
-
-		if (GmCXt.isExtension())
-			n = "mgPlayerJSPreview_start-button-playerxt";
-		else
-			n = "mgPlayerJSPreview_start-button-clientJS";
-	}
-
-	return n;
-};
-
-/**
-	* Check if user was playing live tour.
-	* Play the last step again if user has selected 'Redirect to Live tour' option.
-	* Play next step is user has clicked on the element (highlighted in inline step).
-	*/
-
-GmCXt.executeRequestPlayTour = function() {
-
-	GmCXt.playerI = mg$.extend({}, GmCXt.playerI);
-
-	if (GmCXt.playerI.testAutomation) {
-		// Show the Guide Automation Progress bar
-		GmCXt.auto.get(function(state) {
-			if (!state) {
-				GmCXt.cleanPlayer();
-			} else {
-				GmCXt.auto.showProgress();
-			}
-		});
-	}
-
-	if (GmCXt.playerI && GmCXt.playerI.tour &&
-		GmCXt.playerI.tour.steps &&
-		GmCXt.playerI.tour.steps.length > 0
-	) {
-
-		var step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-		if (!step) return;
-
-		if (GmCXt.playerI.completeEventTracked && GmCXt.isLooping()) {
-			GmCXt.requestHandler.playAutoTour();
-			return;
-		}
-
-		var playMode = GmCXt.playerI.mode;
-
-		GmCXt.log(33, "Page reloaded. Guide started.");
-
-		if (GmCXt.playerI.guideState === 'pause' &&
-			GmCXt.playerI.pausedOn === GmCXt.urlParts.host + GmCXt.urlParts.pathname &&
-			playMode !== 'slideshow'
-		) {
-			GmCXt.playTour();
-			return;
-		}
-
-		var settings = step.step_settings;
-
-		var inlineStepCheck = step.step_type === GmCXt.STEP_TYPE_INLINE;
-		var isAutomationStep = GmCXt.isAutomationStep(step);
-		var messageStepCheck = (step.step_type === GmCXt.STEP_TYPE_MESSAGE && !settings.keepNext);
-
-		// If request is not coming from "redirect to live step" option,
-		// and last step is played successfully
-		// then increment stepIndex
-
-		if (GmCXt.playerI.lastAction !== "redirection" &&
-			(inlineStepCheck || messageStepCheck || isAutomationStep) &&
-			GmCXt.playerI.lastPlayedStepId === GmCXt.playerI.currentStepId) {
-
-			GmCXt.playerI.currentStepId = GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure);
-
-			step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-			if (!step) {
-				GmCXt.log(33, "Step not Found in Tour. Halt Guide Play.", GmCXt.playerI);
-				GmCXt.cleanPlayer();
-				return;
-			}
-
-			GmCXt.log(33, "Page reloaded. Pointer incremented to next step.");
-		}
-
-		if (step.step_type === "guide") {
-
-			var d = {
-				tour_id: step.step_settings.tour_id
-			};
-
-			GmCXt.getGuideFirstStep(d)
-				.then(function(s) {
-					GmCXt.executeNextStep();
-				});
-
-		} else {
-			GmCXt.executeNextStep();
-		}
-	}
-};
-
-GmCXt.getGuideFirstStep = function(d) {
-	return new Promise(function(resolve, reject) {
-		GmCXt.getTourDetails(d)
-			.then(function(tour) {
-				var s = {};
-				if (tour) s = tour.steps[0];
-				resolve(s);
-			});
-	});
-};
-
-GmCXt.executeNextStep = function() {
-	function proceed() {
-		GmCXt.playerI.onPageLoad = true;
-		GmCXt.playTour();
-	}
-
-	GmCXt.playerI.lastAction = null;
-
-	if (GmCXt.playerI.currentStepId) {
-		var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-
-		if (step.step_type === GmCXt.STEP_TYPE_GUIDE) {
-			proceed();
-		} else {
-			GmCXt.checkProceedToPlay(step, GmCXt.playerI.tour).then(function(y) {
-				if (y && GmCXt.playerI) {
-					proceed();
-				}
-			});
-		}
-
-	} else {
-		GmCXt.cleanPlayer();
-	}
-};
-
-GmCXt.triggerChangeListeners = function(source) {
-	if (GmCXt.currentUrl !== GmCXt._location().href) {
-		GmCXt.currentUrl = GmCXt._location().href;
-		GmCXt.changeEvent('url');
-	}
-
-	if (GmCXt.pageTitle !== GmCXt.getDocTitle()) {
-		GmCXt.setPageTitle();
-		GmCXt.changeEvent('page_title');
-	}
-};
-
-GmCXt.changeEventType = null;
-
-GmCXt.changeEvent = function(type) {
-
-	GmCXt.log(1, "CHANGE EVENT: " + type);
-
-	if (type === "url") {
-		GmCXt.saveCurrentURL();
-	}
-
-	if (!GmCXt.changeEventType) {
-		clearTimeout(GmCXt.changeEventTimeout);
-	} else {
-		return;
-	}
-
-	GmCXt.ruleEngine.clearJobs();
-
-	if (!(GmCXt.isHumana() && GmCXt.checkSalesForceSite())) {
-		GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:clear_rule_jobs', {
-			trigger: type
-		});
-	}
-
-	GmCXt.sendMessageToApp("mgPlayerJSPreview_action:clear_current_page", {});
-
-	if (GmCXt.isExcludeDomain()) return;
-	// call processLastActionTime from background.js to track events and for player sync
-	if (GmCXt.user) {
-		if (GmCXt.isClientJs() || GmCXt.isCreatorJS()) {
-			GmCXt.processLastActionTime();
-
-		} else {
-			var m = {
-				action: "mgPlayerJSPreview_action:record_user_activity",
-				data: {
-					organization: GmCXt.organization,
-					user: GmCXt.user
-				}
-			};
-			GmCXt.sendMessageToBackgroundService(m);
-
-		}
-	}
-
-	if (type === 'url' || type === 'page_title') {
-		GmCXt.changeEventType = 'contextChange';
-	} else {
-		GmCXt.changeEventType = null;
-	}
-
-	GmCXt.changeEventTimeout = GmCXt.timeout(function() {
-		GmCXt.log(1, "CHANGE EVENT processed: " + type);
-
-		if (!GmCXt.isExcludeDomain()) {
-			GmCXt.validatedSegments = {};
-			if (GmCXt.changeEventType === 'contextChange') {
-				GmCXt.variables = [];
-				GmCXt.getVariables();
-				GmCXt.onContextChange(type);
-			} else {
-				GmCXt.onPageClicked();
-			}
-		}
-		GmCXt.changeEventType = null;
-	}, 1000);
-};
-
-GmCXt.filterGuidesByRuleType = function(type) {
-	var id, rules, found;
-	var idList = [];
-
-	var toursOnScreen = GmCXt.partialVisibleTooltipsIds.concat(GmCXt.onScreenTooltipGuideIds);
-
-	for (var i = 0; i < toursOnScreen.length; i++) {
-		id = toursOnScreen[i];
-		rules = GmCXt.onScreenTooltipGuideInfo['tour_' + id].rules;
-		found = false;
-		if (type === 'url') {
-			found = rules.some(function(r) {
-				return ["URL Path", "URL", "URL Hostname", "URL Parameters", "URL Hash"].indexOf(r) >= 0;
-			});
-		} else if (type === 'page_title') {
-			found = rules.indexOf("Page Title") >= 0;
-		}
-
-		//Return toolip guides which should be removed when rules become invalid
-		if (found && GmCXt.onScreenTooltipGuideInfo['tour_' + id].watchRules) {
-			idList.push(id);
-		}
-	}
-	return idList;
-};
-
-GmCXt.onContextChange = function(eventType) {
-	GmCXt.pageTours = {};
-	GmCXt.clearBeaconsAndTooltips(false, GmCXt.filterGuidesByRuleType(eventType));
-	GmCXt.rulesIframeQueue = [];
-
-	GmCXt.storage().get(['mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY', 'testMe', 'guide_play_event'])
-		.then(function(st) {
-
-			var pi = st.mgPlayerJSPreview_GM_PLAYER_STORAGE_KEY;
-
-			if (pi && pi.testAutomation) {
-				GmCXt.guidePlayTracker = st.guide_play_event || {};
-			}
-
-			// Neglect change event
-
-			if (GmCXt.isTestMeOn(st.testMe)) {
-				return true;
-			} else if (!GmCXt.isPlayer()) {
-				return true;
-			}
-
-			GmCXt.getContextGuides(eventType);
-		});
-};
-
-GmCXt.neglectChangeEvent = function() {
-	if (GmCXt.isAutomationRunning()) {
-		return false;
-	}
-	if (GmCXt.playerI) {
-		return true;
-	} else if (GmCXt.isTestMeOn(GmCXt.testMe)) {
-		return true;
-	} else if (!GmCXt.isPlayer()) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-GmCXt.removeInvalidSegmentSmartipAndBeacon = function(tList, tListType) {
-	if (tList.length) {
-		for (var b = 0; b < tList.length; b++) {
-			var segmentGrp = tList[b].tour_settings.segment_groups;
-			if (!GmCXt.isEmpty(segmentGrp)) {
-				for (var sg = 0; sg < segmentGrp.length; sg++) {
-					var seg = GmCXt.getSegmentById(segmentGrp[sg]);
-					if (seg && seg.rule_check) {
-						if (tListType === "beacon") {
-							GmCXt.removeBeaconElement(tList[b]);
-							var tindx = GmCXt.beaconsOnScreen.indexOf(parseInt(tList[b].tour_id));
-							if (tindx !== -1) {
-								GmCXt.beaconsOnScreen.splice(tindx, 1);
-							}
-						} else if (tListType === "smarttip") {
-							var tindx = GmCXt.onScreenTooltipGuideIds.indexOf(tList[b].tour_id);
-							if (tindx !== -1) {
-								GmCXt.onScreenTooltipGuideIds.splice(tindx, 1);
-							}
-							GmCXt.removeTooltips(tList[b]);
-						}
-						break;
-					}
-				}
-			}
-		}
-	}
-};
-
-GmCXt.onPageClicked = function() {
-
-	if (GmCXt.neglectChangeEvent() && !GmCXt.user) return;
-
-	GmCXt.rulesIframeQueue = [];
-	GmCXt.setPageTitle();
-
-	if (!GmCXt.checkPrecedence()) {
-		return;
-	}
-
-	if (GmCXt.user) {
-		GmCXt.trackerV1.trackUserPulse();
-	}
-
-	var gotTours = function(tours) {
-
-		GmCXt.pageTours = tours;
-
-		var beaconTours = tours ? GmCXt.filterBeaconGuides(tours) : mg$.extend([], GmCXt.beaconTours);
-		var tooltipTours = tours ? GmCXt.filterSmartTipGuides(tours) : mg$.extend([], GmCXt.tooltipTours);
-		if (GmCXt.organization.admin_settings.efficient_rule_mode) {
-			if (beaconTours.length) {
-				GmCXt.removeInvalidSegmentSmartipAndBeacon(beaconTours, "beacon");
-			}
-
-			if (tooltipTours.length) {
-				GmCXt.removeInvalidSegmentSmartipAndBeacon(tooltipTours, "smarttip");
-			}
-		}
-
-		if (beaconTours.length) {
-			GmCXt.renderBeacons(beaconTours, false, true);
-		}
-
-		if (tooltipTours.length) {
-			GmCXt.renderSmartTips(tooltipTours, false, true);
-		}
-
-		if (tours) {
-			GmCXt.notificationGuides = mg$.extend([], GmCXt.filterNotifications(tours));
-		}
-
-		if ((!GmCXt.stopNotification(false) || GmCXt.isAutomationRunning()) && GmCXt.notificationGuides && GmCXt.notificationGuides.length) {
-			GmCXt.removeNotif();
-			GmCXt.showNotifications();
-		}
-	};
-
-	if (GmCXt.inPlayer) {
-		if (GmCXt.isEmpty(GmCXt.pageTours)) {
-			GmCXt.callApi({
-				url: GmCXt.getUrl(),
-				organization_id: GmCXt.organization.organization_id
-			}, "tour/contextual").then(gotTours);
-		} else {
-			gotTours(GmCXt.pageTours);
-		}
-
-	} else {
-		gotTours(GmCXt.pageTours);
-	}
-
-	var gc = GmCXt.getAppSetting('guide_count_on_widget');
-	var hw = GmCXt.getAppSetting('hide_widget_if_noguide');
-	if ((gc && !GmCXt.isWestpac()) || hw || GmCXt.APP_PANEL_OPEN) {
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:refresh_current_page", {
-			eventType: 'page_click'
-		});
-	}
-};
-
-GmCXt.getTourDetails = function(d) {
-	return GmCXt.callApi(d, "tour");
-};
-
-GmCXt.getTourAndPlay = function(tourId, initiator, origin) {
-
-	var d = {
-		tour_id: tourId
-	};
-
-	GmCXt.getTourDetails(d).then(function(tour) {
-		if (tour && tour.is_published) {
-			GmCXt.playLiveTour(tour, 0, initiator, false, false, origin);
-		}
-	});
-};
-
-GmCXt.getTourDetailsCallback = function(tour, domains, initiator, type) {
-	if (tour && domains) {
-		tour.allDomains = domains;
-	}
-	GmCXt.playLiveTour(tour, 0, initiator, undefined, type);
-};
-
-GmCXt.invokeLiveTour = function() {
-	if (GmCXt.playerI) {
-		if (GmCXt._location().href && GmCXt._location().href.indexOf("chrome/newtab") === -1) {
-			GmCXt.executeRequestPlayTour();
-		}
-	}
-};
-
-GmCXt.getOverlayToursInCat = function(category) {
-	return new Promise(function(resolve, reject) {
-		var options = {
-			limit: 100,
-			offset: 0,
-			category_id: category.category_id
-		};
-
-		GmCXt.api.getTours(options)
-			.then(function(result) {
-				if (result.error === false) resolve(result);
-				else reject(result);
-			});
-	});
-};
-
-GmCXt.playLiveTour = function(tour, currentStepId, initiator, isAutolaunch, type, origin) {
-
-	var mode = "live";
-
-	if (isAutolaunch) GmCXt.isPageReloaded = true;
-
-	if (GmCXt.FT.isPlayer && tour.tour_settings.slideshow_mode) {
-		mode = "slideshow";
-		type = "slideshow";
-	}
-
-	var isAutomation = GmCXt.getUrlParameter('automation');
-	if (initiator === 'doitforme') {
-		isAutomation = true;
-	}
-
-	var testAutomation = false;
-	if (initiator === 'automation') {
-		testAutomation = true;
-	}
-
-	if (initiator === 'beaconTour' || initiator === 'overlayTourPopup') {
-
-		var ts = tour.tour_settings;
-		mode = ts.defaultPlayAction;
-
-		if (mode === 'Default') {
-			mode = GmCXt.getAppSetting('defaultPlayAction');
-		}
-
-		if (mode === 'doitforme') {
-			isAutomation = true;
-		} else if (mode === 'slideshow') {
-			type = 'slideshow';
-			ts.play_structure = GmCXt.getGuidePlayStructure(tour);
-			currentStepId = ts.play_structure[0].id;
-		}
-	}
-
-	GmCXt.playerI = {
-		type: type || 'slideshow',
-		tour: tour,
-		mode: mode,
-		currentStepId: currentStepId,
-		initiator: initiator,
-		isAutomation: isAutomation,
-		isAutolaunch: isAutolaunch,
-		testAutomation: testAutomation,
-		previousTourType: tour.previousTourType,
-		origin: origin || initiator
-	};
-	GmCXt.playTour();
-};
-
-GmCXt.getOrgStepWaitTime = function() {
-	return 10000;
-};
-
-GmCXt.onDocumentMouseDown = function() {
-
-	if (GmCXt.playerI && GmCXt.playerI.completeEventTracked) GmCXt.saveSurveyTrigger();
-
-	GmCXt.clickTime = new Date().getTime();
-
-	if (GmCXt.testMe || GmCXt.testMe === null) {
-		GmCXt.storage().set({
-			'testMe': GmCXt.testMe
-		});
-	}
-};
-
-GmCXt.saveSurveyTrigger = function() {
-
-	if (GmCXt.playerI && GmCXt.tourPlayerI) {
-
-		var ts = GmCXt.playerI.tour.tour_settings;
-		var currentStepId = GmCXt.playerI.currentStepId;
-		var playStructure = GmCXt.playerI.playStructure;
-		var tour = GmCXt.playerI.tour;
-
-		if (GmCXt.isLastStep(currentStepId, playStructure) && GmCXt.playerI.initiator !== 'doitforme') {
-			if (tour.is_published && ts.enableSentiment == true) {
-				GmCXt.storage().set({
-					'SHOW_SURVEY': {
-						tourId: tour.tour_id,
-						version: tour.version
-					}
-				});
-			}
-		}
-	}
-};
-
-GmCXt.onWinUnload = function() {
-	// In clientJS, all the below storage calls fails, 
-	// since they are async. So for clientJS only, there is document
-	// mousedown event to make storage calls. 
-
-	GmCXt.log(1, "Window unload event");
-
-	if (GmCXt.FT.creatorApp && mediaRecorder) {
-		mediaRecorder.stop();
-		GmCXt.storage().set({
-			'screen_recorder_close': true
-		});
-	}
-
-	if (GmCXt.testMe || GmCXt.testMe === null) {
-		GmCXt.storage().set({
-			'testMe': GmCXt.testMe
-		});
-	}
-
-	if (GmCXt.stepReq || GmCXt.stepReq === null) {
-		GmCXt.stepReq.appId = GmCXt.activeAppId;
-		GmCXt.storage().set({
-			'stepReq': GmCXt.stepReq
-		});
-	}
-
-	var pi = GmCXt.playerI;
-
-	if (pi) {
-		if (pi.completeEventTracked) GmCXt.saveSurveyTrigger();
-
-		if (pi.guideState === 'pause') {
-			GmCXt.setResumeWinDisplayed(false);
-		}
-
-		if (GmCXt.isLastStep(pi.lastPlayedStepId, pi.playStructure) && !GmCXt.isLooping()) {
-			GmCXt.cleanPlayerI();
-		}
-	}
-
-	localStorage.setItem(GmCXt.storagePrefix + "pageRefreshEvent", false);
-
-	if (GmCXt.tourActivity) {
-		GmCXt.storage().set({
-			'tourActivity': GmCXt.tourActivity
-		});
-	}
-
-	var currentTime = GmCXt.getCurrentTimeInMilSec();
-
-	var pageRefreshed = false;
-
-	if (!GmCXt.clickTime) {
-		pageRefreshed = true;
-	} else if (currentTime - GmCXt.clickTime > 1000) {
-		pageRefreshed = true;
-	}
-
-	var mgInfo = GmCXt.parseJSON(sessionStorage.getItem('mgInfo'));
-
-	mgInfo.pageRefreshed = pageRefreshed;
-	mgInfo.lastUrl = GmCXt.urlParts.fullUrl;
-
-	sessionStorage.setItem('mgInfo', JSON.stringify(mgInfo));
-
-	localStorage.setItem("mg_pageRefreshEvent", pageRefreshed);
-
-	GmCXt.trackerV1.trackPageVisit(true);
-};
-
-GmCXt.showKeyCodePopUp = function() {
-	var ok = GmCXt.label.ok;
-
-	if (!GmCXt.keyInputGuides || !GmCXt.keyInputGuides.length) {
-		return;
-	}
-
-	mg$("html").append(GmCXt.getKeyShortPopupHtml(GmCXt.keyInputGuides, ok));
-
-	function onOK(e) {
-		GmCXt.unlockScroll();
-		GmCXt.closePopup();
-	}
-
-	GmCXt.addPopupEvents(onOK);
-};
-
-GmCXt.onVisibilityChange = function() {
-
-	if (!GmCXt.visits) GmCXt.visits = 0;
-
-	GmCXt.visits++;
-
-	if (GmCXt.visits % 2) { //blur
-
-		GmCXt.log(1, "Event: page visibility blur");
-
-		if (GmCXt.pageVisit) {
-
-			if (GmCXt.pageVisit.timeFocused) {
-				var timeSpent = GmCXt.pageVisit.timeSpent + (new Date().getTime() - GmCXt.pageVisit.timeFocused);
-			} else {
-				var timeSpent = new Date().getTime() - GmCXt.pageVisit.timeStarted;
-			}
-
-			GmCXt.pageVisit.timeSpent = timeSpent;
-
-			//if page is blur for more than 30mins 
-			if (GmCXt.trackerUtil.pageTracking) {
-				GmCXt.trackerTimer = GmCXt.timeout(function() {
-					GmCXt.trackerV1.trackPageVisit();
-				}, GmCXt.t.pageTrackWait);
-			}
-		}
-
-	} else { //focus
-
-		GmCXt.log(1, "Event: page visibility focus");
-
-		if (GmCXt.pageVisit) GmCXt.pageVisit.timeFocused = new Date().getTime();
-
-		if (GmCXt.trackerTimer) clearTimeout(GmCXt.trackerTimer);
-	}
-};
-
-GmCXt.getCurrentURL = function() {
-	var url = GmCXt.getUrl();
-	return {
-		url: url,
-		urlParts: GmCXt.urlParts,
-		fullUrl: GmCXt._location().href,
-		title: GmCXt.getDocTitle(),
-		elAppName: GmCXt.isElectron() ? GmCXt.getElectronAppName() : ''
-	};
-};
-
-GmCXt.syncCurrentURL = function() {
-
-	GmCXt.trackerV1.setUrl(GmCXt.getCurrentURL().fullUrl);
-
-	GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:page_url', GmCXt.getCurrentURL());
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:page_url', GmCXt.getCurrentURL());
-
-	domainInApp = GmCXt.isDomainInActiveApp();
-
-	GmCXt.sendMessageToAllWindows('mgPlayerJSPreview_action:domain_in_active_app', {
-		domainInApp: domainInApp
-	});
-};
-
-GmCXt.saveCurrentURL = function() {
-	var parser = document.createElement('a');
-	parser.href = GmCXt._location();
-
-	GmCXt.urlParts = {};
-
-	var host = parser.host;
-
-	// Remove port number from host name, In IE port number coming with host 
-	if (host && host.indexOf(':') !== -1) {
-		host = host.split(':')[0];
-	}
-	GmCXt.urlParts.host = host;
-
-	GmCXt.urlParts.pathname = parser.pathname;
-	GmCXt.urlParts.search = parser.search;
-	GmCXt.urlParts.href = GmCXt.filterUrlScheme(parser.href);
-	GmCXt.urlParts.fullUrl = parser.href;
-	GmCXt.urlParts.hash = parser.hash;
-	GmCXt.urlParts.scheme = GmCXt.getUrlScheme();
-	GmCXt.urlParts.port = parser.port;
-	GmCXt.elAppName = GmCXt.isElectron() ? GmCXt.getElectronAppName() : '';
-
-	GmCXt.syncCurrentURL();
-};
-
-GmCXt.setPageTitle = function() {
-	GmCXt.pageTitle = GmCXt.getDocTitle();
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:page_title', {
-		title: GmCXt.pageTitle
-	});
-	GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:page_title', {
-		title: GmCXt.pageTitle
-	});
-};
-
-GmCXt.requestHandler.hideSmarttipDelay = function(data, options) {
-	if (data) {
-		if (window.self === window.top) {
-			GmCXt.hideTooltipTimeout = GmCXt.timeout(function() {
-				GmCXt.requestHandler.hideSmartTip(data, options);
-			}, 200);
-		} else {
-			var m = {
-				action: 'mgPlayerJSPreview_action:hide_smarttip_delay',
-				stepId: data.step_id
-			};
-			GmCXt.sendToParentWindow(m);
-		}
-	}
-};
-
-GmCXt.requestHandler.hideSmartTip = function(msg, options) {
-	if (options && (options.type == 'disableElement')) {
-		mg$('#mgPlayerJSPreview_smarttip-' + msg.stepId + '-alert').hide();
-	} else {
-		mg$('#mgPlayerJSPreview_smarttip-' + msg.stepId).hide();
-		mg$('.mgPlayerJSPreview_smarttip-icon-wrapper-' + msg.stepId).hide();
-	}
-};
-
-GmCXt.requestHandler.hideValidationSmarttip = function(message) {
-	mg$(".mgPlayerJSPreview_smarttip-valid-" + message.stepId).hide();
-
-	if (message.showGuidanceTooltip) {
-		mg$('#mgPlayerJSPreview_smarttip-' + message.stepId).show();
-	}
-};
-
-GmCXt.getManifest = function() {
-
-	if (GmCXt.browserApp === 'chrome') {
-		var manifest = chrome.runtime.getManifest();
-	} else {
-		var manifest = browser.runtime.getManifest();
-	}
-};
-
-GmCXt.toggleJsonEditor = function() {
-	GmCXt.sendMessageToApp("mgPlayerJSPreview_action:toggle_json_editor");
-};
-
-GmCXt.playStepFromDesktop = function(msg) {
-
-	var tour = {
-		steps: [msg.step]
-	};
-
-	tour = GmCXt.validateDataModel(tour, GmCXt.model.guide);
-
-	tour.tour_settings.play_structure = msg.step.playStructure;
-
-	var data = {
-		tour: tour,
-		source: GmCXt.sourceDesktop,
-		automate: false,
-		isHybrid: msg.isHybrid,
-		currentStepId: msg.step.currentStepId,
-		isFirstStep: msg.isFirstStep,
-		isLastStep: msg.isLastStep,
-		playType: msg.type,
-		requestId: msg.requestId
-	};
-
-	if (msg.mode === 'doitforme') {
-		data.automate = true;
-		data.initiator = 'doitforme';
-	}
-
-	GmCXt.requestHandler.playGuide(data);
-};
-
-GmCXt.sendMessageToDesktop = function(msg) {
-	if (GmCXt.wsDesktop && GmCXt.wsDesktop.readyState === GmCXt.wsDesktop.OPEN) {
-		GmCXt.wsDesktop.send(JSON.stringify(msg));
-	}
-};
-
-GmCXt.applyOverlayMessageStep = function(highLightEl) {
-	var ha = [];
-	for (var i in GmCXt.highlight_elements) {
-		ha.push(GmCXt.highlight_elements[i][0]);
-	}
-
-	var options = {
-		data: ha,
-		containerOffset: GmCXt.getContainerOffSet(false),
-		stepType: GmCXt.STEP_TYPE_INLINE,
-		overlay: true,
-	};
-
-	GmCXt.screenOverlayI = GmCXt.screenOverlay(options);
-	GmCXt.screenOverlayI.start();
-};
-
-GmCXt.getLXPLang = function() {
-	var lxpLang = window.localStorage.selectedLanguage;
-	return GmCXt.getProcessedLang(lxpLang);
-};
-
-GmCXt.mgActiveLang = '';
-/**
-	* This function sets language of the content script and then propagates to side panel and step creator frames.
-	* Useful when laguage is read from host site e.g. LXP or read from browser preference.
-	*/
-GmCXt.setLangFromCS = function(lang) {
-	GmCXt.mgActiveLang = lang;
-	GmCXt.getAllLabels(lang);
-
-	var data = {
-		'lang': lang
-	};
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:set_lang_side_panel', data);
-
-	if (GmCXt.FT.creatorApp) {
-		GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:set_lang_step_panel', data);
-		GmCXt.sendMessageToolbar('mgPlayerJSPreview_action:set_lang_toolbar', data);
-	}
-};
-
-/**
-	* This function sets user preference language selected in the side panel.
-	* Propagates change to step creator frame
-	*/
-GmCXt.setLangPref = function(lang) {
-	GmCXt.mgActiveLang = lang;
-	GmCXt.getAllLabels(lang);
-	mg$('#mgPlayerJSPreview_panel-close .mgPlayerJSPreview_close-lbl').text(GmCXt.label.close);
-
-	if (GmCXt.FT.creatorApp) {
-		var data = {
-			'lang': lang
-		};
-		GmCXt.sendMessageToStepFrame('mgPlayerJSPreview_action:set_lang_step_panel', data);
-		GmCXt.sendMessageToolbar('mgPlayerJSPreview_action:set_lang_toolbar', data);
-	}
-};
-
-GmCXt.stopAudioTrack = function() {
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:stop_audio', {});
-};
-
-GmCXt.playAudioTrack = function(message) {
-	GmCXt.isPageReloaded = false;
-	GmCXt.sendMessageToApp('mgPlayerJSPreview_action:play_audio', message);
-};
-
-GmCXt.filterPrivateTours = function(tours) {
-
-	var arr = [];
-
-	tours.forEach(function(tour) {
-
-		if (tour.is_private)
-			arr.push(tour);
-	});
-
-	return arr;
-};
-
-GmCXt.hidePanelCloseBtn = function() {
-	mg$('.mgPlayerJSPreview_panel-close').hide();
-};
-
-GmCXt.showPanelCloseBtn = function() {
-	mg$('.mgPlayerJSPreview_panel-close').show();
-};
-
-GmCXt.isExitSurvey = function() {
-	var flag = false;
-	var os = GmCXt.getOrgSettings();
-	if (GmCXt.checkInsightEnabled()) {
-		if (os && os.exitSurvey) flag = true;
-		if (os && os.exitSentiment) flag = true;
-	}
-	return flag;
-};
-
-GmCXt.widgetIconCustomize = function() {
-	var s = GmCXt.getWidgetSettings();
-	if (!s || GmCXt.isEmpty(s)) return;
-
-	var widget = GmCXt.getWidgetInstance();
-	widget.css({
-		'z-index': ((s.widget_icon_zindex !== ('Default' || 'default')) ? s.widget_icon_zindex : GmCXt.defaultWidgetZindex)
-	});
-
-	switch (s.widgetIconType) {
-		case 'circular':
-			widget.css({
-				width: s.widgetIconSize.widgetIconWidth,
-				height: s.widgetIconSize.widgetIconWidth,
-				borderRadius: '50%'
-			});
-			widget.find('.mgPlayerJSPreview_custom-image').css('border-radius', '50%');
-			break;
-
-		case 'rectangular':
-			widget.css({
-				width: s.widgetIconSize.widgetIconWidth,
-				height: s.widgetIconSize.widgetIconHeight,
-			});
-			break;
-	}
-};
-
-GmCXt.chatIconCustomize = function() {
-	var s = GmCXt.getAppSetting();
-
-	if (!s || GmCXt.isEmpty(s)) return;
-
-	var chat = GmCXt.getChatIconInstance();
-
-	if (chat) {
-		switch (s.chatIconType) {
-			case 'circular':
-				chat.css({
-					width: s.chatIconSize ? s.chatIconSize.chatIconWidth : 50,
-					height: s.chatIconSize ? s.chatIconSize.chatIconWidth : 50,
-					borderRadius: '50%'
-				});
-				chat.find('.mgPlayerJSPreview_custom-image').css('border-radius', '50%');
-				break;
-
-			case 'rectangular':
-				chat.css({
-					width: s.chatIconSize ? s.chatIconSize.chatIconWidth : 50,
-					height: s.chatIconSize ? s.chatIconSize.chatIconHeight : 50,
-				});
-				break;
-		}
-	}
-};
-
-GmCXt.updateAccessibility = function(val) {
-	if (GmCXt.isDefined(val)) {
-		GmCXt.accessibility = val;
-	} else {
-		GmCXt.accessibility = false;
-	}
-};
-/*
-	* To change this license header, choose License Headers in Project Properties.
-	* To change this template file, choose Tools | Templates
-	* and open the template in the editor.
-	*/
-
-GmCXt.surveyStart = function(options, isExitSurvey, isPreview) {
-	options = options || {};
-	var surveyID = '';
-	var tour_id = options.tourId;
-	var surveyQuestion = [];
-	var surveyQuestionList = [];
-	var inValidFlag = true;
-	var branchQues = [];
-	var currentQues = {};
-
-	if (!isExitSurvey && options.type !== 'stepPlay') {
-		GmCXt.cleanPlayer();
-	}
-
-	clearSurveyInstance();
-	openSurvey(options);
-
-
-	function getBranchQueIndex(ques) {
-		branchQues = [];
-		bInd = -1;
-
-		if (surveyQuestion && surveyQuestion.length > 0) {
-			for (q = 0; q < surveyQuestion.length; q++) {
-				if (ques && ques.questionID === surveyQuestion[q].questionID) {
-					bInd = q;
-				}
-				if (surveyQuestion[q].isBranchNode && ((ques && bInd !== -1 && q >= bInd) || !ques)) {
-					for (var opt = 0; opt < surveyQuestion[q].options.length; opt++) {
-						if (branchQues.indexOf(surveyQuestion[q].options[opt].nextHopOnBranch) === -1) {
-							branchQues.push(surveyQuestion[q].options[opt].nextHopOnBranch);
-						}
-
-					}
-				}
-			}
-		}
-		return branchQues;
-	}
-
-	function filterBranchNodePages() {
-		var bLinkQues = getBranchQueIndex();
-		var s = [];
-		for (var i = 0; i < surveyQuestion.length; i++) {
-			if (bLinkQues.indexOf(surveyQuestion[i].pageIndex) === -1) {
-				s.push(surveyQuestion[i]);
-			}
-		}
-		return s;
-	}
-
-	function getHtml(result) {
-		surveyID = result.guide_id;
-		surveyQuestion = result.questions;
-		surveyQuestionList = filterBranchNodePages();
-		surveyName = result.questionnaire_title || result.sentimentTitle;
-
-		var surveyTitle = isExitSurvey ? GmCXt.label.exitSurvey : GmCXt.label.survey;
-		if (options.type === 'stepPlay') {
-			surveyTitle = options.step.step_title;
-		}
-
-		var previewClass = '';
-		if (isPreview) {
-			previewClass = ' mgPlayerJSPreview_forbidden';
-		}
-
-		var htmlData = " <wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-popup-container'> " +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-popup-wrapper'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-header-wrapper'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-logo-wrapper'>" + surveyTitle + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-popup-close' aria-label='close survey' >" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-bottom-left'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_survey-content-wrapper'>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_question-single-select-wrapper'>" +
-
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
-
-		var progressWrap = '';
-		if (result.questions.length > 1) {
-			progressWrap = '<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-footer-progress-wrapper mgPlayerJSPreview_inline-block-vm">' +
-				'	<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-progressbar-wrapper mgPlayerJSPreview_inline-block-vm">' +
-				'		<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-progressbar mgPlayerJSPreview_inline-block-vm"></wmgPlayerJSPreview_>' +
-				'	</wmgPlayerJSPreview_>' +
-				'	<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-questions-count mgPlayerJSPreview_inline-block-vm">' + GmCXt.label.question +
-				' 		<span id="current_question">1</span> <span id="mgPlayerJSPreview_question_count">' + GmCXt.label.of + ' ' + surveyQuestionList.length +
-				'	</span></wmgPlayerJSPreview_>' +
-				'</wmgPlayerJSPreview_>';
-		}
-
-		htmlData += '<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-footer-action-wrapper">' +
-			'<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-button-back mgPlayerJSPreview_btn-default mgPlayerJSPreview_disabled mgPlayerJSPreview_inline-block-vm" aria-label="' + GmCXt.label.back + '" >' + GmCXt.label.back + '</wmgPlayerJSPreview_>' +
-			'<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-button-continue mgPlayerJSPreview_btn-default mgPlayerJSPreview_inline-block-vm" aria-label="' + GmCXt.label.next + '">' + GmCXt.label.next + '</wmgPlayerJSPreview_>' +
-			'<wmgPlayerJSPreview_ class="mgPlayerJSPreview_survey-button-submit mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_btn-default' + previewClass + '" style="display:none" aria-label="' + GmCXt.label.btnSubmit + '">' + GmCXt.label.btnSubmit + '</wmgPlayerJSPreview_>' +
-			progressWrap +
-			'</wmgPlayerJSPreview_>' +
-			'</wmgPlayerJSPreview_>';
-
-		return htmlData;
-	}
-
-	function listen(event) {
-
-		var message = GmCXt.parseMsg(event);
-
-		if (!message) return;
-		if (!message.action || message.action.indexOf('mgPlayerJSPreview_action:') !== 0) return;
-		message = GmCXt.convertMgdata(message);
-
-		if (message.action === 'mgPlayerJSPreview_action:got_survey_detail') {
-			cb(message.data);
-			window.removeEventListener('message', listen);
-		}
-	}
-
-	function cb(sd) {
-		if (sd) {
-			var htmlData = getHtml(sd.data);
-
-			mg$(".mgPlayerJSPreview_user-guide-container").empty().append(htmlData).show();
-
-			mg$(".mgPlayerJSPreview_survey-popup-close").html(GmCXt.svgs.close_btn);
-			currentQues = sd.data.questions[0];
-			addQuestionInSurvey(sd.data.questions[0], 1);
-			toggleBackContinueButton(0);
-			changeProgressbar(1);
-			attachDOMEvents(options);
-
-			if (GmCXt.accessibility) {
-				mg$(".mgPlayerJSPreview_survey-footer-action-wrapper").addClass("mgPlayerJSPreview_accessibility-theme");
-				mg$(".mgPlayerJSPreview_survey-button-back").addClass("mgPlayerJSPreview_ass-default-btn");
-				mg$(".mgPlayerJSPreview_survey-button-continue").addClass("mgPlayerJSPreview_ass-default-btn");
-				mg$(".mgPlayerJSPreview_survey-button-submit").addClass("mgPlayerJSPreview_ass-default-btn");
-
-			} else {
-				mg$(".mgPlayerJSPreview_survey-footer-action-wrapper").removeClass("mgPlayerJSPreview_accessibility-theme");
-				mg$(".mgPlayerJSPreview_survey-button-back").removeClass("mgPlayerJSPreview_ass-default-btn");
-				mg$(".mgPlayerJSPreview_survey-button-continue").removeClass("mgPlayerJSPreview_ass-default-btn");
-				mg$(".mgPlayerJSPreview_survey-button-submit").removeClass("mgPlayerJSPreview_ass-default-btn");
-			}
-
-			GmCXt.timeout(function() {
-				mg$(".mgPlayerJSPreview_survey-popup-close").focus();
-			}, 500);
-
-		} else {
-			closeTourWithSurvey(false);
-		}
-	}
-
-	function getExitSentimentDetails() {
-		window.addEventListener('message', listen);
-		var data = {};
-		var os = GmCXt.getOrgSettings();
-		data.sentiment = os.sentiment;
-		data.isExit = true;
-		GmCXt.sendMessageToApp("mgPlayerJSPreview_action:get_survey_detail", data);
-	}
-
-	function openSurvey(options) {
-
-		mg$("html").find('.mgPlayerJSPreview_user-guide-container').remove();
-		mg$("<wmgPlayerJSPreview_></wmgPlayerJSPreview_>").addClass('mgPlayerJSPreview_user-guide-container').appendTo('html');
-
-		if (isExitSurvey) {
-			try {
-				var os = GmCXt.getOrgSettings();
-				var surveyData = null;
-				if (os && os.exitSentiment) {
-					getExitSentimentDetails();
-				} else if (os && os.exitSurvey) {
-					if (os.survey.length > 0) {
-						surveyData = getExitSurvey(os);
-						cb(surveyData);
-					}
-				}
-			} catch (e) {
-				console.dir(e.message);
-			}
-		} else if (isPreview || (options.data && options.data.sentimentCode)) {
-			cb(options);
-		} else {
-			window.addEventListener('message', listen);
-			var data = {};
-			if (options.type === 'stepPlay') {
-				data.sentiment = options.step.step_settings.sentiment;
-			} else if (options.type === 'guide') {
-				var ts = options.instance.tour.tour_settings;
-				if (ts.enableSentiment) {
-					data.sentiment = ts.sentiment;
-				}
-			} else if (options.tourId) {
-				data.tourId = options.tourId;
-			}
-			GmCXt.sendMessageToApp("mgPlayerJSPreview_action:get_survey_detail", data);
-		}
-	}
-
-	function getExitSurvey(os) {
-		var quesArray = [];
-		var i = 0;
-		if (os.survey[0].questions.length > 0) {
-			for (i; i < os.survey[0].questions.length; i++) {
-				var ques = {
-					question: os.survey[0].questions[i].question,
-					type: os.survey[0].questions[i].type,
-					options: os.survey[0].questions[i].options,
-					answer: []
-				};
-				quesArray.push(ques);
-			}
-		}
-
-		var surveyData = {
-			data: {
-				guide_id: '',
-				questionnaire_title: os.survey[0].surveyTitle,
-				questions: quesArray
-			}
-		};
-
-		return surveyData;
-
-	}
-
-	function clearPreviousAns(survey) {
-		var s = survey;
-		var i = 0;
-		for (i; i < s.data.questions.length; i++) {
-			s.data.questions[i].answer = [];
-		}
-		return s;
-	}
-
-	function addQuestionInSurvey(result, id) {
-		var questionType = result.type;
-		mg$('#current_question').html(id);
-		mg$('#mgPlayerJSPreview_question_count').html(GmCXt.label.of + ' ' + surveyQuestionList.length);
-		var htmlData = '';
-		switch (questionType) {
-			case 'yes-no':
-				htmlData = addYesAndNoQuestion(result);
-				break;
-			case 'comment':
-				htmlData = addCommentTypeQuestion(result);
-				break;
-			case 'select':
-				htmlData = addSelectTypeQuestion(result);
-				break;
-			case 'multi-select':
-				htmlData = addMultiSelectType(result);
-				break;
-			case 'range':
-				htmlData = addRangeQuestion(result);
-				break;
-			case 'rating':
-				htmlData = addRateQuestion(result);
-				break;
-		}
-		changeProgressbar(id);
-		mg$(".mgPlayerJSPreview_question-single-select-wrapper").empty().append(htmlData);
-		mg$(".mgPlayerJSPreview_ext-link-svg").html(GmCXt.svgs.external_link);
-
-	}
-
-	function addCommentTypeQuestion(question) {
-		var html = "<wmgPlayerJSPreview_><wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'>" + GmCXt.escapeHtml(question.question) +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_select-option'>" +
-			"<textarea id='comment_type_" + question.questionID + "' class='mgPlayerJSPreview_comment_type_question' cols='44' rows='4' data-gramm_editor='false' placeholder='" + GmCXt.label.surveyCommentPlaceholder + "' maxlength='500'></textarea>" +
-			"</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_><wmgPlayerJSPreview_ id='comment_type_survey_" + question.questionID + "'>" + GmCXt.label.characters + " 0</wmgPlayerJSPreview_><br><wmgPlayerJSPreview_>";
-		return html;
-	}
-
-	function changeProgressbar(length) {
-		var initialProgressBar = parseInt((100 * length) / surveyQuestionList.length);
-		mg$('.mgPlayerJSPreview_survey-progressbar').css('width', initialProgressBar + '%');
-	}
-
-	function addYesAndNoQuestion(question) {
-		var html = "<div id='mgPlayerJSPreview_single-type-question-" + question.questionID + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_select-option'>" +
-			'<input type="radio" name="mgPlayerJSPreview_capture-guide-radio-' + question.questionID + '" value="Yes" id="mgPlayerJSPreview_capture-guide-checkbox" class="mgPlayerJSPreview_input-radio-custom mgPlayerJSPreview_input-radio-with-branch mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_input-display-block"><wmgPlayerJSPreview_ class="mgPlayerJSPreview_option-label mgPlayerJSPreview_inline-block-vm">' + GmCXt.escapeHtml('Yes') + '</wmgPlayerJSPreview_>';
-		if (!GmCXt.isFalse(question.options[0]) && !GmCXt.isFalse(question.options[0].optionReferenceLink)) {
-			html += "<a href='" + getReferenceURL(question.options[0].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_ext-link-svg'></wmgPlayerJSPreview_></a>";
-		}
-		html += '</wmgPlayerJSPreview_>' +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_select-option'>" +
-			'<input type="radio" name="mgPlayerJSPreview_capture-guide-radio-' + question.questionID + '" value="No" id="mgPlayerJSPreview_capture-guide-checkbox" class="mgPlayerJSPreview_input-radio-custom mgPlayerJSPreview_input-radio-with-branch mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_input-display-block"><wmgPlayerJSPreview_ class="mgPlayerJSPreview_option-label mgPlayerJSPreview_inline-block-vm">' + GmCXt.escapeHtml('No') + '</wmgPlayerJSPreview_>';
-		if (!GmCXt.isFalse(question.options[1]) && !GmCXt.isFalse(question.options[1].optionReferenceLink)) {
-			html += "<a href='" + getReferenceURL(question.options[1].optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_ext-link-svg'></wmgPlayerJSPreview_></a>";
-		}
-		html += '</wmgPlayerJSPreview_>' +
-			"<br></div>";
-		return html;
-	}
-
-	function addSelectTypeQuestion(question) {
-		var html = "<div id='mgPlayerJSPreview_single-type-question-" + question.questionID + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSPreview_>";
-		mg$.each(question.options, function(index, element) {
-			html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_select-option'>" +
-				"<input class='mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_input-radio-with-branch mgPlayerJSPreview_input-radio-custom mgPlayerJSPreview_input-display-block' type='radio' name='select_type_option_" + question.questionID + "' value='" + element.option + "' />" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_option-label mgPlayerJSPreview_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSPreview_>";
-			if (!GmCXt.isFalse(element.optionReferenceLink)) {
-				html += "<a href='" + getReferenceURL(element.optionReferenceLink) + "' target='_blank' rel='noopener noreferrer'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_ext-link-svg'></wmgPlayerJSPreview_></a>";
-			}
-			html += "</wmgPlayerJSPreview_>";
-		});
-		html += "<br></div>";
-		return html;
-	}
-
-	function getReferenceURL(url) {
-		if (url.indexOf("https://") === 0 || url.indexOf("http://") === 0) {
-			return url;
-		}
-		return "https://" + url;
-	}
-
-	function addMultiSelectType(question) {
-		var html = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'>" + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSPreview_><div id='mgPlayerJSPreview_multiselect-type-question'>";
-		mg$.each(question.options, function(index, element) {
-			html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_select-option'>" +
-				"<input class='mgPlayerJSPreview_inline-block-vm mgPlayerJSPreview_input-checkbox-custom mgPlayerJSPreview_input-display-block' type='checkbox' name='multiselect_type_option_" + question.questionID + "[]' id='multiselect_type_option_" + question.questionID + "' value='" + GmCXt.escapeHtml(element.option) + "' />" +
-				"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_option-label mgPlayerJSPreview_inline-block-vm'>" + GmCXt.escapeHtml(element.option) + "</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>";
-		});
-		html += "<br></div>";
-		return html;
-	}
-
-	function addRangeQuestion(question) {
-		var html = "<div id='mgPlayerJSPreview_single-type-question-" + question.questionID + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_range-question-wrapper'>";
-
-		for (var i = 1; i < 10; i++) {
-			html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_value-range mgPlayerJSPreview_inline-block-vm' id='mgPlayerJSPreview_value-range-" + i + "' aria-label='range'>" + i + "</wmgPlayerJSPreview_>";
-		}
-
-		html += "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_value-range mgPlayerJSPreview_inline-block-vm' style='border-right: 1px solid #cccccc;' id='mgPlayerJSPreview_value-range-10' aria-label='range'>10</wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>" +
-			"<br></div>";
-		return html;
-	}
-
-	function addRateQuestion(question) {
-		var html = "<div id='mgPlayerJSPreview_single-type-question-" + question.questionID + "'><wmgPlayerJSPreview_ class='mgPlayerJSPreview_single-type-question'> " + GmCXt.escapeHtml(question.question) + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_rating'>";
-
-		for (var i = 1; i < 4; i++) {
-			html += "<button class='mgPlayerJSPreview_lbl-btn mgPlayerJSPreview_stars-rate' id='mgPlayerJSPreview_rate-" + i + "' aria-label='rate' >&#9733;</button>";
-		}
-		html += "</wmgPlayerJSPreview_>" +
-			"<br></div>";
-		return html;
-	}
-
-	function checkCommentTypeMess() {
-		mg$('.mgPlayerJSPreview_comment_type_question').on('keyup', function(e) {
-			var qI = parseInt(mg$('#current_question').html());
-			if (!qI) {
-				qI = 1;
-			}
-			var ansLen = e.target.value.length;
-			mg$('#comment_type_survey_' + surveyQuestion[qI - 1].questionID).html(GmCXt.label.characters + ' ' + ansLen);
-			if (ansLen === 500) {
-				GmCXt.toastMsg(GmCXt.label.feedCmt).show();
-			}
-		});
-	}
-
-	function getQuesnIndex(pindex, qindex) {
-		var index = -1;
-		if (surveyQuestion && surveyQuestion.length > 0) {
-			for (q = 0; q < surveyQuestion.length; q++) {
-				if (surveyQuestion[q].pageIndex === pindex &&
-					surveyQuestion[q].indexInPage === qindex) {
-					index = q;
-				}
-			}
-		}
-		return index;
-	}
-
-	function getQListByPageIndex(pi) {
-		var qList = [];
-		if (surveyQuestion && surveyQuestion.length > 0) {
-			for (q = 0; q < surveyQuestion.length; q++) {
-				if (surveyQuestion[q].pageIndex === pi) {
-					qList.push(surveyQuestion[q]);
-				}
-			}
-		}
-		return qList;
-	}
-
-	function getListQuesnIndex(qid) {
-		var index = -1;
-		if (surveyQuestionList && surveyQuestionList.length > 0) {
-			for (q = 0; q < surveyQuestionList.length; q++) {
-				if (surveyQuestionList[q].questionID === qid) {
-					index = q;
-				}
-			}
-		}
-		return index;
-	}
-
-	function onNextQuesClick() {
-		var qI = parseInt(mg$('#current_question').html());
-		if (!qI) {
-			qI = 1;
-		}
-
-		var status = storeQuestionAnswer(qI - 1);
-
-		var ind = -1;
-
-		if (!GmCXt.isEmpty(status)) {
-			if (currentQues.isBranchNode) {
-				if (currentQues.type === "select" || currentQues.type === 'yes-no') {
-					for (a = 0; a < currentQues.options.length; a++) {
-						if (currentQues.options[a].option === status) {
-							ind = getQuesnIndex(currentQues.options[a].nextHopOnBranch, 1);
-							break;
-						}
-					}
-				}
-			}
-
-			if (ind !== -1) {
-				//get all qusetion of next page
-				var nq = getQListByPageIndex(surveyQuestion[ind].pageIndex);
-				//Remove other Question with same page index of branch ques
-
-				if (currentQues.isBranchNode) {
-					surveyQuestionList = surveyQuestionList.filter(function(q) {
-						return ((q.questionID === currentQues.questionID &&
-								q.pageIndex === currentQues.pageIndex) ||
-							(q.questionID !== currentQues.questionID &&
-								(q.pageIndex !== currentQues.pageIndex ||
-									(q.pageIndex === currentQues.pageIndex &&
-										q.indexInPage < currentQues.indexInPage)) &&
-								getBranchQueIndex(currentQues).indexOf(q.pageIndex) === -1));
-
-					});
-				} else {
-					surveyQuestionList = surveyQuestionList.filter(function(q) {
-						return ((q.questionID === currentQues.questionID &&
-								q.pageIndex === currentQues.pageIndex) ||
-							(q.questionID !== currentQues.questionID &&
-								q.pageIndex !== currentQues.pageIndex));
-
-					});
-				}
-
-				var inx = getListQuesnIndex(currentQues.questionID);
-				surveyQuestionList.splice(inx + 1, 0, nq);
-				if (surveyQuestionList.length) {
-					surveyQuestionList = surveyQuestionList.flat();
-				}
-			}
-		}
-
-		toggleBackContinueButton(qI);
-		currentQues = surveyQuestionList[qI];
-		addQuestionInSurvey(surveyQuestionList[qI], qI + 1);
-		attachDOMEvents(options);
-		setQuestionAnswer(qI);
-	}
-
-	function onBackQuesClick() {
-		var qI = parseInt(mg$('#current_question').html()) - 1;
-		if (!qI) {
-			qI = 0;
-			if (options.type === 'stepPlay') {
-				close(false, true);
-				return;
-			}
-		}
-
-		storeQuestionAnswer(qI);
-		toggleBackContinueButton(qI - 1);
-		currentQues = surveyQuestionList[qI - 1];
-		addQuestionInSurvey(surveyQuestionList[qI - 1], qI);
-		setQuestionAnswer(qI - 1);
-	}
-
-
-	function attachDOMEvents(options) {
-
-		mg$('.mgPlayerJSPreview_survey-popup-close').on('click', function(e) {
-			if (isExitSurvey) {
-				closeTourWithSurvey(true);
-			} else if (GmCXt.isPlayer() && GmCXt.playerI && options && options.type === "stepPlay" && GmCXt.isExitSurvey()) {
-				var data = {
-					tourId: GmCXt.playerI.tour.tour_id,
-					version: GmCXt.playerI.tour.version,
-					playerInstance: GmCXt.playerI
-				};
-				GmCXt.showSurveyScreen(data, true);
-			} else {
-				close(true);
-			}
-			e.stopPropagation();
-		});
-
-		checkCommentTypeMess();
-
-		mg$(document).off('click', '.mgPlayerJSPreview_value-range');
-		mg$(document).on('click', '.mgPlayerJSPreview_value-range', function(e) {
-			mg$('.mgPlayerJSPreview_value-range').removeClass('mgPlayerJSPreview_value-range-selected');
-			var selectRange = e.target.innerHTML;
-			mg$('#mgPlayerJSPreview_value-range-' + selectRange).addClass('mgPlayerJSPreview_value-range-selected');
-		});
-
-		mg$(document).off('click', '.mgPlayerJSPreview_stars-rate');
-		mg$(document).on('click', '.mgPlayerJSPreview_stars-rate', function(e) {
-			if (e.target.id.indexOf("mgPlayerJSPreview_rate") !== -1) {
-				var elem = mg$('#' + e.target.id);
-				elem.toggleClass('mgPlayerJSPreview_rating-filled');
-				elem.nextAll().removeClass('mgPlayerJSPreview_rating-filled');
-				elem.prevAll().addClass('mgPlayerJSPreview_rating-filled');
-			}
-		});
-
-		mg$(document).off('click', '.mgPlayerJSPreview_survey-button-continue');
-		mg$(document).on('click', '.mgPlayerJSPreview_survey-button-continue', function(e) {
-			onNextQuesClick();
-		});
-
-		mg$(document).off('change', '.mgPlayerJSPreview_input-radio-with-branch');
-		mg$(document).on('change', '.mgPlayerJSPreview_input-radio-with-branch', function(e) {
-			var ans = mg$("input:radio[name='" + mg$('.mgPlayerJSPreview_input-radio-with-branch')[0].name +
-				"']:checked").val();
-			if (currentQues && currentQues.isBranchNode && !GmCXt.isEmpty(ans)) {
-				var isSubmitVisible = false;
-				if (mg$('.mgPlayerJSPreview_survey-button-submit') && mg$('.mgPlayerJSPreview_survey-button-submit')[0] &&
-					mg$('.mgPlayerJSPreview_survey-button-submit')[0].style.display !== "none") {
-					isSubmitVisible = true;
-				}
-				if (isSubmitVisible) {
-					for (var o = 0; o < currentQues.options.length; o++) {
-						if (currentQues.options[o].option === ans &&
-							currentQues.options[o].nextHopOnBranch) {
-							mg$('.mgPlayerJSPreview_survey-button-submit').hide();
-							mg$('.mgPlayerJSPreview_survey-button-continue').show();
-							break;
-						}
-					}
-				}
-			}
-		});
-
-		mg$(document).off('click', '.mgPlayerJSPreview_survey-button-back');
-		mg$(document).on('click', '.mgPlayerJSPreview_survey-button-back', function(e) {
-			onBackQuesClick();
-		});
-
-		mg$(document).off('click', '.mgPlayerJSPreview_survey-button-submit');
-		mg$(document).on('click', ".mgPlayerJSPreview_survey-button-submit", function(e) {
-			if (!isPreview) {
-				submitSurvey();
-			}
-		});
-	}
-
-	function mergeAllSurveyQuestions() {
-		if (surveyQuestionList && surveyQuestionList.length) {
-			for (var s1 = 0; s1 < surveyQuestion.length; s1++) {
-				for (s2 = 0; s2 < surveyQuestionList.length; s2++) {
-					if (surveyQuestionList[s2].questionID === surveyQuestion[s1].questionID) {
-						surveyQuestion[s1] = surveyQuestionList[s2];
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	function submitSurvey() {
-		var data = [];
-		var dataAnalytics = [];
-
-
-		var getAnswer = function(answer) {
-			if (answer !== undefined) return answer;
-			else return '';
-		};
-
-		var pushData = function(el) {
-			return {
-				'question_id': el.questionID ? el.questionID : '',
-				'question_type': el.type,
-				'question_name': el.question ? el.question : ''
-			};
-		};
-
-		storeQuestionAnswer(surveyQuestionList.length - 1);
-
-		surveyQuestionList.filter(function(el) {
-			if (el.answer && el.answer.length > 0) {
-				inValidFlag = false;
-			}
-		});
-
-		mergeAllSurveyQuestions();
-
-		mg$.each(surveyQuestion, function(index, element) {
-
-			var valueData = '';
-
-			switch (element.type) {
-				case 'yes-no':
-					if (element.answer !== undefined)
-						valueData = (element.answer === 'Yes') ? true : (element.answer === 'No') ? false : null;
-
-					var data = pushData(element);
-					data.is_answer_yes = valueData;
-					break;
-
-				case 'comment':
-					valueData = getAnswer(element.answer);
-
-					var data = pushData(element);
-					data.comment = valueData;
-					break;
-
-				case 'multi-select':
-					valueData = getAnswer(element.answer).split(",");
-					var data = pushData(element);
-					data.option = valueData;
-					break;
-
-				case 'select':
-				case 'range':
-					valueData = getAnswer(element.answer).split();
-					var data = pushData(element);
-					data.option = valueData;
-					break;
-				case 'rating':
-					valueData = getAnswer(element.answer).split();
-					var data = pushData(element);
-					data.option = valueData;
-					break;
-			}
-
-			dataAnalytics.push(data);
-		});
-
-		var user_id = 0;
-		if (typeof GmCXt.user.user_id != 'undefined')
-			user_id = GmCXt.user.user_id;
-
-		if (!inValidFlag) {
-			if (isExitSurvey) {
-				var os = GmCXt.getOrgSettings();
-				if (os.exitSentiment) {
-					if (!options.tourId) {
-						options.tourId = options.tour.tour_id;
-					}
-					var data = {
-						trigger_source_type: 'guide_exit',
-						trigger_source_id: options.tourId,
-						sentimentCode: os.sentiment.sentimentCode
-					};
-					GmCXt.trackerV1.trackSurveyInstantResponse(dataAnalytics, data);
-				} else {
-					// Track With Insights Team
-					// GmCXt.trackerV1.trackExitSurvey(dataAnalytics, tour_id);
-				}
-
-			} else {
-				var data = {
-					trigger_source_type: options.type,
-					trigger_source_id: tour_id + ':' + options.stepId
-				};
-
-				if (options.type === 'stepPlay') {
-					data.sentimentCode = options.step.step_settings.sentiment.sentimentCode;
-					data.trigger_source_type = 'step';
-					data.trigger_source_id = options.step.tour_id + ":" + options.step.step_id;
-				} else if (options.data && GmCXt.isDefined(options.data.sentimentCode)) {
-					data.sentimentCode = options.data.sentimentCode;
-				} else if (options.type === 'guide') {
-					var ts = options.instance.tour.tour_settings;
-					if (ts.enableSentiment) {
-						data.sentimentCode = ts.sentiment.sentimentCode;
-						data.trigger_source_id = tour_id;
-						data.trigger_source_type = 'guide';
-						GmCXt.updateSurveyCompletedData({
-							tourId: tour_id,
-							version: options.version
-						});
-					}
-				}
-
-				if (GmCXt.isDefined(data.sentimentCode)) {
-					GmCXt.trackerV1.trackSurveyInstantResponse(dataAnalytics, data);
-				} else {
-					GmCXt.trackerV1.trackGuideSurveyAnswer(dataAnalytics, tour_id);
-				}
-			}
-
-			closeTourWithSurvey(false);
-			if (options.type !== 'stepPlay') {
-				GmCXt.toastMsg(GmCXt.label.surveyThanksMessage).show();
-			}
-		} else {
-			GmCXt.toastMsg(GmCXt.label.surveyErrorMsg).show();
-		}
-	}
-
-	function toggleBackButton() {
-		if (options.type === 'stepPlay') {
-			var prevStep = GmCXt.getPreviousStep();
-			if (!GmCXt.isEmpty(prevStep)) {
-				if (mg$.inArray(prevStep.step_id, GmCXt.playedPreviousSteps) !== -1 || prevStep.step_settings.optional) {
-					mg$('.mgPlayerJSPreview_survey-button-back').removeClass('mgPlayerJSPreview_disabled');
-				}
-			}
-		} else {
-			mg$('.mgPlayerJSPreview_survey-button-back').addClass('mgPlayerJSPreview_disabled');
-		}
-	}
-
-	function toggleBackContinueButton(ind) {
-
-		if (surveyQuestionList.length === 1) {
-			//Only One Question in Survey
-			mg$('.mgPlayerJSPreview_survey-button-submit').show();
-			mg$('.mgPlayerJSPreview_survey-button-continue').hide();
-			mg$('.mgPlayerJSPreview_survey-button-back').show();
-			toggleBackButton();
-		} else if (surveyQuestionList.length > 1 && ind === 0) {
-			//More than one question and current question no 1
-			mg$('.mgPlayerJSPreview_survey-button-submit').hide();
-			mg$('.mgPlayerJSPreview_survey-button-continue').show();
-			mg$('.mgPlayerJSPreview_survey-button-back').show();
-			toggleBackButton();
-
-		} else if (surveyQuestionList.length === ind + 1) {
-			//More than one questions and current at last question
-			mg$('.mgPlayerJSPreview_survey-button-submit').show();
-			mg$('.mgPlayerJSPreview_survey-button-continue').hide();
-			mg$('.mgPlayerJSPreview_survey-button-back').show();
-			mg$('.mgPlayerJSPreview_survey-button-back').removeClass('mgPlayerJSPreview_disabled');
-		} else if (surveyQuestionList.length > 1 && ind > 0) {
-			//More than one question and questions between 1st and Last Excluding the tow
-			mg$('.mgPlayerJSPreview_survey-button-submit').hide();
-			mg$('.mgPlayerJSPreview_survey-button-continue').show();
-			mg$('.mgPlayerJSPreview_survey-button-back').show();
-			mg$('.mgPlayerJSPreview_survey-button-back').removeClass('mgPlayerJSPreview_disabled');
-		}
-
-	}
-
-	function close(closeIconClicked, playPrevStep) {
-		var pi = GmCXt.playerI;
-		GmCXt.isSurveyVisible = false;
-		mg$('.mgPlayerJSPreview_overlay-container').hide().empty();
-		mg$('.mgPlayerJSPreview_user-guide-container').hide().empty();
-		mg$('.mgPlayerJSPreview_user-tip-guide-container').hide().empty();
-		if (isPreview) {
-			GmCXt.openAppPanel();
-		} else if (options.type === 'stepPlay') {
-			if (closeIconClicked && GmCXt.tourPlayerI) {
-				GmCXt.markAutoLaunchTourDoNotShow(GmCXt.playerI.tour);
-
-				if (GmCXt.FT.isPlayer && pi) {
-					GmCXt.tourActivity['t:' + pi.tour.tour_id] = pi.lastPlayedStepId;
-
-					GmCXt.sendMessageToApp("mgPlayerJSPreview_action:update_tour_activity", {
-						tourActivity: GmCXt.tourActivity
-					});
-				}
-			} else if (GmCXt.tourPlayerI && playPrevStep) {
-				GmCXt.tourPlayerI.playPreviousStep();
-			} else if (GmCXt.tourPlayerI) {
-				GmCXt.tourPlayerI.playNextStep();
-			}
-
-		} else {
-			GmCXt.showSmartTips();
-			GmCXt.showBeacons();
-			GmCXt.resumeAutomation();
-
-			if (GmCXt.playerI) {
-				var step = GmCXt.getCurrentStep(GmCXt.playerI.currentStepId);
-				if (step.step_type === "video") {
-					GmCXt.toggleSidePanel(true);
-				}
-			}
-		}
-	}
-
-	function closeTourWithSurvey(closeIconClicked) {
-		if (GmCXt.tourPlayerI && isExitSurvey) GmCXt.tourPlayerI.closeGuide();
-		close(closeIconClicked);
-	}
-
-	function hideAllQuestions() {
-		mg$('.question:visible').each(function(index, element) {
-			mg$(element).hide();
-		});
-	}
-
-	function storeQuestionAnswer(id) {
-		var questionType = surveyQuestionList[id].type;
-		var qId = surveyQuestionList[id].questionID;
-		var retVal = true;
-
-		switch (questionType) {
-			case 'yes-no':
-				surveyQuestionList[id].answer = mg$('input:radio[name=mgPlayerJSPreview_capture-guide-radio-' + qId + ']:checked').val() || '';
-				break;
-			case 'comment':
-				var ans = mg$('textarea#comment_type_' + qId + '').val();
-				if (ans.length > 500) {
-					GmCXt.toastMsg(GmCXt.label.feedCmt).show();
-					retVal = false;
-					break;
-				} else {
-					surveyQuestionList[id].answer = ans;
-				}
-				break;
-			case 'select':
-				surveyQuestionList[id].answer = mg$('input:radio[name=select_type_option_' + qId + ']:checked').val() || '';
-				break;
-			case 'multi-select':
-				var values = [];
-				mg$.each(mg$("input:checkbox[name='multiselect_type_option_" + qId + "[]']:checked"), function() {
-					values.push(mg$(this).val());
-				});
-
-				if (values.length) surveyQuestionList[id].answer = values.toString();
-				else surveyQuestionList[id].answer = "";
-
-				break;
-			case 'range':
-				var rangeValue = mg$('#mgPlayerJSPreview_single-type-question-' + qId + '').find('.mgPlayerJSPreview_value-range-selected');
-				surveyQuestionList[id].answer = rangeValue.length ? rangeValue[0].textContent : '';
-				break;
-			case 'rating':
-				var rateValue = mg$('#mgPlayerJSPreview_single-type-question-' + qId + '').find('.mgPlayerJSPreview_rating-filled');
-				surveyQuestionList[id].answer = rateValue.length ? rateValue.length.toString() : '';
-				break;
-		}
-
-		return surveyQuestionList[id].answer;
-	}
-
-	function setQuestionAnswer(id) {
-		var questionType = surveyQuestionList[id].type;
-		var qId = surveyQuestionList[id].questionID;
-		var questionAns = surveyQuestionList[id].answer || '';
-
-		switch (questionType) {
-			case 'yes-no':
-				mg$('input:radio[name=mgPlayerJSPreview_capture-guide-radio-' + qId + '][value="' + questionAns + '"]').prop('checked', true);
-				break;
-			case 'comment':
-				mg$('textarea#comment_type_' + qId + '').val(questionAns);
-				mg$('#comment_type_survey_' + qId).html(GmCXt.label.characters + ' ' + questionAns.length);
-				checkCommentTypeMess();
-				break;
-			case 'select':
-				mg$('input:radio[name=select_type_option_' + qId + '][value="' + questionAns + '"]').prop('checked', true);
-				break;
-			case 'multi-select':
-				mg$.each(questionAns.split(","), function(index, element) {
-					mg$('input:checkbox[name="multiselect_type_option_' + qId + '[]"][value="' + element + '"]').prop('checked', true);
-				});
-				break;
-			case 'range':
-				mg$('#mgPlayerJSPreview_single-type-question-' + qId + '').find('#mgPlayerJSPreview_value-range-' + questionAns + '').addClass('mgPlayerJSPreview_value-range-selected');
-				break;
-			case 'rating':
-				mg$('.mgPlayerJSPreview_stars-rate').removeClass('mgPlayerJSPreview_rating-filled');
-				var elem = mg$('#mgPlayerJSPreview_single-type-question-' + qId + '').find('#mgPlayerJSPreview_rate-' + questionAns + '');
-				elem.addClass('mgPlayerJSPreview_rating-filled');
-				elem.prevAll().addClass('mgPlayerJSPreview_rating-filled');
-				break;
-		}
-	}
-
-	function clearSurveyInstance() {
-		GmCXt.storage().set({
-			'SHOW_SURVEY': null
-		});
-		GmCXt.storage().remove(['SHOW_SURVEY']);
-	}
-
-};
-GmCXt.requestHandler.startToolTestMe = function(data) {
-	GmCXt.testMe = {};
-	GmCXt.testMe.message = mg$.extend(true, {}, data);
-	GmCXt.testMe.eventCount = 0;
-	GmCXt.testMe.hitCount = 0;
-	GmCXt.testMe.steps = data.tour.steps;
-	GmCXt.testMe.tourId = data.tour.tour_id;
-	GmCXt.testMe.url = data.tour.url;
-
-	GmCXt.closeAppPanel();
-	GmCXt.requestHandler.startTestMeWatcher();
-
-	GmCXt.testMe.startTime = Date.now();
-
-	//Number of inline steps in a guide
-	GmCXt.testMe.stepCount = 0;
-
-	if (GmCXt.testMe.steps) {
-		GmCXt.testMe.goalStep = GmCXt.testMe.steps[GmCXt.testMe.steps.length - 1];
-
-		for (var i = 0, j = GmCXt.testMe.steps.length; i < j; i++) {
-			var step = GmCXt.testMe.steps[i];
-			if (step.step_type === GmCXt.STEP_TYPE_INLINE) {
-				GmCXt.testMe.stepCount++;
-			}
-		}
-	}
-
-	//Expected time to play guide 1 step = 10 sec
-	GmCXt.testMe.expectedTime = GmCXt.testMe.stepCount * 10;
-	GmCXt.testMe.countDownTime = new Date().getTime() + GmCXt.testMe.expectedTime * 1000;
-};
-
-GmCXt.showTestMeCountdown = function() {
-
-	GmCXt.testMe.timer = setInterval(function() {
-
-		if (GmCXt.testMe) {
-			var now = new Date().getTime();
-
-			var distance = GmCXt.testMe.countDownTime - now;
-
-			// Time calculations for minutes and seconds
-			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-			// Count down is over
-			if (distance < 0) {
-				clearInterval(GmCXt.testMe.timer);
-				GmCXt.requestHandler.stopToolTestMe();
-			} else {
-				var str = "";
-				if (minutes > 0) {
-					str += minutes + "m ";
-				}
-				if (seconds > 0) {
-					str += seconds + "s";
-				}
-				mg$('.mgPlayerJSPreview_testme-active-countdown').html(str);
-			}
-		}
-	}, 1000);
-};
-
-GmCXt.requestHandler.startTestMeWatcher = function() {
-
-	GmCXt.log(58, 'MyTest started');
-	mg$('.mgPlayerJSPreview_testme-active').show();
-	mg$('.mgPlayerJSPreview_testme-active-title').html(GmCXt.label.testMeStopMessage);
-	mg$('.mgPlayerJSPreview_testme-stop-label').html(GmCXt.label.stop);
-
-	GmCXt.showTestMeCountdown();
-	GmCXt.hideWidgetIcon();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:start_watcher;testMe");
-};
-
-GmCXt.requestHandler.recordEventTestMe = function(data) {
-
-	if (!GmCXt.testMe) return;
-
-	GmCXt.log(58, "Recording events for testMe");
-
-	var new_ = data.element;
-
-	if (data.event === 'click') {
-		GmCXt.log(58, data.event.toUpperCase() + " Event Occured");
-	}
-
-	//Loop through all the steps of a tour
-	for (var i = 0; i < GmCXt.testMe.steps.length; i++) {
-
-		var step = GmCXt.testMe.steps[i];
-
-		if (step.step_type === GmCXt.STEP_TYPE_INLINE) {
-
-			var settings = step.step_settings;
-			var match = false;
-
-			if (data.event === 'click' &&
-				(settings.clickNext === true ||
-					settings.onRightClickNext === true ||
-					settings.onChangeNext === true ||
-					settings.onKeyupNext === true)
-			) {
-				GmCXt.testMe.eventCount++;
-				match = matchStep(step);
-
-			} else if (data.event === 'mouseover' &&
-				(settings.hoverNext === true ||
-					settings.keepNext === true ||
-					settings.closeAfterDelay === true)
-			) {
-				match = matchStep(step);
-				if (match === true) {
-					GmCXt.log(58, data.event.toUpperCase() + " Event Occured");
-					GmCXt.testMe.eventCount++;
-				}
-			}
-
-			if (match === true) {
-
-				GmCXt.log(58, "STEP MATCHED Id: " + step.step_id);
-				GmCXt.testMe.hitCount++;
-				GmCXt.testMe.steps.splice(i, 1);
-
-				if (GmCXt.testMe.goalStep.step_id == step.step_id) {
-					GmCXt.log(58, "GOAL STEP MATCHED, STOP TEST TOOL");
-					GmCXt.requestHandler.stopToolTestMe();
-				} else {
-					break;
-				}
-			}
-		}
-	}
-
-	function compareAttributes(elObj, stepEl) {
-		var elAttr1 = mg$.extend(true, {}, elObj.meta.elAttributes);
-		var elAttr2 = mg$.extend(true, {}, stepEl.meta.elAttributes);
-
-		if (elAttr1 && elAttr2) {
-			elAttr1.class = GmCXt.dom.filterValidClasses(elAttr1.class) ? GmCXt.dom.filterValidClasses(elAttr1.class).split('.') : [];
-			elAttr2.class = GmCXt.dom.filterValidClasses(elAttr2.class) ? GmCXt.dom.filterValidClasses(elAttr2.class).split('.') : [];
-		}
-
-		return GmCXt.compareObjectsByPercentMatch(elAttr1, elAttr2, 60);
-	}
-
-	function matchStep(step) {
-
-		var stepSettings = step.step_settings;
-		var stepEl = stepSettings.element;
-		var match = false;
-		var old_ = stepEl;
-
-		if (!mg$.isArray(new_)) {
-			new_ = [new_];
-		}
-
-		for (var i = 0; i < new_.length; i++) {
-			if (compareAttributes(new_[i], old_)) {
-				match = true;
-				break;
-			}
-		}
-		return match;
-	}
-
-	function compareSelector(prop, old, new_) {
-
-		var match = false;
-		var oldSelector = old[prop];
-		var newSelector = new_[prop];
-
-		if (oldSelector && newSelector) {
-
-			var len = newSelector.length;
-			var o = 0;
-			var n = 0;
-
-			//Compare each selector
-			for (var j = 0; j < len; j++) {
-				if (oldSelector[o] === newSelector[n]) {
-					o++;
-					n++;
-					match = true;
-				} else if (match === true) {
-					match = false;
-					break;
-				}
-
-				if (match === false && oldSelector[o] !== newSelector[n]) {
-					n++;
-				}
-			}
-		}
-
-		return match;
-	}
-};
-
-GmCXt.requestHandler.stopToolTestMe = function() {
-	GmCXt.log(58, 'MyTest ENDED');
-	clearInterval(GmCXt.testMe.timer);
-	mg$('.mgPlayerJSPreview_testme-active').hide();
-	GmCXt.testMe.stopTime = Date.now();
-	GmCXt.requestHandler.stopTestMeWatcher();
-	GmCXt.requestHandler.showTestMeReport();
-};
-
-GmCXt.requestHandler.stopTestMeWatcher = function() {
-	GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:stop_watcher;testMe");
-};
-
-GmCXt.requestHandler.showTestMeReport = function() {
-	GmCXt.testMe.userTime = parseInt((GmCXt.testMe.stopTime - GmCXt.testMe.startTime) / 1000) || 1;
-	GmCXt.testMe.testEfficiency = null;
-	GmCXt.testMe.testEffectiveness = null;
-	GmCXt.testMe.testResult = "Failed";
-
-	if (GmCXt.testMe.hitCount === GmCXt.testMe.stepCount) {
-
-		GmCXt.testMe.testResult = "Passed";
-
-		//(Expected time to complete a guide / Total time taken by user) * 100;
-		GmCXt.testMe.testEfficiency =
-			parseFloat(((GmCXt.testMe.expectedTime / GmCXt.testMe.userTime) * 100).toFixed(2));
-
-		// (Number of inline steps in a guide / Number of steps performed by user) * 100
-		GmCXt.testMe.testEffectiveness =
-			parseFloat(((GmCXt.testMe.stepCount / GmCXt.testMe.eventCount) * 100).toFixed(2));
-	}
-
-	GmCXt.showTestMeReportUI();
-
-	//call analytics tracker
-	GmCXt.trackerV1.trackTestMe(GmCXt.testMe);
-	GmCXt.retakeTest = GmCXt.testMe;
-	GmCXt.storage().set({
-		'testMe': null
-	});
-	GmCXt.testMe = {steps:[]};
-};
-
-GmCXt.showTestMeReportUI = function() {
-
-	var testMeResultHeader =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-test-me-result-header'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-test-me-result-title'>" +
-		GmCXt.label.testMeResultTitle +
-		"</wmgPlayerJSPreview_>" +
-		"<button class='mgPlayerJSPreview_popup-test-me-result-close mgPlayerJSPreview_lbl-btn'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-test-me-close-svg'></wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_title-tooltip-wrapper mgPlayerJSPreview_position-bottom-left'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_tooltip-title'>" + GmCXt.label.close + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</button>" +
-		"</wmgPlayerJSPreview_>";
-
-	var testMeUserResultPass =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_result-passed-container'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_message-icon-passed'>" +
-		"<span class='mgPlayerJSPreview_message-icon-passed-svg'></span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_message-text-passed'>" +
-		"<span>" + GmCXt.label.testMePassedMessage + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	var testMeUserResultFail =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_result-failed-container'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_message-icon-failed'>" +
-		"<span class='mgPlayerJSPreview_message-icon-failed-svg'></span>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_message-text-failed'>" +
-		"<span>" + GmCXt.label.testMeFailedMessage + "</span>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	//Get test time in min-sec format
-	if (GmCXt.testMe.userTime > 60) {
-		var testMeUserTime = Math.floor(GmCXt.testMe.userTime / 60) + " min " +
-			parseInt(GmCXt.testMe.userTime - Math.floor(GmCXt.testMe.userTime / 60) * 60) + " sec";
-	} else {
-		var testMeUserTime = Math.floor(GmCXt.testMe.userTime) + " sec";
-	}
-
-	if (GmCXt.testMe.expectedTime > 60) {
-		var testMeExpectedTime = Math.floor(GmCXt.testMe.expectedTime / 60) + " min " +
-			parseInt(GmCXt.testMe.expectedTime - Math.floor(GmCXt.testMe.expectedTime / 60) * 60) + " sec";
-	} else {
-		var testMeExpectedTime = Math.floor(GmCXt.testMe.expectedTime) + " sec";
-	}
-
-	GmCXt.testMe.testMeExpectedTime = testMeExpectedTime;
-
-	var testMeEfficiency = GmCXt.testMe.testEfficiency;
-	var testMeEffectiveness = GmCXt.testMe.testEffectiveness;
-	if (GmCXt.testMe.testEfficiency === null ||
-		GmCXt.testMe.testEffectiveness === null) {
-
-		testMeEfficiency = 0;
-		testMeEffectiveness = 0;
-	}
-
-	var efficiencyResult =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-guide-efficiency'>" +
-		GmCXt.label.testMeGuideEfficiency + " " + testMeEfficiency + "%" +
-		"</wmgPlayerJSPreview_>";
-
-	var effectivenessResult =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-guide-effectiveness'>" +
-		GmCXt.label.testMeGuideEffectiveness + " " + testMeEffectiveness + "%" +
-		"</wmgPlayerJSPreview_>";
-
-	var testEfficiency =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_guide-efficiency-wrapper'>" +
-		efficiencyResult +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_verticle-line'>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-time-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_time-taken-text'>" + GmCXt.label.testMeTestTime + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_time-user'>" + testMeUserTime + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-expected-time-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_expected-time-text'>" + GmCXt.label.testMeExpectedTime + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_time-expected'>" + testMeExpectedTime + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	var testEffectiveness =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_guide-effectiveness-wrapper'>" +
-		effectivenessResult +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_verticle-line'>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-test-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_test-steps-text'>" + GmCXt.label.testMeStepsTaken + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_count-steps'>" + GmCXt.testMe.eventCount + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-required-steps-wrapper'>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_required-steps-text'>" + GmCXt.label.testMeExpectedSteps + "</wmgPlayerJSPreview_>" +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_count-steps'>" + GmCXt.testMe.stepCount + "</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	if (GmCXt.testMe.testResult === "Passed") {
-		var bottomButtons =
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_test-me-btn-action'>" +
-			"<button class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-neutral mgPlayerJSPreview_btn-esc-test-me mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_lbl-btn'>" + GmCXt.label.close + "</button>" +
-			"</wmgPlayerJSPreview_>";
-	} else {
-		var bottomButtons =
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_test-me-btn-action'>" +
-			"<button class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-start-test mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_lbl-btn'>" + GmCXt.label.testMeRetakeTestBtn + "</button>" +
-			"<button class='mgPlayerJSPreview_btn-default mgPlayerJSPreview_btn-neutral mgPlayerJSPreview_btn-esc-test-me mgPlayerJSPreview_inline-block-vt mgPlayerJSPreview_lbl-btn'>" + GmCXt.label.close + "</button>" +
-			"</wmgPlayerJSPreview_>";
-	}
-
-	var testMeFailedDescription = "";
-
-	if (GmCXt.testMe.testResult === "Passed") {
-		testMeUserResultFail = "";
-	} else {
-		testMeUserResultPass = "";
-		testEfficiency = "";
-		testEffectiveness = "";
-
-		//Show this message instead of Test Efficiency and Test Effectiveness when Test is failed.
-
-		var msg = GmCXt.label.testMeFailedErrorMessage;
-        msg = msg.replace(/{CORRECT_STEPS}/g, GmCXt.testMe.hitCount);
-        msg = msg.replace(/{TOTAL_STEPS}/g, GmCXt.testMe.stepCount);
-
-        testMeFailedDescription = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_text-guide-message-failed'>" + msg + "</wmgPlayerJSPreview_>";
-	}
-
-	var html =
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-test-me-result-preview'>" +
-		testMeResultHeader +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-test-me-result-container'>" +
-		testMeUserResultFail +
-		testMeUserResultPass +
-		"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_result-score-container'>" +
-		testEfficiency +
-		testEffectiveness +
-		testMeFailedDescription +
-		"</wmgPlayerJSPreview_>" +
-		bottomButtons +
-		"</wmgPlayerJSPreview_>" +
-		"</wmgPlayerJSPreview_>";
-
-	mg$("html").append(html);
-
-	mg$(".mgPlayerJSPreview_popup-test-me-close-svg").html(GmCXt.svgs.close_btn);
-	mg$(".mgPlayerJSPreview_message-icon-passed-svg").html(GmCXt.svgs.testme_result_passed);
-	mg$(".mgPlayerJSPreview_message-icon-failed-svg").html(GmCXt.svgs.testme_result_failed);
-
-	function closeTestMeReport() {
-		mg$('.mgPlayerJSPreview_popup-test-me-result-preview').hide();
-		GmCXt.openAppPanel();
-		GmCXt.displayWidget();
-		GmCXt.testMe = null;
-		GmCXt.storage().set({
-			'testMe': null
-		});
-	}
-
-	function reStartTestMe() {
-		GmCXt.testMe = GmCXt.retakeTest;
-		GmCXt.storage().set({
-			'testMe': GmCXt.testMe
-		});
-		mg$('.mgPlayerJSPreview_popup-test-me-result-preview').hide();
-		GmCXt.hideWidgetIcon();
-		var testMeMessage = mg$.extend(true, {}, GmCXt.testMe.message);
-
-		//Start TestMe Tool
-		GmCXt.testMe = null;
-		GmCXt.storage().set({
-			'testMe': null
-		});
-		GmCXt.requestHandler.startToolTestMe(testMeMessage);
-		var firstStepId = testMeMessage.tour.tour_settings.play_structure[0].id;
-		var firstStep = GmCXt.getStepFromSteps(firstStepId, testMeMessage.tour.steps);
-		const currentUrl = new URL(window.location.href);
-		const guideUrl = new URL(`https://${firstStep.step_url}`);
-		if (guideUrl.hostname !== currentUrl.hostname || guideUrl.pathname !== currentUrl.pathname) {
-			window.location.href = `https://${firstStep.step_url}`;
-		}
-	}
-
-	//Close report on clicking close icon/Esc button
-	mg$(".mgPlayerJSPreview_popup-test-me-result-close").on("click", closeTestMeReport);
-	mg$(".mgPlayerJSPreview_btn-esc-test-me").on("click", closeTestMeReport);
-
-	mg$(".mgPlayerJSPreview_btn-start-test").on("click", reStartTestMe);
-
-};
-
-GmCXt.requestHandler.checkTestMeDomain = function(data) {
-	GmCXt.storage().set({
-		'testMe': null
-	});
-	GmCXt.closeAppPanel();
-	var windowHost = GmCXt.getPageDomain();
-	var stepUrlHost = GmCXt.getDomain(data.tour.steps[0].step_url);
-
-	if (windowHost !== stepUrlHost) {
-		return false;
-	} else {
-		return true;
-	}
-
-};
-
-GmCXt.requestHandler.redirectToUrl = function(data) {
-
-	function button1Callback() {
-		var message = {
-			currStepUrl: 'https://' + data.tour.steps[0].step_url,
-			action: "mgPlayerJSPreview_action:start_tool;testMe",
-			data: data
-		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:redirectTestMe', message);
-	}
-
-	var options = {
-		description: GmCXt.label.ConfirmIfTestMeModeRidirect,
-		button1: GmCXt.label.redirect,
-		button1Callback: button1Callback,
-		button2: GmCXt.label.btnCancel
-		// button2Callback: button2Callback
-	};
-
-	alertV1(options).show();
-
-};
-
-alertV1 = function(options) {
-	options = options || {};
-
-	var pub = {};
-
-	var self = {
-		description: options.description,
-		button1: options.button1,
-		button1Callback: options.button1Callback,
-		button2: options.button2,
-		button2Callback: options.button2Callback,
-		keepScrollLock: options.keepScrollLock || false,
-		closeTour: false,
-		showInputField: options.showInputField || false
-	};
-
-	var popupInputField = 'none';
-	if (self.showInputField) {
-		popupInputField = 'block';
-	}
-	pub.show = function() {
-
-		var html = " <wmgPlayerJSPreview_ class='mgPlayerJSPreview_overlay-container'></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup'>" +
-			"<img class='mgPlayerJSPreview_popup-close-button' src='" + GmCXt.conf.staticContentPath + "close.png'/>" +
-			"<wmgPlayerJSPreview_ style='display:" + popupInputField + "'><input type='text'  maxlength='250' class='mgPlayerJSPreview_popup-input-field'/></wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-content-wrapper'>" + self.description + "</wmgPlayerJSPreview_>" +
-			"<wmgPlayerJSPreview_ class='mgPlayerJSPreview_popup-btn-wrapper'>";
-
-		if (self.button1) {
-			html += "<wmgPlayerJSPreview_ title='" + self.button1 + "' aria-label='popup " + self.button1 + " button' class='mgPlayerJSPreview_popup-ok-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt'>" + self.button1 + "</wmgPlayerJSPreview_>";
-		}
-		if (self.button2) {
-			html += "<wmgPlayerJSPreview_ title='" + self.button2 + "' aria-label='popup " + self.button2 + " button' class='mgPlayerJSPreview_popup-cancel-btn mgPlayerJSPreview_btn-default mgPlayerJSPreview_text-overflow-ellipsis mgPlayerJSPreview_inline-block-vt'>" + self.button2 + "</wmgPlayerJSPreview_>" +
-				"</wmgPlayerJSPreview_>";
-		}
-		html += "</wmgPlayerJSPreview_>";
-
-		mg$("html").append(html);
-
-		var windowHeight = mg$(window).height();
-		var popupTop = (windowHeight - mg$('.mgPlayerJSPreview_popup').height()) / 2;
-		mg$('.mgPlayerJSPreview_popup').css("top", popupTop);
-
-		mg$(".mgPlayerJSPreview_popup-ok-btn").on("click", function() {
-			var popupInputFieldValue = mg$('.mgPlayerJSPreview_popup-input-field').val();
-			pub.close();
-			if (mg$.isFunction(self.button1Callback))
-				self.button1Callback(popupInputFieldValue);
-		});
-
-		mg$(".mgPlayerJSPreview_popup-cancel-btn").on("click", function() {
-			pub.close(self.keepScrollLock);
-			GmCXt.openAppPanel();
-		});
-
-		mg$(".mgPlayerJSPreview_popup-close-button").on("click", function() {
-			pub.close(self.keepScrollLock);
-		});
-	};
-
-	pub.close = function(keepScrollLock) {
-
-		if (!keepScrollLock)
-			GmCXt.unlockScroll();
-
-		mg$(".mgPlayerJSPreview_popup").remove();
-		mg$(".mgPlayerJSPreview_overlay-container").remove();
-	};
-
-	return pub;
-};
-GmCXt.vlabPanel = function() {
-
-	var pub = {};
-
-	//@function Publicly callble method to load vlab window
-
-	pub.load = function() {
-
-		if (!GmCXt.playerI.playStructure) {
-			GmCXt.playerI.playStructure = [];
-			updatePlayStructure(GmCXt.playerI.tour);
-		}
-
-		if (!GmCXt.playerI.currentStepId) {
-			var firstStepId = GmCXt.getFirstStepId();
-			if (firstStepId) {
-				GmCXt.playerI.currentStepId = firstStepId;
-			} else {
-				GmCXt.cleanPlayer();
-				return true;
-			}
-		}
-
-		mg$(".mgPlayerJSPreview_vlab-next").off("click").on("click", playNextStep);
-		mg$(".mgPlayerJSPreview_vlab-prev").off("click").on("click", playPrevStep);
-		mg$(".mgPlayerJSPreview_vlab-close").off("click").on("click", close);
-
-		GmCXt.timeout(function() {
-			mg$(".mgPlayerJSPreview_vlab-next").focus();
-		}, 500);
-
-		GmCXt.hideWidgetIcon();
-
-		start();
-	};
-
-	function close() {
-
-		if (GmCXt.FT.isPlayer) {
-			var step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-			GmCXt.updatePlayedSteps(step);
-		}
-		hide();
-		GmCXt.openAppPanel();
-		GmCXt.displayWidget();
-
-		if (GmCXt.playerI) {
-			var TS = GmCXt.playerI.tour.tour_settings;
-			if (TS && TS.play_structure && TS.play_structure.length) {
-				if (GmCXt.playerI.tour && GmCXt.playerI.tour.steps && GmCXt.playerI.tour.steps.length && GmCXt.playerI.tour.steps[0].step_id === TS.play_structure[0].id &&
-					GmCXt.isLastStep(GmCXt.playerI.currentStepId, TS.play_structure)) {
-					GmCXt.playerI.completeEventTracked = true;
-				}
-			}
-		}
-
-		if (!GmCXt.tourPlayerI) {
-			GmCXt.tourPlayerI = GmCXt.tourPlayer();
-			GmCXt.tourPlayerI.closeGuide();
-		}
-		
-		GmCXt.cleanPlayer();
-	}
-
-	function hide() {
-		mg$('.mgPlayerJSPreview_vlab-screen-img').attr('src', GmCXt.getDefaultGuideIcon()).attr('alt', '');
-		mg$('.mgPlayerJSPreview_vlab-screen-loader').hide();
-		mg$('.mgPlayerJSPreview_vlab-virtual-element').hide();
-		mg$('.mgPlayerJSPreview_vlab-screen').hide();
-		mg$('.mgPlayerJSPreview_vlab-next').hide();
-		mg$('.mgPlayerJSPreview_vlab-prev').hide();
-		mg$('.mgPlayerJSPreview_vlab-virtual-element').off();
-		mg$('.mgPlayerJSPreview_vlab-video-screen').empty().hide();
-		mg$('.mgPlayerJSPreview_vlab-container').hide();
-	}
-
-	function updatePlayStructure(tour) {
-		var ps = GmCXt.getGuidePlayStructure(tour);
-		GmCXt.playerI.playStructure = GmCXt.playerI.playStructure.concat(ps);
-	}
-
-	function playLinkedGuide(step) {
-
-		window.addEventListener('message', listen);
-		var ts = [];
-
-		function listen(event) {
-
-			var message = GmCXt.parseMsg(event);
-
-			if (!message || !message.action || message.action.indexOf('mgPlayerJSPreview_action:') !== 0) {
-				return;
-			}
-			message = GmCXt.convertMgdata(message);
-
-			if (message.action === 'mgPlayerJSPreview_action:update_PI_steps_done') {
-				GmCXt.playerI.currentStepId = GmCXt.playerI.linkGuideFS;
-				start();
-				window.removeEventListener('message', listen);
-			}
-
-			if (message.action === 'mgPlayerJSPreview_action:update_PI_PS_done') {
-				if (!ts.length) return;
-				GmCXt.concatLinkGuideSteps(ts);
-			}
-		}
-
-		var d = {
-			tour_id: step.step_settings.tour_id
-		};
-
-		GmCXt.getSteps(d).then(function(tour) {
-			GmCXt.updatePlayStructureLinkGuide(tour);
-			ts = tour.steps;
-		});
-	}
-
-	function start() {
-
-		var step = GmCXt.getStepFromPlayerI(GmCXt.playerI.currentStepId);
-
-		function onLoadInlineStep() {
-			mg$('.mgPlayerJSPreview_vlab-screen-loader').hide();
-			mg$('.mgPlayerJSPreview_vlab-next').hide();
-			createVirtualEl(step);
-		}
-
-		function onLoadMsgStep() {
-			mg$('.mgPlayerJSPreview_vlab-screen-loader').hide();
-			mg$('.mgPlayerJSPreview_vlab-next').show();
-			if (!GmCXt.isFirstStep()) {
-				mg$('.mgPlayerJSPreview_vlab-prev').show();
-			}
-		}
-
-		if (step !== undefined) {
-
-			hide();
-
-			if (step.step_type === GmCXt.STEP_TYPE_VIDEO) {
-
-				mg$(".mgPlayerJSPreview_vlab-container").show();
-				mg$('.mgPlayerJSPreview_vlab-video-screen').show();
-
-				mg$(".mgPlayerJSPreview_vlab-video-screen").append(
-					"<video id='mgPlayerJSPreview_vlab-video-container' class='mgPlayerJSPreview_vlab-video-container' autoplay controls ></video>");
-
-				var vid = document.getElementById('mgPlayerJSPreview_vlab-video-container');
-				vid.innerHTML = "<source type='video/mp4' src=" + step.step_video_url + GmCXt.user.cdn_signature + ">";
-
-				mg$('.mgPlayerJSPreview_vlab-next').show();
-				mg$('.mgPlayerJSPreview_vlab-prev').show();
-
-				vid.onended = function() {
-					GmCXt.timeout(function() {
-						playNextStep();
-					}, 2000);
-				};
-			} else if (step.step_type === GmCXt.STEP_TYPE_INLINE && !step.step_settings.inlineBranch) {
-
-				loadScreen(step, onLoadInlineStep);
-			} else if (step.step_type === GmCXt.STEP_TYPE_MESSAGE ||
-				step.step_type === GmCXt.STEP_TYPE_IMAGE) {
-
-				loadScreen(step, onLoadMsgStep);
-			} else if (step.step_type === GmCXt.STEP_TYPE_GUIDE) {
-
-				playLinkedGuide(step);
-
-			} else if ( GmCXt.checkForBranchVariationSteps(step) ) {
-
-				GmCXt.toastMsgPersistent('Branch step detected. TeachMe cannot proceed with branch steps').show();
-				GmCXt.cleanPlayer();
-				GmCXt.displayWidget();
-			} else if (step.step_type === GmCXt.STEP_TYPE_SURVEY) {
-				playNextStep();
-			}
-		}
-	}
-
-	function loadScreen(step, cb) {
-		mg$(".mgPlayerJSPreview_vlab-container").show();
-		mg$('.mgPlayerJSPreview_vlab-screen-loader').show();
-		mg$('.mgPlayerJSPreview_vlab-screen').show();
-		mg$('.mgPlayerJSPreview_vlab-screen-img').off('load').on('load', function(e) {
-			if (e.target.src.indexOf('default') === -1) {
-				cb();
-			}
-		});
-
-		mg$('.mgPlayerJSPreview_vlab-screen-img').attr('src', step.screen_url + GmCXt.user.cdn_signature).attr('alt', GmCXt.concatHTMLStringWithSpace(step.step_title));
-	}
-
-	function getElemPosition(step) {
-
-		var stepElPos = step.step_settings.element.position;
-
-		var vLabImageWidth = mg$('.mgPlayerJSPreview_vlab-screen-img').width();
-		var vLabImageHeight = mg$('.mgPlayerJSPreview_vlab-screen-img').height();
-
-		var vLabImageOffsetLeft = ((mg$(window).width() - vLabImageWidth) / 2);
-		var vLabImageOffsetTop = ((mg$(window).height() - vLabImageHeight) / 2);
-
-		var widthRatio = vLabImageWidth / stepElPos.windowWidth;
-		var heightRatio = vLabImageHeight / stepElPos.windowHeight;
-
-		var top = (stepElPos.top * heightRatio) + vLabImageOffsetTop;
-		var left = (stepElPos.left * widthRatio) + vLabImageOffsetLeft;
-		var width = stepElPos.width * heightRatio;
-		var height = stepElPos.height * widthRatio;
-
-		if (width && height) {
-			return {
-				top: top,
-				left: left,
-				width: width,
-				height: height
-			};
-		} else return false;
-	}
-
-	function showVirtualEl(pos) {
-		mg$('.mgPlayerJSPreview_vlab-virtual-element').empty().show();
-		mg$('.mgPlayerJSPreview_vlab-virtual-element').css({
-			"top": pos.top,
-			"left": pos.left,
-			"width": pos.width,
-			"height": pos.height
-		});
-	}
-
-	function createVirtualEl(step) {
-		if(step.step_settings.completionEvent) {
-			var e = step.step_settings.completionEvent;
-		} else if(step.step_settings.keepNext) {
-			var e = "keepNext";
-		}
-		var pos = getElemPosition(step);
-
-		if (pos) {
-
-			showVirtualEl(pos);
-
-			if (e === 'onKeyupNext') {
-				createInputBox(step);
-			} else {
-				createSubElems(step);
-			}
-
-			addEvents(step, e);
-		}
-
-		var lastStep = GmCXt.isLastStep(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure);
-		var eventArr = ['keepNext', 'onChangeNext'];
-		if ((eventArr.indexOf(e) !== -1 && !lastStep) || !pos) {
-			mg$('.mgPlayerJSPreview_vlab-next').show();
-		}
-		if (!GmCXt.isFirstStep()) {
-			mg$('.mgPlayerJSPreview_vlab-prev').show();
-		}
-	}
-
-	var timer = null;
-
-	function triggerNextOnTyping() {
-		clearTimeout(timer);
-		timer = GmCXt.timeout(function() {
-			playNextStep();
-		}, 1000);
-	}
-
-	function createInputBox(step) {
-
-		var textField = "<input class='mgPlayerJSPreview_vlab-element-input-text' type='text' /> ";
-
-		mg$(".mgPlayerJSPreview_vlab-virtual-element").append(textField);
-		mg$(".mgPlayerJSPreview_vlab-element-input-text").off("keyup").on("keyup", triggerNextOnTyping);
-	}
-
-	function getRadioEl(el) {
-
-		return "<input class='mgPlayerJSPreview_vlab-element-input-radio mgPlayerJSPreview_input-radio-custom' type='radio' " +
-			"name='" + el.name +
-			"' style = 'width:" + el.width + "px; " +
-			"height:" + el.height + "px; " +
-			"top:" + el.top + "px; " +
-			"left:" + el.left + "px;' /> ";
-	}
-
-	function getCheckboxEl(el) {
-		return "<input class='mgPlayerJSPreview_vlab-element-input-checkbox mgPlayerJSPreview_input-checkbox-custom' type='checkbox' " +
-			"name='" + el.name +
-			"' style='width:" + el.width + "px; " +
-			" height:" + el.height + "px; " +
-			"top:" + el.top + "px; " +
-			"left:" + el.left + "px;'/> ";
-	}
-
-	function getSelectEl(el) {
-		return "<option>" + el.name + "</option>";
-	}
-
-	function createSubElems(step) {
-
-		var elements = step.step_settings.element.elOptions;
-
-		if (elements && elements.length) {
-
-			var elType = elements[0].type;
-
-			var opHtml = '';
-			for (var i = 0; i < elements.length; i++) {
-				var el = elements[i];
-				switch (elType) {
-					case 'select':
-						opHtml += getSelectEl(el);
-						break;
-
-					case 'radio':
-						opHtml += getRadioEl(el);
-						break;
-
-					case 'checkbox':
-						opHtml += getCheckboxEl(el);
-						break;
-				}
-			}
-
-			if (elType === 'select') {
-				opHtml = '<select class="mgPlayerJSPreview_vlab-element-input-select">' + opHtml + "</select>";
-			}
-
-			mg$(".mgPlayerJSPreview_vlab-virtual-element").append(opHtml);
-		}
-	}
-
-	function addEvents(step, event) {
-
-		switch (event) {
-
-			case 'clickNext':
-				mg$(".mgPlayerJSPreview_vlab-virtual-element").off("click").on("click", playNextStep);
-				break;
-
-			case 'onRightClickNext':
-				mg$(".mgPlayerJSPreview_vlab-virtual-element").off("mousedown").on("mousedown", checkForRightClick);
-				break;
-
-			case 'hoverNext':
-				mg$(".mgPlayerJSPreview_vlab-virtual-element").off("mouseover").on("mouseover", playNextStep);
-				break;
-
-			case 'onClickAnywhere':
-			case 'headerNext':
-				mg$(".mgPlayerJSPreview_vlab-screen").off("click").on("click", playNextStep);
-				break;
-
-			case 'onChangeNext':
-				mg$(".mgPlayerJSPreview_vlab-element-input-select").off("change").on("change", triggerNextOnTyping);
-				break;
-
-			case 'closeAfterDelay':
-				var delayTime = step.step_settings.completionTime;
-				delayTime = parseInt(delayTime) * 1000;
-
-				GmCXt.timeout(function() {
-					playNextStep();
-				}, delayTime);
-				break;
-		}
-	}
-
-	function checkForRightClick(e) {
-
-		if (e && e.which === 3) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			playNextStep();
-		}
-	}
-
-	function playNextStep() {
-
-		var nextStepId = GmCXt.getTail(GmCXt.playerI.currentStepId, GmCXt.playerI.playStructure);
-		if (nextStepId) {
-			GmCXt.playerI.currentStepId = nextStepId;
-			start();
-		} else {
-			hide();
-			GmCXt.cleanPlayer();
-			GmCXt.displayWidget();
-		}
-	}
-
-	function playPrevStep() {
-
-		var previousStepId = GmCXt.getPreviousStepId(GmCXt.playerI.currentStepId);
-		if (previousStepId) {
-			GmCXt.playerI.currentStepId = previousStepId;
-			start();
-		} else {
-			hide();
-			GmCXt.cleanPlayer();
-		}
-	}
-	return pub;
-};
-/**
-	* @file Guideme HTTP service
-	* @author Nilesh Pachpande
-	*/
-
-GmCXt.userApiKeySignin = function(data) {
-
-	var myGuideOrgKey = data.myGuideOrgKey;
-	delete data.myGuideOrgKey;
-
-	var params = {
-		url: 'user/sso/login',
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			"Authorization": myGuideOrgKey
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.getAnonymousUserPrefrence = function(data, accesstoken) {
-
-	var params = {
-		url: 'user/preference',
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			AccessToken: accesstoken
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.setAnonymousUserPrefrence = function(data) {
-
-	var params = {
-		url: 'user/preference',
-		method: 'PUT',
-		headers: {
-			'Content-Type': "application/json",
-			AccessToken: GmCXt.user.accesstoken
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-
-GmCXt.apiGetHandOffToken = function() {
-	var params = {
-		url: "accounts/v1/handoff-token/generate/",
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			AccessToken: GmCXt.user.accesstoken,
-			AppKey: GmCXt.conf.apiSecrret,
-			RefreshToken: GmCXt.user.refreshtoken
-		},
-		data: ''
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiRegisterClientInsight = function() {
-	var params = {
-		url: "event/v1/client/register/?org_id=" + GmCXt.organization.organization_id,
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			AccessToken: GmCXt.user.accesstoken,
-			AppKey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-	return GmCXt.xhrAnalytics(params, true);
-};
-
-GmCXt.apiGetClientSecretInsight = function(o) {
-	var params = {
-		url: "event/v1/client/secret/?org_id=" + GmCXt.organization.organization_id,
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify({
-			"app_client_id": o
-		})
-	};
-	return GmCXt.xhrAnalytics(params, true);
-};
-
-GmCXt.apiTrackEventV3 = function(o) {
-	var params = {
-		url: "v3/push_events/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiTrackEventV1 = function(o) {
-
-	var params = {
-		url: "event/v1/push/?org_id=" + o.payload[0].org_id + "&app_code=" + o.payload[0].app_code + "&event_type=" + o.payload[0].event_type,
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apitrackSentiment = function(o) {
-	var params = {
-		url: "register/v1/sentiment/report/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apitrackConversation = function(o) {
-	var params = {
-		url: "register/v1/conversation/report/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiUpdateSentiment = function(o) {
-	var params = {
-		url: "sentiments/v1/questionaire/",
-		method: 'PUT',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			key: GmCXt.trackerUtil.clientKey,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiDeleteSentiment = function(o) {
-	var url = "";
-	if (o.app_code) {
-		url = "sentiments/v1/questionaire/?app_code=" + o.app_code + "&sentiment_code=" + o.sentiment_code +
-			"&time_zone=utc+0530";
-	} else {
-		url = "sentiments/v1/questionaire/?sentiment_code=" + o.sentiment_code +
-			"&time_zone=utc+0530";
-	}
-
-	var params = {
-		url: url,
-		method: 'DELETE',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiGetSentiment = function(o) {
-	var url = "";
-	if (o.app_code) {
-		url = "sentiments/v1/questionaire/?app_code=" + o.app_code + "&sentiment_code=" + o.sentiment_code +
-			"&time_zone=utc+0530";
-	} else {
-		url = "sentiments/v1/questionaire/?sentiment_code=" + o.sentiment_code +
-			"&time_zone=utc+0530";
-	}
-	var params = {
-		url: url,
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiGetBotConv = function(o) {
-	var url = "";
-	if (o.app_code) {
-		url = "conversations/v1/questionaire/?app_code=" + o.app_code + "&conversation_code=" + o.conversation_code +
-			"&time_zone=utc+0530";
-	} else {
-		url = "conversations/v1/questionaire/?conversation_code=" + o.conversation_code +
-			"&time_zone=utc+0530";
-	}
-	var params = {
-		url: url,
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiGetSentiments = function(o) {
-	var url = "";
-	if (o.app_code) {
-		url = "sentiments/v1/list/?app_code=" + o.app_code + "&sort_by=sentiment_title&order=asc&page_index=" +
-			o.pageIndex + "&page_size=" + o.pageSize;
-	} else {
-		url = "sentiments/v1/list/?sort_by=sentiment_title&order=asc&page_index=" +
-			o.pageIndex + "&page_size=" + o.pageSize;
-	}
-	var params = {
-		url: url,
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiGetBotConvList = function(o) {
-	var url = "";
-	if (o.app_code) {
-		url = "conversations/v1/list/?app_code=" + o.app_code + "&sort_by=conversation_title&order=asc&page_index=" +
-			o.pageIndex + "&page_size=" + o.pageSize;
-	} else {
-		url = "conversations/v1/list/?sort_by=conversation_title&order=asc&page_index=" +
-			o.pageIndex + "&page_size=" + o.pageSize;
-	}
-	var params = {
-		url: url,
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: ''
-	};
-
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiPostSurvey = function(o, user) {
-	var params = {
-		url: "v3/survey/questionnaire/" + o.guide_id + "/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: user.accesstoken,
-			key: GmCXt.trackerUtil.clientKey,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiPostSentiment = function(o) {
-	var params = {
-		url: "sentiments/v1/questionaire/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			accesstoken: GmCXt.user.accesstoken,
-			key: GmCXt.trackerUtil.clientKey,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiUpdateUserProfile = function(user) {
-	user.settings = JSON.stringify(user.settings);
-	var params = {
-		url: "user",
-		method: 'PUT',
-		data: JSON.stringify(user)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.apiUpdateUserGuidevView = function(data) {
-	var guideView = {
-		guide_view: JSON.stringify(data)
-	};
-
-	var params = {
-		url: "user/guide_view",
-		method: 'PUT',
-		data: JSON.stringify(guideView)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.logoutUser = function() {
-	GmCXt.msgToApp('mgPlayerJSPreview_action:to_signin_page', {}, senderTabId);
-};
-
-GmCXt.loginFromConsole = function(email, password) {
-	if (!GmCXt.isBackgroundPage) {
-		GmCXt.msgToApp('mgPlayerJSPreview_action:signin_from_console', {
-			email: email,
-			password: password
-		}, senderTabId);
-	}
-};
-
-GmCXt.saveMyBotReport = function(o) {
-	var params = {
-		url: "register/v1/mybot/report/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			'AccessToken': GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.getElementsDetailInsights = function(id) {
-	var params = {
-		url: "tracker/v1/element/metedata/contextual/?app_code=" + id + "&url=" + GmCXt.urlParts.host,
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json",
-			'AccessToken': GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		}
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.createNewElTrackObject = function(obj) {
-	var params = {
-		url: "tracker/v1/element/metedata/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json",
-			'AccessToken': GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(obj)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.updateElTrackObject = function(obj) {
-	var params = {
-		url: "tracker/v1/element/metedata/",
-		method: 'PUT',
-		headers: {
-			'Content-Type': "application/json",
-			'AccessToken': GmCXt.user.accesstoken,
-			appkey: GmCXt.conf.apiSecrret
-		},
-		data: JSON.stringify(obj)
-	};
-	return GmCXt.xhrAnalytics(params);
-};
-
-GmCXt.apiGetSegmentGroupList = function(o) {
-	var params = {
-		url: "segment/group/list?organization_id=" + o.organization_id,
-		method: "GET",
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: ''
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.apiPostSegmentGroupList = function(data) {
-	var params = {
-		url: "segment/group",
-		method: "POST",
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.apiPutSegmentGroupList = function(data) {
-	var params = {
-		url: "segment/group",
-		method: "PUT",
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.apiDeleteSegmentGroupList = function(data) {
-
-	var params = {
-		url: 'segment/group',
-		method: 'DELETE',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.callGetCdnSignature = function(data) {
-
-	var params = {
-		url: 'organization/signature?',
-		method: 'GET',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: GmCXt.encode(data)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.sendFeedbackEmail = function(obj) {
-	var params = {
-		url: "organization/feedback",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(obj)
-	};
-	return GmCXt.xhr(params);
-};
-
-GmCXt.getSearchURL = function(url, searchData) {
-	var searchParams = new URLSearchParams(searchData);
-	var searchParamsStr = searchParams.toString();
-	if (searchParamsStr.length && searchParamsStr.indexOf("?") === -1 && url.indexOf("?") === -1) {
-		searchParams = "?" + searchParams.toString();
-	}
-	url = url + searchParams;
-	return url;
-};
-
-GmCXt.xhr = function(params, doNotAddWebURL, extApi) {
-
-	return new Promise(function(resolve, reject) {
-		var host = "";
-
-		if(!GmCXt.isEmpty(GmCXt.urlParts)){
-			host = GmCXt.urlParts.host;
-		}
-
-		var headers = {
-			"appkey": GmCXt.conf.apiSecrret,
-			'x-mg-host': host,
-			'x-mg-source': GmCXt.conf.appName,
-			'x-mg-orgId': ''
-		};
-
-		var showMaintenance = function() {
-			if (GmCXt.isBackgroundPage === true) {
-				GmCXt.sendMessageToPanel('mgPlayerJSPreview_action:maintenance');
-			} else {
-				GmCXt.sendMessageToApp('mgPlayerJSPreview_action:maintenance');
-			}
-		};
-
-		var onError = function(error) {
-			console.log(error);
-			if (error) {
-				error.url = params.url;
-				error.paramsData = params.data;
-				error.method = params.method;
-
-				var code = error.code;
-
-				if (code == 1003 || code === 2004 || (code === 2036 && (error.url.indexOf('user/signout') > 0 || error.url.indexOf('user/token') > 0))) { // AccessToken Invalid || Session Expired
-					if (GmCXt.isBackgroundPage) {
-						GmCXt.createStepJobs = [];
-					}
-					GmCXt.logoutUser();
-					reject(error);
-
-				} else if (code == 1007) { // AccessToken expired
-					GmCXt.getAccessToken().then(function(r) {
-						GmCXt.saveToken(r);
-						params.headers.AccessToken = GmCXt.user.accesstoken;
-						ajax();
-					}).catch(function() {
-						GmCXt.logoutUser();
-					});
-
-				} else if (code === 1014) {
-					showMaintenance();
-					reject(error);
-
-				} else {
-					reject(error);
-				}
-
-			} else {
-				reject();
-			}
-		};
-
-		var onSuccess = function(result) {
-
-			result.code = parseInt(result.code);
-
-			if (doNotAddWebURL) {
-				resolve(result);
-				return;
-			}
-
-			var code = result.code;
-			if (result.error === false) {
-
-				if (params.url === 'user/token') {
-					result = GmCXt.validateDataModel(result.data, GmCXt.model.userToken);
-				}
-				if (params.onSuccess) {
-					params.onSuccess(result);
-				}
-
-				resolve(result);
-			} else if (code === 1005) {
-				resolve(result);
-
-			} else if (code === 1018) {
-				resolve(result);
-
-			} else if (code === 1014) {
-				showMaintenance();
-				reject(result);
-
-			} else if (code == 1003 || code == 2004 || (code === 2036 && (params.url.indexOf('user/signout') > 0 || params.url.indexOf('user/token') > 0))) { // AccessToken Invalid || Session Expired
-
-				if (GmCXt.isBackgroundPage) {
-					GmCXt.createStepJobs = [];
-				}
-				GmCXt.logoutUser();
-				reject(result);
-
-			} else if (code == 1007) { // AccessToken expired
-				GmCXt.getAccessToken().then(function(r) {
-					GmCXt.saveToken(r);
-					params.headers.AccessToken = GmCXt.user.accesstoken;
-					callApi_();
-				}).catch(function() {
-					GmCXt.logoutUser();
-				});
-
-			} else {
-				reject(result);
-			}
-		};
-
-		function callApi_() {
-
-			for (var key in params.headers) {
-				if (params.headers.hasOwnProperty(key)) headers[key] = params.headers[key];
-			}
-
-			if (GmCXt.user && GmCXt.organization) {
-				headers.appType = GmCXt.conf.appType;
-				headers.orgId = GmCXt.organization.organization_id;
-				headers['x-mg-orgId'] = GmCXt.organization.organization_id;
-
-				headers.AccessToken = GmCXt.user.accesstoken;
-
-				processApi();
-			} else {
-				GmCXt.getDatafromPanel().then(function(d) {
-					GmCXt.user = d.user;
-					GmCXt.organization = d.organization;
-					if (GmCXt.user) {
-						headers.appType = GmCXt.conf.appType;
-						headers.orgId = GmCXt.organization.organization_id;
-						headers.AccessToken = GmCXt.user.accesstoken;
-						headers['x-mg-orgId'] = GmCXt.organization.organization_id;
-					}
-					processApi();
-				}).catch(function(e) {
-					console.log('Error while fetching user data', e);
-				});
-			}
-		}
-
-		function processApi() {
-
-			var url = GmCXt.conf.webServiceUrl + "" + params.url;
-			
-			if (doNotAddWebURL) {
-				url = params.url;
-			}
-
-			if (params.method === 'GET') {
-
-				fetch(GmCXt.getSearchURL(url, params.data), {
-						headers: headers,
-						method: params.method
-					})
-					.then(function(response) {
-
-						if (doNotAddWebURL && !extApi) {
-
-							if (response.status === 200) {
-								resolve();
-							} else {
-								reject();
-							}
-
-						} else {
-							response.json()
-								.then(onSuccess)
-								.catch(onError);
-						}
-
-					}).catch(onError);
-
-			} else {
-				fetch(url, {
-						headers: headers,
-						method: params.method,
-						body: params.data
-					})
-					.then(function(response) {
-						response.json()
-							.then(onSuccess)
-							.catch(onError);
-					}).catch(onError);
-			}
-		}
-
-		callApi_();
-	});
-};
-
-GmCXt.getDetailTour = function(o) {
-	return new Promise(function(resolve, reject) {
-		var params = {
-			url: "tour",
-			method: 'GET',
-			headers: {
-				'Content-Type': "application/json"
-			},
-			data: GmCXt.encode(o)
-		};
-
-		function gotTour(tour) {
-			tour = GmCXt.migrateTour(tour);
-
-			resolve(tour);
-		}
-
-		function onSuccess(r) {
-			if (r && r.data) {
-				GmCXt.validateApiResp(gotTour,
-					"tour",
-					r.data.tour,
-					GmCXt.model.guide);
-			} else {
-				resolve();
-			}
-		}
-
-		GmCXt.xhr(params).then(onSuccess);
-	});
-};
-
-GmCXt.xhrAnalytics = function(params, isInsight) {
-
-	return new Promise(function(resolve, reject) {
-
-		function OnAccessTokenError() {
-			GmCXt.getAccessToken().then(function(r) {
-				r = r || {};
-				GmCXt.saveToken(r);
-
-				params.headers.accesstoken = GmCXt.user.accesstoken;
-				ajax();
-			}).catch(function() {
-				GmCXt.logoutUser();
-			});
-		}
-
-		var onSuccess = function(result) {
-
-			result = GmCXt.parseJSON(result);
-
-			if (result.status === 'success') {
-
-				if (result.data.event_chain_id) {
-					if (isInsight) {
-						GmCXt.INSIGHTS_EVENT_CHAIN_ID = result.data.event_chain_id;
-					} else {
-						GmCXt.ANALYTICS_EVENT_CHAIN_ID = result.data.event_chain_id;
-					}
-				}
-				resolve(result);
-			} else {
-				if (!GmCXt.isEmpty(result) && GmCXt.isDefined(result.status) &&
-					result.status === 'error' &&
-					result.description === "Access token expired.") {
-					OnAccessTokenError();
-				} else {
-					reject(result);
-				}
-			}
-		};
-
-		var onError = function(xhr) {
-
-			console.log(xhr);
-			if (xhr.responseJSON) {
-
-				if (xhr.responseJSON.description == "Access token expired.") {
-					OnAccessTokenError();
-
-				} else {
-					var error = xhr.responseJSON;
-					error.apiUrl = params.url;
-					reject(error);
-				}
-			} else {
-				reject(error);
-			}
-		};
-
-		function ajax() {
-
-			url = GmCXt.conf.analyticsPath + "" + params.url;
-
-			if (params.method === 'GET') {
-
-				fetch(GmCXt.getSearchURL(url, params.data), {
-						headers: params.headers,
-						method: params.method
-					})
-					.then(function(response) {
-						response.json()
-							.then(function(r) {
-								onSuccess(r);
-							})
-							.catch(onError);
-					});
-
-			} else {
-				fetch(url, {
-						headers: params.headers,
-						method: params.method,
-						body: params.data
-					})
-					.then(function(response) {
-						response.json()
-							.then(onSuccess)
-							.catch(onError);
-					});
-			}
-		}
-
-		var org = GmCXt.organization;
-
-		if (!GmCXt.isEmpty(GmCXt.conf.analyticsPath) &&
-			((org && org.admin_settings.insights.enabled) || params.url.indexOf("handoff-token") != -1 || GmCXt.isLogoutTrackApi)) {
-			ajax();
-		} else {
-			reject();
-		}
-	});
-};
-GmCXt.guideMeApiProvider = function() {
-
-	var pub = {};
-
-	pub.getUser = function(o) {
-		var params = {
-			url: "user",
-			method: 'GET',
-			headers: {
-				'Content-Type': "application/json"
-			},
-			data: GmCXt.encode(o)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getOrganization = function(o) {
-		var params = {
-			url: "organization",
-			method: 'GET',
-			headers: {
-				'Content-Type': "application/json"
-			},
-			data: GmCXt.encode(o)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getOrgSettings = function(o) {
-		var params = {
-			url: "organization",
-			method: 'GET',
-			headers: {
-				'Content-Type': "application/json"
-			},
-			data: GmCXt.encode(o)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getTours = function(o) {
-		var params = {
-			url: "tour/list",
-			method: 'GET',
-			headers: {
-				'Content-Type': "application/json"
-			},
-			data: GmCXt.encode(o)
-		};
-		return GmCXt.xhr(params);
-
-		// 4830:
-		//GmCXt.validateApiResp( cb,
-		//    params.url, 
-		//    r.data.tours, 
-		//    GmCXt.model.guides 
-		//);
-	};
-
-	pub.getVideoUploadUrl = function(data) {
-		data.organization_id = GmCXt.organization.organization_id;
-		var params = {
-			url: "file/upload/url?",
-			method: 'GET',
-			headers: {},
-			data: GmCXt.encode(data)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getVideoUploadUrl_IBM = function(data) {
-		data.organization_id = GmCXt.organization.organization_id;
-		var params = {
-			url: "file/presigned/upload/url?",
-			method: "GET",
-			headers: {},
-			data: GmCXt.encode(data)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.videoUploadStatus = function(data) {
-		data.organization_id = GmCXt.organization.organization_id;
-		var params = {
-			url: "file/upload/status",
-			method: 'POST',
-			headers: {},
-			data: JSON.stringify(data)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getVideoLocator = function(data) {
-		data.organization_id = GmCXt.organization.organization_id;
-		var params = {
-			url: "file/upload/status",
-			method: 'GET',
-			headers: {},
-			data: GmCXt.encode(data)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.uploadFTPFile = function(data, successCb, errorCb) {
-		data.organization_id = GmCXt.organization.organization_id;
-		var params = {
-			url: "file/upload/ftp",
-			method: "POST",
-			serviceType: "",
-			data: data,
-			fileInput: true,
-			onSuccess: successCb,
-			onFail: errorCb
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.createStep = function(o) {
-		var params = {
-			url: "step",
-			method: 'POST',
-			headers: {},
-			data: JSON.stringify(o.args)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.deleteStep = function(data) {
-
-		var params = {
-			url: 'step',
-			method: 'DELETE',
-			data: JSON.stringify(data)
-		};
-
-		return GmCXt.xhr(params);
-	};
-
-	pub.updateTour = function(data) {
-		var params = {
-			url: 'tour',
-			method: 'PUT',
-			headers: {},
-			data: JSON.stringify(data)
-		};
-
-		return GmCXt.xhr(params);
-	};
-
-	pub.updateStep = function(o) {
-		var params = {
-			url: "step",
-			method: 'PUT',
-			headers: {},
-			data: JSON.stringify(o.args)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.updateStepLang = function(o) {
-		var params = {
-			url: "step/language/update",
-			method: 'PUT',
-			headers: {},
-			data: JSON.stringify(o.args)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.uploadFileBase64 = function(o) {
-		var params = {
-			url: "file/base64image",
-			method: 'POST',
-			headers: {},
-			data: o.args
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.uploadBase64Image = function(o) {
-		var params = {
-			url: "file/upload/base64image",
-			method: 'POST',
-			headers: {},
-			data: o.args
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.uploadFile = function(o) {
-		o.args.append("organization_id", GmCXt.organization.organization_id);
-		var params = {
-			url: "file/image",
-			method: 'POST',
-			headers: {},
-			data: o.args
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.uploadAudio = function(o) {
-		var params = {
-			url: "file/audio",
-			method: 'POST',
-			headers: {},
-			data: o.args
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.getAudio = function(o) {
-		var params = {
-			url: "file/audio",
-			method: 'GET',
-			data: GmCXt.encode(o.args)
-		};
-		return GmCXt.xhr(params);
-	};
-
-	pub.updateSurvey = function(o, user) {
-		var params = {
-			url: "v3/survey/questionnaire/" + o.guide_id + "/",
-			method: 'PUT',
-			headers: {
-				'Content-Type': "application/json",
-				accesstoken: user.accesstoken,
-				key: GmCXt.trackerUtil.clientKey,
-				appkey: GmCXt.conf.apiSecrret
-			},
-			data: JSON.stringify(o)
-		};
-		return GmCXt.xhrAnalytics(params);
-	};
-
-	pub.updateUserProfile = GmCXt.apiUpdateUserProfile;
-	pub.getHandOffToken = GmCXt.apiGetHandOffToken;
-	pub.getSentiments = GmCXt.apiGetSentiments;
-	pub.getBotConvList = GmCXt.apiGetBotConvList;
-	pub.updateSentiment = GmCXt.apiUpdateSentiment;
-	pub.postSentiment = GmCXt.apiPostSentiment;
-	pub.deleteSentiment = GmCXt.apiDeleteSentiment;
-	pub.getSentiment = GmCXt.apiGetSentiment;
-	pub.getGetBotConv = GmCXt.apiGetBotConv;
-	pub.postSurvey = GmCXt.apiPostSurvey;
-	pub.getSegmentGroupList = GmCXt.apiGetSegmentGroupList;
-	pub.postSegmentGroupList = GmCXt.apiPostSegmentGroupList;
-	pub.putSegmentGroupList = GmCXt.apiPutSegmentGroupList;
-	pub.deleteSegmentGroupList = GmCXt.apiDeleteSegmentGroupList;
-	pub.userApiKeySignin = GmCXt.userApiKeySignin;
-	pub.registerClientInsight = GmCXt.apiRegisterClientInsight;
-	pub.getClientSecretInsight = GmCXt.apiGetClientSecretInsight;
-	pub.trackEventV1 = GmCXt.apiTrackEventV1;
-	pub.trackEventV3 = GmCXt.apiTrackEventV3;
-	pub.saveMyBotReport = GmCXt.saveMyBotReport;
-	pub.getOneTimeTokenInsights = GmCXt.getOneTimeTokenInsights;
-	pub.trackSentiment = GmCXt.apitrackSentiment;
-	pub.trackConversation = GmCXt.apitrackConversation;
-	pub.createNewElTrackObject = GmCXt.createNewElTrackObject;
-	pub.getElementsDetailInsights = GmCXt.getElementsDetailInsights;
-	pub.updateElTrackObject = GmCXt.updateElTrackObject;
-	pub.getCdnSignature = GmCXt.callGetCdnSignature;
-	pub.getTour = GmCXt.getDetailTour;
-	pub.sendFeedbackEmail = GmCXt.sendFeedbackEmail;
-	pub.getAnonymousUserPrefrence = GmCXt.getAnonymousUserPrefrence;
-	pub.setAnonymousUserPrefrence = GmCXt.setAnonymousUserPrefrence;
-
-	return pub;
-};
-
-if (GmCXt.conf.provider === 'GuideMe') {
-	GmCXt.api = GmCXt.guideMeApiProvider();
-}
-GmCXt.apiPlayerProvider = function() {
-
-	var pub = {};
-
-	pub.updateUserProfile = GmCXt.updateUserProfile;
-	pub.getSentiments = GmCXt.apiGetSentiments;
-	pub.getBotConvList = GmCXt.apiGetBotConvList;
-	pub.getSentiment = GmCXt.apiGetSentiment;
-	pub.getGetBotConv = GmCXt.apiGetBotConv;
-	pub.postSurvey = GmCXt.apiPostSurvey;
-	pub.getSegmentGroupList = GmCXt.apiGetSegmentGroupList;
-	pub.postSegmentGroupList = GmCXt.apiPostSegmentGroupList;
-	pub.putSegmentGroupList = GmCXt.apiPutSegmentGroupList;
-	pub.deleteSegmentGroupList = GmCXt.apiDeleteSegmentGroupList;
-	pub.userApiKeySignin = GmCXt.userApiKeySignin;
-	pub.registerClientInsight = GmCXt.apiRegisterClientInsight;
-	pub.getClientSecretInsight = GmCXt.apiGetClientSecretInsight;
-	pub.trackEventV1 = GmCXt.apiTrackEventV1;
-	pub.trackEventV3 = GmCXt.apiTrackEventV3;
-	pub.saveMyBotReport = GmCXt.saveMyBotReport;
-	pub.trackSentiment = GmCXt.apitrackSentiment;
-	pub.trackConversation = GmCXt.apitrackConversation;
-	pub.createNewElTrackObject = GmCXt.createNewElTrackObject;
-	pub.getElementsDetailInsights = GmCXt.getElementsDetailInsights;
-	pub.getHandOffToken = GmCXt.apiGetHandOffToken;
-	pub.updateElTrackObject = GmCXt.updateElTrackObject;
-	pub.getCdnSignature = GmCXt.callGetCdnSignature;
-	pub.getTour = GmCXt.getDetailTour;
-	pub.sendFeedbackEmail = GmCXt.sendFeedbackEmail;
-	pub.getAnonymousUserPrefrence = GmCXt.getAnonymousUserPrefrence;
-	pub.setAnonymousUserPrefrence = GmCXt.setAnonymousUserPrefrence;
-
-	return pub;
-};
-
-if (GmCXt.inPlayer) {
-	GmCXt.api = GmCXt.apiPlayerProvider();
-}
-
-/**
-	* @file Boot script
-	* This code is executed only once, immediately after content script is injected
-	* into a webpage.
-	* @author Nilesh Pachpande
-	*/
-
-GmCXt.client = {
-	'isUrlTour': false
-};
-GmCXt.user = false;
-GmCXt.organization = false;
-GmCXt.myGuideApps = {};
-GmCXt.initialization = {};
-GmCXt.beaconTours = [];
-GmCXt.beaconsOnScreen = [];
-
-GmCXt.onScreenTooltipGuideInfo = {}; //Info about tooltip guides with rules matched on the screen
-GmCXt.onScreenTooltipGuideIds = []; //Tooltip guides with all tooltips are visible on screen
-GmCXt.partialVisibleTooltipsIds = []; //Tooltip guides with at least one but less than total tooltips are visible on screen
-
-GmCXt.urlBasedTours = [];
-GmCXt.tooltipTours = [];
-GmCXt.fTags = [];
-GmCXt.beaconIframe = {};
-GmCXt.smartTipIframe = {};
-GmCXt.tagIframe = {};
-GmCXt.rulesIframeQueue = [];
-GmCXt.changeEventTimeout = null;
-GmCXt.fastSteps = [];
-GmCXt.maxFastSteps = 10;
-GmCXt.dragWidgetPose = {};
-GmCXt.dragChatPose = {};
-
-
-GmCXt.initLoading = new Date().getTime();
-mg$(window).on('load', function() {
-	GmCXt.pageLoadTime = new Date().getTime() - GmCXt.initLoading;
-});
-
-mg$(window).on('beforeunload', function() {
-	GmCXt.onWinUnload();
-});
-
-GmCXt.main();
-
-GmCXt.currentUrl = GmCXt._location().href;
-
-setInterval(function() {
-	if (GmCXt.FT.isPlayer && GmCXt.isClientJs() && GmCXt.conf.appConfig.iframeInjection) {
-		GmCXt.injectGuideMeInIframes(window);
-	}
-	GmCXt.triggerChangeListeners();
-}, 500); //Do Not Change the timer.
-
-document.addEventListener('mousedown', GmCXt.onDocumentMouseDown);
-
-document.addEventListener('mouseup', GmCXt.triggerChangeListeners);
-
-document.addEventListener('visibilitychange', GmCXt.onVisibilityChange);
-
-document.addEventListener("keypress", function(event) {
-
-	var org = GmCXt.organization;
-	if(!GmCXt.isEmpty(org) && org.admin_settings && org.admin_settings.keyboard_shortcuts && 
-		org.admin_settings.keyboard_shortcuts === "0"){
-		return;
-	}
-
-	if (event.keyCode == 63) {
-		GmCXt.storage().get(['login_state']).then(function(o) {
-			if (o.login_state) {
-				GmCXt.showKeyCodePopUp();
-			}
-		});
-	}
-
-	var key = '';
-
-	var keycharc = "";
-	if (event.code.indexOf("Key") !== -1) {
-		keycharc = event.code.replace("Key", '');
-	} else {
-		keycharc = unescape(encodeURIComponent(event.key));
-	}
-
-	if (event.shiftKey) {
-		key = "shift+" + keycharc.toLowerCase();
-	}
-
-	if (!GmCXt.isEmpty(key)) {
-		var tour = GmCXt.getTourFromKey(key);
-		if (tour) {
-			GmCXt.getTourAndPlay(tour.tour_id, 'doitforme', 'keypress');
-		}
-	}
-});
-
-GmCXt.getTourFromKey = function(key) {
-	var obj = null;
-	GmCXt.keyInputGuides.forEach(function(tour) {
-		if (tour && GmCXt.updateNumericKeys(tour.tour_settings.keyboardKeyInput) === key)
-			obj = tour;
-	});
-	return obj;
-};
-
-GmCXt.saveCurrentURL();
-
-GmCXt.setPageTitle();
-
-// Desktop changes related code below
-if (GmCXt.conf.appConfig.desktopCommunication) {
-	GmCXt.resetDesktopConnection = function() {
-		GmCXt.desktopConnection = {
-			connected: false,
-			activeReq: false,
-			activeReqTab: null,
-			activeMsg: null
-		};
-	};
-
-	GmCXt.resetDesktopConnection();
-
-	GmCXt.wsDesktop = null;
-
-	GmCXt.establishConnection = function() {
-		if (GmCXt.wsDesktop && GmCXt.wsDesktop.readyState === GmCXt.wsDesktop.OPEN) {
-			GmCXt.wsDesktop.close();
-		}
-
-		if (GmCXt.FT.isPlayer) {
-			GmCXt.wsDesktop = new WebSocket("ws://127.0.0.1:11611");
-		} else {
-			GmCXt.wsDesktop = new WebSocket("ws://127.0.0.1:11511");
-		}
-
-		GmCXt.wsDesktop.onopen = function(event) {
-			GmCXt.log(74, 'WebSocket Connection Established');
-			GmCXt.desktopConnection.connected = true;
-			GmCXt.sendMessageToDesktop({
-				requestId: 10000,
-				requestType: 'webSocketConnectionEstablished'
-			});
-		};
-
-		GmCXt.wsDesktop.onerror = function(err) {
-			GmCXt.log(74, 'err: ', err);
-		};
-
-		GmCXt.wsDesktop.onmessage = function(event) {
-			var message = JSON.parse(event.data);
-			GmCXt.log(74, 'Analyze desktop message', message);
-			GmCXt.analyzeDesktopMsg(message);
-		};
-
-		GmCXt.wsDesktop.onclose = function() {
-			GmCXt.log(74, 'WebSocket Connection Closed');
-			GmCXt.resetDesktopConnection();
-			GmCXt.sendMessageToDesktop({
-				requestId: 10000,
-				requestType: 'webSocketConnectionClosed'
-			});
-		};
-	};
-
-	GmCXt.analyzeDesktopMsg = function(message) {
-		if (!GmCXt.desktopConnection.connected) {
-			return;
-		}
-		var domain = message.domains ? GmCXt.findDomainMatch(message.domains, GmCXt.getCurrentURL().url) : '';
-
-		GmCXt.desktopConnection.activeReq = true;
-		GmCXt.desktopConnection.activeMsg = message;
-
-		if (message.type === "createInlineStep" || message.type === "webInlineStep") {
-			if (!domain.url) {
-				GmCXt.sendMessageToDesktop({
-					stepCreation: "fail",
-					ack: 'CurrentDomianIsNotConfigured'
-				});
-				return;
-			}
-
-			GmCXt.sendMessageToDesktop({
-				stepCreation: "start",
-				ack: message.type
-			});
-			GmCXt.log(74, 'Create Inline Step');
-			GmCXt.createStepFromDesktop(message);
-
-		} else if (message.type === 'getTabDetails') {
-			GmCXt.sendMessageToDesktop({
-				'tabDetails': {
-					'URL Hostname': GmCXt.urlParts.host,
-					'URL Path': GmCXt.urlParts.pathname,
-					'URL Parameters': GmCXt.getUrlParam(),
-					'URL Hash': GmCXt.urlParts.hash,
-					'URL': GmCXt.urlParts.href,
-					'Page Title': GmCXt.pageTitle
-				}
-			});
-		} else if (message.type === 'reselectElement') {
-			GmCXt.sendMessageToDesktop({
-				ack: "reselectElement",
-				stepCreation: "start"
-			});
-
-			GmCXt.log(74, 'Reselect Inline Step');
-
-			var step = {
-				step: message.stepData
-			};
-
-			var e = {
-				data: {
-					action: "mgPlayerJSPreview_action:reselect_edit_step_element,task:edit_step",
-					data: step,
-					isDesktop: true,
-					isEdit: true
-				}
-			};
-			GmCXt.handleDesktopEditStepInline(e);
-
-		} else if (message.type === "getAudio") {
-			var previewAudio = new Audio(message.data);
-			previewAudio.play();
-		} else {
-			GmCXt.log(74, 'Play Step', message.step);
-			GmCXt.playStepFromDesktop(message);
-		}
-	};
-
-	window.onfocus = function() {
-		// build connection with desktop on focus only if it is disconnected
-		if (!GmCXt.wsDesktop || GmCXt.wsDesktop.readyState === GmCXt.wsDesktop.CLOSED) {
-			GmCXt.establishConnection();
-		}
-	};
-
-	window.onbeforeunload = function() {
-		if (GmCXt.desktopConnection.activeReq) {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSPreview_action:hide_dom_outline");
-			GmCXt.sendMessageToDesktop({
-				stepCreation: "fail",
-				ack: 'closedStepCreation'
-			});
-		}
-	};
-}
-/**
  * @author Nilesh Pachpande
  */
 
@@ -48132,27 +29076,27 @@ GmCXt.sendMsgUp = function(type, data, toTop) {
 
 	if (window.self === window.top) {
 		switch (type) {
-			case 'mgPlayerJSPreview_action:close_step':
+			case 'mgPlayerJSProd_action:close_step':
 				GmCXt.requestHandler.closeStep();
 				break;
 
-			case 'mgPlayerJSPreview_action:enable_next_button':
+			case 'mgPlayerJSProd_action:enable_next_button':
 				GmCXt.requestHandler.enableNextButton();
 				break;
 
-			case 'mgPlayerJSPreview_action:record_event;testMe':
+			case 'mgPlayerJSProd_action:record_event;testMe':
 				GmCXt.requestHandler.recordEventTestMe(data);
 				break;
 
-			case "mgPlayerJSPreview_action:play_next_step":
+			case "mgPlayerJSProd_action:play_next_step":
 				GmCXt.requestHandler.playTourNextStep();
 				break;
 
-			case "mgPlayerJSPreview_action:update_PI_PS":
+			case "mgPlayerJSProd_action:update_PI_PS":
 				GmCXt.requestHandler.updatePIPS(data);
 				break;
 
-			case 'mgPlayerJSPreview_action:update_PI_steps':
+			case 'mgPlayerJSProd_action:update_PI_steps':
 				GmCXt.requestHandler.updatePISteps(data);
 				break;
 
@@ -48249,7 +29193,7 @@ GmCXt.requestHandler.findElementToCheckDomRule = function(data) {
 		};
 
 		var message = {
-			action: "mgPlayerJSPreview_action:completed;task:select_dom_element_for_rules",
+			action: "mgPlayerJSProd_action:completed;task:select_dom_element_for_rules",
 			data: obj
 		};
 
@@ -48339,7 +29283,7 @@ GmCXt.requestHandler.selectExistingDomElementIframe = function(d) {
 };
 
 GmCXt.requestHandler.selectELForVariable = function(request) {
-	var actionName = "mgPlayerJSPreview_action:completed;task:find_element_for_variable";
+	var actionName = "mgPlayerJSProd_action:completed;task:find_element_for_variable";
 
 	function callback(data) {
 		var message = {
@@ -48362,7 +29306,7 @@ GmCXt.requestHandler.selectELForVariable = function(request) {
 
 GmCXt.requestHandler.selectDomElement = function(request) {
 
-	var actionName = "mgPlayerJSPreview_action:completed;task:select_dom_element_tooltips";
+	var actionName = "mgPlayerJSProd_action:completed;task:select_dom_element_tooltips";
 
 	var data = request.data;
 	var elems = data.settings.domElems;
@@ -48397,7 +29341,7 @@ GmCXt.requestHandler.selectDomElement = function(request) {
 			if (window.self === window.top) {
 				GmCXt.requestHandler.findOtherTooltips(request);
 			} else {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:find_other_msg_step_tooltips', request);
+				GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:find_other_msg_step_tooltips', request);
 			}
 		}
 	};
@@ -48434,11 +29378,11 @@ GmCXt.requestHandler.searchStartPoint = function(data) {
 
 	var cb = function(d) {
 		if (d.status === GmCXt.ELEMENT_FOUND) {
-			GmCXt.sendMessageToTheTopWindow("mgPlayerJSPreview_action:start_point_found", {
+			GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:start_point_found", {
 				step: data.startPoint
 			});
 		} else {
-			GmCXt.sendMessageToApp('mgPlayerJSPreview_action:start_point_not_found');
+			GmCXt.sendMessageToApp('mgPlayerJSProd_action:start_point_not_found');
 		}
 	};
 	var step = data.startPoint;
@@ -48464,7 +29408,7 @@ GmCXt.requestHandler.searchDomElement = function(d) {
 		data: d,
 		cb: function(r) {
 			if (r.status === GmCXt.ELEMENT_FOUND) {
-				GmCXt.sendMessageToTheTopWindow("mgPlayerJSPreview_action:next_step_found");
+				GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:next_step_found");
 			}
 		}
 	});
@@ -48484,7 +29428,7 @@ GmCXt.requestHandler.selectExistingDomElement = function(d) {
 
 GmCXt.onFindExistingEl = function(data) {
 
-	var actionName = "mgPlayerJSPreview_action:completed;task:select_existing_dom_element";
+	var actionName = "mgPlayerJSProd_action:completed;task:select_existing_dom_element";
 	delete data.he;
 
 	var message = {
@@ -48611,7 +29555,7 @@ GmCXt.requestHandler.removeToolip = function(data) {
 
 GmCXt.requestHandler.hideAllSmartTip = function(msg) {
 	GmCXt.forwardToContentWindows(msg);
-	mg$('.mgPlayerJSPreview_smarttip-icon').hide();
+	mg$('.mgPlayerJSProd_smarttip-icon').hide();
 	GmCXt.smarttipAreHidden = true;
 };
 
@@ -48622,65 +29566,65 @@ GmCXt.processIframePlayer = function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSPreview_action:domain_in_active_app':
+		case 'mgPlayerJSProd_action:domain_in_active_app':
 			GmCXt.domainInApp = message.data.domainInApp;
 			break;
 
-		case 'mgPlayerJSPreview_action:page_url':
+		case 'mgPlayerJSProd_action:page_url':
 			GmCXt.urlParts = message.data.urlParts;
 			GmCXt.elAppName = message.data.elAppName;
 			GmCXt.pageTitle = message.data.title;
 			break;
 
-		case 'mgPlayerJSPreview_action:started; task:remove_intel_events':
+		case 'mgPlayerJSProd_action:started; task:remove_intel_events':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.removeExistingDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSPreview_action:clear_outline;action:do':
+		case 'mgPlayerJSProd_action:clear_outline;action:do':
 			if (message.data.scriptId !== GmCXt.id) {
-				mg$('.mgPlayerJSPreview_new-outline').hide();
-				mg$('.mgPlayerJSPreview_select-outline').hide();
+				mg$('.mgPlayerJSProd_new-outline').hide();
+				mg$('.mgPlayerJSProd_select-outline').hide();
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:set_iframe_id:do':
+		case 'mgPlayerJSProd_action:set_iframe_id:do':
 			GmCXt.currentIframeId = message.data.currentIframeId;
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_existing_dom_element':
+		case 'mgPlayerJSProd_action:started;task:select_existing_dom_element':
 			if (GmCXt.visibleWindow(message.data)) {
 				GmCXt.forwardToContentWindows(message);
 				GmCXt.requestHandler.selectExistingDomElement(messageCopy.data);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_existing_dom_element:target_frame_only':
+		case 'mgPlayerJSProd_action:started;task:select_existing_dom_element:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.requestHandler.selectExistingDomElement(messageCopy.data);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:set_iframe_id', {
 					currentIframeId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:search_next_step':
+		case 'mgPlayerJSProd_action:started;task:search_next_step':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.searchDomElement(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:search_start_point':
+		case 'mgPlayerJSProd_action:started;task:search_start_point':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.searchStartPoint(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_tooltips':
+		case 'mgPlayerJSProd_action:started;task:select_dom_element_tooltips':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectDomElement(messageCopy);
 			break;
 
-		case 'mgPlayerJSPreview_action:task:init_new_iframe':
+		case 'mgPlayerJSProd_action:task:init_new_iframe':
 			GmCXt.forwardToContentWindows(message);
 
 			if (message.data.receiverId === GmCXt.id) {
@@ -48696,7 +29640,7 @@ GmCXt.processIframePlayer = function(event) {
 
 				if (message.data.domainInApp) GmCXt.domainInApp = message.data.domainInApp;
 
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:update_variables');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:update_variables');
 
 				if (message.data.activeAppSettings) {
 					GmCXt.activeAppSettings = message.data.activeAppSettings;
@@ -48706,192 +29650,192 @@ GmCXt.processIframePlayer = function(event) {
 			}
 			break;
 
-		case "mgPlayerJSPreview_action:command; task:trigger_step_click":
+		case "mgPlayerJSProd_action:command; task:trigger_step_click":
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.triggerElementClick(message);
 			break;
 
-		case "mgPlayerJSPreview_action:find_element_for_variable":
+		case "mgPlayerJSProd_action:find_element_for_variable":
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.selectELForVariable(messageCopy);
 
 			break;
 
-		case 'mgPlayerJSPreview_action:show_beacon_on_dom_element':
+		case 'mgPlayerJSProd_action:show_beacon_on_dom_element':
 			GmCXt.forwardToContentWindows(message);
 
 			GmCXt.highlighter.queueBeacon(messageCopy);
 			break;
 
-		case 'mgPlayerJSPreview_action:show_beacon_on_dom_element:target_frame_only':
+		case 'mgPlayerJSProd_action:show_beacon_on_dom_element:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.stepData.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueBeacon(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id:beacon', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:set_iframe_id:beacon', {
 					tour_id: message.data.tourId,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:clear_dom_outline':
+		case 'mgPlayerJSProd_action:clear_dom_outline':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.removeOutline(message.data.id);
 			break;
 
-		case 'mgPlayerJSPreview_action:stop_dom_highlighter':
+		case 'mgPlayerJSProd_action:stop_dom_highlighter':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.unqueue(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:completed;task:select_dom_element_tooltips':
-		case 'mgPlayerJSPreview_action:completed;task:select_existing_dom_element':
-		case 'mgPlayerJSPreview_action:completed;task:select_dom_element_for_rules':
-		case 'mgPlayerJSPreview_action:completed;task:find_element_for_variable':
+		case 'mgPlayerJSProd_action:completed;task:select_dom_element_tooltips':
+		case 'mgPlayerJSProd_action:completed;task:select_existing_dom_element':
+		case 'mgPlayerJSProd_action:completed;task:select_dom_element_for_rules':
+		case 'mgPlayerJSProd_action:completed;task:find_element_for_variable':
 			if (!GmCXt.isSidePanelApp) {
 				GmCXt.requestHandler.updateElementOffset(event, message);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:close_step':
+		case 'mgPlayerJSProd_action:close_step':
 			// pass to the top window if current window is not the top window
 			if (window.parent !== window.top) {
 				GmCXt.sendToParentWindow(message);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_to_show_tooltip':
+		case 'mgPlayerJSProd_action:started;task:select_dom_element_to_show_tooltip':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.queueSmarttip(messageCopy);
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_to_show_tooltip:target_frame_only':
+		case 'mgPlayerJSProd_action:started;task:select_dom_element_to_show_tooltip:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueSmarttip(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id:tooltip', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:set_iframe_id:tooltip', {
 					step_id: message.data.step.step_id,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:find_tag_elm':
+		case 'mgPlayerJSProd_action:started;task:find_tag_elm':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.queueTag(messageCopy);
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:find_tag_elm:target_frame_only':
+		case 'mgPlayerJSProd_action:started;task:find_tag_elm:target_frame_only':
 			GmCXt.forwardToContentWindows(message);
 			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
 				GmCXt.highlighter.queueTag(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id:tag', {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:set_iframe_id:tag', {
 					step_id: message.data.step.step_id,
 					frameId: GmCXt.id
 				});
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:bring_element_in_viewport':
+		case 'mgPlayerJSProd_action:bring_element_in_viewport':
 			GmCXt.requestHandler.bringElementInViewport(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:bring_element_in_viewport_edit_step':
+		case 'mgPlayerJSProd_action:bring_element_in_viewport_edit_step':
 			GmCXt.requestHandler.bringElementInViewportEditStep(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:start_watcher;testMe':
+		case 'mgPlayerJSProd_action:start_watcher;testMe':
 			GmCXt.requestHandler.startWatcherTestMe(message.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:stop_watcher;testMe':
+		case 'mgPlayerJSProd_action:stop_watcher;testMe':
 			GmCXt.requestHandler.stopWatcherTestMe();
 			break;
 
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_for_rules':
+		case 'mgPlayerJSProd_action:started;task:select_dom_element_for_rules':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.requestHandler.findElementToCheckDomRule(messageCopy.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:save_org_in_iframes':
+		case 'mgPlayerJSProd_action:save_org_in_iframes':
 			if (!GmCXt.isEmpty(message.data.org)) {
 				GmCXt.updateGlobalOrg(message.data.org);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:save_user_in_iframes':
+		case 'mgPlayerJSProd_action:save_user_in_iframes':
 			if (!GmCXt.isEmpty(message.data.user)) {
 				GmCXt.updateGlobalUser(message.data.user);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:hide_beacons':
+		case 'mgPlayerJSProd_action:hide_beacons':
 			GmCXt.forwardToContentWindows(message);
-			mg$('.mgPlayerJSPreview_beacon-icon').addClass('mgPlayerJSPreview_hidden');
+			mg$('.mgPlayerJSProd_beacon-icon').addClass('mgPlayerJSProd_hidden');
 			GmCXt.beaconsAreHidden = true;
 			break;
 
-		case 'mgPlayerJSPreview_action:show_beacons':
+		case 'mgPlayerJSProd_action:show_beacons':
 			GmCXt.forwardToContentWindows(message);
-			mg$('.mgPlayerJSPreview_beacon-icon').removeClass('mgPlayerJSPreview_hidden');
+			mg$('.mgPlayerJSProd_beacon-icon').removeClass('mgPlayerJSProd_hidden');
 			GmCXt.beaconsAreHidden = false;
 			break;
 
-		case 'mgPlayerJSPreview_action:remove_preview':
+		case 'mgPlayerJSProd_action:remove_preview':
 			GmCXt.removePreviewFrame();
 			break;
 
-		case "mgPlayerJSPreview_action:clear_session":
+		case "mgPlayerJSProd_action:clear_session":
 			GmCXt.clearSession();
 			break;
 
-		case 'mgPlayerJSPreview_action:hide_all_smarttip':
+		case 'mgPlayerJSProd_action:hide_all_smarttip':
 			GmCXt.requestHandler.hideAllSmartTip(message);
 			break;
 
-		case 'mgPlayerJSPreview_action:clear_message_tooltip':
+		case 'mgPlayerJSProd_action:clear_message_tooltip':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.highlighter.clearJob(message.data.id);
 			break;
 
-		case 'mgPlayerJSPreview_action:remove_tooltip':
+		case 'mgPlayerJSProd_action:remove_tooltip':
 			GmCXt.requestHandler.removeToolip(message.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:show_all_smarttip':
+		case 'mgPlayerJSProd_action:show_all_smarttip':
 			GmCXt.updateFrameOffsetsForSmarttip(message);
-			mg$('.mgPlayerJSPreview_smarttip-icon').show();
+			mg$('.mgPlayerJSProd_smarttip-icon').show();
 			GmCXt.smarttipAreHidden = false;
 			break;
 
-		case 'mgPlayerJSPreview_action:hide_smarttip_delay':
+		case 'mgPlayerJSProd_action:hide_smarttip_delay':
 			if (window.self !== window.top) {
 				GmCXt.sendToParentWindow(message);
 			}
 			break;
 
-		case 'mgPlayerJSPreview_action:show_preview_smarttip':
-			mg$('.mgPlayerJSPreview_smarttip-icon-wrapper-' + message.data.id).removeClass('tooltip-hidden');
+		case 'mgPlayerJSProd_action:show_preview_smarttip':
+			mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + message.data.id).removeClass('tooltip-hidden');
 			break;
 
-		case 'mgPlayerJSPreview_action:show_preview_beacon':
-			mg$('.mgPlayerJSPreview_beacon-icon-tour-' + message.data.id).show();
+		case 'mgPlayerJSProd_action:show_preview_beacon':
+			mg$('.mgPlayerJSProd_beacon-icon-tour-' + message.data.id).show();
 			break;
 
-		case 'mgPlayerJSPreview_action:forward;remove_active_smarttip_beacon':
+		case 'mgPlayerJSProd_action:forward;remove_active_smarttip_beacon':
 			GmCXt.requestHandler.removeSmarttipBeacon(message.data.idList);
 			break;
 
-		case 'mgPlayerJSPreview_action:smarttip_preview_on':
+		case 'mgPlayerJSProd_action:smarttip_preview_on':
 			GmCXt.forwardToContentWindows(message);
 			GmCXt.smartTipPreviewOn = true;
 			break;
 
-		case 'mgPlayerJSPreview_action:insert_power_html':
+		case 'mgPlayerJSProd_action:insert_power_html':
 			GmCXt.highlighter.insertPowerForm(message.data);
 			break;
 
-		case 'mgPlayerJSPreview_action:update_tracking_info:frames':
+		case 'mgPlayerJSProd_action:update_tracking_info:frames':
 			GmCXt.forwardToContentWindows(message);
 
 			GmCXt.trackerUtil = GmCXt.trackerUtil || {};
@@ -48900,11 +29844,11 @@ GmCXt.processIframePlayer = function(event) {
 			GmCXt.trackerUtil.pageTracking =  message.data.pageTracking;
 			break;
 
-		case 'mgPlayerJSPreview_action:remove_beacon_job':
+		case 'mgPlayerJSProd_action:remove_beacon_job':
 			GmCXt.highlighter.removeBeaconJob(message.data.tourId);
 			break;
 
-		case 'mgPlayerJSPreview_action:clear_rule_jobs':
+		case 'mgPlayerJSProd_action:clear_rule_jobs':
 			GmCXt.forwardToContentWindows(message);
 
 			var init = message.data.initiator || '';
@@ -48913,23 +29857,23 @@ GmCXt.processIframePlayer = function(event) {
 			GmCXt.highlighter.clearRuleJobs(init, triggerSource);
 			break;
 
-		case "mgPlayerJSPreview_action:update_app_settings":
+		case "mgPlayerJSProd_action:update_app_settings":
 			GmCXt.activeAppSettings = message.data.activeAppSettings;
 			break;
 
-		case 'mgPlayerJSPreview_action:sync_playerinstance_for_automation':
+		case 'mgPlayerJSProd_action:sync_playerinstance_for_automation':
 			GmCXt.playerI = message.data.playerInstance;
 			break;
 
-		case 'mgPlayerJSPreview_action:request_dom_tracker_info':
+		case 'mgPlayerJSProd_action:request_dom_tracker_info':
 			GmCXt.shareDomTrackerInfo();
 			break;
 
-		case 'mgPlayerJSPreview_action:reset_dom_tracker':
+		case 'mgPlayerJSProd_action:reset_dom_tracker':
 			GmCXt.resetElTrackerVariable();
 			break;
 
-		case 'mgPlayerJSPreview_action:empty_user_on_logout_in_iframes':
+		case 'mgPlayerJSProd_action:empty_user_on_logout_in_iframes':
 			
 			GmCXt.user = false;
 			break;
@@ -48942,1482 +29886,6 @@ GmCXt.listenIframePlayer = function(event) {
 	event = mg$.extend({}, event);
 	if (GmCXt.verifyMsg(event))
 		GmCXt.processIframePlayer(event);
-};
-/**
- * @author Nilesh Pachpande
- */
-
-GmCXt.listenIframeCreator = function(event) {
-	event = mg$.extend({}, event);
-	if (GmCXt.verifyMsg(event)) {
-		GmCXt.processIframeCreator(event);
-		GmCXt.processIframePlayer(event);
-	}
-};
-
-GmCXt.processIframeCreator = function(event) {
-	var message = event.data;
-	var messageCopy = mg$.extend(true, {}, message);
-
-	switch (message.action) {
-
-		case 'mgPlayerJSPreview_action:toggle_capture_and_navigate_tool':
-			if (GmCXt.enableNavigateTool === true) {
-				GmCXt.enableNavigateTool = false;
-			} else {
-				GmCXt.enableNavigateTool = true;
-			}
-			break;
-		
-		case 'mgPlayerJSPreview_action:hide_step_selector_toolbar':
-			GmCXt.toggleStepSelectionToolbar(false);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:highlight_element':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.highlightElement(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:do;task:enable_navigate_tool':
-			GmCXt.enableNavigateTool = true;
-			GmCXt.forwardToContentWindows(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:do;task:enable_capture_tool':
-			GmCXt.enableManualJQuerySelector = false;
-			GmCXt.enableNavigateTool = false;
-			GmCXt.jQElementFound = false;
-			GmCXt.forwardToContentWindows(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:do;task:enable_capture_delay_tool':
-			GmCXt.enableNavigateTool = true;
-			GmCXt.forwardToContentWindows(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:do;task:enable_jQuery_selector':
-			GmCXt.enableManualJQuerySelector = true;
-			GmCXt.enableNavigateTool = true;
-			GmCXt.jQElementFound = false;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectElementUsingJQ(messageCopy.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_invalid_jQuery_message;action:do':
-			GmCXt.jQElementFound = true;
-			GmCXt.forwardToContentWindows(message.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_new_dom_element':
-		case 'mgPlayerJSPreview_action:started;task:select_new_dom_element_for_edit_step':
-			GmCXt.enableNavigateTool = message.data.enableNavigateTool || false;
-			GmCXt.forwardToContentWindows(message);
-
-			GmCXt.log(74, 'mgPlayerJSPreview_action:started;task:select_new_dom_element', messageCopy);
-
-			GmCXt.requestHandler.selectNewDomElement(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_new_dom_element_quick':
-			GmCXt.enableNavigateTool = message.data.enableNavigateTool || false;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewDomElementQuick(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_new_dom_element_find_replace':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewDomElementFindReplace(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:narrow_element_selection':
-		case 'mgPlayerJSPreview_action:started;task:expand_element_selection':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.modifyElementSelection(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_tags':
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_tags_2':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewDomElementTags(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_element_for_message_step':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectSupportingElement(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_element_for_branching_step':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectSupportingElementForBranching(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_element_for_step_rule':
-		case 'mgPlayerJSPreview_action:started;task:select_new_element_for_dom_select_rule':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewElementForDomRule(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_new_table_for_dom_select_rule':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewElementForDomTableRule(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:delete_element_for_message_step':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.deleteSupportingElement();
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_for_beacon':
-			GmCXt.enableNavigateTool = false;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementForBeacon(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:blackout_dom_element':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.blackoutDomElement(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_step_select_existing_dom_element':
-			GmCXt.selectorTool = null;
-			if (GmCXt.visibleWindow(message.data)) {
-				GmCXt.forwardToContentWindows(message);
-				GmCXt.requestHandler.selectDomElementEditStep(messageCopy);
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_tag_select_existing_dom_element':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementEditTag(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_step_select_existing_dom_element:target_frame_only':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
-				GmCXt.requestHandler.selectDomElementEditStep(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id', {
-					currentIframeId: GmCXt.id
-				});
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_message_step_select_existing_dom_element':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementMessageEditStep(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:step_blackout_area_existing_dom_element':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementForBlackOutArea(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementBeaconEdit(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only':
-			GmCXt.selectorTool = null;
-			GmCXt.forwardToContentWindows(message);
-			if (GmCXt.validateTargetFrame(message.data.iframeAttrs, message.data.frame.attributes)) {
-				GmCXt.requestHandler.selectDomElementBeaconEdit(messageCopy);
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:set_iframe_id', {
-					currentIframeId: GmCXt.id
-				});
-			}
-			break;
-
-		case 'mgPlayerJSPreview_action:started:select_new_dom_element_for_smart_tip':
-			GmCXt.enableNavigateTool = false;
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectNewDomElementForSmartTip(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:stop_dom_selector;action:do':
-			GmCXt.handleStopDom(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_step_req':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.clearStepReqObj();
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_dom_outline':
-			GmCXt.handleClearDomOutline(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:set_curr_he':
-			GmCXt.setCurrentHe(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:clear_dom_outline_new':
-			GmCXt.handleClearDomOutlineNew(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:hide_dom_outline':
-			GmCXt.handleHideDomOutline(message);
-			break;
-
-		case 'mgPlayerJSPreview_action:delete_beacon_icon':
-			var tourId = (message.data.tourId) ? message.data.tourId : 0;
-			var len = mg$('.mgPlayerJSPreview_beacon-icon-tour-' + tourId).length;
-			if (len && len === 1)
-				mg$('.mgPlayerJSPreview_beacon-icon-tour-' + tourId).remove();
-
-			break;
-
-		case 'mgPlayerJSPreview_action:find_element_to_get_precision':
-			GmCXt.requestHandler.findElementToGetPrecision(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:find_element_to_get_precision_for_rules':
-			GmCXt.requestHandler.findElementToGetPrecisionForRules(messageCopy);
-			break;
-
-		case 'mgPlayerJSPreview_action:completed;task:select_new_dom_element':
-		case 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_quick':
-		case 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_edit_step':
-		case 'mgPlayerJSPreview_action:completed;task:edit_step_select_existing_dom_element':
-		case 'mgPlayerJSPreview_action:completed;task:edit_tag_select_existing_dom_element':
-		case 'mgPlayerJSPreview_action:completed;task:select_element_for_message_step':
-		case 'mgPlayerJSPreview_action:completed;task:select_element_for_branching_step':
-		case 'mgPlayerJSPreview_action:completed;task:select_dom_element_for_beacon':
-		case 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_smart_tip':
-		case 'mgPlayerJSPreview_action:started;task:edit_beacon_select_existing_dom_element':
-		case 'mgPlayerJSPreview_action:completed;task:select_element_for_step_rule':
-		case 'mgPlayerJSPreview_action:completed;task:select_new_element_for_dom_select_rule':
-		case 'mgPlayerJSPreview_action:completed;task:select_new_table_for_dom_select_rule':
-		case 'mgPlayerJSPreview_action:completed;task:select_element_for_variable_completed':
-			GmCXt.requestHandler.updateElementOffset(event, message);
-			break;
-
-		case 'mgPlayerJSPreview_action:stop_step_edit_tool_instance':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.highlighter.unqueue(messageCopy.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_dom_element_for_matching_in_rules':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.findElementToCheckMatchingAlgo(messageCopy.data);
-			break;
-
-		case 'mgPlayerJSPreview_action:started;task:select_element_for_variable':
-			GmCXt.forwardToContentWindows(message);
-			GmCXt.requestHandler.selectDomElementForVariable(messageCopy);
-			break;
-	}
-};
-
-GmCXt.handleStopDom = function(message) {
-	GmCXt.forwardToContentWindows(message);
-
-	if (GmCXt.selectorTool) {
-		GmCXt.selectorTool.status = 'inactive';
-		GmCXt.selectorTool.stop();
-	}
-	if (GmCXt.selectorToolFill) {
-		GmCXt.selectorToolFill.status = 'inactive';
-		GmCXt.selectorToolFill.stop();
-	}
-	if (GmCXt.selectorToolRules) {
-		GmCXt.selectorToolRules.status = 'inactive';
-		GmCXt.selectorToolRules.stop();
-	}
-};
-
-GmCXt.handleClearDomOutline = function(message) {
-	GmCXt.forwardToContentWindows(message);
-	if (GmCXt.selectorTool) {
-		GmCXt.selectorTool.removeOutline();
-	}
-	if (GmCXt.selectorToolFill) {
-		GmCXt.selectorToolFill.removeOutline();
-	}
-	if (GmCXt.selectorToolRules) {
-		GmCXt.selectorToolRules.removeOutline();
-	}
-	if (GmCXt.selectorToolFill) {
-		GmCXt.selectorToolFill.clearBlackoutArea();
-		GmCXt.selectorToolFill = null;
-	}
-};
-
-GmCXt.setCurrentHe = function(message) {
-	GmCXt.forwardToContentWindows(message);
-	if (GmCXt.selectorTool) {
-		GmCXt.selectorTool.setCurrentHe();
-	}
-};
-
-GmCXt.handleClearDomOutlineNew = function(message) {
-	GmCXt.forwardToContentWindows(message);
-	if (GmCXt.selectorTool) {
-		GmCXt.selectorTool.removeOutlineNew();
-	}
-};
-
-GmCXt.handleHideDomOutline = function(message) {
-	GmCXt.forwardToContentWindows(message);
-	if (GmCXt.selectorTool) {
-		GmCXt.selectorTool.hideOutline();
-	}
-};
-
-GmCXt.requestHandler.findElementToGetPrecision = function(req) {
-
-	if (GmCXt.stepReq.iframeIdentifier !== GmCXt.id) return;
-
-	var index = req.data.data.index;
-
-	function cb(el) {
-		var data = {
-			index: index,
-			el: el
-		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:update_element_precision', data);
-	}
-
-	if (GmCXt.stepReq) {
-
-		var elm = req.data.data.el;
-
-		if ((GmCXt.stepReq.type === GmCXt.STEP_BEACON_TYPE && GmCXt.stepReq.dom.hasOwnProperty('selectedDOMElement')) ||
-			(GmCXt.stepReq.step && GmCXt.stepReq.step.step_id && GmCXt.stepReq.reselectElem !== true)
-		) {
-			var el = GmCXt.highlighter.getElementPrecision(elm.criteria);
-			cb(el);
-		} else if (GmCXt.selectorTool) {
-			var el = GmCXt.selectorTool.getElementPrecision(elm.criteria);
-			cb(el);
-		}
-	}
-};
-
-GmCXt.requestHandler.findElementToGetPrecisionForRules = function(req) {
-
-	if (!GmCXt.rulesElement) return;
-
-	var d = req.data.data;
-	var elm = d.el;
-	GmCXt.rulesElement = d.el;
-
-	function cb(el) {
-		if (el === null) return;
-
-		if (GmCXt.rulesElement) {
-			GmCXt.rulesElement = el;
-		}
-
-		var dataValue = {
-			index: d.index,
-			parentIndex: d.parentIndex,
-			rulesElement: el
-		};
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:update_element_precision:for_rules', dataValue);
-	}
-
-	if (GmCXt.highlighter) {
-		var el = GmCXt.highlighter.getElementPrecision(elm.criteria);
-		cb(el);
-	} else if (GmCXt.selectorToolRules) {
-		var el = GmCXt.selectorToolRules.getElementPrecision(elm.criteria);
-		cb(el);
-	}
-};
-
-GmCXt.requestHandler.blackoutDomElement = function(request) {
-	var cb = function(data) {
-
-		var rect = data.element.position;
-		var actionName = 'mgPlayerJSPreview_action:completed;task:blackout_dom_element';
-
-		var message = {
-			action: actionName,
-			id: data.id,
-			position: rect,
-			element: data
-		};
-
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventBlackoutDOMElement(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.selectorToolFill.removeBlackoutOutline();
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-	GmCXt.selectorToolFill = GmCXt.selector({
-		cb: cb,
-		frame: request.data.frame,
-		identifier: "blackout-request"
-	});
-	GmCXt.selectorToolFill.start();
-};
-
-GmCXt.requestHandler.selectSupportingElement = function(request) {
-	var cb = function(data) {
-
-		var actionName = "mgPlayerJSPreview_action:completed;task:select_element_for_message_step";
-		delete data.he;
-
-		var message = {
-			action: actionName,
-			status: GmCXt.ELEMENT_FOUND,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-	var frame = request.data.frame;
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.requestHandler.selectNewDomElementTags = function(request) {
-	var cb = function(data) {
-
-		var actionName = request.action.replace("started", "completed");
-		data.title = data.titleSuggestion.text;
-
-		delete data.he;
-
-		var message = {
-			action: actionName,
-			status: GmCXt.ELEMENT_FOUND,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		}, 500);
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 200);
-	};
-
-	var frame = request.data.frame;
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.requestHandler.selectSupportingElementForBranching = function(request) {
-
-	function getDataOption(elem) {
-		var data = {
-			id: elem.id,
-			element: GmCXt.dom.getElement(elem, null, request.data.frame)
-		};
-
-		var opt = {
-			text: readText(elem),
-			value: elem.value,
-			data: data
-		};
-
-		if (opt.text) return opt;
-		else return null;
-	}
-
-	function readText(elem) {
-		var text = elem.innerHTML;
-
-		if (text === "" && elem.nextElementSibling) {
-			text = elem.nextElementSibling.innerHTML;
-		}
-
-		if (text === "" && elem.parentElement) {
-
-			var ps = elem.parentElement.nextElementSibling;
-
-			if (ps && ps.tagName === "LABEL" &&
-				(ps.getAttribute("for") === elem.getAttribute("name") ||
-					ps.getAttribute("id") === elem.getAttribute("name") ||
-					ps.getAttribute("for") === elem.getAttribute("id")
-				)
-			) {
-				text = ps.innerText;
-			}
-		}
-		return text.substring(0, 50);
-	}
-
-	var cb = function(data) {
-
-		var actionName = "mgPlayerJSPreview_action:completed;task:select_element_for_branching_step";
-		var message = {
-			action: actionName,
-			status: GmCXt.ELEMENT_FOUND,
-			data: data,
-		};
-
-		var tagN = mg$(message.data.he)[0].tagName.toLowerCase();
-		message.data.dataOptions = [];
-
-		message.data.textContent = GmCXt.getElementText(message.data.he);
-
-		if (tagN === 'select') {
-
-			message.data.dataOptionsType = "select";
-			for (var i = 0; i < message.data.he.options.length; i++) {
-				var objToPush = {};
-				objToPush.text = mg$(message.data.he.options[i])[0].innerHTML.substring(0, GmCXt.ruleTextLimit);
-				objToPush.val = mg$(message.data.he.options[i]).val();
-				objToPush.data = {};
-				objToPush.data.element = GmCXt.dom.getElement(message.data.he, null, request.data.frame);
-				message.data.dataOptions.push(objToPush);
-			}
-		} else if (tagN === 'input') {
-
-			if (data.element.selector.js[0].toLowerCase().indexOf("radio") > -1) {
-
-				var allRadio = mg$("input[name='" + message.data.he.name + "']");
-				message.data.dataOptionsType = "radio";
-
-				for (var i = 0; i < allRadio.length; i++) {
-					var opt = getDataOption(allRadio[i]);
-					if (opt) message.data.dataOptions.push(opt);
-				}
-			}
-		} else if (mg$(message.data.he).has("input[type=radio]").length > 0) {
-
-			message.data.dataOptionsType = "radio";
-
-			var allRadio = mg$("input[name='" + mg$(message.data.he).find("input[type=radio]")[0].name + "']");
-
-			for (var i = 0; i < allRadio.length; i++) {
-				var opt = getDataOption(allRadio[i]);
-				if (opt) message.data.dataOptions.push(opt);
-			}
-		} else if (mg$(message.data.he).find("select").length === 1) {
-
-			message.data.dataOptionsType = "select";
-			var elem = mg$(message.data.he).find("select");
-
-			for (var i = 0; i < elem[0].options.length; i++) {
-				var objToPush = {};
-				objToPush.text = mg$(elem[0].options[i])[0].innerHTML;
-				objToPush.val = mg$(elem[0].options[i]).val();
-				objToPush.data = {};
-				objToPush.data.element = GmCXt.dom.getElement(elem[0], null, request.data.frame);
-				message.data.dataOptions.push(objToPush);
-			}
-		}
-
-		delete message.data.he;
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		}, 300);
-	};
-
-	GmCXt.selectorToolRules = GmCXt.selector({
-		cb: cb,
-		frame: request.data.frame,
-		identifier: "rules-engine-request"
-	});
-	GmCXt.selectorToolRules.start();
-
-};
-
-GmCXt.getInfoFromHe = function(data) {
-	data.childElements = data.element.childElements;
-	data.elTag = mg$(data.he)[0].tagName.toLowerCase();
-	data.parentNotExist = !data.he.parentElement;
-};
-
-GmCXt.requestHandler.selectNewElementForDomTableRule = function(request) {
-	var cb = function(data) {
-
-		if (request.data && request.data.ruleIndex !== undefined) {
-			data.ruleIndex = request.data.ruleIndex;
-			data.groupIndex = request.data.groupIndex;
-			data.reSelect = request.data.reSelect;
-		}
-
-		var actionName = "";
-
-		if (data.he.tagName === 'TABLE') {
-			var table = data.he;
-			data.columns = {};
-			var numberOfCols = table.rows[0].cells.length;
-			var i;
-			for (i = 0; i < numberOfCols; i++) {
-				data.columns[i] = {
-					label: table.rows[0].cells[i].textContent,
-					id: i,
-					values: []
-				};
-			}
-			var val = '';
-			for (i = 1; i < table.rows.length; i++) {
-				for (j = 0; j < numberOfCols; j++) {
-					val = table.rows[i].cells[j].textContent.trim();
-					if (val && !data.columns[j].values.includes(val)) {
-						data.columns[j].values.push(val);
-					}
-				}
-			}
-			actionName = "mgPlayerJSPreview_action:completed;task:select_new_table_for_dom_select_rule";
-		} else {
-			//If selected element not table change rule to select element
-			actionName = "mgPlayerJSPreview_action:completed;task:select_new_element_for_dom_select_rule";
-		}
-		var message = {
-			action: actionName,
-			status: GmCXt.ELEMENT_FOUND,
-			data: data,
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		}, 500);
-
-	};
-
-	GmCXt.selectorToolRules = GmCXt.selector({
-		cb: cb,
-		frame: request.data.frame,
-		identifier: "rules-engine-request",
-		type: "table"
-	});
-	GmCXt.selectorToolRules.start();
-};
-
-// This function is to select dom element needed by Rule Engine to show beacon/tooltip/push notification
-GmCXt.requestHandler.selectNewElementForDomRule = function(request) {
-
-	var cb = function(data) {
-
-		if (request.data && request.data.ruleIndex !== undefined) {
-			data.ruleIndex = request.data.ruleIndex;
-			data.groupIndex = request.data.groupIndex;
-			data.reSelect = request.data.reSelect;
-		}
-
-		GmCXt.requestHandler.updateCriteriaForQuickFindEl(data);
-		delete data.he;
-
-		var actionName = "mgPlayerJSPreview_action:completed;task:select_new_element_for_dom_select_rule";
-		if (request.action === 'mgPlayerJSPreview_action:started;task:select_element_for_step_rule') {
-			// dom rule at step level
-			data.rules = request.data.rules;
-			actionName = "mgPlayerJSPreview_action:completed;task:select_element_for_step_rule";
-		}
-		var message = {
-			action: actionName,
-			status: GmCXt.ELEMENT_FOUND,
-			data: data,
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		}, 300);
-
-	};
-
-	GmCXt.selectorToolRules = GmCXt.selector({
-		cb: cb,
-		frame: request.data.frame,
-		identifier: "rules-engine-request"
-	});
-	GmCXt.selectorToolRules.start();
-};
-
-GmCXt.requestHandler.deleteSupportingElement = function(request) {
-	var message = {
-		action: "mgPlayerJSPreview_action:completed;task:delete_element_for_message_step",
-		iframeIdentifier: GmCXt.id
-	};
-
-	// Send a message to all frames to clear outline.
-	GmCXt.timeout(function() {
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(message.action, message);
-		}
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-	}, 300);
-};
-
-GmCXt.selectNewDomElForEdit = function(request) {
-
-	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_edit_step';
-
-	var cb = function(data, autoCorrectData) {
-
-		if (data.he) {
-			var he = data.he;
-			GmCXt.getInfoFromHe(data);
-			data.isEditableEl = mg$(he).attr('contenteditable');
-			delete data.he;
-		}
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		var req = mg$.extend(true, {}, request);
-
-		//Auto correction functionality
-		if (req && req.action === 'mgPlayerJSPreview_action:started;task:select_new_dom_element_for_edit_step') {
-
-			var oldSelector = req.data.stepReq.data.step.step_settings.element.selector;
-
-			//Get list of dynamic attributes
-			GmCXt.dom.dynamicAttrs = GmCXt.requestHandler.getDynamicAttrList(oldSelector, data.element.selector);
-
-			if (GmCXt.dom.dynamicAttrs !== null) {
-				//Skip dynamic attributes while creating new selector
-				message.data.element = GmCXt.dom.getElement(autoCorrectData.he, data.element.criteria, autoCorrectData.frame);
-
-			} else {
-				//If there are no dynamic attributes to skip, add addditional selector for this element
-				message.data.element.selector1 = oldSelector;
-			}
-		}
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.selectNewDomEl = function(request) {
-	var frame = request.data.frame;
-	if (request.action === 'mgPlayerJSPreview_action:started;task:select_new_dom_element_for_edit_step') {
-		var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_edit_step';
-	} else {
-		var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element';
-	}
-
-	var cb = function(data) {
-		GmCXt.getInfoFromHe(data);
-		delete data.he;
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			stepType: request.data.stepType,
-			iframeIdentifier: GmCXt.id
-		};
-
-		GmCXt.log(74, 'Element found', GmCXt.stepReq);
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.selectNewDomElFindReplace = function(request) {
-
-	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_find_replace';
-	var cb = function(data) {
-
-		delete data.he;
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		}, 500);
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 200);
-	};
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.requestHandler.selectElementUsingJQ = function(request) {
-	var jQ = request.data.val;
-	var openPanel = request.data.openPanel;
-	if (jQ) {
-		if (GmCXt.selectorTool)
-			GmCXt.selectorTool.getElemenetUsingJQ(jQ, openPanel);
-		else if (GmCXt.selectorToolFill)
-			GmCXt.selectorToolFill.getElemenetUsingJQ(jQ, openPanel);
-		else if (GmCXt.selectorToolRules)
-			GmCXt.selectorToolRules.getElemenetUsingJQ(jQ, openPanel);
-	}
-};
-
-GmCXt.requestHandler.selectNewDomElementQuick = function(request) {
-	var frame = request.data.frame;
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_quick';
-
-	var cb = function(data) {
-		GmCXt.getInfoFromHe(data);
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			stepType: request.data.stepType,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	GmCXt.startSelectorTool(cb, frame, true);
-};
-
-GmCXt.requestHandler.selectNewDomElement = function(request) {
-
-	GmCXt.log(74, 'selectNewDomElement', request);
-
-	if (request.action === 'mgPlayerJSPreview_action:started;task:select_new_dom_element' ||
-		request.data.stepReq.data.step.step_settings.element.selector1) {
-
-		GmCXt.selectNewDomEl(request);
-
-	} else if (request.action === 'mgPlayerJSPreview_action:started;task:select_new_dom_element_for_edit_step') {
-		GmCXt.selectNewDomElForEdit(request);
-	}
-};
-
-GmCXt.requestHandler.selectNewDomElementFindReplace = function(request) {
-	if (request.action === 'mgPlayerJSPreview_action:started;task:select_new_dom_element_find_replace') {
-		GmCXt.selectNewDomElFindReplace(request);
-	}
-};
-
-GmCXt.requestHandler.modifyElementSelection = function(request) {
-
-	if (GmCXt.id !== GmCXt.stepReq.iframeIdentifier) {
-		return;
-	}
-	var frame = request.data.frame;
-
-	if (GmCXt.highlighter && GmCXt.stepReq.dom.status === GmCXt.ELEMENT_FOUND) {
-		var currentHe = GmCXt.highlighter.getCurrentHe();
-		GmCXt.startSelectorTool(null, frame);
-	}
-
-	if (GmCXt.selectorTool) {
-		if (request.action === 'mgPlayerJSPreview_action:started;task:expand_element_selection') {
-			var data = GmCXt.selectorTool.expandElementSelection(currentHe);
-			GmCXt.onChangeSelection(data);
-		} else if (request.action === 'mgPlayerJSPreview_action:started;task:narrow_element_selection') {
-			var data = GmCXt.selectorTool.narrowElementSelection(currentHe);
-			GmCXt.onChangeSelection(data);
-		}
-	}
-};
-
-GmCXt.onChangeSelection = function(data) {
-	if (!data) return;
-	var step_type = GmCXt.stepReq.step.step_type;
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element';
-	var he = data.he;
-
-	data.isChildrenVisited = mg$(he).children('[gm_visited="true"]').length ? true : false;
-	GmCXt.getInfoFromHe(data);
-
-	if (step_type === GmCXt.STEP_TYPE_SMART_TIP) {
-
-		data.isEditableEl = mg$(he).attr('contenteditable');
-		actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_smart_tip';
-		var isElementFixed = GmCXt.dom.getElementFixedPosition(he);
-		data.elPosProp = isElementFixed ? 'fixed' : mg$(he).css('position');
-		data.parentElPosProp = mg$(he).parent().css('position');
-	}
-
-	delete data.he;
-
-	var message = {
-		status: GmCXt.ELEMENT_FOUND,
-		action: actionName,
-		data: data,
-		iframeIdentifier: GmCXt.id
-	};
-
-	GmCXt.timeout(function() {
-		if (window.self === window.top) {
-			if (step_type === GmCXt.STEP_TYPE_SMART_TIP) {
-				GmCXt.requestHandler.handleEventSelectDOMElementForSmartTip(null, message);
-			} else {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			}
-		} else {
-			GmCXt.sendMessageToParentWindow(message.action, message);
-		}
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-	}, 0);
-};
-
-GmCXt.startSelectorTool = function(cb, frame, isQuick) {
-	if (!GmCXt.selectorTool || GmCXt.selectorTool.status === 'inactive') {
-		GmCXt.selectorTool = GmCXt.selector({
-			cb: cb,
-			frame: frame,
-			isQuick: isQuick
-		});
-		GmCXt.selectorTool.status = 'active';
-		GmCXt.selectorTool.start();
-	}
-};
-
-GmCXt.requestHandler.selectDomElementEditStep = function(request) {
-
-	var actionName = "mgPlayerJSPreview_action:completed;task:edit_step_select_existing_dom_element";
-
-	var cb = function(data) {
-		if (data.he) {
-			var he = data.he;
-			GmCXt.getInfoFromHe(data);
-			var isElementFixed = GmCXt.dom.getElementFixedPosition(he);
-			data.elPosProp = isElementFixed ? 'fixed' : mg$(he).css('position');
-			data.parentElPosProp = mg$(he).parent().css('position');
-			delete data.he;
-		}
-
-		var message = {
-			action: actionName,
-			status: data.status,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(actionName, message);
-		}
-	};
-
-	if (request.data.settings) {
-		request.data.identifier = "editStep";
-		GmCXt.highlighter.queue({
-			data: request.data,
-			cb: cb
-		});
-	}
-};
-
-GmCXt.requestHandler.selectDomElementEditTag = function(request) {
-	
-	var actionName = "mgPlayerJSPreview_action:completed;task:edit_tag_select_existing_dom_element";
-	var elTags = request.data.elTags;
-
-	var cb = function(data) {
-
-		delete data.he;
-
-		var message = {
-			action: actionName,
-			status: data.status,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(actionName, message);
-		}
-	};
-
-	for (var i = 0; i < elTags.length; i++) {
-
-		var d = {
-			settings: elTags[i].step_settings
-		};
-
-		if (request.data) {
-			request.data.isElem = true;
-			GmCXt.highlighter.queue({
-				data: d,
-				cb: cb,
-				type: 'tag'
-			});
-		}
-	}
-};
-
-GmCXt.requestHandler.selectDomElementMessageEditStep = function(request) {
-
-	var data = request.data;
-	var actionName = "mgPlayerJSPreview_action:completed;task:edit_message_step_select_existing_dom_element";
-
-	var elems = data.settings.domElems || {};
-	var cb = function(data) {
-
-		data.stepType = request.data.stepType;
-		data.tooltip = request.data.tooltip;
-
-		var message = {
-			action: actionName,
-			status: data.status,
-			data: data,
-			id: request.data.id,
-			iframeIdentifier: GmCXt.id
-		};
-
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	for (var i = 0, j = elems.length; i < j; i++) {
-
-		data.id = i;
-		data.tooltipId = elems[i].id;
-		data.tooltip = i;
-		data.timeout = Date.now() + 250;
-
-		if (request.data.settings) {
-			request.data.identifier = "editStep";
-			GmCXt.highlighter.queue({
-				data: request.data,
-				element: elems[i].element,
-				cb: cb
-			});
-		}
-
-	}
-};
-
-GmCXt.requestHandler.selectDomElementForBlackOutArea = function(request) {
-
-	var actionName = "mgPlayerJSPreview_action:completed;task:step_blackout_area_existing_dom_element";
-
-	var cb = function(data) {
-
-		var message = {
-			action: actionName,
-			status: data.status,
-			data: data,
-			id: request.data.id,
-			iframeIdentifier: GmCXt.id
-		};
-
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(actionName, message);
-		}
-	};
-
-	if (request.data.settings) {
-		GmCXt.highlighter.queue({
-			data: request.data,
-			cb: cb,
-			identifier: "blackout-request"
-		});
-	}
-};
-
-GmCXt.requestHandler.selectDomElementBeaconEdit = function(request) {
-
-	var actionName = "mgPlayerJSPreview_action:completed;task:edit_beacon_select_existing_dom_element";
-
-	var cb = function(data) {
-
-		request.data.beaconSetting.element = mg$.extend(true, {}, data.element);
-
-		var message = {
-			action: actionName,
-			status: data.status,
-			data: request.data.beaconSetting,
-			iframeIdentifier: GmCXt.id
-		};
-
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(actionName, message);
-		}
-	};
-
-	if (request.data.settings) {
-		GmCXt.highlighter.queue({
-			data: request.data,
-			cb: cb
-		});
-	}
-};
-
-GmCXt.requestHandler.updateCriteriaForQuickFindEl = function(data) {
-	// Default high for beacons, tooltips & rule Els
-	data.element.criteria.precision_level = "High";
-	data.element.isQuickFindEl = true;
-};
-
-GmCXt.requestHandler.selectDomElementForBeacon = function(request) {
-
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_dom_element_for_beacon';
-
-	var frame = request.data.frame;
-	var cb = function(data) {
-
-		GmCXt.requestHandler.updateCriteriaForQuickFindEl(data);
-		delete data.he;
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.requestHandler.selectDomElementForVariable = function(request) {
-
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_element_for_variable_completed';
-
-	var frame = request.data.frame;
-	var cb = function(data) {
-
-		GmCXt.requestHandler.updateCriteriaForQuickFindEl(data);
-		delete data.he;
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 500);
-	};
-
-	GmCXt.selectorToolRules = GmCXt.selector({
-		cb: cb,
-		frame: frame,
-		identifier: "rules-engine-request",
-		type: "variable"
-	});
-	GmCXt.selectorToolRules.start();
-};
-
-GmCXt.requestHandler.highlightElement = function(request) {
-
-	var actionName = 'mgPlayerJSPreview_action:completed;task:highlight_element';
-
-	var cb = function(data) {
-
-		if (data.status === GmCXt.ELEMENT_FOUND) {
-
-			var message = {
-				action: actionName,
-				status: data.status,
-				data: data,
-				iframeIdentifier: GmCXt.id
-			};
-
-			if (window.self === window.top) {
-				GmCXt.requestHandler.handleEventSelectDOMEl(null, message);
-			} else {
-				GmCXt.sendMessageToParentWindow(actionName, message);
-			}
-		} else {
-			if (window.self === window.top) {
-				GmCXt.executeEditInlineStep(data);
-			} else {
-				GmCXt.sendMessageToParentWindow("mgPlayerJSPreview_action:task:execute_edit_inline_step", data);
-			}
-		}
-	};
-
-	if (request.data.settings) {
-		GmCXt.highlighter.queue({
-			data: request.data,
-			cb: cb,
-			isHighlightEl: true
-		});
-	}
-};
-
-GmCXt.requestHandler.selectNewDomElementForSmartTip = function(request) {
-
-	var actionName = 'mgPlayerJSPreview_action:completed;task:select_new_dom_element_for_smart_tip';
-
-	var frame = request.data.frame;
-
-	var cb = function(data) {
-		var he = data.he;
-		GmCXt.getInfoFromHe(data);
-		data.isEditableEl = mg$(he).attr('contenteditable');
-
-		GmCXt.requestHandler.updateCriteriaForQuickFindEl(data);
-		var isElementFixed = GmCXt.dom.getElementFixedPosition(he);
-		data.elPosProp = isElementFixed ? 'fixed' : mg$(he).css('position');
-		data.parentElPosProp = mg$(he).parent().css('position');
-		delete data.he;
-
-		var message = {
-			status: GmCXt.ELEMENT_FOUND,
-			action: actionName,
-			data: data,
-			iframeIdentifier: GmCXt.id
-		};
-
-		if (window.self === window.top) {
-			GmCXt.requestHandler.handleEventSelectDOMElementForSmartTip(null, message);
-		} else {
-			GmCXt.sendMessageToParentWindow(actionName, message);
-		}
-
-		// Send a message to all frames to clear outline.
-		GmCXt.timeout(function() {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:stop_dom_selector;action:inform');
-		}, 300);
-	};
-
-	GmCXt.startSelectorTool(cb, frame);
-};
-
-GmCXt.requestHandler.getDynamicAttrList = function(old, new_) {
-
-	// Define dynamic attributes for each selector
-	var dynamicAttr = {
-		js: null,
-		js1: null,
-		js2: null,
-		js3: null
-	};
-
-	// Get dynamic attributes for each selector
-	if (old.js && new_.js) {
-		dynamicAttr.js = getDynamicAttr(old.js, new_.js);
-	}
-
-	if (old.js1 && new_.js1) {
-		dynamicAttr.js1 = getDynamicAttr(old.js1, new_.js1);
-	}
-
-	if (old.js2 && new_.js2) {
-		dynamicAttr.js2 = getDynamicAttr(old.js2, new_.js2);
-	}
-
-	if (old.js3 && new_.js3) {
-		dynamicAttr.js3 = getDynamicAttr(old.js3, old.js3);
-	}
-
-	function getDynamicAttr(old, new_) {
-
-		var oldObj = GmCXt.dom.getAttributes(old);
-		var newObj = GmCXt.dom.getAttributes(new_);
-
-		var len;
-		if (old.length < new_.length) {
-			len = old.length;
-		} else {
-			len = new_.length;
-		}
-
-		var tagStatus = compareTags(oldObj, newObj, len);
-
-		if (tagStatus !== true) {
-			return null;
-		}
-
-		var dynamicAttri = compareAttributes_(oldObj, newObj, len);
-
-		return dynamicAttri;
-	}
-
-	function compareAttributes_(old, new_, len) {
-
-		//Dynamic attribute list
-		var attributeList = [];
-
-		for (var i = 0; i < len; i++) {
-			if (old[i].tagName === new_[i].tagName) {
-				// Extract dynamic attributes
-				for (var attr in old[i]) {
-					if (!isEqual(old[i][attr], new_[i][attr]))
-						attributeList.push(attr);
-				}
-			}
-		}
-
-		if (attributeList.length === 0) {
-			return null;
-		} else {
-			// Removes duplicate attributes
-			attributeList = Array.from(new Set(attributeList));
-			return attributeList;
-		}
-	}
-
-	function isEqual(val1, val2) {
-		if (val1 && val2) {
-			if (typeof val1 === 'object' && JSON.stringify(val1) === JSON.stringify(val2))
-				return true;
-			if (val1 == val2)
-				return true;
-		}
-		return false;
-	}
-
-	function compareTags(old, new_, len) {
-		var tagStatus = true;
-
-		for (var i = 0; i < len; i++) {
-			if (old[i].tagName !== new_[i].tagName) {
-				tagStatus = false;
-				break;
-			}
-		}
-
-		return tagStatus;
-	}
-
-	//Return dynamic attributes
-	if (dynamicAttr.js || dynamicAttr.js1 || dynamicAttr.js2 || dynamicAttr.js3) {
-		return dynamicAttr;
-	} else {
-		return null;
-	}
-};
-
-GmCXt.requestHandler.findElementToCheckMatchingAlgo = function(data) {
-
-	var callback = function(result) {
-
-		if (!result.found) return;
-
-		var obj = {
-			found: result.found,
-			jobId: data.jobId,
-			fromSidePanel: data.fromSidePanel,
-			ruleIndex: data.ruleIndex,
-			groupIndex: data.groupIndex,
-			de: result.de
-		};
-
-		GmCXt.rulesElement = result.he;
-
-		var message = {
-			action: "mgPlayerJSPreview_action:forward;task:select_dom_element_for_matching_in_rules",
-			data: obj
-		};
-
-		GmCXt.sendMessageToTheTopWindow(message.action, message.data);
-	};
-
-	var request = {
-		data: {
-			requestId: Math.random(),
-			element: data.element,
-			frame: data.frame,
-			job: data.job
-		},
-		cb: callback
-	};
-
-	GmCXt.highlighter.queueMatchingAlgoElement(request);
 };
 function domFinder(elem, elemPath) {
 
@@ -51474,17 +30942,17 @@ GmCXt.dom1334.filterParentTextEl = function(nodes, text) {
 	var text = text.trim().toLowerCase();
 
 	nodes.filter(function(index, node) {
-		mg$(node).parents().addClass('mgPlayerJSPreview_dummy-class');
+		mg$(node).parents().addClass('mgPlayerJSProd_dummy-class');
 	});
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText) {
 			var nodeText = node.innerText.trim().toLowerCase();
-			return nodeText === text && !mg$(node).hasClass('mgPlayerJSPreview_dummy-class');
+			return nodeText === text && !mg$(node).hasClass('mgPlayerJSProd_dummy-class');
 		}
 	});
 
-	mg$('.mgPlayerJSPreview_dummy-class').removeClass('mgPlayerJSPreview_dummy-class');
+	mg$('.mgPlayerJSProd_dummy-class').removeClass('mgPlayerJSProd_dummy-class');
 
 	return GmCXt.l.return(nodes);
 };
@@ -52416,17 +31884,17 @@ GmCXt.dom1334.filterParentNodes = function(nodes, text) {
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText && node.innerText.trim().toLowerCase() === text) {
-			mg$(node).parents().addClass('mgPlayerJSPreview_dummy-class');
+			mg$(node).parents().addClass('mgPlayerJSProd_dummy-class');
 			return true;
 		}
 		return false;
 	});
 
 	var childNodes = nodes.filter(function(index, node) {
-		return !mg$(node).hasClass('mgPlayerJSPreview_dummy-class');
+		return !mg$(node).hasClass('mgPlayerJSProd_dummy-class');
 	});
 
-	mg$('.mgPlayerJSPreview_dummy-class').removeClass('mgPlayerJSPreview_dummy-class');
+	mg$('.mgPlayerJSProd_dummy-class').removeClass('mgPlayerJSProd_dummy-class');
 
 	var returnValue;
 	if (childNodes.length === 1) { // All nodes are hierachichally linked (parent-child)
@@ -52519,9 +31987,9 @@ GmCXt.dom1334.executeTextBasedJquery = function(queryString, text) {
 
 GmCXt.getPosition = function(cssPos) {
 	if (cssPos) {
-		return 'mgPlayerJSPreview_fixed-position';
+		return 'mgPlayerJSProd_fixed-position';
 	} else {
-		return 'mgPlayerJSPreview_absolute-position';
+		return 'mgPlayerJSProd_absolute-position';
 	}
 };
 GmCXt.dom = {};
@@ -55055,17 +34523,17 @@ GmCXt.dom.filterParentTextEl = function(nodes, text) {
 	var text = text.trim().toLowerCase();
 
 	nodes.filter(function(index, node) {
-		mg$(node).parents().addClass('mgPlayerJSPreview_dummy-class');
+		mg$(node).parents().addClass('mgPlayerJSProd_dummy-class');
 	});
 
 	nodes = nodes.filter(function(index, node) {
 		if (node.innerText) {
 			var nodeText = node.innerText.trim().toLowerCase();
-			return nodeText === text && !mg$(node).hasClass('mgPlayerJSPreview_dummy-class');
+			return nodeText === text && !mg$(node).hasClass('mgPlayerJSProd_dummy-class');
 		}
 	});
 
-	mg$('.mgPlayerJSPreview_dummy-class').removeClass('mgPlayerJSPreview_dummy-class');
+	mg$('.mgPlayerJSProd_dummy-class').removeClass('mgPlayerJSProd_dummy-class');
 
 	return GmCXt.l.return(nodes);
 };
@@ -55240,8 +34708,8 @@ GmCXt.highlighter = (function() {
 		}
 
 		pub.removeOutline();
-		mg$('.mgPlayerJSPreview_selector-blackout').remove();
-		mg$(".mgPlayerJSPreview_user-tip-guide-container").remove();
+		mg$('.mgPlayerJSProd_selector-blackout').remove();
+		mg$(".mgPlayerJSProd_user-tip-guide-container").remove();
 	};
 
 	pub.queueVariable = function(req) {
@@ -55310,7 +34778,7 @@ GmCXt.highlighter = (function() {
 			}
 		}
 		beaconJobs = [];
-		mg$(".mgPlayerJSPreview_beacon-icon").remove();
+		mg$(".mgPlayerJSProd_beacon-icon").remove();
 	};
 
 	pub.queueTag = function(req) {
@@ -55427,9 +34895,9 @@ GmCXt.highlighter = (function() {
 	};
 
 	pub.removeToolTipIcons = function(d) {
-		mg$('.mgPlayerJSPreview_smarttip-icon-wrapper-' + d.step_id).remove();
-		mg$('.mgPlayerJSPreview_smarttip-valid-' + d.step_id).remove();
-		mg$('#mgPlayerJSPreview_smarttip-' + d.step_id).remove();
+		mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + d.step_id).remove();
+		mg$('.mgPlayerJSProd_smarttip-valid-' + d.step_id).remove();
+		mg$('#mgPlayerJSProd_smarttip-' + d.step_id).remove();
 		mg$('.gssSmarttip-form-submit-' + d.tour_id).removeClass('gssSmarttip-form-submit');
 		mg$('.gssSmarttip-form-submit-' + d.tour_id).removeClass('gssSmarttip-form-submit-' + d.tour_id);
 	};
@@ -55795,15 +35263,15 @@ GmCXt.highlighter = (function() {
 
 			if (!doNotHideStep(req)) {
 				if (req.data.tooltipId) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:hide_inline_step_popup_tootip', {
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_inline_step_popup_tootip', {
 						id: req.data.tooltipId
 					});
 				} else {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:hide_inline_step_popup');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_inline_step_popup');
 				}
 
 			} else {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:step_element_hidden');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:step_element_hidden');
 			}
 		}
 	}
@@ -56374,7 +35842,7 @@ GmCXt.highlighter = (function() {
 				}
 
 			});
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:check_iframe_visible', {
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:check_iframe_visible', {
 				selector: s
 			});
 		}
@@ -56889,15 +36357,15 @@ GmCXt.highlighter = (function() {
 	}
 
 	function hideOutline(jobId) {
-		mg$('.mgPlayerJSPreview_select-outline.' + jobId).hide();
+		mg$('.mgPlayerJSProd_select-outline.' + jobId).hide();
 	}
 
 	function showOutline(jobId) {
-		mg$('.mgPlayerJSPreview_select-outline.' + jobId).show();
+		mg$('.mgPlayerJSProd_select-outline.' + jobId).show();
 	}
 
 	function editStep(e) {
-		GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:execute_edit_step_activerequest');
+		GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:execute_edit_step_activerequest');
 	}
 
 	function getNextDomain(nextStep) {
@@ -56918,7 +36386,7 @@ GmCXt.highlighter = (function() {
 
 		if (GmCXt.playerI.testAutomation) {
 			var nextStep = GmCXt.getNextStep();
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:automation_check_reload', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:automation_check_reload', {
 				pageReloadOption: s.pageReloadOption,
 				isNextStep: nextStep ? true : false
 			});
@@ -56997,7 +36465,7 @@ GmCXt.highlighter = (function() {
 			job.resp.userEventFlag = true;
 			onElem = true;
 
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:close_step');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:close_step');
 
 			// TODO: 
 			if (PI.tour && PI.tour.steps && mg$.isArray(PI.tour.steps)) {
@@ -57020,7 +36488,7 @@ GmCXt.highlighter = (function() {
 				if (currentStepDomainName === nextStepDomainName && checkReload(setting)) {
 
 					GmCXt.log(33, "On user event, send message to play next step.");
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_next_step');
 
 				} else if (setting.pageReloadOption === "restart_parent") {
 					GmCXt.restartInParent();
@@ -57034,31 +36502,31 @@ GmCXt.highlighter = (function() {
 				GmCXt.log(33, 'Tour Loop: ' + (PI.currentLoop + 1) + ' completed.');
 
 				if (!(setting.pageReloadOption === "new_tab" || setting.pageReloadOption === "reload")) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:tour_loop_completed');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:tour_loop_completed');
 				}
 			} else if ((!(GmCXt.isPlayer() && PI.tour.tour_settings.enableSentiment) || PI.testAutomation) &&
 				GmCXt.isLastStep(PI.currentStepId, PI.playStructure) && !GmCXt.isLooping()) {
 
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:close_guide');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:close_guide');
 			}
 
 			hideOutline(jobId);
 			delete jobs[jobId];
 
 			if (GmCXt.isDesktop() && !PI.isLastStep) {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_next_step');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_next_step');
 			}
 		}
 	}
 
 	function createOutline(jobId, tooltipId, identifier) {
-		var cname = 'mgPlayerJSPreview_select-outline ' + jobId;
+		var cname = 'mgPlayerJSProd_select-outline ' + jobId;
 		if (identifier === "editStep") {
-			cname = 'mgPlayerJSPreview_select-tool-outline ' + jobId;
+			cname = 'mgPlayerJSProd_select-tool-outline ' + jobId;
 		}
 
 		if (tooltipId)
-			cname += ' mgPlayerJSPreview_msg-tooltip-' + tooltipId;
+			cname += ' mgPlayerJSProd_msg-tooltip-' + tooltipId;
 
 		var div = '<div class="' + cname + '"></div>';
 
@@ -57091,10 +36559,10 @@ GmCXt.highlighter = (function() {
 	pub.removeOutline = function(tooltipId) {
 
 		if (tooltipId) {
-			mg$('.mgPlayerJSPreview_msg-tooltip-' + tooltipId).remove();
+			mg$('.mgPlayerJSProd_msg-tooltip-' + tooltipId).remove();
 		} else
-			mg$('.mgPlayerJSPreview_select-outline').remove();
-		mg$('.mgPlayerJSPreview_select-tool-outline').remove();
+			mg$('.mgPlayerJSProd_select-outline').remove();
+		mg$('.mgPlayerJSProd_select-tool-outline').remove();
 	};
 
 	// Bind events on the element
@@ -57130,13 +36598,13 @@ GmCXt.highlighter = (function() {
 		if (GmCXt.playerI && resp.userEventFlag === false) {
 			resp.userEventFlag = true;
 
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:close_step');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:close_step');
 
 			var data = {
 				tourId: resp.guideLinkId
 			};
 
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_linked_tour', data);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_linked_tour', data);
 
 			hideOutline(jobId);
 			delete jobs[jobId];
@@ -57161,7 +36629,7 @@ GmCXt.highlighter = (function() {
 
 	var onKeyupElement = function(e) {
 		if (mg$(this).val().length) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:enable_next_button');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:enable_next_button');
 		}
 	};
 
@@ -57345,11 +36813,11 @@ GmCXt.highlighter = (function() {
 	};
 
 	function addNoWatch(he) {
-		mg$(he).addClass('mgPlayerJSPreview_no-watch');
+		mg$(he).addClass('mgPlayerJSProd_no-watch');
 	}
 
 	function removeNoWatch(he) {
-		mg$(he).removeClass('mgPlayerJSPreview_no-watch');
+		mg$(he).removeClass('mgPlayerJSProd_no-watch');
 	}
 
 	function triggerRightClick(he) {
@@ -57478,7 +36946,7 @@ GmCXt.highlighter = (function() {
 				}
 			}
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:trigger_next_click');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:trigger_next_click');
 		}
 	}
 
@@ -57681,7 +37149,7 @@ GmCXt.highlighter = (function() {
 			insertPowerHtml(he, tag, value);
 		}
 
-		if (isPreview) mg$(he).addClass('mgPlayerJSPreview_preview-smarttip-pwr-html');
+		if (isPreview) mg$(he).addClass('mgPlayerJSProd_preview-smarttip-pwr-html');
 
 		if (!isPreview) {
 			GmCXt.updateOnScreenTooltipGuideInfo(rd.tour, rd.tour.tour_id, rd.step.step_id, true, opt, GmCXt.urlParts.fullUrl);
@@ -57770,7 +37238,7 @@ GmCXt.highlighter = (function() {
 
 			if (auto.hasHumanInteraction && !GmCXt.isAutomationStep(nextStep)) {
 				GmCXt.log(33, "Waiting for human interaction.");
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:automation_waiting_for_human_interaction');
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:automation_waiting_for_human_interaction');
 				return;
 			}
 
@@ -57778,14 +37246,14 @@ GmCXt.highlighter = (function() {
 			(!GmCXt.isAutomationStep(nextStep) || !nextStep) &&
 			(s.onKeyupNext || s.onChangeNext || s.onClickAnywhere)) {
 			GmCXt.log(33, "Waiting for human interaction.");
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:automation_waiting_for_human_interaction');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:automation_waiting_for_human_interaction');
 			return;
 		}
 
 		if (window.self === window.top) {
 			GmCXt.rotateGear();
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:rotate_gear');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:rotate_gear');
 		}
 
 		if (s.headerNext && GmCXt.isAutomationStep(nextStep) && GmCXt.playerI) {
@@ -57837,9 +37305,9 @@ GmCXt.highlighter = (function() {
 				} else if (s.keepNext) {
 					triggerNextBtnClick(he, req);
 				} else if (s.onClickAnywhere) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_next_step');
 				} else if (s.onPageClickNext === true && (GmCXt.playerI.testAutomation || !auto.hasHumanInteraction)) {
-					GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_next_step');
+					GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_next_step');
 				} else if (s.removeElement) {
 					removeElement(he);
 				}
@@ -58085,7 +37553,7 @@ GmCXt.highlighter = (function() {
 			var list = data.blackoutElements;
 			for (var j = 0; j < list.length; j++) {
 				var rect = list[j];
-				mg$('<div class="mgPlayerJSPreview_selector-blackout ' + req.data.requestId + '"></div>')
+				mg$('<div class="mgPlayerJSProd_selector-blackout ' + req.data.requestId + '"></div>')
 					.appendTo('body')
 					.css({
 						'width': rect.width,
@@ -58301,7 +37769,7 @@ GmCXt.highlighter = (function() {
 		GmCXt.log(48, "REMOVED beacon [" + tourId || tourTitle + "]");
 		mg$(beaconImg).remove();
 		var m = {
-			action: "mgPlayerJSPreview_action:toggle_beacon_visibility",
+			action: "mgPlayerJSProd_action:toggle_beacon_visibility",
 			remove: true,
 			tourId: tourId || rd.tourId
 		};
@@ -58325,7 +37793,7 @@ GmCXt.highlighter = (function() {
 		var pos = resp.elemPos;
 		var rd = job.req.data;
 		var tourTitle = rd.tourTitle;
-		var beaconImg = mg$(".mgPlayerJSPreview_beacon-icon.mgPlayerJSPreview_beacon-icon-tour-" + rd.tourId);
+		var beaconImg = mg$(".mgPlayerJSProd_beacon-icon.mgPlayerJSProd_beacon-icon-tour-" + rd.tourId);
 		var rect = GmCXt.getBoundingRect(he);
 
 		if (!rect) {
@@ -58337,7 +37805,7 @@ GmCXt.highlighter = (function() {
 
 		if (rect.width === 0 && rect.height === 0) visibility = 'hidden';
 		var m = {
-			action: "mgPlayerJSPreview_action:toggle_beacon_visibility",
+			action: "mgPlayerJSProd_action:toggle_beacon_visibility",
 			show: true,
 			tourId: rd.tourId
 		};
@@ -58440,7 +37908,7 @@ GmCXt.highlighter = (function() {
 
 
 		if(requestData.beaconSettings.stickTargetElement){
-			mg$(he).parent().addClass('mgPlayerJSPreview_relative-position');
+			mg$(he).parent().addClass('mgPlayerJSProd_relative-position');
 		}
 
 		css_.position = 'absolute';
@@ -58459,7 +37927,7 @@ GmCXt.highlighter = (function() {
 			addBeaconHtml(jobId,css_, align);
 		} else {
 			var m = {
-				action: "mgPlayerJSPreview_action:show_beacon",
+				action: "mgPlayerJSProd_action:show_beacon",
 				jobId: jobId,
 				requestData: requestData,
 				isPreview: requestData.isPreview,
@@ -58482,7 +37950,7 @@ GmCXt.highlighter = (function() {
 		var job = jobs[jobId];
 		var requestData = job.req.data;
 		var settings = requestData.beaconSettings;
-		var beaconObj = mg$("#mgPlayerJSPreview_beacon-icon-" + requestData.tourId);
+		var beaconObj = mg$("#mgPlayerJSProd_beacon-icon-" + requestData.tourId);
 		var he = job.resp.he;
 
 		if (beaconObj.length) {
@@ -58501,12 +37969,12 @@ GmCXt.highlighter = (function() {
 				beaconImgUrl = GmCXt.conf.staticContentPath + beaconIcon;
 			}
 
-			var beaconClass = "mgPlayerJSPreview_beacon-icon mgPlayerJSPreview_beacon-icon-tour-" + requestData.tourId;
+			var beaconClass = "mgPlayerJSProd_beacon-icon mgPlayerJSProd_beacon-icon-tour-" + requestData.tourId;
 			if (GmCXt.beaconsAreHidden && !requestData.isPreview) {
-				beaconClass += " mgPlayerJSPreview_hidden";
+				beaconClass += " mgPlayerJSProd_hidden";
 			}
 
-			if (requestData.isPreview) beaconClass += " mgPlayerJSPreview_preview-beacon";
+			if (requestData.isPreview) beaconClass += " mgPlayerJSProd_preview-beacon";
 
 			var titleAlign = align;
 			if (requestData.beaconSettings.beaconMsgPosition) {
@@ -58516,17 +37984,17 @@ GmCXt.highlighter = (function() {
 			var t = GmCXt.escapeHtml(requestData.tourTitle);
 			var c = GmCXt.singleLineTitle(t);
 
-			var html_ = "<wmgPlayerJSPreview_ id='mgPlayerJSPreview_beacon-icon-" + requestData.tourId +
+			var html_ = "<wmgPlayerJSProd_ id='mgPlayerJSProd_beacon-icon-" + requestData.tourId +
 				"' class='" + beaconClass + "'>" +
-				"   <img src='" + beaconImgUrl + "' class='mgPlayerJSPreview_custom-image' />" +
-				"   <div class='mgPlayerJSPreview_tour-title-on-beacon " + c + " mgPlayerJSPreview_tour-title-on-beacon-" +
+				"   <img src='" + beaconImgUrl + "' class='mgPlayerJSProd_custom-image' />" +
+				"   <div class='mgPlayerJSProd_tour-title-on-beacon " + c + " mgPlayerJSProd_tour-title-on-beacon-" +
 				titleAlign + "'>" +
 				t +
 				"</div>" +
-				"</wmgPlayerJSPreview_>";
+				"</wmgPlayerJSProd_>";
 			var m = {
 				tour : requestData.tour,
-				action : 'mgPlayerJSPreview_action:track_beacon_feature'
+				action : 'mgPlayerJSProd_action:track_beacon_feature'
 			};
 
 			mg$(html_)
@@ -58534,7 +38002,7 @@ GmCXt.highlighter = (function() {
 				.insertAfter(he)
 				.on('click', function() {
 					if (!requestData.isPreview) {
-						GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:play_tour;event:beacon_click', {
+						GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:play_tour;event:beacon_click', {
 							tourId: requestData.tourId,
 							userKey: requestData.userKey
 						});
@@ -58648,9 +38116,9 @@ GmCXt.highlighter = (function() {
 
 			if (prevJobId && prevJobId !== jobId) {
 
-				var tooltip = mg$(".mgPlayerJSPreview_smarttip-icon-wrapper-" + prevStepId);
-				var validationMessage = mg$("#mgPlayerJSPreview_smarttip-valid-" + prevStepId);
-				var ductTapeTooltip = mg$("#mgPlayerJSPreview_smarttip-" + prevStepId);
+				var tooltip = mg$(".mgPlayerJSProd_smarttip-icon-wrapper-" + prevStepId);
+				var validationMessage = mg$("#mgPlayerJSProd_smarttip-valid-" + prevStepId);
+				var ductTapeTooltip = mg$("#mgPlayerJSProd_smarttip-" + prevStepId);
 
 				mg$(he).off('mouseover focus blur click');
 
@@ -58665,7 +38133,7 @@ GmCXt.highlighter = (function() {
 				if (!rd.isPreview) {
 
 					if (prevTourId) {
-						mg$('.mgPlayerJSPreview_guidence-message-' + prevTourId).remove();
+						mg$('.mgPlayerJSProd_guidence-message-' + prevTourId).remove();
 						mg$(he).removeClass(getGuidenceMessageElmClass(prevStepId, prevTourId));
 
 						GmCXt.log(42, "REMOVED PREV: " + GmCXt.stepLog(prevStepId, prevTourId));
@@ -58739,7 +38207,7 @@ GmCXt.highlighter = (function() {
 
 		var isHidden = !mg$(he).is(":visible") || GmCXt.getElVisibility(he) === 'hidden' || isTextChanged;
 
-		if (mg$(he).hasClass('mgPlayerJSPreview_no-watch') && !isHidden) return true;
+		if (mg$(he).hasClass('mgPlayerJSProd_no-watch') && !isHidden) return true;
 
 		if (isHidden && he && de.targetInfo && GmCXt.dom.isWDTextArea(de)) {
 			var expandedHe = GmCXt.dom.checkForExpandedTextBox(he, de.meta);
@@ -58749,8 +38217,8 @@ GmCXt.highlighter = (function() {
 			}
 		}
 
-		var tooltip = mg$(".mgPlayerJSPreview_smarttip-icon-wrapper-" + step.step_id);
-		var validationMessage = mg$("#mgPlayerJSPreview_smarttip-" + step.step_id);
+		var tooltip = mg$(".mgPlayerJSProd_smarttip-icon-wrapper-" + step.step_id);
+		var validationMessage = mg$("#mgPlayerJSProd_smarttip-" + step.step_id);
 
 		if (!rect) {
 			if (!isPreview) {
@@ -58829,7 +38297,7 @@ GmCXt.highlighter = (function() {
 	}
 
 	function getDuctTapeClass(id) {
-		return 'mgPlayerJSPreview_duct-tape-' + id;
+		return 'mgPlayerJSProd_duct-tape-' + id;
 	}
 
 	function addDuctTape(he, opt, w, h, job, rect) {
@@ -58843,17 +38311,17 @@ GmCXt.highlighter = (function() {
 			if (type === 'opacity') {
 
 				if (isPreview)
-					mg$(he).addClass('mgPlayerJSPreview_duct-tape-invisible-preview mgPlayerJSPreview_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
+					mg$(he).addClass('mgPlayerJSProd_duct-tape-invisible-preview mgPlayerJSProd_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
 				else
-					mg$(he).addClass('mgPlayerJSPreview_duct-tape-invisible mgPlayerJSPreview_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
+					mg$(he).addClass('mgPlayerJSProd_duct-tape-invisible mgPlayerJSProd_duct-tape-smarttip-tour-' + job.req.data.step.tour_id);
 
 			} else if (type === 'color') {
 				if (settings.stickTargetElement) {
-					mg$(he).parent().addClass('mgPlayerJSPreview_relative-position');
-					mg$(he).removeClass('mgPlayerJSPreview_relative');
+					mg$(he).parent().addClass('mgPlayerJSProd_relative-position');
+					mg$(he).removeClass('mgPlayerJSProd_relative');
 				} else {
-					mg$(he).addClass('mgPlayerJSPreview_relative');
-					mg$(he).parent().removeClass('mgPlayerJSPreview_relative-position');
+					mg$(he).addClass('mgPlayerJSProd_relative');
+					mg$(he).parent().removeClass('mgPlayerJSProd_relative-position');
 				}
 				positionDuctTape(job, he, opt, w, h, rect);
 			} else if (type === 'delete') {
@@ -58872,16 +38340,16 @@ GmCXt.highlighter = (function() {
 		var opacity = getDuctTapeOpacity(job.req.data.step);
 		var isPreview = job.req.data.isPreview;
 		var d = opt.disableElement || GmCXt.getDiableEleDefaultVal();
-		var id = 'mgPlayerJSPreview_smarttip-' + job.req.data.step.step_id;
-		var tourClass = 'mgPlayerJSPreview_smarttip-tour-' + job.req.data.step.tour_id;
+		var id = 'mgPlayerJSProd_smarttip-' + job.req.data.step.step_id;
+		var tourClass = 'mgPlayerJSProd_smarttip-tour-' + job.req.data.step.tour_id;
 
 		var preview = "";
-		if (isPreview) preview = "mgPlayerJSPreview_preview-smarttip";
+		if (isPreview) preview = "mgPlayerJSProd_preview-smarttip";
 
-		var html = "<wmgPlayerJSPreview_ jobid='" + job.id + "' id='" + id + "'" +
-			" class='mgPlayerJSPreview_duct-tape " + preview + " " + tourClass + " " + posClass + "'" +
+		var html = "<wmgPlayerJSProd_ jobid='" + job.id + "' id='" + id + "'" +
+			" class='mgPlayerJSProd_duct-tape " + preview + " " + tourClass + " " + posClass + "'" +
 			" style='width:" + w + "px;height:" + h + "px;background:" + d.color + ";opacity:" + opacity + "'>" +
-			"</wmgPlayerJSPreview_>";
+			"</wmgPlayerJSProd_>";
 
 		return html;
 	}
@@ -58896,7 +38364,7 @@ GmCXt.highlighter = (function() {
 
 		var opt = requestData.settings.smartTip;
 
-		var id = '#mgPlayerJSPreview_smarttip-' + job.req.data.step.step_id;
+		var id = '#mgPlayerJSProd_smarttip-' + job.req.data.step.step_id;
 
 		var posClass = '';
 
@@ -58906,8 +38374,8 @@ GmCXt.highlighter = (function() {
 
 			var parentEl = mg$(he).parent()[0];
 			var parentPos = parentEl.getBoundingClientRect();
-			posClass = 'mgPlayerJSPreview_absolute-position';
-			mg$(id).removeClass('mgPlayerJSPreview_fixed-position');
+			posClass = 'mgPlayerJSProd_absolute-position';
+			mg$(id).removeClass('mgPlayerJSProd_fixed-position');
 
 		} else {
 
@@ -58926,14 +38394,14 @@ GmCXt.highlighter = (function() {
 		};
 
 		if (!requestData.settings.stickTargetElement) {
-			if (posClass === 'mgPlayerJSPreview_absolute-position') {
-				mg$(id).removeClass('mgPlayerJSPreview_fixed-position');
-				mg$(id).addClass('mgPlayerJSPreview_absolute-position');
+			if (posClass === 'mgPlayerJSProd_absolute-position') {
+				mg$(id).removeClass('mgPlayerJSProd_fixed-position');
+				mg$(id).addClass('mgPlayerJSProd_absolute-position');
 				style.top += scrollTop;
 				style.left += scrollLeft;
 			} else {
-				mg$(id).removeClass('mgPlayerJSPreview_absolute-position');
-				mg$(id).addClass('mgPlayerJSPreview_fixed-position');
+				mg$(id).removeClass('mgPlayerJSProd_absolute-position');
+				mg$(id).addClass('mgPlayerJSProd_fixed-position');
 			}
 		}
 
@@ -59093,7 +38561,7 @@ GmCXt.highlighter = (function() {
 	}
 
 	function getFormSubmitClass(tourId, isPreview) {
-		var previewClass = isPreview ? ' mgPlayerJSPreview_form-submit-preview' : '';
+		var previewClass = isPreview ? ' mgPlayerJSProd_form-submit-preview' : '';
 		return 'gssSmarttip-form-submit-' + tourId + previewClass;
 	}
 
@@ -59205,7 +38673,7 @@ GmCXt.highlighter = (function() {
 
 			mg$(getTooltipMessageHtml(he, requestData, options)).css(msgStyle).appendTo('html:first');
 
-			var iconId = 'mgPlayerJSPreview_smarttip-icon-' + requestData.step.step_id;
+			var iconId = 'mgPlayerJSProd_smarttip-icon-' + requestData.step.step_id;
 			var gId = "smarttip-guidance-msg-" + requestData.step.step_id;
 
 			var iconEL = document.getElementById(iconId);
@@ -59247,7 +38715,7 @@ GmCXt.highlighter = (function() {
 			left: options.pos.left,
 			top: options.pos.top
 		};
-		var iconId = 'mgPlayerJSPreview_smarttip-icon-' + step.step_id;
+		var iconId = 'mgPlayerJSProd_smarttip-icon-' + step.step_id;
 
 		if (GmCXt.getElVisibility(he) === 'hidden') {
 			style.display = 'none';
@@ -59291,7 +38759,7 @@ GmCXt.highlighter = (function() {
 			var url = requestData.settings.smartTip.icon;
 			addEventstoTooltip(style, he, requestData, options, step, updatedUrl);
 
-			var tipClass = 'mgPlayerJSPreview_smarttip-icon-wrapper-' + requestData.step.step_id;
+			var tipClass = 'mgPlayerJSProd_smarttip-icon-wrapper-' + requestData.step.step_id;
 			GmCXt.imageSizeStyle('.' + tipClass + ' .smarttip-msg-inner img');
 
 			GmCXt.zoomImage(options.guidanceMessage, ".smarttip-msg-inner");
@@ -59664,7 +39132,7 @@ GmCXt.highlighter = (function() {
 		if (isPreview && !GmCXt.smartTipPreviewOn) return;
 
 		var step = requestData.step;
-		var iconId = 'mgPlayerJSPreview_smarttip-icon-' + step.step_id;
+		var iconId = 'mgPlayerJSProd_smarttip-icon-' + step.step_id;
 
 		mg$(he).addClass(getGuidenceMessageElmClass(step.step_id, tourId));
 
@@ -59703,28 +39171,28 @@ GmCXt.highlighter = (function() {
 			GmCXt.requestHandler.showSmarttip(d);
 			GmCXt.addEventOnTooltip(requestData);
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:show_smarttip', d);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:show_smarttip', d);
 		}
 	}
 
 	function getTooltipHtml(he, requestData, size, options, updatedUrl) {
 		if (options.stickTargetElement) {
-			mg$(he).parent().addClass('mgPlayerJSPreview_relative-position');
+			mg$(he).parent().addClass('mgPlayerJSProd_relative-position');
 		} else {
-			mg$(he).parent().removeClass('mgPlayerJSPreview_relative-position');
+			mg$(he).parent().removeClass('mgPlayerJSProd_relative-position');
 		}
-		var id = 'mgPlayerJSPreview_smarttip-icon-' + requestData.step.step_id;
+		var id = 'mgPlayerJSProd_smarttip-icon-' + requestData.step.step_id;
 
-		var tipClass = 'mgPlayerJSPreview_smarttip-icon mg-smarttip-icon mgPlayerJSPreview_smarttip-icon-wrapper-' + requestData.step.step_id + ' ' + 'mgPlayerJSPreview_smarttip-tour-' + requestData.step.tour_id;
+		var tipClass = 'mgPlayerJSProd_smarttip-icon mg-smarttip-icon mgPlayerJSProd_smarttip-icon-wrapper-' + requestData.step.step_id + ' ' + 'mgPlayerJSProd_smarttip-tour-' + requestData.step.tour_id;
 		
 		if (GmCXt.smarttipAreHidden === true && !requestData.isPreview) {
 			tipClass += ' tooltip-hidden';
 		}
 
 		if (options.tipPosition)
-			tipClass += ' ' + options.tipPosition.replace('mgPlayerJSPreview_', 'mg-');
+			tipClass += ' ' + options.tipPosition.replace('mgPlayerJSProd_', 'mg-');
 
-		if (requestData.isPreview) tipClass += ' mgPlayerJSPreview_preview-smarttip';
+		if (requestData.isPreview) tipClass += ' mgPlayerJSProd_preview-smarttip';
 
 		var img = requestData.settings.smartTip.icon;
 		if (updatedUrl) {
@@ -59737,21 +39205,21 @@ GmCXt.highlighter = (function() {
 
 		var os = requestData.os;
 
-		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSPreview_');
+		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSProd_');
 
-		var popupFooter = "<wmgPlayerJSPreview_ class='mgPlayerJSPreview_smarttip-popup-footer mgPlayerJSPreview_width-100 mgPlayerJSPreview_display-flex mgPlayerJSPreview_align-items-center mgPlayerJSPreview_justify-content-flex-start'>" +
-			"                 <img class='mgPlayerJSPreview_custom-image' src='" + GmCXt.brandLogo() + "'>" +
-			"              </wmgPlayerJSPreview_>";
+		var popupFooter = "<wmgPlayerJSProd_ class='mgPlayerJSProd_smarttip-popup-footer mgPlayerJSProd_width-100 mgPlayerJSProd_display-flex mgPlayerJSProd_align-items-center mgPlayerJSProd_justify-content-flex-start'>" +
+			"                 <img class='mgPlayerJSProd_custom-image' src='" + GmCXt.brandLogo() + "'>" +
+			"              </wmgPlayerJSProd_>";
 
-		var html = "<wmgPlayerJSPreview_ class='" + tipClass + " ' style='width:" +
+		var html = "<wmgPlayerJSProd_ class='" + tipClass + " ' style='width:" +
 			size.width + "px; height:" + size.height + "px' >" +
-			"   <img class='mgPlayerJSPreview_custom-image' id='" + id + "'" +
+			"   <img class='mgPlayerJSProd_custom-image' id='" + id + "'" +
 			"       src='" + img + "' " +
 			"       style='width:" + size.width + "px; height:" + size.height + "px' />" +
 			(options.stickTargetElement ? '' : getTooltipMessageHtml(he, requestData, options)) +
 			(tTheme.tooltipBgColor.length > 0 ? popupFooter : '') +
-			"   </wmgPlayerJSPreview_>" +
-			"</wmgPlayerJSPreview_>";
+			"   </wmgPlayerJSProd_>" +
+			"</wmgPlayerJSProd_>";
 
 		return html;
 	}
@@ -59769,7 +39237,7 @@ GmCXt.highlighter = (function() {
 
 		var os = requestData.os;
 
-		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSPreview_');
+		var tTheme = GmCXt.tooltipTheme(os, 'wmgPlayerJSProd_');
 
 		var gId = "smarttip-guidance-msg-" + requestData.step.step_id;
 
@@ -59787,9 +39255,9 @@ GmCXt.highlighter = (function() {
 		var t = GmCXt.updateOrgAndAddSignature(GmCXt.replaceVariableWithValue(options.guidanceMessage));
 		var c = GmCXt.singleLineTitle(t);
 
-		var html = "<wmgPlayerJSPreview_ id ='" + gId + "'class='smarttip-guidance-msg " + guidanc_class + " " + c + " ' style='" + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipPaddingTop ? tTheme.tooltipPaddingTop : '') + (tTheme.tooltipPaddingBottom ? tTheme.tooltipPaddingBottom : '') + (tTheme.tooltipPaddingLeft ? tTheme.tooltipPaddingLeft : '') + (tTheme.tooltipPaddingRight ? tTheme.tooltipPaddingRight : '') + "'>" +
-		"       <wmgPlayerJSPreview_ class='smarttip-msg-inner' style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + t +
-		"       </wmgPlayerJSPreview_>";
+		var html = "<wmgPlayerJSProd_ id ='" + gId + "'class='smarttip-guidance-msg " + guidanc_class + " " + c + " ' style='" + (tTheme.tooltipBorderC ? tTheme.tooltipBorderC : '') + (tTheme.tooltipBgColor ? tTheme.tooltipBgColor : '') + (tTheme.tooltipBorderW ? tTheme.tooltipBorderW : '') + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipPaddingTop ? tTheme.tooltipPaddingTop : '') + (tTheme.tooltipPaddingBottom ? tTheme.tooltipPaddingBottom : '') + (tTheme.tooltipPaddingLeft ? tTheme.tooltipPaddingLeft : '') + (tTheme.tooltipPaddingRight ? tTheme.tooltipPaddingRight : '') + "'>" +
+		"       <wmgPlayerJSProd_ class='smarttip-msg-inner' style='" + popupStyle + (tTheme.tooltipBorderRadius ? tTheme.tooltipBorderRadius : '') + (tTheme.tooltipDescColor ? tTheme.tooltipDescColor : '') + (tTheme.tooltipDescFsize ? tTheme.tooltipDescFsize : '') + (tTheme.tooltipDescFfamily ? tTheme.tooltipDescFfamily : '') + (tTheme.tooltipMwidth ? tTheme.tooltipMwidth : '') + (tTheme.tooltipWidth ? tTheme.tooltipWidth : '') + "'>" + t +
+		"       </wmgPlayerJSProd_>";
 
 		return html;
 
@@ -59890,7 +39358,7 @@ GmCXt.highlighter = (function() {
 		}
 
 		if (!options.stickTargetElement) {
-			if (options.tipPosition === "mgPlayerJSPreview_absolute-position") {
+			if (options.tipPosition === "mgPlayerJSProd_absolute-position") {
 				top = top + mg$(window).scrollTop();
 				left = left + mg$(window).scrollLeft();
 			}
@@ -59985,7 +39453,7 @@ GmCXt.highlighter = (function() {
 				top = rect.top + options.rules.customPosition.top;
 		}
 
-		if (options.tipPosition === "mgPlayerJSPreview_absolute-position") {
+		if (options.tipPosition === "mgPlayerJSProd_absolute-position") {
 			top = top + mg$(window).scrollTop();
 			left = left + mg$(window).scrollLeft();
 		}
@@ -60038,7 +39506,7 @@ GmCXt.highlighter = (function() {
 		if (window.self === window.top) {
 			GmCXt.requestHandler.showSmarttip(d);
 		} else {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:show_smarttip', d);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:show_smarttip', d);
 		}
 	}
 
@@ -60424,11 +39892,11 @@ GmCXt.highlighter = (function() {
 		if (job) {
 			var rd = job.req.data;
 			var tourTitle = rd.tourTitle;
-			var beaconImg = mg$(".mgPlayerJSPreview_beacon-icon.mgPlayerJSPreview_beacon-icon-tour-" + rd.tourId);
+			var beaconImg = mg$(".mgPlayerJSProd_beacon-icon.mgPlayerJSProd_beacon-icon-tour-" + rd.tourId);
 
 			removeBeacon(jobId, rd, beaconImg, tourTitle);
 		} else {
-			var beaconImg = mg$(".mgPlayerJSPreview_beacon-icon.mgPlayerJSPreview_beacon-icon-tour-" + tourId);
+			var beaconImg = mg$(".mgPlayerJSProd_beacon-icon.mgPlayerJSProd_beacon-icon-tour-" + tourId);
 
 			if (beaconImg.length) {
 				removeBeacon(jobId, null, beaconImg, null, tourId);
@@ -60503,14 +39971,14 @@ GmCXt.bootScript = function() {
 	};
 
 	if (!GmCXt.isMyGuideIframe(GmCXt._location().href) && window.self !== window.top) {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:new_iframe_found', GmCXt.id);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:new_iframe_found', GmCXt.id);
 	}
 
 	mg$(window).on('unload', function() {
 		var pi = GmCXt.playerI;
 		if (pi) {
 			if (GmCXt.currentIframeId === GmCXt.id) {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:close_step');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:close_step');
 			}
 		}
 		GmCXt.highlighter.clearIframeWatch();
@@ -60519,7 +39987,7 @@ GmCXt.bootScript = function() {
 	mg$(window).on('keyup', function(e) {
 
 		if (e.which === 16 && GmCXt.FT.creatorApp) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:toggle_capture_and_navigate_tool:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:toggle_capture_and_navigate_tool:inform');
 		}
 	});
 
@@ -60541,7 +40009,7 @@ GmCXt.bootScript = function() {
 		if (!GmCXt.isClickInStepPopup(e) && !GmCXt.isClickInSurveyPopup(e)) {
 			var d = GmCXt.highlighter.onDocumentClick(e);
 			if (GmCXt.playerI) {
-				GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:click_event_for_guide', d);
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:click_event_for_guide', d);
 			}
 
 			GmCXt.highlighter.onDocumentClickForTooltip(e);
@@ -60551,7 +40019,7 @@ GmCXt.bootScript = function() {
 			if (window.self === window.top) {
 				GmCXt.changeEvent("page_click");
 			} else {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:page_clicked');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:page_clicked');
 			}
 
 			if (GmCXt.FT.isPlayer) {
@@ -60561,7 +40029,7 @@ GmCXt.bootScript = function() {
 					if (window.self === window.top) {
 						GmCXt.trackerV1.trackFeatureClick(data);
 					} else {
-						GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:track_feature_click', data);
+						GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:track_feature_click', data);
 					}
 				}
 			}
@@ -60632,14 +40100,14 @@ GmCXt.selector = function(options) {
 
 	pub.start = function() {
 		pub.status = 'active';
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:dom_selctor_started');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:dom_selctor_started');
 		showOutline();
 		createOutlineElements();
 		subscribeEvents();
 	};
 
 	pub.stop = function() {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:dom_selctor_stopped');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:dom_selctor_stopped');
 		unsubscribeEvents();
 	};
 
@@ -60648,27 +40116,27 @@ GmCXt.selector = function(options) {
 	};
 
 	pub.removeOutline = function() {
-		mg$('.mgPlayerJSPreview_select-tool-outline').remove();
+		mg$('.mgPlayerJSProd_select-tool-outline').remove();
 	};
 
 	pub.removeOutlineNew = function() {
-		mg$('.mgPlayerJSPreview_new-outline').remove();
+		mg$('.mgPlayerJSProd_new-outline').remove();
 	};
 
 	pub.hideOutline = function() {
-		mg$('.mgPlayerJSPreview_select-tool-outline').hide();
+		mg$('.mgPlayerJSProd_select-tool-outline').hide();
 	};
 
 	pub.clearBlackoutArea = function() {
-		mg$('.mgPlayerJSPreview_selector-blackout').remove();
+		mg$('.mgPlayerJSProd_selector-blackout').remove();
 	};
 
 	pub.removeBlackoutOutline = function() {
-		mg$('.mgPlayerJSPreview_blackout-tool-outline').remove();
+		mg$('.mgPlayerJSProd_blackout-tool-outline').remove();
 	};
 
 	pub.removeRulesEngineOutline = function() {
-		mg$('.mgPlayerJSPreview_rules-engine-tool-outline').remove();
+		mg$('.mgPlayerJSProd_rules-engine-tool-outline').remove();
 	};
 
 	pub.getElementPrecision = function(criteria) {
@@ -60705,11 +40173,11 @@ GmCXt.selector = function(options) {
 				found: true,
 				openPanel: openPanel
 			};
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:clear_invalid_jQuery_message;action:inform', message);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:clear_invalid_jQuery_message;action:inform', message);
 		}
 
 		if (checkjQ.nodeCount > 1) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:show_unique_elem_not_found;action:inform');
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:show_unique_elem_not_found;action:inform');
 		}
 	};
 
@@ -60833,9 +40301,9 @@ GmCXt.selector = function(options) {
 
 	function onBodyMouseEnter() {
 		if (!GmCXt.jQElementFound && !GmCXt.enableNavigateTool) {
-			mg$('.mgPlayerJSPreview_select-tool-outline').show();
+			mg$('.mgPlayerJSProd_select-tool-outline').show();
 
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:clear_outline;action:inform', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:clear_outline;action:inform', {
 				scriptId: GmCXt.id
 			});
 		}
@@ -60860,11 +40328,11 @@ GmCXt.selector = function(options) {
 
 	function hideOutline() {
 		if (!GmCXt.jQElementFound)
-			mg$('.mgPlayerJSPreview_new-outline').hide();
+			mg$('.mgPlayerJSProd_new-outline').hide();
 	}
 
 	function showOutline() {
-		mg$('.mgPlayerJSPreview_select-tool-outline').show();
+		mg$('.mgPlayerJSProd_select-tool-outline').show();
 	}
 
 	function stopEventPropagationforClickEvent(e) {
@@ -60902,13 +40370,13 @@ GmCXt.selector = function(options) {
 
 	function clickOnToolbar(e) {
 
-		if (e.target.className === 'mgPlayerJSPreview_toolbar-tooltip mgPlayerJSPreview_toolbar-top-pos' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip mgPlayerJSPreview_toolbar-bottom-pos' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-capture' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-navigation' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-title' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-instruction' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-delay-capture') {
+		if (e.target.className === 'mgPlayerJSProd_toolbar-tooltip mgPlayerJSProd_toolbar-top-pos' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip mgPlayerJSProd_toolbar-bottom-pos' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-capture' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-navigation' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-title' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-instruction' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-delay-capture') {
 			return true;
 		} else return false;
 	}
@@ -60916,10 +40384,10 @@ GmCXt.selector = function(options) {
 	function clickOnTooltip(e) {
 
 		if (e.target.className === 'ok-got-it' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-close' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-close' ||
-			e.target.className === 'mgPlayerJSPreview_toolbar-tooltip-close-svg' ||
-			(e.target.parentElement && e.target.parentElement.className === 'mgPlayerJSPreview_toolbar-tooltip-close-svg')) {
+			e.target.className === 'mgPlayerJSProd_toolbar-close' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-close' ||
+			e.target.className === 'mgPlayerJSProd_toolbar-tooltip-close-svg' ||
+			(e.target.parentElement && e.target.parentElement.className === 'mgPlayerJSProd_toolbar-tooltip-close-svg')) {
 			return true;
 		} else return false;
 	}
@@ -60927,8 +40395,8 @@ GmCXt.selector = function(options) {
 	function documentClickEvent(e) {
 		
 		if (!GmCXt.user) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:stop_inline_step_selection_mode');
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:close_inline_step_panel');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:stop_inline_step_selection_mode');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:close_inline_step_panel');
 			return;
 			
 		}
@@ -60938,7 +40406,7 @@ GmCXt.selector = function(options) {
 		if (clickOnToolbar(e)) return;
 
 		if (clickOnTooltip(e)) {
-			GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:hide_guideme_toolbar_tooltip');
+			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:hide_guideme_toolbar_tooltip');
 			return;
 		}
 
@@ -61026,7 +40494,7 @@ GmCXt.selector = function(options) {
 				found = true;
 			}
 		} catch (error) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:clear_invalid_jQuery_message;action:inform', {
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:clear_invalid_jQuery_message;action:inform', {
 				found: found
 			});
 		}
@@ -61452,7 +40920,7 @@ GmCXt.selector = function(options) {
 		if (!self.identifier) {
 			GmCXt.currentHe = currentHe;
 		}
-		mg$('.mgPlayerJSPreview_new-outline').removeClass('mgPlayerJSPreview_new-outline');
+		mg$('.mgPlayerJSProd_new-outline').removeClass('mgPlayerJSProd_new-outline');
 		return data;
 	};
 
@@ -61475,7 +40943,7 @@ GmCXt.selector = function(options) {
 
 		if (self.isQuick) {
 			if (!inTopWindow) {
-				GmCXt.sendMessageToParentWindow('mgPlayerJSPreview_action:hide_step_selector_toolbar');
+				GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:hide_step_selector_toolbar');
 				setTimeout(function() {
 					GmCXt.takeScreenshot().then(function(imageStr) {
 						data.image = imageStr;
@@ -61596,7 +41064,7 @@ GmCXt.selector = function(options) {
 	var showingScoreOf = null;
 
 	function setConfidenceScoreCss(color, score) {
-		mg$('.mgPlayerJSPreview_scoreEl').css({
+		mg$('.mgPlayerJSProd_scoreEl').css({
 			boxShadow: "#a0a0a0 2px 2px 5px 0px",
 			display: "block",
 			position: "relative",
@@ -61606,7 +41074,7 @@ GmCXt.selector = function(options) {
 			"border-radius": "50%"
 		});
 
-		mg$('.mgPlayerJSPreview_figcaption').css({
+		mg$('.mgPlayerJSProd_figcaption').css({
 			"text-align": "center",
 			color: color,
 			width: "100%",
@@ -61618,7 +41086,7 @@ GmCXt.selector = function(options) {
 			"font-weight": "bold"
 		});
 
-		mg$('.mgPlayerJSPreview_scoreEl svg').css({
+		mg$('.mgPlayerJSProd_scoreEl svg').css({
 			display: "block",
 			height: "100%",
 			width: "100%",
@@ -61628,18 +41096,18 @@ GmCXt.selector = function(options) {
 			overflow: "visible"
 		});
 
-		if (mg$('.mgPlayerJSPreview_circle').css('stroke-dashoffset') === '0px') {
-			mg$('.mgPlayerJSPreview_circle').css({
+		if (mg$('.mgPlayerJSProd_circle').css('stroke-dashoffset') === '0px') {
+			mg$('.mgPlayerJSProd_circle').css({
 				stroke: color,
 				fill: 'rgba(0,0,0,0)',
 				'stroke-width': '15%',
 				'stroke-dashoffset': '25'
 			});
 		} else {
-			mg$('.mgPlayerJSPreview_circle').css({
+			mg$('.mgPlayerJSProd_circle').css({
 				background: '#fff',
-				"animation": "mgPlayerJSPreview_pie" + score + " 4s infinite ease both",
-				"-webkit-animation": "mgPlayerJSPreview_pie" + score + " 2s infinite ease both"
+				"animation": "mgPlayerJSProd_pie" + score + " 4s infinite ease both",
+				"-webkit-animation": "mgPlayerJSProd_pie" + score + " 2s infinite ease both"
 			});
 		}
 	}
@@ -61653,11 +41121,11 @@ GmCXt.selector = function(options) {
 		var el = GmCXt.dom.getElement(he, null, self.frame, hoverEl);
 		var sc = GmCXt.getMatchConfidence(el.meta.score);
 
-		var scoreEl = '<div class="mgPlayerJSPreview_scoreEl">' +
-			'<figcaption class="mgPlayerJSPreview_figcaption" style="color:' + sc.color + ';">' + sc.val + '</figcaption>' +
+		var scoreEl = '<div class="mgPlayerJSProd_scoreEl">' +
+			'<figcaption class="mgPlayerJSProd_figcaption" style="color:' + sc.color + ';">' + sc.val + '</figcaption>' +
 			'<svg viewBox="0 0 40 40">' +
 			'<circle stroke="#f3f3f3" stroke-width="15%" fill="none" cx="20" cy="20" r="15"/>' +
-			'<circle class="mgPlayerJSPreview_pie1 ' + sc.class_ + ' mgPlayerJSPreview_circle" cx="20" cy="20" r="15"/>' +
+			'<circle class="mgPlayerJSProd_pie1 ' + sc.class_ + ' mgPlayerJSProd_circle" cx="20" cy="20" r="15"/>' +
 			'</svg>' +
 			'</div>';
 
@@ -61756,7 +41224,7 @@ GmCXt.selector = function(options) {
 		}
 
 		if (typeof e.target.className == "string" &&
-			e.target.className.indexOf('mgPlayerJSPreview_select-tool-outline') !== -1) {
+			e.target.className.indexOf('mgPlayerJSProd_select-tool-outline') !== -1) {
 			return;
 		}
 
@@ -61779,12 +41247,12 @@ GmCXt.selector = function(options) {
 
 	function createOutlineElements() {
 
-		var c = 'mgPlayerJSPreview_select-tool-outline ' + self.id + ' mgPlayerJSPreview_new-outline';
+		var c = 'mgPlayerJSProd_select-tool-outline ' + self.id + ' mgPlayerJSProd_new-outline';
 
 		if (self.identifier && self.identifier == 'blackout-request') {
-			c += ' mgPlayerJSPreview_blackout-tool-outline';
+			c += ' mgPlayerJSProd_blackout-tool-outline';
 		} else if (self.identifier && self.identifier === 'rules-engine-request') {
-			c += ' mgPlayerJSPreview_rules-engine-tool-outline';
+			c += ' mgPlayerJSProd_rules-engine-tool-outline';
 		}
 		var st = '';
 		var div = '<div class="' + c + '"' + st + '></div>';
@@ -61802,28 +41270,28 @@ GmCXt.getMatchConfidence = function(score) {
 
 	var val = '0/5';
 	var color = '#ff0000';
-	var class_ = 'mgPlayerJSPreview_level-0';
+	var class_ = 'mgPlayerJSProd_level-0';
 
 	if (score === 5) {
 		val = '5/5';
 		color = '#2f9987';
-		class_ = 'mgPlayerJSPreview_level-5';
+		class_ = 'mgPlayerJSProd_level-5';
 	} else if (score === 4) {
 		val = '4/5';
 		color = '#6bc9b8';
-		class_ = 'mgPlayerJSPreview_level-4';
+		class_ = 'mgPlayerJSProd_level-4';
 	} else if (score === 3) {
 		val = '3/5';
 		color = '#F9AF6A';
-		class_ = 'mgPlayerJSPreview_level-3';
+		class_ = 'mgPlayerJSProd_level-3';
 	} else if (score === 2) {
 		val = '2/5';
 		color = '#F1736A';
-		class_ = 'mgPlayerJSPreview_level-2';
+		class_ = 'mgPlayerJSProd_level-2';
 	} else if (score === 1) {
 		val = '1/5';
 		color = '#B3463F';
-		class_ = 'mgPlayerJSPreview_level-1';
+		class_ = 'mgPlayerJSProd_level-1';
 	}
 
 	return {
@@ -61881,14 +41349,14 @@ GmCXt.testMeWatcher = function(options) {
 	}
 
 	function checkTestMeWidgetClick(e) {
-		if (e.target.className === 'mgPlayerJSPreview_testme-active' ||
-			e.target.className === 'mgPlayerJSPreview_testme-active-head' ||
-			e.target.className === 'mgPlayerJSPreview_play-pause-position-top' ||
-			e.target.className === 'mgPlayerJSPreview_play-pause-position-bottom' ||
-			e.target.className === 'mgPlayerJSPreview_testme-active-close' ||
-			e.target.className === 'mgPlayerJSPreview_testme-active-inner' ||
-			e.target.className === 'mgPlayerJSPreview_testme-active-title' ||
-			e.target.className === 'mgPlayerJSPreview_testme-active-stop') {
+		if (e.target.className === 'mgPlayerJSProd_testme-active' ||
+			e.target.className === 'mgPlayerJSProd_testme-active-head' ||
+			e.target.className === 'mgPlayerJSProd_play-pause-position-top' ||
+			e.target.className === 'mgPlayerJSProd_play-pause-position-bottom' ||
+			e.target.className === 'mgPlayerJSProd_testme-active-close' ||
+			e.target.className === 'mgPlayerJSProd_testme-active-inner' ||
+			e.target.className === 'mgPlayerJSProd_testme-active-title' ||
+			e.target.className === 'mgPlayerJSProd_testme-active-stop') {
 
 			return true;
 		} else {
@@ -61942,7 +41410,7 @@ GmCXt.testMeWatcher = function(options) {
 				event: eventName,
 				element: element
 			};
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSPreview_action:record_event;testMe', data);
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:record_event;testMe', data);
 		}
 	}
 
@@ -61977,21 +41445,5 @@ GmCXt.testMeWatcher = function(options) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1723122380932.css');
-})();
-(function() {
-	function load(cssId, path) {
-		if (!document.getElementById(cssId)) {
-			var head = document.getElementsByTagName('head')[0];
-			var link = document.createElement('link');
-			link.id = cssId;
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = GmCXt.conf.baseUrl + path;
-			link.media = 'all';
-			head.appendChild(link);
-		}
-	}
-
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1723122380932.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1723195069124.css');
 })();
