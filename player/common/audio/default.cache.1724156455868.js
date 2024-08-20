@@ -209,16 +209,6 @@ GmCXt.IS_VALID = 'Get Validity';
 GmCXt.VISIBLE = 'Visible';
 GmCXt.NOT_VISIBLE = 'Not Visible';
 
-GmCXt.getEmbedCode = function() {
-    var embedCode = "if(!window.guideMe)window.guideMe={}; " +
-        "window.guideMe.baseUrl='" + GmCXt.conf.clientJsBaseUrl + "';" +
-        "var a=document.createElement('script');" +
-        "a.src=guideMe.baseUrl+'guideme.js';" +
-        "document.head.appendChild(a);";
-
-    return embedCode;
-};
-
 GmCXt.getHostnameFromUrl = function(url) {
     if (url) {
         if (url.includes('https://')) {
@@ -381,10 +371,10 @@ GmCXt.isGmElement = function(el) {
     isGmElement = (
         el &&
         (
-            el.parent('wmgPlayerJSProd_').length ||
-            el.parent('.mgPlayerJSProd_beacon-icon').length ||
-            el.parent('.mgPlayerJSProd_smarttip-icon').length ||
-            el.parents('wmgPlayerJSProd_').length
+            el.parent('wmgPlayerJSTest2_').length ||
+            el.parent('.mgPlayerJSTest2_beacon-icon').length ||
+            el.parent('.mgPlayerJSTest2_smarttip-icon').length ||
+            el.parents('wmgPlayerJSTest2_').length
         )
     );
 
@@ -392,7 +382,7 @@ GmCXt.isGmElement = function(el) {
         var className = el.attr('class');
         var parentClassName = el.parent().attr('class');
 
-        if ((className && className.indexOf('mgPlayerJSProd_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSProd_') !== -1))
+        if ((className && className.indexOf('mgPlayerJSTest2_') !== -1) || (parentClassName && parentClassName.indexOf('mgPlayerJSTest2_') !== -1))
             isGmElement = true;
     }
 
@@ -401,7 +391,7 @@ GmCXt.isGmElement = function(el) {
 
 GmCXt.onImageLoadError = function(obj) {
 
-    var isCDNCheck = obj.hasClass('mgPlayerJSProd_cdnChecked');
+    var isCDNCheck = obj.hasClass('mgPlayerJSTest2_cdnChecked');
     var cn, isMyGuideImage, isSrcEmpty, src;
 
     var updateSign = function() {
@@ -413,18 +403,18 @@ GmCXt.onImageLoadError = function(obj) {
                 GmCXt.getCdnSignature(true);
             } else {
                 var m = {
-                    action: 'mgPlayerJSProd_action:get_cdn_signature',
+                    action: 'mgPlayerJSTest2_action:get_cdn_signature',
                 };
                 GmCXt.sendToParentWindow(m);
             }
-        } else if (obj.hasClass('mgPlayerJSProd_dap-card-image')) {
+        } else if (obj.hasClass('mgPlayerJSTest2_dap-card-image')) {
             obj.attr('src', GmCXt.conf.staticContentPath + 'technology.jpg');
         }
     };
 
     if (obj && obj.length && (obj[0].tagName === 'IMG' || GmCXt.isGmElement(obj)) && !isCDNCheck) {
 
-        cn = 'mgPlayerJSProd_custom-image'; // Never do this 'gss'
+        cn = 'mgPlayerJSTest2_custom-image'; // Never do this 'gss'
         isMyGuideImage = obj.hasClass(cn);
         if (GmCXt.isGmElement(obj) && obj[0].tagName === 'SOURCE') {
             isMyGuideImage = true;
@@ -434,7 +424,7 @@ GmCXt.onImageLoadError = function(obj) {
 
         src = obj.attr('src');
 
-        obj.addClass('mgPlayerJSProd_cdnChecked');
+        obj.addClass('mgPlayerJSTest2_cdnChecked');
         updateSign();
     }
 };
@@ -938,16 +928,16 @@ GmCXt.sendToParentWindow = function(m) {
             m.data.fromSidePanel = GmCXt.isSidePanelApp;
         }
 
-        if (m.action !== "mgPlayerJSProd_action:update_custom_labels" &&
-            m.action !== "mgPlayerJSProd_action:set_lang_content_script" &&
-            m.action !== "mgPlayerJSProd_action:update:player_mode" &&
-            m.action !== "mgPlayerJSProd_action:save_user_info" &&
-            m.action !== "mgPlayerJSProd_action:payload_event_call"
+        if (m.action !== "mgPlayerJSTest2_action:update_custom_labels" &&
+            m.action !== "mgPlayerJSTest2_action:set_lang_content_script" &&
+            m.action !== "mgPlayerJSTest2_action:update:player_mode" &&
+            m.action !== "mgPlayerJSTest2_action:save_user_info" &&
+            m.action !== "mgPlayerJSTest2_action:payload_event_call"
         ) {
             m.data.user = GmCXt.user;
         }
 
-        if (m.action === "mgPlayerJSProd_action:payload_event_call") {
+        if (m.action === "mgPlayerJSTest2_action:payload_event_call") {
             delete m.data.fromSidePanel;
         }
     }
@@ -998,7 +988,7 @@ GmCXt.getPopupLogo = function() {
         brandLogo = logo + GmCXt.getCdnSign();
     }
 
-    return "<img class='mgPlayerJSProd_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
+    return "<img class='mgPlayerJSTest2_logo-image' src='" + brandLogo + "' alt='" + GmCXt.label.brandLogo + "' />";
 };
 
 GmCXt.seggregateRules = function(ruleGroup) {
@@ -1097,7 +1087,7 @@ GmCXt.reloadFailedImages = function() {
     }
 
     if (window.self === window.top) {
-        var msg = "mgPlayerJSProd_action:reload_images";
+        var msg = "mgPlayerJSTest2_action:reload_images";
         GmCXt.sendMessageToApp(msg);
         GmCXt.sendMessageToStepFrame(msg);
     }
@@ -1383,9 +1373,9 @@ GmCXt.redirect = function(to) {
 
 GmCXt.getPosition = function(cssPos) {
     if (cssPos) {
-        return 'mgPlayerJSProd_fixed-position';
+        return 'mgPlayerJSTest2_fixed-position';
     } else {
-        return 'mgPlayerJSProd_absolute-position';
+        return 'mgPlayerJSTest2_absolute-position';
     }
 };
 
@@ -1675,9 +1665,9 @@ GmCXt.initPlayerModeFeatures = function(showPlayer, isMiniPlayer, isPlayerMode) 
     }
 
     if (GmCXt.isMicroPlayer()) {
-        mg$(".mgPlayerJSProd_panel").addClass('mgPlayerJSProd_theme-mplayer');
+        mg$(".mgPlayerJSTest2_panel").addClass('mgPlayerJSTest2_theme-mplayer');
     } else {
-        mg$(".mgPlayerJSProd_panel").removeClass('mgPlayerJSProd_theme-mplayer');
+        mg$(".mgPlayerJSTest2_panel").removeClass('mgPlayerJSTest2_theme-mplayer');
     }
 };
 
@@ -2262,13 +2252,13 @@ GmCXt.cleanPlayer = function() {
 
     GmCXt.cleanPlayerI();
 
-    GmCXt.sendMessageToApp("mgPlayerJSProd_action:clean_tour_player");
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:clean_tour_player");
 
     GmCXt.storage().set({
-        'mgPlayerJSProd_GM_PLAYER_STORAGE_KEY': null
+        'mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY': null
     });
 
-    GmCXt.storage().remove(['mgPlayerJSProd_GM_PLAYER_STORAGE_KEY']);
+    GmCXt.storage().remove(['mgPlayerJSTest2_GM_PLAYER_STORAGE_KEY']);
 };
 
 GmCXt.compareAttributes = function(el, topEl) {
@@ -2287,17 +2277,17 @@ GmCXt.filterParentNodes = function(nodes, text) {
 
     nodes = nodes.filter(function(index, node) {
         if (node.innerText && node.innerText.trim().toLowerCase() === text) {
-            mg$(node).parents().addClass('mgPlayerJSProd_dummy-class');
+            mg$(node).parents().addClass('mgPlayerJSTest2_dummy-class');
             return true;
         }
         return false;
     });
 
     var childNodes = nodes.filter(function(index, node) {
-        return !mg$(node).hasClass('mgPlayerJSProd_dummy-class');
+        return !mg$(node).hasClass('mgPlayerJSTest2_dummy-class');
     });
 
-    mg$('.mgPlayerJSProd_dummy-class').removeClass('mgPlayerJSProd_dummy-class');
+    mg$('.mgPlayerJSTest2_dummy-class').removeClass('mgPlayerJSTest2_dummy-class');
 
     if (childNodes.length === 1) {
         GmCXt.l.add('All nodes resulting from the query are hierachichally linked (parent-child)');
@@ -2366,14 +2356,14 @@ GmCXt.getErrObj = function(msg, data, isAnalytics) {
     return eObj;
 };
 
-// Elements might have classes like 'mgPlayerJSProd_select-outline' or 'mgPlayerJSProd_dummy-class'
+// Elements might have classes like 'mgPlayerJSTest2_select-outline' or 'mgPlayerJSTest2_dummy-class'
 GmCXt.checkMyGuideClass = function(className) {
 
     var mgClass = false;
     if (className && typeof className === 'string') {
         var arrClass = className.split(/\s+/).filter(Boolean);
         mgClass = arrClass.filter(function(cls) {
-            return cls.indexOf('mgPlayerJSProd_') === 0;
+            return cls.indexOf('mgPlayerJSTest2_') === 0;
         })[0];
     }
     return mgClass;
@@ -2542,11 +2532,11 @@ GmCXt.getFontFile = function() {
 };
 
 GmCXt.getCustomFontStyle = function() {
-    var styleElem = document.getElementById('mgPlayerJSProd_nunito-font-style');
+    var styleElem = document.getElementById('mgPlayerJSTest2_nunito-font-style');
     if (!GmCXt.isEmpty(styleElem)) styleElem.remove();
 
     var newStyle = document.createElement('style');
-    newStyle.id = "mgPlayerJSProd_nunito-font-style";
+    newStyle.id = "mgPlayerJSTest2_nunito-font-style";
     var FontName = "Nunito";
     var FontUrl = GmCXt.getFontFile() + "Nunito-Regular.woff";
     newStyle.appendChild(document.createTextNode("@font-face { font-family: '" + FontName + "'; src: url('" + FontUrl + "') format('woff');}"));
@@ -2683,11 +2673,11 @@ GmCXt.getTitleEditor = function(identifier, flag) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSProd_char_count mgPlayerJSProd_display-flex mgPlayerJSProd_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSTest2_char_count mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem2 = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSProd_title-tool-text-color');
-            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSProd_title-tool-bg-color');
+            toolElem2[0].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest2_title-tool-text-color');
+            toolElem2[0].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest2_title-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -2734,15 +2724,15 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
         content_css: "../../common/lib/tinymce/skins/ui/oxide/content.min.css",
         image_class_list: [{
             title: 'Custom Class',
-            value: 'mgPlayerJSProd_custom-image'
+            value: 'mgPlayerJSTest2_custom-image'
         }],
         file_picker_types: "image media",
         file_picker_callback: function(callback, value, meta) {
             if (meta.filetype == 'image') {
-                mg$('#mgPlayerJSProd_upload-image').val('');
-                mg$('#mgPlayerJSProd_upload-image').trigger('click');
-                mg$('#mgPlayerJSProd_upload-image').off('change');
-                mg$('#mgPlayerJSProd_upload-image').on('change', function() {
+                mg$('#mgPlayerJSTest2_upload-image').val('');
+                mg$('#mgPlayerJSTest2_upload-image').trigger('click');
+                mg$('#mgPlayerJSTest2_upload-image').off('change');
+                mg$('#mgPlayerJSTest2_upload-image').on('change', function() {
                     var file = this.files[0];
 
                     if (file) {
@@ -2769,7 +2759,7 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                                         alt: ''
                                     });
                                 }
-                                mg$(".mgPlayerJSProd_spinner-wrapper").remove();
+                                mg$(".mgPlayerJSTest2_spinner-wrapper").remove();
                             }).catch(function(error) {
                                 throw new Error(error);
                             });
@@ -2778,10 +2768,10 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
                     }
                 });
             } else if (meta.filetype == 'media') {
-                mg$('#mgPlayerJSProd_upload-video').val('');
-                mg$('#mgPlayerJSProd_upload-video').trigger('click');
-                mg$('#mgPlayerJSProd_upload-video').off('change');
-                mg$('#mgPlayerJSProd_upload-video').on('change', function() {
+                mg$('#mgPlayerJSTest2_upload-video').val('');
+                mg$('#mgPlayerJSTest2_upload-video').trigger('click');
+                mg$('#mgPlayerJSTest2_upload-video').off('change');
+                mg$('#mgPlayerJSTest2_upload-video').on('change', function() {
                     var file = this.files[0];
                     if (file) {
                         var reader = new FileReader();
@@ -2798,11 +2788,11 @@ GmCXt.getDescEditor = function(identifier, maxChar) {
 
             var pathElem = mg$('#' + editor.id).next().find('.tox-statusbar__path');
 
-            mg$('<div class="mgPlayerJSProd_char_count mgPlayerJSProd_display-flex mgPlayerJSProd_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
+            mg$('<div class="mgPlayerJSTest2_char_count mgPlayerJSTest2_display-flex mgPlayerJSTest2_align-items-center" style="text-align:right"></div>').insertAfter(pathElem);
 
             var toolElem = mg$('#' + editor.id).next().find('.tox-toolbar');
-            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSProd_desc-tool-text-color');
-            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSProd_desc-tool-bg-color');
+            toolElem[1].childNodes[1].firstElementChild.setAttribute('id', 'mgPlayerJSTest2_desc-tool-text-color');
+            toolElem[1].childNodes[1].lastElementChild.setAttribute('id', 'mgPlayerJSTest2_desc-tool-bg-color');
 
             GmCXt.tinymce_updateCharCounter(this, GmCXt.tinymce_getContentLength());
 
@@ -2840,12 +2830,12 @@ GmCXt.tinymce_getContentLength = function() {
 };
 
 GmCXt.tinymce_updateCharCounter = function(el, len) {
-    mg$('#' + el.id).next().find('.mgPlayerJSProd_char_count').html('<div id="mgPlayerJSProd_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
+    mg$('#' + el.id).next().find('.mgPlayerJSTest2_char_count').html('<div id="mgPlayerJSTest2_text_count-' + el.id + '">' + len + '</div>/' + el.settings.max_chars);
 
     if (len > el.settings.max_chars) {
-        mg$('#mgPlayerJSProd_text_count-' + el.id).css('color', 'red');
+        mg$('#mgPlayerJSTest2_text_count-' + el.id).css('color', 'red');
     } else {
-        mg$('#mgPlayerJSProd_text_count-' + el.id).css('color', '');
+        mg$('#mgPlayerJSTest2_text_count-' + el.id).css('color', '');
     }
 };
 
@@ -2878,16 +2868,16 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         resetDragEvents();
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSProd_micro_player_drag .mgPlayerJSProd_title-tooltip-wrapper").removeAttr("style");
+            mg$("#mgPlayerJSTest2_micro_player_drag .mgPlayerJSTest2_title-tooltip-wrapper").removeAttr("style");
         }
     }
 
     function dragOutEvent(e) {
         GmCXt.timeout(function() {
-            mg$('.mgPlayerJSProd_slideshow_drag_over').hide();
+            mg$('.mgPlayerJSTest2_slideshow_drag_over').hide();
         }, GmCXt.t.drag);
 
-        if (dragEl.id === 'mgPlayerJSProd_mPlayer-drag') {
+        if (dragEl.id === 'mgPlayerJSTest2_mPlayer-drag') {
             resetDragEvents();
         }
     }
@@ -2915,12 +2905,12 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         }
 
         if (GmCXt.isMicroPlayer()) {
-            mg$("#mgPlayerJSProd_micro_player_drag .mgPlayerJSProd_title-tooltip-wrapper").css("display", "none");
+            mg$("#mgPlayerJSTest2_micro_player_drag .mgPlayerJSTest2_title-tooltip-wrapper").css("display", "none");
         }
     }
 
     function elementDrag(e) {
-        mg$('.mgPlayerJSProd_slideshow_drag_over').show();
+        mg$('.mgPlayerJSTest2_slideshow_drag_over').show();
         e = e || window.event;
         // calculate the new cursor position:
         var wWdth = mg$(window).width();
@@ -2968,7 +2958,7 @@ GmCXt.attachDragEvents = function(elmnt, dragEl) {
         /* stop moving when mouse button is released:*/
         resetDragEvents();
 
-        mg$('.mgPlayerJSProd_slideshow_drag_over').hide();
+        mg$('.mgPlayerJSTest2_slideshow_drag_over').hide();
     }
 };
 
@@ -3117,21 +3107,21 @@ GmCXt.isDefaultIcon = function(str) {
 };
 
 GmCXt.syncPlayerInst = function(m) {
-    if (m === "mgPlayerJSProd_action:started;task:select_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSProd_action:started;task:select_dom_element_tooltips" ||
-        m === "mgPlayerJSProd_action:task:init_new_iframe" ||
-        m === "mgPlayerJSProd_action:update_player_instance" ||
-        m === "mgPlayerJSProd_action:play_slideshow" ||
-        m === "mgPlayerJSProd_action:play_video_step" ||
-        m === "mgPlayerJSProd_action:play_image_step" ||
-        m === "mgPlayerJSProd_action:click; on:mgPlayerJSProd_slideshow-close" ||
-        m === "mgPlayerJSProd_action:mark_auto_tour_donotshow" ||
-        m === "mgPlayerJSProd_action:update_player_instance_app" ||
-        m === "mgPlayerJSProd_action:set_audio_mode_off" ||
-        m === "mgPlayerJSProd_action:set_audio_mode_on" ||
-        m === "mgPlayerJSProd_action:close_guide" ||
-        m === "mgPlayerJSProd_action:set_style_audio_icon_response") {
+    if (m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_tooltips" ||
+        m === "mgPlayerJSTest2_action:task:init_new_iframe" ||
+        m === "mgPlayerJSTest2_action:update_player_instance" ||
+        m === "mgPlayerJSTest2_action:play_slideshow" ||
+        m === "mgPlayerJSTest2_action:play_video_step" ||
+        m === "mgPlayerJSTest2_action:play_image_step" ||
+        m === "mgPlayerJSTest2_action:click; on:mgPlayerJSTest2_slideshow-close" ||
+        m === "mgPlayerJSTest2_action:mark_auto_tour_donotshow" ||
+        m === "mgPlayerJSTest2_action:update_player_instance_app" ||
+        m === "mgPlayerJSTest2_action:set_audio_mode_off" ||
+        m === "mgPlayerJSTest2_action:set_audio_mode_on" ||
+        m === "mgPlayerJSTest2_action:close_guide" ||
+        m === "mgPlayerJSTest2_action:set_style_audio_icon_response") {
         return true;
     } else {
         return false;
@@ -3139,45 +3129,45 @@ GmCXt.syncPlayerInst = function(m) {
 };
 
 GmCXt.syncCreateInst = function(m) {
-    if (m === "mgPlayerJSProd_action:started;task:highlight_element" ||
-        m === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:completed;task:edit_step_select_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSProd_action:started;task:select_new_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:select_new_dom_element_for_edit_step" ||
-        m === "mgPlayerJSProd_action:narrow_element_selection" ||
-        m === "mgPlayerJSProd_action:started;task:narrow_element_selection" ||
-        m === "mgPlayerJSProd_action:expand_element_selection" ||
-        m === "mgPlayerJSProd_action:started;task:expand_element_selection" ||
-        m === "mgPlayerJSProd_action:started;task:select_element_for_message_step" ||
-        m === "mgPlayerJSProd_action:started;task:select_element_for_branching_step" ||
-        m === "mgPlayerJSProd_action:started;task:select_new_element_for_dom_select_rule" ||
-        m === "mgPlayerJSProd_action:started;task:select_new_table_for_dom_select_rule" ||
-        m === "mgPlayerJSProd_action:started;task:delete_element_for_message_step" ||
-        m === "mgPlayerJSProd_action:started;task:select_dom_element_for_beacon" ||
-        m === "mgPlayerJSProd_action:started;task:blackout_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:edit_message_step_select_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:step_blackout_area_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element" ||
-        m === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
-        m === "mgPlayerJSProd_action:started:select_new_dom_element_for_smart_tip" ||
-        m === "mgPlayerJSProd_action:find_element_to_get_precision" ||
-        m === "mgPlayerJSProd_action:find_element_to_get_precision_for_rules" ||
-        m === "mgPlayerJSProd_action:started;task:select_dom_element_for_matching_in_rules" ||
-        m === "mgPlayerJSProd_action:do;task:enable_jQuery_selector" ||
-        m === "mgPlayerJSProd_action:save_step" ||
-        m === "mgPlayerJSProd_action:click;on:save-beacon-settings" ||
-        m === "mgPlayerJSProd_action:reselect_beacon_element" ||
-        m === "mgPlayerJSProd_action:reselect_element" ||
-        m === "mgPlayerJSProd_action:select_element" ||
-        m === "mgPlayerJSProd_action:blackout_element" ||
-        m === "mgPlayerJSProd_action:delete_step_element" ||
-        m === "mgPlayerJSProd_action:find_element_precision" ||
-        m === "mgPlayerJSProd_action:find_element_precision_for_rules" ||
-        m === "mgPlayerJSProd_action:save_elem" ||
-        m === "mgPlayerJSProd_action:update_elem_tag" ||
-        m === "mgPlayerJSProd_action:select_element_tag" ||
-        m === "mgPlayerJSProd_action:started;task:edit_tag_select_existing_dom_element") {
+    if (m === "mgPlayerJSTest2_action:started;task:highlight_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:completed;task:edit_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_dom_element_for_edit_step" ||
+        m === "mgPlayerJSTest2_action:narrow_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:narrow_element_selection" ||
+        m === "mgPlayerJSTest2_action:expand_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:expand_element_selection" ||
+        m === "mgPlayerJSTest2_action:started;task:select_element_for_message_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_element_for_branching_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_element_for_dom_select_rule" ||
+        m === "mgPlayerJSTest2_action:started;task:select_new_table_for_dom_select_rule" ||
+        m === "mgPlayerJSTest2_action:started;task:delete_element_for_message_step" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_for_beacon" ||
+        m === "mgPlayerJSTest2_action:started;task:blackout_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_message_step_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:step_blackout_area_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element:target_frame_only" ||
+        m === "mgPlayerJSTest2_action:started:select_new_dom_element_for_smart_tip" ||
+        m === "mgPlayerJSTest2_action:find_element_to_get_precision" ||
+        m === "mgPlayerJSTest2_action:find_element_to_get_precision_for_rules" ||
+        m === "mgPlayerJSTest2_action:started;task:select_dom_element_for_matching_in_rules" ||
+        m === "mgPlayerJSTest2_action:do;task:enable_jQuery_selector" ||
+        m === "mgPlayerJSTest2_action:save_step" ||
+        m === "mgPlayerJSTest2_action:click;on:save-beacon-settings" ||
+        m === "mgPlayerJSTest2_action:reselect_beacon_element" ||
+        m === "mgPlayerJSTest2_action:reselect_element" ||
+        m === "mgPlayerJSTest2_action:select_element" ||
+        m === "mgPlayerJSTest2_action:blackout_element" ||
+        m === "mgPlayerJSTest2_action:delete_step_element" ||
+        m === "mgPlayerJSTest2_action:find_element_precision" ||
+        m === "mgPlayerJSTest2_action:find_element_precision_for_rules" ||
+        m === "mgPlayerJSTest2_action:save_elem" ||
+        m === "mgPlayerJSTest2_action:update_elem_tag" ||
+        m === "mgPlayerJSTest2_action:select_element_tag" ||
+        m === "mgPlayerJSTest2_action:started;task:edit_tag_select_existing_dom_element") {
         return true;
     } else {
         return false;
@@ -3193,12 +3183,12 @@ GmCXt.setAutoTour = function(id) {
         };
         if (GmCXt.isSidePanelApp) {
             var m = {
-                action: "mgPlayerJSProd_action:set_auto_tour"
+                action: "mgPlayerJSTest2_action:set_auto_tour"
             };
             m.data = data;
             GmCXt.sendToParentWindow(m);
         } else {
-            GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:set_auto_tour', data);
+            GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:set_auto_tour', data);
         }
     }
 };
@@ -3507,7 +3497,7 @@ GmCXt.verifyMsg = function(event) {
     var valid = false;
     var data = message.data;
 
-    var fromSelf = (action.indexOf('mgPlayerJSProd_action:') !== -1);
+    var fromSelf = (action.indexOf('mgPlayerJSTest2_action:') !== -1);
 
     // for salesforce and service now app backword compatibility 
     if (action === "gmPlayerXt_action:init_sfdc_env" ||
@@ -3599,20 +3589,20 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         step.step_type === 'smartTip' ||
         step.step_type === GmCXt.STEP_TYPE_EXTERNAL_AUTOMATION) {
 
-        message.action = "mgPlayerJSProd_action:edit_step,type:inline";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:inline";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (GmCXt.isAutomationStep(step)) {
-        message.action = "mgPlayerJSProd_action:edit_step,type:automation";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:automation";
 
         if (!isEditOnImage)
             step.step_settings.element = GmCXt.migrateMatchAlgoSetting(step.step_settings.element);
 
     } else if (step.step_type === 'message') {
 
-        message.action = "mgPlayerJSProd_action:edit_step,type:message";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:message";
 
         var domElems = step.step_settings.domElems;
         for (var index in domElems) {
@@ -3620,7 +3610,7 @@ GmCXt.editStepWrapper = function(tour, step, previousStep, language, isDefaultLa
         }
 
     } else if (step.step_type === 'image') {
-        message.action = "mgPlayerJSProd_action:edit_step,type:image";
+        message.action = "mgPlayerJSTest2_action:edit_step,type:image";
     }
 
     GmCXt.sendToParentWindow(message);
@@ -3634,53 +3624,53 @@ GmCXt.toastMsg = function(message) {
 
     return {
         show: function() {
-            mg$("#mgPlayerJSProd_toast-msg").remove();
+            mg$("#mgPlayerJSTest2_toast-msg").remove();
 
-            var html = "<wmgPlayerJSProd_ id='mgPlayerJSProd_toast-msg'></wmgPlayerJSProd_>";
+            var html = "<wmgPlayerJSTest2_ id='mgPlayerJSTest2_toast-msg'></wmgPlayerJSTest2_>";
             if (GmCXt.browserApp === 'ie') {
                 mg$("body").append(html);
             } else {
                 mg$("html").append(html);
             }
 
-            mg$("#mgPlayerJSProd_toast-msg").html(self.message);
-            mg$("#mgPlayerJSProd_toast-msg").fadeIn();
+            mg$("#mgPlayerJSTest2_toast-msg").html(self.message);
+            mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
             GmCXt.timeout(function() {
-                mg$('#mgPlayerJSProd_toast-msg').fadeOut(500);
+                mg$('#mgPlayerJSTest2_toast-msg').fadeOut(500);
             }, GmCXt.t.toastMsg);
         }
     };
 };
 
 GmCXt.showToastMsg = function(message) {
-    mg$("#mgPlayerJSProd_toast-msg").html(message);
-    mg$("#mgPlayerJSProd_toast-msg").fadeIn();
+    mg$("#mgPlayerJSTest2_toast-msg").html(message);
+    mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
 };
 
 GmCXt.hideToastMsg = function() {
-    mg$('#mgPlayerJSProd_toast-msg').fadeOut(100);
+    mg$('#mgPlayerJSTest2_toast-msg').fadeOut(100);
 };
 
 GmCXt.toastMsgPersistent = function(message) {
     return {
         show: function() {
-            var htmlstr = "<div class='mgPlayerJSProd_toast-msg-wrapper'><div id='mgPlayerJSProd_toast-msg-close' >x</div>";
-            htmlstr += "<div id='mgPlayerJSProd_toast-msg-text' >" + message + "</div></div>";
-            mg$("#mgPlayerJSProd_toast-msg").html(htmlstr);
-            mg$("#mgPlayerJSProd_toast-msg").fadeIn();
+            var htmlstr = "<div class='mgPlayerJSTest2_toast-msg-wrapper'><div id='mgPlayerJSTest2_toast-msg-close' >x</div>";
+            htmlstr += "<div id='mgPlayerJSTest2_toast-msg-text' >" + message + "</div></div>";
+            mg$("#mgPlayerJSTest2_toast-msg").html(htmlstr);
+            mg$("#mgPlayerJSTest2_toast-msg").fadeIn();
 
-            mg$("#mgPlayerJSProd_toast-msg-close").click(function() {
+            mg$("#mgPlayerJSTest2_toast-msg-close").click(function() {
                 GmCXt.toastMsgPersistent().hide();
             });
         },
         hide: function() {
-            mg$('#mgPlayerJSProd_toast-msg').fadeOut(500);
+            mg$('#mgPlayerJSTest2_toast-msg').fadeOut(500);
         }
     };
 };
 
 GmCXt.clearScreen = function() {
-    mg$('.mgPlayerJSProd_inline-step-capture-screen').remove();
+    mg$('.mgPlayerJSTest2_inline-step-capture-screen').remove();
 };
 
 GmCXt.unlockScroll = function() {
@@ -3702,7 +3692,7 @@ GmCXt.getNewGroup = function() {
 
 GmCXt.showAlertToastMsg = function(msg) {
     var obj = {
-        action: "mgPlayerJSProd_action:show_toast_message",
+        action: "mgPlayerJSTest2_action:show_toast_message",
         data: msg
     };
     GmCXt.sendToParentWindow(obj);
@@ -3769,34 +3759,34 @@ GmCXt.tinyMcePasteSetup = function(ed) {
         if (GmCXt.tinymce_getContentLength() === 0) {
             var scope = angular.element('.step-create-section-container').scope();
             if (scope) {
-                if (this.name === "#mgPlayerJSProd_step_title") {
+                if (this.name === "#mgPlayerJSTest2_step_title") {
                     scope.step.step_title = "";
-                    mg$("#mgPlayerJSProd_title-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSTest2_title-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSProd_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSTest2_title-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
-                if (this.name === "#mgPlayerJSProd_step_description") {
+                if (this.name === "#mgPlayerJSTest2_step_description") {
                     scope.step.step_description = "";
-                    mg$("#mgPlayerJSProd_desc-tool-text-color #tox-icon-text-color__color").attr({
+                    mg$("#mgPlayerJSTest2_desc-tool-text-color #tox-icon-text-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
 
-                    mg$("#mgPlayerJSProd_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
+                    mg$("#mgPlayerJSTest2_desc-tool-bg-color #tox-icon-highlight-bg-color__color").attr({
                         'fill': '#222f3e',
                         'stroke': '#222f3e'
                     });
                 }
 
-                if (this.name === "#mgPlayerJSProd_smart_textarea")
+                if (this.name === "#mgPlayerJSTest2_smart_textarea")
                     scope.step.step_settings.smartTip.guidanceMessage = "";
-                if (this.name === "#mgPlayerJSProd_step_tooltip") {
+                if (this.name === "#mgPlayerJSTest2_step_tooltip") {
                     if (scope.stepDomElms) {
                         scope.stepDomElms[scope.elemSelectedIndex].title = "";
                     }
@@ -3836,7 +3826,7 @@ GmCXt.videoReturnListener = function(callback) {
         event = GmCXt.parseJSON(event);
         event = GmCXt.convertMgdata(event);
 
-        if (event.action === "mgPlayerJSProd_action:save_video_in_background;task:upload_video;completed") {
+        if (event.action === "mgPlayerJSTest2_action:save_video_in_background;task:upload_video;completed") {
             GmCXt.removeVidImageLoader();
             callback(event.data.videoUrl + GmCXt.user.cdn_signature, {
                 alt: ''
@@ -3858,7 +3848,7 @@ GmCXt.sendVideoUploadMessage = function(url, cb) {
         data: {
             videoUrl: url,
         },
-        action: "mgPlayerJSProd_action:save_video_in_background;task:upload_video"
+        action: "mgPlayerJSTest2_action:save_video_in_background;task:upload_video"
     };
     GmCXt.videoReturnListener(cb);
     GmCXt.sendMessageToBackgroundService(m);
@@ -3879,19 +3869,19 @@ GmCXt.readFile = function(file, cb) {
             return;
         }
         mg$(".disabledSaveBtn").prop("disabled", true);
-        mg$(".disabledSaveBtn").addClass("mgPlayerJSProd_disabled");
+        mg$(".disabledSaveBtn").addClass("mgPlayerJSTest2_disabled");
         var url = window.URL.createObjectURL(file);
-        var vid = document.getElementById('mgPlayerJSProd_video-container-currupt-file-test');
+        var vid = document.getElementById('mgPlayerJSTest2_video-container-currupt-file-test');
         vid.src = url;
         var promise = vid.play();
         if (promise !== undefined) {
             promise.then(function() {
-                mg$('.mgPlayerJSProd_screen-container').show();
+                mg$('.mgPlayerJSTest2_screen-container').show();
                 GmCXt.vidImageLoader();
                 GmCXt.sendVideoUploadMessage(url, cb);
                 vid.pause();
             }).catch(function() {
-                mg$('.mgPlayerJSProd_screen-container').hide();
+                mg$('.mgPlayerJSTest2_screen-container').hide();
                 GmCXt.showAlertToastMsg(GmCXt.label.curruptVideoFileMsg);
                 return;
             });
@@ -3901,17 +3891,17 @@ GmCXt.readFile = function(file, cb) {
 
 GmCXt.vidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", true);
-    mg$(".disabledSaveBtn").addClass("mgPlayerJSProd_disabled");
-    mg$(".tox-button").addClass("mgPlayerJSProd_disabled");
-    var spinner = "<div class='mgPlayerJSProd_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
+    mg$(".disabledSaveBtn").addClass("mgPlayerJSTest2_disabled");
+    mg$(".tox-button").addClass("mgPlayerJSTest2_disabled");
+    var spinner = "<div class='mgPlayerJSTest2_spinner-wrapper'><img src='" + GmCXt.getBasePath('common/img/g_new_loader.gif') + "'/></div>";
     mg$('.tox-dialog').append(spinner);
 };
 
 GmCXt.removeVidImageLoader = function() {
     mg$(".disabledSaveBtn").prop("disabled", false);
-    mg$(".disabledSaveBtn").removeClass("mgPlayerJSProd_disabled");
-    mg$(".tox-button").removeClass("mgPlayerJSProd_disabled");
-    mg$('.mgPlayerJSProd_spinner-wrapper').remove();
+    mg$(".disabledSaveBtn").removeClass("mgPlayerJSTest2_disabled");
+    mg$(".tox-button").removeClass("mgPlayerJSTest2_disabled");
+    mg$('.mgPlayerJSTest2_spinner-wrapper').remove();
 };
 
 GmCXt.getStepSortedByPS = function(PS, stepId) {
@@ -4047,8 +4037,8 @@ GmCXt.escapeHtml = function(str) {
 };
 
 GmCXt.removeNotif = function() {
-    mg$(".mgPlayerJSProd_overlay-tours-popup").remove();
-    mg$(".mgPlayerJSProd_overlay-container").remove();
+    mg$(".mgPlayerJSTest2_overlay-tours-popup").remove();
+    mg$(".mgPlayerJSTest2_overlay-container").remove();
 };
 
 GmCXt.getObjectSize = function(obj) {
@@ -4065,17 +4055,17 @@ GmCXt.updateUserProfileSettings = function(userSettings) {
     var user = GmCXt.user;
     user.settings = userSettings;
 
-    GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_user_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_user_data', {
         user: user
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_organization_data', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_organization_data', {
         organization: GmCXt.organization
     });
 };
 
 GmCXt.updatePlayedSteps = function(step) {
-    GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_played_step", {
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_played_step", {
         playedStep: step
     });
 };
@@ -4219,7 +4209,7 @@ GmCXt.updatePlayStructureLinkGuide = function(tour, playerInstance, cb) {
     } else if (playerInstance && !GmCXt.playerI) {
         if (cb) cb(finalPS);
     } else {
-        GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:update_PI_PS", finalPS);
+        GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:update_PI_PS", finalPS);
     }
 };
 
@@ -4269,7 +4259,7 @@ GmCXt.concatLinkGuideSteps = function(newSteps, tour, step_id, cb) {
         if (GmCXt.playerI.type === GmCXt.TOUR_PLAYER_SLIDESHOW) {
             GmCXt.playerI.tour.steps = steps;
         } else {
-            GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:update_PI_steps", steps);
+            GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:update_PI_steps", steps);
         }
         GmCXt.playerI.totalStepCount = steps.length;
         GmCXt.playerI.tour.step_count = steps.length;
@@ -4285,19 +4275,19 @@ GmCXt.stopNotification = function(isPreview) {
     if (!GmCXt.isPlayer() && !isPreview) {
         reason = "app is not a player";
         flag = true;
-    } else if (mg$('.mgPlayerJSProd_image-step-screen').is(':visible') || mg$('.mgPlayerJSProd_preview-step-popup-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_image-step-screen').is(':visible') || mg$('.mgPlayerJSTest2_preview-step-popup-container').is(':visible')) {
         reason = "step is playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSProd_user-guide-container').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_user-guide-container').is(':visible')) {
         reason = "survey is open";
         flag = true;
-    } else if (mg$('.mgPlayerJSProd_notifcation-popup').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_notifcation-popup').is(':visible')) {
         reason = "org notification";
         flag = true;
-    } else if (mg$('.mgPlayerJSProd_slideshow-panel').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_slideshow-panel').is(':visible')) {
         reason = "slideshow playing";
         flag = true;
-    } else if (mg$('.mgPlayerJSProd_play-pause-toolbar').is(':visible')) {
+    } else if (mg$('.mgPlayerJSTest2_play-pause-toolbar').is(':visible')) {
         reason = "pause guide";
         flag = true;
     } else if (GmCXt.APP_PANEL_OPEN && !GmCXt.getAppSetting('keep_player_panel_open')) {
@@ -4591,13 +4581,13 @@ GmCXt.checkLangExist = function(lArr, lang) {
 
 GmCXt.removePreviewFrame = function() {
 
-    mg$('.mgPlayerJSProd_preview-beacon').remove();
-    mg$('.mgPlayerJSProd_preview-smarttip').remove();
-    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSProd_form-submit-preview gssSmarttip-form-submit');
-    mg$('.mgPlayerJSProd_duct-tape-invisible-preview').removeClass('mgPlayerJSProd_duct-tape-invisible-preview');
+    mg$('.mgPlayerJSTest2_preview-beacon').remove();
+    mg$('.mgPlayerJSTest2_preview-smarttip').remove();
+    mg$('.gssSmarttip-form-submit').removeClass('mgPlayerJSTest2_form-submit-preview gssSmarttip-form-submit');
+    mg$('.mgPlayerJSTest2_duct-tape-invisible-preview').removeClass('mgPlayerJSTest2_duct-tape-invisible-preview');
 
-    if (mg$('.mgPlayerJSProd_preview-smarttip-pwr-html').length)
-        mg$('.mgPlayerJSProd_preview-smarttip-pwr-html').val('');
+    if (mg$('.mgPlayerJSTest2_preview-smarttip-pwr-html').length)
+        mg$('.mgPlayerJSTest2_preview-smarttip-pwr-html').val('');
 };
 
 GmCXt.clearSession = function() {
@@ -4612,8 +4602,8 @@ GmCXt.clearSession = function() {
     GmCXt.playedTour = [];
     GmCXt.storage().remove(['playedTour', 'stepsPlayed']);
 
-    if (mg$('.mgPlayerJSProd_task-list-button').length > 0) {
-        mg$('.mgPlayerJSProd_task-list-button').remove();
+    if (mg$('.mgPlayerJSTest2_task-list-button').length > 0) {
+        mg$('.mgPlayerJSTest2_task-list-button').remove();
     }
 };
 
@@ -4624,8 +4614,8 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         if (idList.length) {
             for (var i = 0; i < idList.length; i++) {
                 GmCXt.log(43, 'Clearing tooltips for tour: ' + idList[i]);
-                mg$('.mgPlayerJSProd_smarttip-tour-' + idList[i]).remove();
-                mg$('.mgPlayerJSProd_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSProd_duct-tape-invisible');
+                mg$('.mgPlayerJSTest2_smarttip-tour-' + idList[i]).remove();
+                mg$('.mgPlayerJSTest2_duct-tape-smarttip-tour-' + idList[i]).removeClass('mgPlayerJSTest2_duct-tape-invisible');
                 delete GmCXt.onScreenTooltipGuideInfo['tour_' + idList[i]];
             }
 
@@ -4639,28 +4629,28 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
         }
     } else {
         // Clear all
-        mg$('.mgPlayerJSProd_smarttip-icon').remove();
+        mg$('.mgPlayerJSTest2_smarttip-icon').remove();
         mg$('.smarttip-guidance-msg').remove();
-        mg$('.mgPlayerJSProd_smarttip').remove();
-        mg$('.mgPlayerJSProd_smarttip-valid').remove();
-        mg$('.mgPlayerJSProd_duct-tape').remove();
-        mg$('.mgPlayerJSProd_duct-tape-invisible').removeClass('mgPlayerJSProd_duct-tape-invisible');
+        mg$('.mgPlayerJSTest2_smarttip').remove();
+        mg$('.mgPlayerJSTest2_smarttip-valid').remove();
+        mg$('.mgPlayerJSTest2_duct-tape').remove();
+        mg$('.mgPlayerJSTest2_duct-tape-invisible').removeClass('mgPlayerJSTest2_duct-tape-invisible');
     }
 
-    mg$(".mgPlayerJSProd_beacon-icon").remove();
+    mg$(".mgPlayerJSTest2_beacon-icon").remove();
     GmCXt.beaconsOnScreen = [];
 
     if (!isLogout) {
         GmCXt.closePowerForm();
     }
 
-    GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:forward;remove_active_smarttip_beacon', {
+    GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:forward;remove_active_smarttip_beacon', {
         idList: idList
     });
 };
 
 GmCXt.closePowerForm = function() {
-    GmCXt.sendMessageToApp("mgPlayerJSProd_action:close_power_form", {});
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:close_power_form", {});
 };
 
 GmCXt.closeAppPanel = function() {
@@ -4668,22 +4658,22 @@ GmCXt.closeAppPanel = function() {
     GmCXt.displayWidget();
     GmCXt.displayChatIcon();
     var alignment = GmCXt.getWidgetAlignment();
-    mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css(alignment, "-9550px");
-    mg$(".mgPlayerJSProd_panel").css(alignment, "-9550px");
+    mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css(alignment, "-9550px");
+    mg$(".mgPlayerJSTest2_panel").css(alignment, "-9550px");
     if (alignment === 'right') {
-        mg$(".mgPlayerJSProd_panel").css('left', "initial");
+        mg$(".mgPlayerJSTest2_panel").css('left', "initial");
     }
 
     if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-        mg$(".mgPlayerJSProd_panel").css("left", "initial");
-        mg$(".mgPlayerJSProd_panel").css("top", "50%");
+        mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+        mg$(".mgPlayerJSTest2_panel").css("top", "50%");
     }
     
-    mg$(".mgPlayerJSProd_panel").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$("#mgPlayerJSProd_app").attr({'aria-hidden':true, 'tabindex':-1});
-    mg$(".mgPlayerJSProd_panel").focus();
+    mg$(".mgPlayerJSTest2_panel").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$("#mgPlayerJSTest2_app").attr({'aria-hidden':true, 'tabindex':-1});
+    mg$(".mgPlayerJSTest2_panel").focus();
 
-    GmCXt.sendMessageToApp("mgPlayerJSProd_action:app_panel_closed", {});
+    GmCXt.sendMessageToApp("mgPlayerJSTest2_action:app_panel_closed", {});
 };
 
 GmCXt.legacyWildChar = function(v) {
@@ -4825,7 +4815,7 @@ GmCXt.sendMessageToDesktopApp = function(msg, d) {
         cb(GmCXt.trackerUtil.tabId);
     } else {
         GmCXt.sendMessageToBackgroundService({
-            action: "mgPlayerJSProd_action:get_current_tab_id"
+            action: "mgPlayerJSTest2_action:get_current_tab_id"
         }, cb);
     }
 };
@@ -4907,25 +4897,25 @@ GmCXt.checkInsightEnabled = function() {
 
 GmCXt.toggleStepSelectionToolbar = function(show, showDone, inlineStepReq) {
     if (show) {
-        mg$('.mgPlayerJSProd_toolbar-panel').show();
+        mg$('.mgPlayerJSTest2_toolbar-panel').show();
 
         if (showDone) {
-            GmCXt.sendMessageToolbar("mgPlayerJSProd_action:show_done_button", {
+            GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:show_done_button", {
                 isQuick: inlineStepReq
             });
         } else {
-            GmCXt.sendMessageToolbar("mgPlayerJSProd_action:hide_done_button");
+            GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:hide_done_button");
         }
 
         var u = GmCXt.user.settings || {};
         if (u.showToolbarTooltip) {
-            mg$('.mgPlayerJSProd_toolbar-tooltip').show();
+            mg$('.mgPlayerJSTest2_toolbar-tooltip').show();
         }
 
     } else {
-        mg$('.mgPlayerJSProd_toolbar-panel').hide();
-        mg$('.mgPlayerJSProd_toolbar-tooltip').hide();
-        GmCXt.sendMessageToolbar("mgPlayerJSProd_action:hide_done_button");
+        mg$('.mgPlayerJSTest2_toolbar-panel').hide();
+        mg$('.mgPlayerJSTest2_toolbar-tooltip').hide();
+        GmCXt.sendMessageToolbar("mgPlayerJSTest2_action:hide_done_button");
         // disable_mouse_hover
         window.removeEventListener('mouseover', stopEventPropagation, true);
     }
@@ -5338,7 +5328,7 @@ GmCXt.takeScreenshot = function() {
             });
         } else if (GmCXt.isExtension()) {
             var m = {
-                action: "mgPlayerJSProd_action:capture_browser_screen"
+                action: "mgPlayerJSTest2_action:capture_browser_screen"
             };
             GmCXt.sendMessageToBackgroundService(m, function(resp) {
                 resolve(resp.imgSrc);
@@ -5352,16 +5342,16 @@ GmCXt.takeScreenshot = function() {
 
 GmCXt.triggerForOtherFunctions = function(id, ev) {
     switch (id) {
-        case "mgPlayerJSProd_play_step_popup_drag":
-        case "mgPlayerJSProd_play-step-popup-drag-icon":
+        case "mgPlayerJSTest2_play_step_popup_drag":
+        case "mgPlayerJSTest2_play-step-popup-drag-icon":
 
             break;
-        case "mgPlayerJSProd_play-step-audio-off":
+        case "mgPlayerJSTest2_play-step-audio-off":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOnAudioMode();
             }
             break;
-        case "mgPlayerJSProd_play-step-audio-on":
+        case "mgPlayerJSTest2_play-step-audio-on":
             if (GmCXt.previewStepPopupInstance) {
                 GmCXt.previewStepPopupInstance.setOffAudioMode();
             }
@@ -5402,8 +5392,8 @@ GmCXt.registerClickListner = function(e) {
 
 GmCXt.isIDinOtherList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSProd_play_step_popup_drag", "mgPlayerJSProd_play-step-popup-drag-icon", "mgPlayerJSProd_play-step-audio-off",
-        "mgPlayerJSProd_play-step-audio-on"
+    var idList = ["mgPlayerJSTest2_play_step_popup_drag", "mgPlayerJSTest2_play-step-popup-drag-icon", "mgPlayerJSTest2_play-step-audio-off",
+        "mgPlayerJSTest2_play-step-audio-on"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -5415,12 +5405,12 @@ GmCXt.isIDinOtherList = function(id) {
 
 GmCXt.isIDinGuidePlayList = function(id) {
     var retVal = false;
-    var idList = ["mgPlayerJSProd_play_step_pause_classic", "mgPlayerJSProd_play_step_next", "mgPlayerJSProd_play_step_next_classic",
-        "mgPlayerJSProd_play_step_prev", "mgPlayerJSProd_play_step_prev_classic", "mgPlayerJSProd_play_step_popup_close",
-        "mgPlayerJSProd_play_step_pause", "mgPlayerJSProd_play_step_next_done", "mgPlayerJSProd_play_step_next_done_classic",
-        "mgPlayerJSProd_play_step_popup_edit",
-        "mgPlayerJSProd_play-step-popup-close-svg", "mgPlayerJSProd_play-step-popup-edit-icon",
-        "mgPlayerJSProd_play-step-pause-svg"
+    var idList = ["mgPlayerJSTest2_play_step_pause_classic", "mgPlayerJSTest2_play_step_next", "mgPlayerJSTest2_play_step_next_classic",
+        "mgPlayerJSTest2_play_step_prev", "mgPlayerJSTest2_play_step_prev_classic", "mgPlayerJSTest2_play_step_popup_close",
+        "mgPlayerJSTest2_play_step_pause", "mgPlayerJSTest2_play_step_next_done", "mgPlayerJSTest2_play_step_next_done_classic",
+        "mgPlayerJSTest2_play_step_popup_edit",
+        "mgPlayerJSTest2_play-step-popup-close-svg", "mgPlayerJSTest2_play-step-popup-edit-icon",
+        "mgPlayerJSTest2_play-step-pause-svg"
     ];
 
     if (GmCXt.inArrayString(id, idList)) {
@@ -5431,7 +5421,7 @@ GmCXt.isIDinGuidePlayList = function(id) {
 };
 
 GmCXt.tooltipTitle = function(os, pEle) {
-    var tTitleCss = "<div class='mgPlayerJSProd_tooltip-title-css'><style type='text/css'>" +
+    var tTitleCss = "<div class='mgPlayerJSTest2_tooltip-title-css'><style type='text/css'>" +
         "." + pEle + " p:first-child {" + "color: " + os.popupDesign.current.stepTitleColor + " !important; " +
         "font-family: " + os.popupDesign.current.stepTitleFontFamily + " !important; " +
         "font-size: " + os.popupDesign.current.stepTitleFontSize + " !important; " +
@@ -5444,7 +5434,7 @@ GmCXt.tooltipTitle = function(os, pEle) {
 };
 
 GmCXt.tooltipPopupCss = function(os, customEle) {
-    var popUpCSS = "<div class='mgPlayerJSProd_tooltip-popup-css'><style type='text/css'>" +
+    var popUpCSS = "<div class='mgPlayerJSTest2_tooltip-popup-css'><style type='text/css'>" +
         customEle + ".smarttip-guidance-msg-top:before {" +
         "border-top-color:" + os.popupDesign.current.bgColor + " !important;" +
         "}" +
@@ -5519,8 +5509,8 @@ GmCXt.tooltipTheme = function(os, customEle) {
     } else {
         tObj.tooltipBorderC = "border-color:" + os.tooltipColor + " !important; ";
 
-        mg$(".mgPlayerJSProd_tooltip-popup-css").remove();
-        mg$(".mgPlayerJSProd_tooltip-title-css").remove();
+        mg$(".mgPlayerJSTest2_tooltip-popup-css").remove();
+        mg$(".mgPlayerJSTest2_tooltip-title-css").remove();
     }
 
     return tObj;
@@ -5649,7 +5639,7 @@ GmCXt.storeVariableValue = function(varIndex) {
             varTitle: variable.name,
             timeout: Date.now() + GmCXt.t.findElTimeout
         };
-        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:find_element_for_variable', data);
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:find_element_for_variable', data);
     }
 };
 
@@ -5718,11 +5708,11 @@ GmCXt.requestHandler.updateVariableValues = function(message) {
         }
     });
 
-    GmCXt.sendMessageToStepFrame('mgPlayerJSProd_action:set_variables', {
+    GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:set_variables', {
         data: GmCXt.variables
     });
 
-    GmCXt.sendMessageToApp('mgPlayerJSProd_action:set_variables', {
+    GmCXt.sendMessageToApp('mgPlayerJSTest2_action:set_variables', {
         variables: GmCXt.variables
     });
 };
@@ -5852,12 +5842,12 @@ GmCXt.trackElNotFound = function(d) {
     // if (window.self === window.top) {
     //     GmCXt.trackerV1.trackElNotFound(d);
     // } else {
-    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:track_element_not_found', d);
+    //     GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:track_element_not_found', d);
     // }
 };
 
 GmCXt.onPopupRerender = function() {
-    if (mg$('#mgPlayerJSProd_popup-reload').length > 0) {
+    if (mg$('#mgPlayerJSTest2_popup-reload').length > 0) {
         var forceClose = !GmCXt.playerI.testAutomation;
         GmCXt.confirmTourClose(forceClose);
     }
@@ -5891,7 +5881,7 @@ GmCXt.getSurveyCompletedData = function(isNotif) {
 
 GmCXt.resetElTracker = function() {
     if (window.self === window.top) {
-        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:reset_dom_tracker');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:reset_dom_tracker');
     }
 };
 
@@ -5905,7 +5895,7 @@ GmCXt.resetElTrackerVariable = function() {
 GmCXt.logElTracker = function() {
     if (window.self === window.top) {
         GmCXt.logTrackerData = false;
-        GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:request_dom_tracker_info');
+        GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:request_dom_tracker_info');
     }
 };
 
@@ -5914,7 +5904,7 @@ GmCXt.shareDomTrackerInfo = function() {
         if (GmCXt.isEmpty(GmCXt.domSelectorTracker)) {
             GmCXt.domSelectorTracker[GmCXt.id] = {};
         }
-        GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
+        GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:send_dom_tracker_info', GmCXt.domSelectorTracker);
     } else {
         GmCXt.combineDomTrackerData();
     }
@@ -5971,9 +5961,9 @@ GmCXt.handleLinkClickEvent = function(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
         if (mediaType === "pdf") {
-            GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_pdf", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_pdf", e.target.href);
         } else {
-            GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_video_player", e.target.href);
+            GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_video_player", e.target.href);
         }
     } else if (GmCXt.isElectron()) {
         e.preventDefault();
@@ -6030,12 +6020,12 @@ GmCXt.captureScreenForFeedback = function(mailTo) {
     GmCXt.takeScreenshot().then(function(imageSrc) {
 
         if (GmCXt.isEmpty(imageSrc)) {
-            mg$(".mgPlayerJSProd_feedback-overlay-svg-error").show();
-            mg$(".mgPlayerJSProd_feedback-re-edit-btn").hide();
+            mg$(".mgPlayerJSTest2_feedback-overlay-svg-error").show();
+            mg$(".mgPlayerJSTest2_feedback-re-edit-btn").hide();
             mg$("#mg-feedback-screenshot-check").removeAttr("checked");
         } else {
-            mg$(".mgPlayerJSProd_feedback-overlay-svg-error").hide();
-            mg$(".mgPlayerJSProd_feedback-re-edit-btn").show();
+            mg$(".mgPlayerJSTest2_feedback-overlay-svg-error").hide();
+            mg$(".mgPlayerJSTest2_feedback-re-edit-btn").show();
         }
 
         var img = mg$("#mg-feedback-screenshot-image");
@@ -6065,12 +6055,12 @@ GmCXt.onEditScreenshotClick = function() {
 };
 
 GmCXt.onClickFeedbackHighlightArea = function() {
-    var div = document.getElementById('mgPlayerJSProd_highlight');
+    var div = document.getElementById('mgPlayerJSTest2_highlight');
     GmCXt.feedbackMarkArea(div);
 };
 
 GmCXt.onClickFeedbackHideArea = function() {
-    var div = document.getElementById('mgPlayerJSProd_blackout');
+    var div = document.getElementById('mgPlayerJSTest2_blackout');
     GmCXt.feedbackMarkArea(div, true);
 };
 
@@ -6162,13 +6152,13 @@ GmCXt.feedbackMarkArea = function(div, hide) {
 
 GmCXt.drawArea = function(arr, className) {
     var elems = arr;
-    mg$('DIV.mgPlayerJSProd_selector-' + className).remove();
+    mg$('DIV.mgPlayerJSTest2_selector-' + className).remove();
 
     for (var i = 0; i < elems.length && elems[i].id; i++) {
         var el = elems[i].element.position;
 
-        var closeBtn = '<div class="mgPlayerJSProd_close-area mgPlayerJSProd_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
-        var blackoutEl = mg$('<div class="mgPlayerJSProd_selector-' + className + '" id="mgPlayerJSProd_selector-' + className + '-' + elems[i].id + '">' +
+        var closeBtn = '<div class="mgPlayerJSTest2_close-area mgPlayerJSTest2_' + className + '-close" id=' + elems[i].id + '><div class="close-text">&times;</div></div>';
+        var blackoutEl = mg$('<div class="mgPlayerJSTest2_selector-' + className + '" id="mgPlayerJSTest2_selector-' + className + '-' + elems[i].id + '">' +
                 closeBtn +
                 '</div>')
             .appendTo('#mg-feedback-flex-container')
@@ -6180,13 +6170,13 @@ GmCXt.drawArea = function(arr, className) {
             });
     }
 
-    mg$("DIV.mgPlayerJSProd_" + className + "-close").on('click', function(e) {
+    mg$("DIV.mgPlayerJSTest2_" + className + "-close").on('click', function(e) {
         var oArr = [];
         arr.forEach(function(el, i) {
             if (el.id !== e.currentTarget.id) oArr.push(el);
         });
         arr = oArr;
-        mg$("#mgPlayerJSProd_selector-" + className + "-" + e.currentTarget.id).remove();
+        mg$("#mgPlayerJSTest2_selector-" + className + "-" + e.currentTarget.id).remove();
     });
 };
 
@@ -6229,9 +6219,9 @@ GmCXt.sendFeedback = function() {
 
 GmCXt.clearFeedBackView = function() {
     mg$("#mg-feedback-container-wrapper").remove();
-    mg$('.mgPlayerJSProd_selector-highlight').remove();
+    mg$('.mgPlayerJSTest2_selector-highlight').remove();
     GmCXt.sfMarkElements = [];
-    mg$('.mgPlayerJSProd_selector-blackout-feedback').remove();
+    mg$('.mgPlayerJSTest2_selector-blackout-feedback').remove();
     GmCXt.sfHideElements = [];
     GmCXt.mailTo = '';
     GmCXt.openAppPanel();
@@ -6501,12 +6491,12 @@ GmCXt.openAppPanel = function(action, source) {
 
 		if (GmCXt.editStepTout) {
 			clearTimeout(GmCXt.editStepTout);
-			mg$('.mgPlayerJSProd_edit-step-loader').hide();
+			mg$('.mgPlayerJSTest2_edit-step-loader').hide();
 		}
 
 		var byPassRoute = (action === "byPassRoute" || action === "playSlideShow") ? true : false;
 		if (!byPassRoute) {
-			GmCXt.sendMessageToApp("mgPlayerJSProd_action:open_side_panel", {
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:open_side_panel", {
 				action: action
 			});
 		}
@@ -6524,22 +6514,22 @@ GmCXt.openAppPanel = function(action, source) {
 
 		GmCXt.timeout(function() {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css(alignment, "0px");
-			mg$(".mgPlayerJSProd_panel").css(alignment, "0px");
+			mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css(alignment, "0px");
+			mg$(".mgPlayerJSTest2_panel").css(alignment, "0px");
 			
 			if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-				mg$(".mgPlayerJSProd_panel .mgPlayerJSProd_app").css("right", "50px");
-				mg$(".mgPlayerJSProd_panel").css("right", "50px");
+				mg$(".mgPlayerJSTest2_panel .mgPlayerJSTest2_app").css("right", "50px");
+				mg$(".mgPlayerJSTest2_panel").css("right", "50px");
 				GmCXt.taskListOpen = false;
 			} else {
-				mg$(".mgPlayerJSProd_panel").removeClass('mgPlayerJSProd_theme-mplayer');
-				mg$(".mgPlayerJSProd_panel").css("top", "0");
+				mg$(".mgPlayerJSTest2_panel").removeClass('mgPlayerJSTest2_theme-mplayer');
+				mg$(".mgPlayerJSTest2_panel").css("top", "0");
 				GmCXt.showPanelCloseBtn();
 			}
 
 			GmCXt.removePreviewTop();
-			mg$(".mgPlayerJSProd_panel").attr({'aria-hidden':false, 'tabindex':0});
-			mg$("#mgPlayerJSProd_app").attr({'aria-hidden':false, 'tabindex':0});
+			mg$(".mgPlayerJSTest2_panel").attr({'aria-hidden':false, 'tabindex':0});
+			mg$("#mgPlayerJSTest2_app").attr({'aria-hidden':false, 'tabindex':0});
 
 		}, GmCXt.t.appPanel);
 
@@ -6554,7 +6544,7 @@ GmCXt.openAppPanel = function(action, source) {
 GmCXt.showPanelDisabledPopup = function() {
 	if (GmCXt.isExtension()) {
 		var m = {
-			action: 'mgPlayerJSProd_action:to_background;task:show_panel_disabled_popup'
+			action: 'mgPlayerJSTest2_action:to_background;task:show_panel_disabled_popup'
 		};
 		GmCXt.sendMessageToBackgroundService(m);
 	}
@@ -6770,57 +6760,57 @@ GmCXt.alert = function(options) {
 	};
 
 	pub.show = function() {
-		var popupType = 'mgPlayerJSProd_popup-info';
+		var popupType = 'mgPlayerJSTest2_popup-info';
 		var popupDescription = "";
 
 		if (self.description) {
-			popupDescription = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-info'>" + self.description + "</wmgPlayerJSProd_>";
+			popupDescription = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-info'>" + self.description + "</wmgPlayerJSTest2_>";
 		}
 
 		var cancelButton = "";
-		var okButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-ok mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSProd_>";
+		var okButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-ok mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.ok + "</wmgPlayerJSTest2_>";
 
 		if (self.type === "confirm") {
-			cancelButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-cancel mgPlayerJSProd_btn-default mgPlayerJSProd_btn-neutral mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSProd_>";
+			cancelButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-cancel mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnCancel + "</wmgPlayerJSTest2_>";
 
 		} else if (self.type === "onboarding") {
-			okButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-ok mgPlayerJSProd_btn-default mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSProd_>";
-			cancelButton = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-cancel mgPlayerJSProd_btn-default mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSProd_>";
+			okButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-ok mgPlayerJSTest2_btn-default mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnGuideMe + "</wmgPlayerJSTest2_>";
+			cancelButton = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-cancel mgPlayerJSTest2_btn-default mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.btnSkip + "</wmgPlayerJSTest2_>";
 		}
 
-		var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_panel-popup-outer'></wmgPlayerJSProd_>" +
-			" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
-			"    <div class='mgPlayerJSProd_popup-header-wrapper'>" +
-			"	    <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel-popup-outer'></wmgPlayerJSTest2_>" +
+			" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+			"    <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+			"	    <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 			"     </div>" +
-			" 	  <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + self.title + "</wmgPlayerJSProd_>" +
+			" 	  <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + self.title + "</wmgPlayerJSTest2_>" +
 			popupDescription +
-			"     <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
+			"     <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
 			okButton +
 			cancelButton +
-			"    </wmgPlayerJSProd_>" +
-			" </wmgPlayerJSProd_>";
+			"    </wmgPlayerJSTest2_>" +
+			" </wmgPlayerJSTest2_>";
 
 		mg$("body").append(html);
 
-		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 
-		mg$(".mgPlayerJSProd_panel-popup-outer").css('height', mg$(document).height());
+		mg$(".mgPlayerJSTest2_panel-popup-outer").css('height', mg$(document).height());
 
-		mg$(".mgPlayerJSProd_panel-popup-ok").on("click", function() {
+		mg$(".mgPlayerJSTest2_panel-popup-ok").on("click", function() {
 			if (mg$.isFunction(self.callback))
 				self.callback();
 			pub.close();
 		});
 
-		mg$(".mgPlayerJSProd_panel-popup-cancel").on("click", function() {
+		mg$(".mgPlayerJSTest2_panel-popup-cancel").on("click", function() {
 			pub.close();
 		});
 	};
 
 	pub.close = function() {
-		mg$(".mgPlayerJSProd_popup").remove();
-		mg$(".mgPlayerJSProd_panel-popup-outer").remove();
+		mg$(".mgPlayerJSTest2_popup").remove();
+		mg$(".mgPlayerJSTest2_panel-popup-outer").remove();
 	};
 
 	return pub;
@@ -6878,52 +6868,52 @@ GmCXt.alertV2 = function(options) {
 	pub.show = function() {
 		var alt = GmCXt.getAutoLaunchTourId();
 		var pi = GmCXt.playerI;
-		var popupType = 'mgPlayerJSProd_popup-info';
+		var popupType = 'mgPlayerJSTest2_popup-info';
 
-		var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
-			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
-			"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
-			"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
+		var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+			"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+			"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 			"   </div>" +
-			"<wmgPlayerJSProd_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSProd_popup-input-field' maxlength='1000' /></wmgPlayerJSProd_>" +
-			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + self.description + "</wmgPlayerJSProd_>" +
-			"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>";
+			"<wmgPlayerJSTest2_ style='display:" + popupInputField + "'><input type='text' class='mgPlayerJSTest2_popup-input-field' maxlength='1000' /></wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + self.description + "</wmgPlayerJSTest2_>" +
+			"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>";
 
 		if (self.button1) {
-			html += "<wmgPlayerJSProd_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSProd_popup-ok-btn mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt'>" + self.button1 + "</wmgPlayerJSProd_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button1 + "' aria-label='" + self.button1 + "' class='mgPlayerJSTest2_popup-ok-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button1 + "</wmgPlayerJSTest2_>";
 		}
 
 		if (self.button3) {
-			html += "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-play-inapp mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSProd_>";
+			html += "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-play-inapp mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt' aria-label='" + self.button3 + "'>" + self.button3 + "</wmgPlayerJSTest2_>";
 		}
 
 		if (self.button2) {
-			html += "<wmgPlayerJSProd_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSProd_popup-cancel-btn mgPlayerJSProd_btn-default mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt'>" + self.button2 + "</wmgPlayerJSProd_>";
+			html += "<wmgPlayerJSTest2_ title='" + self.button2 + "' aria-label='" + self.button2 + "' class='mgPlayerJSTest2_popup-cancel-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt'>" + self.button2 + "</wmgPlayerJSTest2_>";
 		}
 
-		html += "</wmgPlayerJSProd_>";
+		html += "</wmgPlayerJSTest2_>";
 
 		if (pi && alt && alt === pi.tour.tour_id)
-			html += "<wmgPlayerJSProd_><input type='checkbox' class='mgPlayerJSProd_popup-checkbox mgPlayerJSProd_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSProd_>" +
-			"</wmgPlayerJSProd_>";
+			html += "<wmgPlayerJSTest2_><input type='checkbox' class='mgPlayerJSTest2_popup-checkbox mgPlayerJSTest2_input-checkbox-custom'>" + GmCXt.label.doNotShowAgain + "</wmgPlayerJSTest2_>" +
+			"</wmgPlayerJSTest2_>";
 
 		mg$("html").append(html);
 
-		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
-		mg$(".mgPlayerJSProd_popup").on("mousedown", function(e) {
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSProd_overlay-container").on("mousedown", function(e) {
+		mg$(".mgPlayerJSTest2_overlay-container").on("mousedown", function(e) {
 			GmCXt.stopPropagation(e);
 		});
 
-		mg$(".mgPlayerJSProd_popup-ok-btn").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-ok-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
-			var popupInputFieldValue = mg$('.mgPlayerJSProd_popup-input-field').val();
+			var popupInputFieldValue = mg$('.mgPlayerJSTest2_popup-input-field').val();
 			if (pi && alt && alt === pi.tour.tour_id) {
 
-				var checked = mg$('.mgPlayerJSProd_popup-checkbox:checkbox:checked').length > 0;
+				var checked = mg$('.mgPlayerJSTest2_popup-checkbox:checkbox:checked').length > 0;
 
 				if (checked)
 					GmCXt.setDoNotShowTours(pi.tour);
@@ -6936,21 +6926,21 @@ GmCXt.alertV2 = function(options) {
 				self.button1Callback(popupInputFieldValue);
 		});
 
-		mg$(".mgPlayerJSProd_popup-play-inapp").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-play-inapp").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close();
 			if (mg$.isFunction(self.button3Callback))
 				self.button3Callback();
 		});
 
-		mg$(".mgPlayerJSProd_popup-cancel-btn").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-cancel-btn").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 			if (mg$.isFunction(self.button2Callback))
 				self.button2Callback();
 		});
 
-		mg$(".mgPlayerJSProd_popup-close-button").on("click", function(e) {
+		mg$(".mgPlayerJSTest2_popup-close-button").on("click", function(e) {
 			GmCXt.stopPropagation(e);
 			pub.close(self.keepScrollLock);
 		});
@@ -6971,31 +6961,31 @@ GmCXt.alertV2 = function(options) {
 
 GmCXt.showForceMode = function() {
 	GmCXt.closePopup();
-	var popupType = 'mgPlayerJSProd_popup-info';
+	var popupType = 'mgPlayerJSTest2_popup-info';
 	var html =
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "'>" +
-		"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "'>" +
+		"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 		"   </div>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSProd_>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_btn-default mgPlayerJSProd_btn-continue-guide mgPlayerJSProd_ok-btn mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSProd_>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_btn-default mgPlayerJSProd_btn-neutral mgPlayerJSProd_btn-exit-guide mgPlayerJSProd_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSProd_>" +
-		"</wmgPlayerJSProd_>" +
-		"</wmgPlayerJSProd_>";
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + GmCXt.escapeHtml(GmCXt.label.userNotFollowingGuideMessage) + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-continue-guide mgPlayerJSTest2_ok-btn mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.continueGuide + "</wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_btn-default mgPlayerJSTest2_btn-neutral mgPlayerJSTest2_btn-exit-guide mgPlayerJSTest2_inline-block-vt'>" + GmCXt.label.exitGuide + "</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 
 	mg$("html").append(html);
 
 	GmCXt.stopAudioTrack();
 
-	mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
+	mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 	GmCXt.enforceGuideMePopup = true;
 	GmCXt.pauseAutomation();
 
 	var windowHeight = mg$(window).height();
-	var popupTop = (windowHeight - mg$('.mgPlayerJSProd_popup').height()) / 2;
-	mg$('.mgPlayerJSProd_popup').css("top", popupTop);
+	var popupTop = (windowHeight - mg$('.mgPlayerJSTest2_popup').height()) / 2;
+	mg$('.mgPlayerJSTest2_popup').css("top", popupTop);
 
 	function close(e) {
 		GmCXt.stopPropagation(e);
@@ -7004,9 +6994,9 @@ GmCXt.showForceMode = function() {
 		if (GmCXt.playerI) GmCXt.resumeAutomation();
 	}
 
-	mg$(".mgPlayerJSProd_btn-continue-guide").on("click", close);
+	mg$(".mgPlayerJSTest2_btn-continue-guide").on("click", close);
 
-	mg$(".mgPlayerJSProd_btn-exit-guide").on("click", function(e) {
+	mg$(".mgPlayerJSTest2_btn-exit-guide").on("click", function(e) {
 		if (GmCXt.isExitSurvey()) {
 			GmCXt.showExitSurvey();
 		}
@@ -7016,7 +7006,7 @@ GmCXt.showForceMode = function() {
 		close(e);
 	});
 
-	mg$(".mgPlayerJSProd_popup-close-button").on("click", close);
+	mg$(".mgPlayerJSTest2_popup-close-button").on("click", close);
 };
 
 GmCXt.firstStepAutoLaunch = function() {
@@ -7065,7 +7055,7 @@ GmCXt.resumeAutomation = function() {
 };
 
 GmCXt.sendMessageToSyncPlayerI = function() {
-	var msg = "mgPlayerJSProd_action:sync_playerinstance_for_automation";
+	var msg = "mgPlayerJSTest2_action:sync_playerinstance_for_automation";
 	var data = {};
 	data.playerInstance = GmCXt.playerI;
 	GmCXt.sendMessageToAllWindows(msg, data);
@@ -7125,7 +7115,7 @@ GmCXt.hideTooltipDelay = function(step, options) {
 			stepId: step.step_id,
 			options: options
 		};
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_smarttip_delay', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_smarttip_delay', data);
 	}
 };
 
@@ -7134,7 +7124,7 @@ GmCXt.clearTooltipTimeout = function() {
 	if (window.self === window.top) {
 		clearTimeout(GmCXt.hideTooltipTimeout);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:clear_smarttip_delay_timeout');
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:clear_smarttip_delay_timeout');
 	}
 };
 
@@ -7146,10 +7136,10 @@ GmCXt.hideValidationTooltip = function(step, showGuidanceTooltip) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideValidationSmarttip(data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_validation_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_validation_smarttip', data);
 	}
 
-	mg$("#mgPlayerJSProd_smarttip-valid-" + step.step_id).hide();
+	mg$("#mgPlayerJSTest2_smarttip-valid-" + step.step_id).hide();
 };
 
 GmCXt.hideTooltip = function(step, options) {
@@ -7160,7 +7150,7 @@ GmCXt.hideTooltip = function(step, options) {
 	if (window.self === window.top) {
 		GmCXt.requestHandler.hideSmartTip(data, options);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:hide_smarttip', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:hide_smarttip', data);
 	}
 };
 
@@ -7385,14 +7375,14 @@ GmCXt.alignMessagePreview = function($popup, $container, alignment, stepSettings
 };
 
 GmCXt.closeNotificationPopup = function(isSidePanelOpen) {
-	GmCXt.sendMessageToApp('mgPlayerJSProd_action:close_notification_popup', {
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:close_notification_popup', {
 		isSidePanelOpen: isSidePanelOpen
 	});
 };
 
 GmCXt.removePreviewTop = function() {
 	GmCXt.removePreviewFrame();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:remove_preview");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:remove_preview");
 };
 
 GmCXt.hideSmartTipsIfOptionON = function() {
@@ -7404,37 +7394,37 @@ GmCXt.hideSmartTipsIfOptionON = function() {
 };
 
 GmCXt.hideSmartTips = function() {
-	mg$('.mgPlayerJSProd_smarttip-icon').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSProd_smarttip').addClass('tooltip-hidden');
-	mg$('.mgPlayerJSProd_smarttip-valid').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip').addClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-valid').addClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:hide_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:hide_all_smarttip");
 };
 
 GmCXt.showSmartTips = function(forceShow) {
 
 	if ((GmCXt.tourPlayerI && !forceShow) || GmCXt.isSurveyVisible) return;
 
-	mg$('.mgPlayerJSProd_smarttip-icon').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSProd_smarttip').removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSProd_smarttip-valid').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip').removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-valid').removeClass('tooltip-hidden');
 	GmCXt.smarttipAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_all_smarttip");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_all_smarttip");
 };
 
 GmCXt.previewSmartTips = function(id) {
-	mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
-	mg$('.mgPlayerJSProd_smarttip-icon-wrapper-' + id).show();
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_preview_smarttip", {
+	mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + id).removeClass('tooltip-hidden');
+	mg$('.mgPlayerJSTest2_smarttip-icon-wrapper-' + id).show();
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_preview_smarttip", {
 		id: id
 	});
 };
 
 GmCXt.hideBeacons = function() {
-	mg$('.mgPlayerJSProd_beacon-icon').addClass('mgPlayerJSProd_hidden');
-	mg$('#mgPlayerJSProd_beacon-icon-pos-select').show();
+	mg$('.mgPlayerJSTest2_beacon-icon').addClass('mgPlayerJSTest2_hidden');
+	mg$('#mgPlayerJSTest2_beacon-icon-pos-select').show();
 	GmCXt.beaconsAreHidden = true;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:hide_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:hide_beacons");
 };
 
 GmCXt.showBeacons = function(forceShow) {
@@ -7444,15 +7434,15 @@ GmCXt.showBeacons = function(forceShow) {
 		return;
 	}
 
-	mg$('.mgPlayerJSProd_beacon-icon').removeClass('mgPlayerJSProd_hidden');
-	mg$('#mgPlayerJSProd_beacon-icon-pos-select').hide();
+	mg$('.mgPlayerJSTest2_beacon-icon').removeClass('mgPlayerJSTest2_hidden');
+	mg$('#mgPlayerJSTest2_beacon-icon-pos-select').hide();
 	GmCXt.beaconsAreHidden = false;
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_beacons");
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_beacons");
 };
 
 GmCXt.previewBeacons = function(id) {
-	mg$('.mgPlayerJSProd_beacon-icon-tour-' + id).removeClass('mgPlayerJSProd_hidden');
-	GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:show_preview_beacons", {
+	mg$('.mgPlayerJSTest2_beacon-icon-tour-' + id).removeClass('mgPlayerJSTest2_hidden');
+	GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:show_preview_beacons", {
 		id: id
 	});
 };
@@ -7481,9 +7471,9 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	// Check for image exist if yes then add popup js
 	var imgSrc = '';
 	GmCXt.setImagePopUp();
-	var fsBtn = "<div class='mgPlayerJSProd_full-screen-icon-cont'><button class='mgPlayerJSProd_full-screen-icon'>&#x26F6;</button></div>";
+	var fsBtn = "<div class='mgPlayerJSTest2_full-screen-icon-cont'><button class='mgPlayerJSTest2_full-screen-icon'>&#x26F6;</button></div>";
 
-	mg$(parentClassName).addClass('mgPlayerJSProd_play-step-popup-loader');
+	mg$(parentClassName).addClass('mgPlayerJSTest2_play-step-popup-loader');
 
 	var stepPopupImgList = mg$(parentClassName + ' img');
 
@@ -7492,24 +7482,24 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 	stepPopupImgList.each(function(e) {
 		var stepPopupContent = mg$(parentClassName)[0].innerHTML;
 		var stepImgVar = stepPopupImgList[e].outerHTML;
-		var stepImgOverlay = "<div class='mgPlayerJSProd_step-img-popup-overlay'></div>";
-		var newStepImgVar = "<div class='mgPlayerJSProd_display-inline-block mgPlayerJSProd_position-relative mgPlayerJSProd_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
+		var stepImgOverlay = "<div class='mgPlayerJSTest2_step-img-popup-overlay'></div>";
+		var newStepImgVar = "<div class='mgPlayerJSTest2_display-inline-block mgPlayerJSTest2_position-relative mgPlayerJSTest2_step-img-popup-cont'>" + stepImgOverlay + fsBtn + stepImgVar + "</div>";
 		finalStepPopupContent = stepPopupContent.replace(stepImgVar, newStepImgVar);
 		mg$(parentClassName)[0].innerHTML = finalStepPopupContent;
-	}).addClass('mgPlayerJSProd_custom-image');
+	}).addClass('mgPlayerJSTest2_custom-image');
 
-	mg$(".mgPlayerJSProd_full-screen-icon").html(GmCXt.svgs.fullscreen);
+	mg$(".mgPlayerJSTest2_full-screen-icon").html(GmCXt.svgs.fullscreen);
 
-	mg$('.mgPlayerJSProd_full-screen-icon').on("click", function(e) {
-		var modalImg = document.getElementById("mgPlayerJSProd_img_desc");
-		var container = this.closest('.mgPlayerJSProd_step-img-popup-cont');
+	mg$('.mgPlayerJSTest2_full-screen-icon').on("click", function(e) {
+		var modalImg = document.getElementById("mgPlayerJSTest2_img_desc");
+		var container = this.closest('.mgPlayerJSTest2_step-img-popup-cont');
 		var imgElem = container.getElementsByTagName('img')[0];
 		imgSrc = imgElem.src;
-		var imgWrp = document.getElementsByClassName('mgPlayerJSProd_image-popup')[0];
+		var imgWrp = document.getElementsByClassName('mgPlayerJSTest2_image-popup')[0];
 		GmCXt.stopPropagation(e);
 		imgWrp.style.display = "block";
 		modalImg.src = imgSrc;
-		mg$('.mgPlayerJSProd_preview-step-popup-container').css({
+		mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 			'z-index': '2147483646'
 		});
 	});
@@ -7518,7 +7508,7 @@ GmCXt.setPopUpForImage = function(description, parentClassName) {
 
 	mg$(parentClassName + ' img').on("load", function() {
 		if (GmCXt.alignPopupI) GmCXt.alignPopupI.redo();
-		mg$(parentClassName).removeClass('mgPlayerJSProd_play-step-popup-loader');
+		mg$(parentClassName).removeClass('mgPlayerJSTest2_play-step-popup-loader');
 	});
 };
 
@@ -7531,7 +7521,7 @@ GmCXt.getText = function(s) {
 
 GmCXt.singleLineTitle = function(t) {
 	var c = '';
-	if (t && t.length < 28) c = 'mgPlayerJSProd_nowrap-div';
+	if (t && t.length < 28) c = 'mgPlayerJSTest2_nowrap-div';
 	return c;
 };
 
@@ -7570,27 +7560,27 @@ GmCXt.reportPresence = function() {
 };
 
 GmCXt.setOnAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:set_audio_mode_on');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_audio_mode_on');
 };
 
 GmCXt.setOffAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:set_audio_mode_off');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:set_audio_mode_off');
 };
 
 GmCXt.setOnOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSProd_tooltip-title-mute').show();
-	mg$('.mgPlayerJSProd_tooltip-title-unmute').hide();
-	mg$('.mgPlayerJSProd_onboarding-audio-off').hide();
-	mg$('.mgPlayerJSProd_onboarding-audio-on').show();
-	mg$('.mgPlayerJSProd_onboarding-audio').addClass('playing-audio');
+	mg$('.mgPlayerJSTest2_tooltip-title-mute').show();
+	mg$('.mgPlayerJSTest2_tooltip-title-unmute').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-off').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-on').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio').addClass('playing-audio');
 };
 
 GmCXt.setOffOnBoarAudioMode = function() {
-	mg$('.mgPlayerJSProd_tooltip-title-mute').hide();
-	mg$('.mgPlayerJSProd_tooltip-title-unmute').show();
-	mg$('.mgPlayerJSProd_onboarding-audio-on').hide();
-	mg$('.mgPlayerJSProd_onboarding-audio-off').show();
-	mg$('.mgPlayerJSProd_onboarding-audio').removeClass('playing-audio');
+	mg$('.mgPlayerJSTest2_tooltip-title-mute').hide();
+	mg$('.mgPlayerJSTest2_tooltip-title-unmute').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio-on').hide();
+	mg$('.mgPlayerJSTest2_onboarding-audio-off').show();
+	mg$('.mgPlayerJSTest2_onboarding-audio').removeClass('playing-audio');
 };
 
 GmCXt.getBoundingRect = function(he) {
@@ -7629,8 +7619,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			yPosMid = (pos.top + pos.height) / 2;
 		}
 
-		disable('.mgPlayerJSProd_smarttip-icon');
-		disable('.mgPlayerJSProd_beacon-icon');
+		disable('.mgPlayerJSTest2_smarttip-icon');
+		disable('.mgPlayerJSTest2_beacon-icon');
 
 		var topEl = document.elementFromPoint(xPosMid, yPosMid);
 
@@ -7638,8 +7628,8 @@ GmCXt.getElVisibility = function(el, isFrame) {
 			return 'hidden';
 		}
 
-		enable('.mgPlayerJSProd_smarttip-icon');
-		enable('.mgPlayerJSProd_beacon-icon');
+		enable('.mgPlayerJSTest2_smarttip-icon');
+		enable('.mgPlayerJSTest2_beacon-icon');
 
 		if (topEl === null) {
 			topEl = document.elementFromPoint(pos.left, pos.top);
@@ -7957,9 +7947,9 @@ GmCXt.isCurrentHost = function(host) {
 GmCXt.openPowerForm = function(data) {
 
 	if (window.self === window.top) {
-		GmCXt.sendMessageToApp('mgPlayerJSProd_action:show_power_form', data);
+		GmCXt.sendMessageToApp('mgPlayerJSTest2_action:show_power_form', data);
 	} else {
-		GmCXt.sendMessageToTheTopWindow('mgPlayerJSProd_action:open_power_form', data);
+		GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest2_action:open_power_form', data);
 	}
 };
 
@@ -7967,8 +7957,8 @@ GmCXt.rotateGear = function() {
 	var c = 1;
 	var i = null;
 
-	var id = '#mgPlayerJSProd_auto-progress-';
-	var cls = 'mgPlayerJSProd_active-progress';
+	var id = '#mgPlayerJSTest2_auto-progress-';
+	var cls = 'mgPlayerJSTest2_active-progress';
 
 	i = setInterval(function() {
 		if (c === 1 || mg$(id + (c - 1)).hasClass(cls)) { // check for the previous gear
@@ -7993,11 +7983,11 @@ GmCXt.removeTooltips = function(t) {
 		if (GmCXt.inTopWindow(step.step_settings)) {
 			GmCXt.requestHandler.removeToolip(data);
 		} else {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:remove_tooltip", data);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:remove_tooltip", data);
 		}
 
 		if (t.steps[j].step_settings.smartTip.type === 'injector') {
-			GmCXt.sendMessageToApp("mgPlayerJSProd_action:remove_power_form", data);
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:remove_power_form", data);
 		}
 
 	}
@@ -8023,7 +8013,7 @@ GmCXt.updateBeaconsOnScreen = function(tourId, isValid) {
 			jobId: tourId,
 			isValid: isValid
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:update_beacons_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:update_beacons_on_screen", data);
 	}
 };
 
@@ -8139,7 +8129,7 @@ GmCXt.updateOnScreenTooltipGuideInfo = function(tour, tourId, stepId, isValid, s
 			smartTip: smartTip,
 			url: url
 		};
-		GmCXt.sendMessageToTheTopWindow("mgPlayerJSProd_action:update_smarttip_on_screen", data);
+		GmCXt.sendMessageToTheTopWindow("mgPlayerJSTest2_action:update_smarttip_on_screen", data);
 	}
 };
 
@@ -8205,7 +8195,7 @@ GmCXt.clearDataOnLogout = function(d) {
 	GmCXt.organization = false;
 
 	GmCXt.clearSession();
-	GmCXt.sendMessageToAllWindows('mgPlayerJSProd_action:clear_session');
+	GmCXt.sendMessageToAllWindows('mgPlayerJSTest2_action:clear_session');
 };
 
 GmCXt.startReloginInterval = function() {
@@ -8275,12 +8265,12 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 
 		if (isExitSurvey) {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:exit_survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:exit_survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else if (data.type === "stepPlay") {
 			GmCXt.isSurveyVisible = true;
-			GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:survey_start;task:show_survey', data);
+			GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:survey_start;task:show_survey', data);
 			resolve(GmCXt.isSurveyVisible);
 
 		} else {
@@ -8291,7 +8281,7 @@ GmCXt.showSurveyScreen = function(data, isExitSurvey) {
 			GmCXt.checkIfSurveySubmitted(playerInstance, data, isExitSurvey, function(f) {
 				if (f) {
 					GmCXt.isSurveyVisible = true;
-					GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:survey_start;task:show_survey', data);
+					GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:survey_start;task:show_survey', data);
 				}
 				resolve(GmCXt.isSurveyVisible);
 			});
@@ -8441,23 +8431,23 @@ GmCXt.recordGuideEvents = function() {
 
 	if (GmCXt.isLastStep(PI.currentStepId, PI.playStructure) && GmCXt.tourActivity['t:' + PI.tour.tour_id]) {
 		delete GmCXt.tourActivity['t:' + PI.tour.tour_id];
-		GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_tour_activity", {
+		GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_tour_activity", {
 			tourActivity: GmCXt.tourActivity
 		});
 	}
 };
 
 GmCXt.isClickInStepPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSProd_preview-step-popup-container').length ||
-		mg$(e.target).hasClass('mgPlayerJSProd_image-popup') ||
-		mg$(e.target).parents('.mgPlayerJSProd_image-popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSProd_icon-image-prev-button') ||
-		mg$(e.target).parents('.mgPlayerJSProd_icon-image-prev-button').length ||
-		mg$(e.target).hasClass('mgPlayerJSProd_image-step-prev') ||
-		mg$(e.target).parents('.mgPlayerJSProd_play-pause-toolbar').length ||
-		mg$(e.target).hasClass('mgPlayerJSProd_popup') ||
-		mg$(e.target).parents('.mgPlayerJSProd_popup').length ||
-		mg$(e.target).hasClass('mgPlayerJSProd_overlay-container')
+	if (mg$(e.target).parents('.mgPlayerJSTest2_preview-step-popup-container').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_image-popup') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_image-popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_icon-image-prev-button') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_icon-image-prev-button').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_image-step-prev') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_play-pause-toolbar').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_popup') ||
+		mg$(e.target).parents('.mgPlayerJSTest2_popup').length ||
+		mg$(e.target).hasClass('mgPlayerJSTest2_overlay-container')
 	) {
 		return true;
 	} else {
@@ -8466,7 +8456,7 @@ GmCXt.isClickInStepPopup = function(e) {
 };
 
 GmCXt.isClickInSurveyPopup = function(e) {
-	if (mg$(e.target).parents('.mgPlayerJSProd_survey-popup-wrapper').length) {
+	if (mg$(e.target).parents('.mgPlayerJSTest2_survey-popup-wrapper').length) {
 		return true;
 	} else {
 		return false;
@@ -8517,18 +8507,18 @@ GmCXt.requiredWidth = function() {
 };
 
 GmCXt.getPopupHtml = function(msg, ok, cancel) {
-	var popupType = 'mgPlayerJSProd_popup-info';
-	var html = " <wmgPlayerJSProd_ class='mgPlayerJSProd_overlay-container'></wmgPlayerJSProd_>" +
-		"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup " + popupType + "' id='mgPlayerJSProd_popup-reload'>" +
-		"   <div class='mgPlayerJSProd_popup-header-wrapper'>" +
-		"	   <div class='mgPlayerJSProd_popup-header-icon-wrapper'><div class='mgPlayerJSProd_popup-header-icon'></div></div>" +
+	var popupType = 'mgPlayerJSTest2_popup-info';
+	var html = " <wmgPlayerJSTest2_ class='mgPlayerJSTest2_overlay-container'></wmgPlayerJSTest2_>" +
+		"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup " + popupType + "' id='mgPlayerJSTest2_popup-reload'>" +
+		"   <div class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <div class='mgPlayerJSTest2_popup-header-icon-wrapper'><div class='mgPlayerJSTest2_popup-header-icon'></div></div>" +
 		"   </div>" +
-		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'>" + msg + "</wmgPlayerJSProd_>" +
-		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-btn-wrapper'>" +
-		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSProd_popup-ok-btn mgPlayerJSProd_btn-default mgPlayerJSProd_ok-btn mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt mgPlayerJSProd_lbl-btn'>" + ok + "</button>" +
-		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSProd_popup-cancel-btn mgPlayerJSProd_btn-default mgPlayerJSProd_text-overflow-ellipsis mgPlayerJSProd_inline-block-vt mgPlayerJSProd_lbl-btn'>" + cancel + "</button>" +
-		" </wmgPlayerJSProd_>" +
-		"</wmgPlayerJSProd_>";
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'>" + msg + "</wmgPlayerJSTest2_>" +
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-btn-wrapper'>" +
+		"   <button title='" + ok + "' aria-label='" + ok + "' class='mgPlayerJSTest2_popup-ok-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_ok-btn mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + ok + "</button>" +
+		"   <button title='" + cancel + "' aria-label='" + cancel + "' class='mgPlayerJSTest2_popup-cancel-btn mgPlayerJSTest2_btn-default mgPlayerJSTest2_text-overflow-ellipsis mgPlayerJSTest2_inline-block-vt mgPlayerJSTest2_lbl-btn'>" + cancel + "</button>" +
+		" </wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	return html;
 };
 
@@ -8536,26 +8526,26 @@ GmCXt.getKeyShortPopupHtml = function(tourList) {
 	var tourListStr = "";
 	if (tourList && tourList.length) {
 		for (var i = 0; i < tourList.length; i++) {
-			tourListStr = tourListStr + "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-row-content-wrapper'><wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper mgPlayerJSProd_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSProd_>" +
-				"<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper mgPlayerJSProd_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSProd_></wmgPlayerJSProd_>";
+			tourListStr = tourListStr + "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-row-content-wrapper'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper mgPlayerJSTest2_col-lt' > " + tourList[i].tour_settings.keyboardKeyInput + " : </wmgPlayerJSTest2_>" +
+				"<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper mgPlayerJSTest2_col-rt' > " + tourList[i].tour_title + " </wmgPlayerJSTest2_></wmgPlayerJSTest2_>";
 		}
 	} else {
-		tourListStr = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-row-content-wrapper'><wmgPlayerJSProd_ class='mgPlayerJSProd_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSProd_> " +
-			"</wmgPlayerJSProd_>";
+		tourListStr = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-row-content-wrapper'><wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-colmn-content-wrapper' > No shortcuts available </wmgPlayerJSTest2_> " +
+			"</wmgPlayerJSTest2_>";
 	}
 
 
-	var html = "<wmgPlayerJSProd_ class='mgPlayerJSProd_popup mgPlayerJSProd_popup-info mgPlayerJSProd_popup-keyshort' id='mgPlayerJSProd_popup-reload'>" +
-		"   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-header-wrapper'>" +
-		"	   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSProd_>" +
-		"	   <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSProd_>" +
-		"   </wmgPlayerJSProd_>" +
-		" <wmgPlayerJSProd_ class='mgPlayerJSProd_popup-content-wrapper'> " +
-		" 	<wmgPlayerJSProd_ class='mgPlayerJSProd_popup-main-content-wrapper'>" +
+	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup mgPlayerJSTest2_popup-info mgPlayerJSTest2_popup-keyshort' id='mgPlayerJSTest2_popup-reload'>" +
+		"   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-header-wrapper'>" +
+		"	   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-keyshort-header-title'>Keyboard shortcuts</wmgPlayerJSTest2_>" +
+		"	   <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-keyshort-close'>" + GmCXt.label.close + "</wmgPlayerJSTest2_>" +
+		"   </wmgPlayerJSTest2_>" +
+		" <wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-content-wrapper'> " +
+		" 	<wmgPlayerJSTest2_ class='mgPlayerJSTest2_popup-main-content-wrapper'>" +
 		tourListStr +
-		" 	</wmgPlayerJSProd_>" +
-		" </wmgPlayerJSProd_>" +
-		"</wmgPlayerJSProd_>";
+		" 	</wmgPlayerJSTest2_>" +
+		" </wmgPlayerJSTest2_>" +
+		"</wmgPlayerJSTest2_>";
 	return html;
 };
 
@@ -8565,13 +8555,13 @@ GmCXt.stopPropagation = function(e) {
 
 GmCXt.addPopupEvents = function(onOK, onCancel, onClose) {
 
-	mg$(".mgPlayerJSProd_popup").on("mousedown", GmCXt.stopPropagation);
-	mg$(".mgPlayerJSProd_overlay-container").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSTest2_popup").on("mousedown", GmCXt.stopPropagation);
+	mg$(".mgPlayerJSTest2_overlay-container").on("mousedown", GmCXt.stopPropagation);
 
-	mg$(".mgPlayerJSProd_popup-ok-btn").on("click", onOK);
-	mg$(".mgPlayerJSProd_popup-cancel-btn").on("click", onCancel);
-	mg$(".mgPlayerJSProd_popup-close-button").on("click", onClose);
-	mg$(".mgPlayerJSProd_popup-keyshort-close").on("click", onOK);
+	mg$(".mgPlayerJSTest2_popup-ok-btn").on("click", onOK);
+	mg$(".mgPlayerJSTest2_popup-cancel-btn").on("click", onCancel);
+	mg$(".mgPlayerJSTest2_popup-close-button").on("click", onClose);
+	mg$(".mgPlayerJSTest2_popup-keyshort-close").on("click", onOK);
 };
 
 GmCXt.showPushOptions = function(opts) {
@@ -8588,11 +8578,11 @@ GmCXt.showPushOptions = function(opts) {
 
 		mg$("html").append(GmCXt.getPopupHtml(msg, ok, cancel));
 
-		mg$(".mgPlayerJSProd_popup-header-icon").html(GmCXt.svgs.popup_info);
+		mg$(".mgPlayerJSTest2_popup-header-icon").html(GmCXt.svgs.popup_info);
 
 		function closeGuide() {
 			if (opts.slideshow) {
-				GmCXt.sendMessageToApp('mgPlayerJSProd_action:stop_slideshow');
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:stop_slideshow');
 				GmCXt.cleanPlayer();
 			} else if (opts.isTour) {
 				var pi = GmCXt.playerI;
@@ -8635,15 +8625,15 @@ GmCXt.showPushOptions = function(opts) {
 };
 
 GmCXt.closePopup = function() {
-	mg$(".mgPlayerJSProd_popup").remove();
-	mg$(".mgPlayerJSProd_overlay-container").remove();
+	mg$(".mgPlayerJSTest2_popup").remove();
+	mg$(".mgPlayerJSTest2_overlay-container").remove();
 };
 
 GmCXt.showExitSurvey = function(opts) {
 
 	var pi = GmCXt.playerI;
 	GmCXt.unlockScroll();
-	mg$(".mgPlayerJSProd_popup").remove();
+	mg$(".mgPlayerJSTest2_popup").remove();
 	GmCXt.getSurveyScreen(pi, true);
 };
 
@@ -8694,7 +8684,7 @@ GmCXt.setLinkGuidePlay = function(text, popClass) {
 							tourId: tourId,
 							initiator: initiator
 						};
-						GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:play_guide_from_link', data);
+						GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:play_guide_from_link', data);
 					}
 				}
 			});
@@ -8793,7 +8783,7 @@ GmCXt.updNotifDataSidePanel = function(toursClosed, tourIdArray) {
 	if (GmCXt.isAnonymousUser()) {
 		data.tourIdArray = tourIdArray;
 	}
-	GmCXt.sendMessageToApp("mgPlayerJSProd_action:update_notification_info", data);
+	GmCXt.sendMessageToApp("mgPlayerJSTest2_action:update_notification_info", data);
 };
 
 GmCXt.updateNotification = function(tours) {
@@ -8929,19 +8919,19 @@ GmCXt.setZoomImageFromIframe = function(desc, parentClassName) {
 };
 
 GmCXt.initialiseImagePopUp = function() {
-	GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:initialize_image_iframe_popup', {});
+	GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:initialize_image_iframe_popup', {});
 };
 
 GmCXt.openModalFromTopWindow = function(src) {
 	var data = {};
 	data.imageSrc = src;
-	GmCXt.sendMessageToParentWindow('mgPlayerJSProd_action:open_image_iframe_popup', data);
+	GmCXt.sendMessageToParentWindow('mgPlayerJSTest2_action:open_image_iframe_popup', data);
 };
 
 GmCXt.setImagePopUp = function() {
-	mg$('#mgPlayerJSProd_image_popup').remove();
+	mg$('#mgPlayerJSTest2_image_popup').remove();
 	GmCXt.addImagePopHtml();
-	var modal = document.getElementById('mgPlayerJSProd_image_popup');
+	var modal = document.getElementById('mgPlayerJSTest2_image_popup');
 
 	if (modal) {
 		modal.style.display = "none";
@@ -8949,12 +8939,12 @@ GmCXt.setImagePopUp = function() {
 			GmCXt.stopPropagation(e);
 		};
 	}
-	var closeBtn = document.getElementsByClassName("mgPlayerJSProd_close-img-popup")[0];
+	var closeBtn = document.getElementsByClassName("mgPlayerJSTest2_close-img-popup")[0];
 	if (closeBtn) {
 		closeBtn.onclick = function(e) {
 			GmCXt.stopPropagation(e);
 			modal.style.display = "none";
-			mg$('.mgPlayerJSProd_preview-step-popup-container').css({
+			mg$('.mgPlayerJSTest2_preview-step-popup-container').css({
 				'z-index': '2147483647'
 			});
 		};
@@ -8962,8 +8952,8 @@ GmCXt.setImagePopUp = function() {
 };
 
 GmCXt.openImagePopup = function(data) {
-	var modal = document.getElementById('mgPlayerJSProd_image_popup');
-	var modalImg = document.getElementById("mgPlayerJSProd_img_desc");
+	var modal = document.getElementById('mgPlayerJSTest2_image_popup');
+	var modalImg = document.getElementById("mgPlayerJSTest2_img_desc");
 	modal.style.display = "block";
 	modalImg.src = data.imageSrc;
 };
@@ -8973,7 +8963,7 @@ GmCXt.addEventOnTooltip = function(req) {
 	clearTimeout(GmCXt.tooltipTimeout);
 
 	GmCXt.tooltipTimeout = GmCXt.timeout(function() {
-		var el = mg$('#mgPlayerJSProd_smarttip-' + req.step.step_id);
+		var el = mg$('#mgPlayerJSTest2_smarttip-' + req.step.step_id);
 
 		el.off("click").on('click', function(e) {
 			if (!req.isPreview) {
@@ -8990,29 +8980,29 @@ GmCXt.isEventToolTip = function(event, stepId) {
 	var isSmartipEvent = false;
 
 	switch (targetId) {
-		case 'mgPlayerJSProd_smarttip-icon-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSProd_smarttip-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 	}
 
 	switch (cTargetId) {
-		case 'mgPlayerJSProd_smarttip-icon-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-icon-' + stepId:
 			isSmartipEvent = true;
 			break;
-		case 'mgPlayerJSProd_smarttip-' + stepId:
+		case 'mgPlayerJSTest2_smarttip-' + stepId:
 			isSmartipEvent = true;
 			break;
 		default:
 			break;
 	}
 
-	if (mg$(event.currentTarget).hasClass("mgPlayerJSProd_smarttip-icon-wrapper-" + stepId)) {
+	if (mg$(event.currentTarget).hasClass("mgPlayerJSTest2_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
-	} else if (mg$(event.target).hasClass("mgPlayerJSProd_smarttip-icon-wrapper-" + stepId)) {
+	} else if (mg$(event.target).hasClass("mgPlayerJSTest2_smarttip-icon-wrapper-" + stepId)) {
 		isSmartipEvent = true;
 	}
 
@@ -9032,7 +9022,7 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 		if (window.self === window.top) {
 			GmCXt.openAppPanel('currentPage');
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:open_app_panel");
+			GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:open_app_panel");
 		}
 
 	} else if (tooltip.clickAction === 'openUrl') {
@@ -9055,9 +9045,9 @@ GmCXt.tooltipAction = function(event, tooltip, step) {
 			stepId: step.step_id
 		};
 		if (window.self === window.top) {
-			GmCXt.sendMessageToApp("mgPlayerJSProd_action:get_survey_detail_tooltip", data);
+			GmCXt.sendMessageToApp("mgPlayerJSTest2_action:get_survey_detail_tooltip", data);
 		} else {
-			GmCXt.sendMessageToParentWindow("mgPlayerJSProd_action:get_survey_data_from_sidepanel", data);
+			GmCXt.sendMessageToParentWindow("mgPlayerJSTest2_action:get_survey_data_from_sidepanel", data);
 		}
 
 	}
@@ -9084,12 +9074,12 @@ GmCXt.isLastStepPlayed = function() {
 };
 
 GmCXt.getNextBtnElem = function() {
-	var nxtBtn = document.getElementById("mgPlayerJSProd_play_step_next");
-	var doneBtn = document.getElementById("mgPlayerJSProd_play_step_next_done");
-	var nxtClassic = document.getElementById("mgPlayerJSProd_play_step_next_classic");
-	var doneClassic = document.getElementById("mgPlayerJSProd_play_step_next_done_classic");
-	var pauseBtn = document.getElementById("mgPlayerJSProd_play_step_pause");
-	var pauseClassic = document.getElementById("mgPlayerJSProd_play_step_pause_classic");
+	var nxtBtn = document.getElementById("mgPlayerJSTest2_play_step_next");
+	var doneBtn = document.getElementById("mgPlayerJSTest2_play_step_next_done");
+	var nxtClassic = document.getElementById("mgPlayerJSTest2_play_step_next_classic");
+	var doneClassic = document.getElementById("mgPlayerJSTest2_play_step_next_done_classic");
+	var pauseBtn = document.getElementById("mgPlayerJSTest2_play_step_pause");
+	var pauseClassic = document.getElementById("mgPlayerJSTest2_play_step_pause_classic");
 	var btn;
 
 	if (mg$(nxtBtn).is(':visible'))
@@ -9308,23 +9298,23 @@ GmCXt.checkProceedToPlay = function(step, tour) {
 
 GmCXt.setPanelTopLeft = function(isClose) {
 	if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
-		mg$(".mgPlayerJSProd_panel").css("left", "initial");
-		mg$(".mgPlayerJSProd_panel").css("top", "50%");
+		mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+		mg$(".mgPlayerJSTest2_panel").css("top", "50%");
 		if (GmCXt.APP_PANEL_OPEN) {
-			mg$(".mgPlayerJSProd_panel").css("right", "50px");
+			mg$(".mgPlayerJSTest2_panel").css("right", "50px");
 		}
 	} else {
-		mg$(".mgPlayerJSProd_panel").css("left", "initial");
-		mg$(".mgPlayerJSProd_panel").css("top", "0");
+		mg$(".mgPlayerJSTest2_panel").css("left", "initial");
+		mg$(".mgPlayerJSTest2_panel").css("top", "0");
 		if (GmCXt.APP_PANEL_OPEN) {
 			var alignment = GmCXt.getWidgetAlignment();
-			mg$(".mgPlayerJSProd_panel").css(alignment, "0");
+			mg$(".mgPlayerJSTest2_panel").css(alignment, "0");
 		}
 	}
 };
 
 GmCXt.myGuideLogout = function() {
-	GmCXt.sendMessageToApp('mgPlayerJSProd_action:logout_user');
+	GmCXt.sendMessageToApp('mgPlayerJSTest2_action:logout_user');
 };
 
 GmCXt.reloadElectronApp = function() {
@@ -9361,16 +9351,16 @@ GmCXt.getContainerOffSet = function(container) {
 
 GmCXt.removeScreenOverlay = function() {
 	GmCXt.screenOverlayI = undefined;
-	mg$('.mgPlayerJSProd_screen-blackout').hide();
-	mg$('.mgPlayerJSProd_screen-blackout').html('');
+	mg$('.mgPlayerJSTest2_screen-blackout').hide();
+	mg$('.mgPlayerJSTest2_screen-blackout').html('');
 };
 
 GmCXt.getWidgetInstance = function() {
-	return mg$('.mgPlayerJSProd_start-button');
+	return mg$('.mgPlayerJSTest2_start-button');
 };
 
 GmCXt.getChatIconInstance = function() {
-	return mg$('#mgPlayerJSProd_btn-chat-button');
+	return mg$('#mgPlayerJSTest2_btn-chat-button');
 };
 
 GmCXt.hideWidgetIcon = function() {
@@ -9463,8 +9453,8 @@ GmCXt.updateSurveyCompletedData = function(data) {
 };
 
 GmCXt.resetMplayerPos = function() {
-	mg$('.mgPlayerJSProd_panel').removeAttr("style");
-	mg$('.mgPlayerJSProd_panel').css({
+	mg$('.mgPlayerJSTest2_panel').removeAttr("style");
+	mg$('.mgPlayerJSTest2_panel').css({
 		'left': 'initial',
 		'top': '50%',
 		'right': '50px'
@@ -9473,11 +9463,11 @@ GmCXt.resetMplayerPos = function() {
 
 GmCXt.isMyGuideEl = function(el) {
 
-	if (el.nodeName.toLowerCase() === 'wmgPlayerJSProd_over' ||
-		mg$(el).closest('wmgPlayerJSProd_').length > 0 ||
+	if (el.nodeName.toLowerCase() === 'wmgPlayerJSTest2_over' ||
+		mg$(el).closest('wmgPlayerJSTest2_').length > 0 ||
 		(el.name && el.name.includes('guideme-iframe')) ||
-		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSProd_") === 0 || el.className.indexOf(" mgPlayerJSProd_") > 0)) ||
-		(el.id && el.id.indexOf("mgPlayerJSProd_beacon-icon-") === 0)
+		(typeof el.className === 'string' && (el.className.indexOf("mgPlayerJSTest2_") === 0 || el.className.indexOf(" mgPlayerJSTest2_") > 0)) ||
+		(el.id && el.id.indexOf("mgPlayerJSTest2_beacon-icon-") === 0)
 	) {
 		return true;
 	}
@@ -9752,9 +9742,9 @@ GmCXt.playerIntervalValidator = function(boxUrl) {
 		if (lastRefresh != GmCXt.refreshTime ) {
 			GmCXt.log(70, "START PLAYER DATA REFRESH");
 
-			GmCXt.msgToApp('mgPlayerJSProd_action:refresh_player', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSTest2_action:refresh_player', r, senderTabId);
 		} else {
-			GmCXt.msgToApp('mgPlayerJSProd_action:update_timestamp_sync_time', r, senderTabId);
+			GmCXt.msgToApp('mgPlayerJSTest2_action:update_timestamp_sync_time', r, senderTabId);
 			GmCXt.log(70, "NO UPDATE FOUND " + new Date());
 		}
 
@@ -9768,7 +9758,7 @@ GmCXt.creatorIntervalValidator = function(boxUrl) {
 
 	GmCXt.getModifiedObjects().then(function(updates) {
 		if (updates.length) {
-			GmCXt.msgToApp('mgPlayerJSProd_action:creator_updates', {
+			GmCXt.msgToApp('mgPlayerJSTest2_action:creator_updates', {
 				updates: updates,
 				refreshTime: GmCXt.creatorRefreshTime
 			}, senderTabId);
@@ -9805,7 +9795,7 @@ GmCXt.startCreatorUpdateInterval = function() {
 	var callSync = function() {
 		GmCXt.getModifiedObjects().then(function(updates) {
 			if (updates.length) {
-				GmCXt.msgToApp('mgPlayerJSProd_action:creator_updates', {
+				GmCXt.msgToApp('mgPlayerJSTest2_action:creator_updates', {
 					updates: updates,
 					refreshTime: GmCXt.creatorRefreshTime
 				}, senderTabId);
@@ -9842,7 +9832,7 @@ GmCXt.sendMessageToApp = function(type, data) {
 };
 
 GmCXt.sendMessageToAppIn = function(type, data) {
-	var appWindow = mg$(".mgPlayerJSProd_app");
+	var appWindow = mg$(".mgPlayerJSTest2_app");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -9928,7 +9918,7 @@ GmCXt.getCdnSignature = function(sendMessage) {
 
 	if (sendMessage) {
 
-		GmCXt.msgToApp('mgPlayerJSProd_action:get_cdn_signature_from_app');
+		GmCXt.msgToApp('mgPlayerJSTest2_action:get_cdn_signature_from_app');
 
 	} else { //this is used in Background.js for player and cretor sync
 		GmCXt.callGetCdnSignature({
@@ -9989,7 +9979,7 @@ GmCXt.getModifiedObjects = function(boxUrl) {
 							GmCXt.creatorRefreshTime = timestamp;
 
 							if (result.code === 1003 || result.code === 2004) {
-								GmCXt.msgToApp('mgPlayerJSProd_action:logout_user');
+								GmCXt.msgToApp('mgPlayerJSTest2_action:logout_user');
 							} else if (result.code === 1007) {
 								GmCXt.getAccessToken().then(function(r) {
 									GmCXt.saveToken(r);
@@ -10200,7 +10190,7 @@ GmCXt.callApi = function(data, api) {
 
 		function sendResponse(m) {
 
-			if (m && m.action === 'mgPlayerJSProd_action:call_api_response') {
+			if (m && m.action === 'mgPlayerJSTest2_action:call_api_response') {
 
 				if (m.data && m.data.id === mid) {
 					window.removeEventListener('message', winListener);
@@ -10234,16 +10224,16 @@ GmCXt.callApi = function(data, api) {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSProd_action:call_api', d, senderTabId);
+			GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:call_api', d, senderTabId);
 
 		} else if (GmCXt.isSidePanelApp) {
 			GmCXt.msgToThisWin({
-				action: 'mgPlayerJSProd_action:call_api',
+				action: 'mgPlayerJSTest2_action:call_api',
 				data: d
 			});
 		} else {
 			window.addEventListener('message', winListener);
-			GmCXt.sendMessageToApp('mgPlayerJSProd_action:call_api', d);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:call_api', d);
 		}
 	});
 };
@@ -10328,11 +10318,11 @@ GmCXt.saveToken = function(r) {
 		if (!GmCXt.isBackgroundPage) {
 
 			GmCXt.getWidgetIcon().then(function(wUrl) {
-				mg$(".mgPlayerJSProd_start-button img").attr('src', wUrl);
+				mg$(".mgPlayerJSTest2_start-button img").attr('src', wUrl);
 			});
 		}
 
-		GmCXt.msgToApp('mgPlayerJSProd_action:update_access_token', data, senderTabId);
+		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', data, senderTabId);
 	}
 };
 
@@ -10634,7 +10624,7 @@ GmCXt.getDatafromPanel = function() {
 	return new Promise(function(resolve, reject) {
 
 		function sendResponse(m) {
-			if (m && m.action === 'mgPlayerJSProd_action:get_data_from_panel_response') {
+			if (m && m.action === 'mgPlayerJSTest2_action:get_data_from_panel_response') {
 				removeEventListener('message', chromeListener);
 				resolve(m.data);
 			}
@@ -10650,7 +10640,7 @@ GmCXt.getDatafromPanel = function() {
 
 		if (GmCXt.isBackgroundPage === true) {
 			chrome.runtime.onMessage.addListener(chromeListener);
-			GmCXt.sendMessageToPanel('mgPlayerJSProd_action:get_data_from_panel');
+			GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:get_data_from_panel');
 		} else {
 			resolve(false);
 		}
@@ -11194,12 +11184,12 @@ GmCXt.apiUpdateUserGuidevView = function(data) {
 };
 
 GmCXt.logoutUser = function() {
-	GmCXt.msgToApp('mgPlayerJSProd_action:to_signin_page', {}, senderTabId);
+	GmCXt.msgToApp('mgPlayerJSTest2_action:to_signin_page', {}, senderTabId);
 };
 
 GmCXt.loginFromConsole = function(email, password) {
 	if (!GmCXt.isBackgroundPage) {
-		GmCXt.msgToApp('mgPlayerJSProd_action:signin_from_console', {
+		GmCXt.msgToApp('mgPlayerJSTest2_action:signin_from_console', {
 			email: email,
 			password: password
 		}, senderTabId);
@@ -11363,9 +11353,9 @@ GmCXt.xhr = function(params, doNotAddWebURL, extApi) {
 
 		var showMaintenance = function() {
 			if (GmCXt.isBackgroundPage === true) {
-				GmCXt.sendMessageToPanel('mgPlayerJSProd_action:maintenance');
+				GmCXt.sendMessageToPanel('mgPlayerJSTest2_action:maintenance');
 			} else {
-				GmCXt.sendMessageToApp('mgPlayerJSProd_action:maintenance');
+				GmCXt.sendMessageToApp('mgPlayerJSTest2_action:maintenance');
 			}
 		};
 
@@ -11964,7 +11954,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if(type !== "mgPlayerJSProd_action:clear_rule_jobs" || type !== "mgPlayerJSProd_action:remove_tooltip"){
+	if(type !== "mgPlayerJSTest2_action:clear_rule_jobs" || type !== "mgPlayerJSTest2_action:remove_tooltip"){
 		data.user = GmCXt.user;
 		data.organization = GmCXt.organization;
 	}
@@ -11981,45 +11971,45 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 
 	if (GmCXt.inTopWindow(data.settings)) {
 
-		if (type === "mgPlayerJSProd_action:started;task:select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:select_existing_dom_element") {
 			GmCXt.requestHandler.selectExistingDomElement(message.data);
 			return;
 		}
 
-		if (type === "mgPlayerJSProd_action:started;task:edit_step_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_step_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditStep(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSProd_action:started;task:edit_tag_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_tag_select_existing_dom_element") {
 			GmCXt.requestHandler.selectDomElementEditTag(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSProd_action:started;task:select_dom_element_tooltips") {
+		if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_tooltips") {
 			GmCXt.requestHandler.selectDomElement(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSProd_action:started;task:edit_beacon_select_existing_dom_element") {
+		if (type === "mgPlayerJSTest2_action:started;task:edit_beacon_select_existing_dom_element") {
 			GmCXt.selectorTool = null;
 			GmCXt.requestHandler.selectDomElementBeaconEdit(message);
 			return;
 		}
 
-		if (type === "mgPlayerJSProd_action:started;task:search_next_step") {
+		if (type === "mgPlayerJSTest2_action:started;task:search_next_step") {
 			GmCXt.requestHandler.searchDomElement(message.data);
 			return;
 		}
 
 	} else if (GmCXt.inTopWindow(data.beaconSettings)) {
-		if (type === "mgPlayerJSProd_action:show_beacon_on_dom_element") {
+		if (type === "mgPlayerJSTest2_action:show_beacon_on_dom_element") {
 			GmCXt.highlighter.queueBeacon(message);
 			return;
 		}
 	}
 
-	if (type === "mgPlayerJSProd_action:started;task:select_dom_element_for_rules") {
+	if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_for_rules") {
 
 		if (data.rule && data.rule.element && data.rule.element.meta) {
 			var el = data.rule.element;
@@ -12033,7 +12023,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSProd_action:started;task:select_dom_element_for_matching_in_rules") {
+	if (type === "mgPlayerJSTest2_action:started;task:select_dom_element_for_matching_in_rules") {
 		if (data.element && data.element.meta) {
 			var el = data.element;
 			if (el.meta.inTopWindow === true) {
@@ -12043,7 +12033,7 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 		}
 	}
 
-	if (type === "mgPlayerJSProd_action:update_session_info") {
+	if (type === "mgPlayerJSTest2_action:update_session_info") {
 		GmCXt.sessionInfo = data.sessionInfo;
 	}
 
@@ -12170,7 +12160,7 @@ GmCXt.sendMessageToolbar = function(type, data) {
 };
 
 GmCXt.sendMessageToolbarIn = function(type, data) {
-	var appWindow = mg$("#mgPlayerJSProd_toolbar-iframe");
+	var appWindow = mg$("#mgPlayerJSTest2_toolbar-iframe");
 	if (appWindow.length) {
 		var message = {
 			action: type,
@@ -12185,8 +12175,8 @@ GmCXt.sendMessageToStepFrame = function(type, data) {
 
 	var sent = false;
 
-	if (mg$("#mgPlayerJSProd_step-iframe").length) {
-		var newStepFrame = mg$("#mgPlayerJSProd_step-iframe").get(0).contentWindow;
+	if (mg$("#mgPlayerJSTest2_step-iframe").length) {
+		var newStepFrame = mg$("#mgPlayerJSTest2_step-iframe").get(0).contentWindow;
 
 		data = data || {};
 		data.config = GmCXt.conf;
@@ -12791,20 +12781,20 @@ GmCXt.updateDebugMode = function(mode) {
 		};
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToAllWindows)) {
-			GmCXt.sendMessageToAllWindows("mgPlayerJSProd_action:update_debug_mode", m);
+			GmCXt.sendMessageToAllWindows("mgPlayerJSTest2_action:update_debug_mode", m);
 		}
 
 		if (!GmCXt.isSidePanelApp) {
-			GmCXt.sendMessageToApp('mgPlayerJSProd_action:update_debug_mode', m);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:update_debug_mode', m);
 		}
 
 		GmCXt.sendMessageToBackgroundService({
-			action: 'mgPlayerJSProd_action:update_debug_mode',
+			action: 'mgPlayerJSTest2_action:update_debug_mode',
 			data: m
 		});
 
 		if (GmCXt.isDefined(GmCXt.sendMessageToStepFrame)) {
-			GmCXt.sendMessageToStepFrame('mgPlayerJSProd_action:update_debug_mode', m);
+			GmCXt.sendMessageToStepFrame('mgPlayerJSTest2_action:update_debug_mode', m);
 		}
 	}
 };
@@ -12907,7 +12897,7 @@ GmCXt.log = function(mode, str, opt) {
 
 GmCXt.sendMessageToPrintLog = function(m, s, o) {
 	var message = {
-		action: "mgPlayerJSProd_action:print_debug_log",
+		action: "mgPlayerJSTest2_action:print_debug_log",
 		data: {
 			mode: m,
 			str: s,
@@ -13006,7 +12996,7 @@ GmCXt.getAppStorage = function(keys) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
 				if (message.data && (mid === message.data.id)) {
-					if (message.action && (message.action === 'mgPlayerJSProd_action:get_local_storage_response')) {
+					if (message.action && (message.action === 'mgPlayerJSTest2_action:get_local_storage_response')) {
 						window.removeEventListener('message', listen);
 						resolve(message.data.items);
 					}
@@ -13018,7 +13008,7 @@ GmCXt.getAppStorage = function(keys) {
 				id: mid,
 				keys: keys
 			};
-			GmCXt.sendMessageToApp('mgPlayerJSProd_action:get_local_storage', d);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:get_local_storage', d);
 		});
 	}
 };
@@ -13041,14 +13031,14 @@ GmCXt.setAppStorage = function(data) {
 			function listen(event) {
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSProd_action:set_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSTest2_action:set_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSProd_action:set_local_storage', data);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:set_local_storage', data);
 		});
 	}
 };
@@ -13072,14 +13062,14 @@ GmCXt.removeAppStorage = function(keys) {
 
 				var message = GmCXt.parseMsg(event);
 				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSProd_action:remove_local_storage_response')) {
+				if (message.action && (message.action === 'mgPlayerJSTest2_action:remove_local_storage_response')) {
 					window.removeEventListener('message', listen);
 					resolve();
 				}
 			}
 
 			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSProd_action:remove_local_storage', keys);
+			GmCXt.sendMessageToApp('mgPlayerJSTest2_action:remove_local_storage', keys);
 		});
 	}
 };
@@ -13215,13 +13205,13 @@ var stepAudio = {};
 var userPrefAudio = false;
 
 function setAudioModeOn() {
-	mg$('.mgPlayerJSProd_play-step-audio-on').show();
-	mg$('.mgPlayerJSProd_play-step-audio-off').hide();
-	mg$('.mgPlayerJSProd_play-step-audio').addClass('playing-audio');
+	mg$('.mgPlayerJSTest2_play-step-audio-on').show();
+	mg$('.mgPlayerJSTest2_play-step-audio-off').hide();
+	mg$('.mgPlayerJSTest2_play-step-audio').addClass('playing-audio');
 
 	if (userPrefAudio) {
 
-		var action = "mgPlayerJSProd_action:set_audio_storage";
+		var action = "mgPlayerJSTest2_action:set_audio_storage";
 		var data = {
 			'stepAudioRunningStatus': true
 		};
@@ -13230,13 +13220,13 @@ function setAudioModeOn() {
 }
 
 function setAudioModeOff() {
-	mg$('.mgPlayerJSProd_play-step-audio-on').hide();
-	mg$('.mgPlayerJSProd_play-step-audio-off').show();
-	mg$('.mgPlayerJSProd_play-step-audio').removeClass('playing-audio');
+	mg$('.mgPlayerJSTest2_play-step-audio-on').hide();
+	mg$('.mgPlayerJSTest2_play-step-audio-off').show();
+	mg$('.mgPlayerJSTest2_play-step-audio').removeClass('playing-audio');
 
 	if (userPrefAudio) {
 
-		var action = "mgPlayerJSProd_action:set_audio_storage";
+		var action = "mgPlayerJSTest2_action:set_audio_storage";
 		var data = {
 			'stepAudioRunningStatus': false
 		};
@@ -13274,7 +13264,7 @@ window.addEventListener('message', function(event) {
 	var message = GmCXt.parseMsg(event);
 
 	if (!message) return;
-	if (!message.action || message.action.indexOf('mgPlayerJSProd_action:') !== 0) return;
+	if (!message.action || message.action.indexOf('mgPlayerJSTest2_action:') !== 0) return;
 	message = GmCXt.convertMgdata(message);
 
 	if (message.data) {
@@ -13300,22 +13290,22 @@ window.addEventListener('message', function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSProd_action:set_audio_mode_on':
+		case 'mgPlayerJSTest2_action:set_audio_mode_on':
 			setAudioModeOn();
 			break;
 
-		case 'mgPlayerJSProd_action:set_audio_mode_off':
+		case 'mgPlayerJSTest2_action:set_audio_mode_off':
 			setAudioModeOff();
 			break;
 
-		case 'mgPlayerJSProd_action:stop_audio':
+		case 'mgPlayerJSTest2_action:stop_audio':
 			GmCXt.requestHandler.stopAudioTrack();
 			break;
 
-		case 'mgPlayerJSProd_action:set_style_audio_icon_response':
+		case 'mgPlayerJSTest2_action:set_style_audio_icon_response':
 			mg$("html:first").append(message.data.data);
-			mg$('.mgPlayerJSProd_audio-iframe-icons').removeAttr('style');
-			formatAndSendToParentWindow('mgPlayerJSProd_action:hide_pop_audio_ctrl', {});
+			mg$('.mgPlayerJSTest2_audio-iframe-icons').removeAttr('style');
+			formatAndSendToParentWindow('mgPlayerJSTest2_action:hide_pop_audio_ctrl', {});
 			break;
 	}
 
@@ -13367,7 +13357,7 @@ GmCXt.playStepAudio = function(message) {
 
 		GmCXt.audioObject = new Audio(audioTrack);
 
-		var action = "mgPlayerJSProd_action:start_step_completion_timeout";
+		var action = "mgPlayerJSTest2_action:start_step_completion_timeout";
 		var data = {
 			step: stepObj
 		};
@@ -13415,14 +13405,14 @@ function formatAndSendToParentWindow(action, data) {
 	GmCXt.sendToParentWindow(obj);
 }
 
-mg$('.mgPlayerJSProd_play-step-audio-on').off('click').on('click', function() {
+mg$('.mgPlayerJSTest2_play-step-audio-on').off('click').on('click', function() {
 	userPrefAudio = true;
 	GmCXt.stopAudio();
-	formatAndSendToParentWindow('mgPlayerJSProd_action:stop_audio', {});
+	formatAndSendToParentWindow('mgPlayerJSTest2_action:stop_audio', {});
 	setAudioModeOff();
 });
 
-mg$('.mgPlayerJSProd_play-step-audio-off').off('click').on('click', function() {
+mg$('.mgPlayerJSTest2_play-step-audio-off').off('click').on('click', function() {
 	userPrefAudio = true;
 	setAudioModeOn();
 	if (GmCXt.playerI) {
@@ -13437,5 +13427,5 @@ mg$('.mgPlayerJSProd_play-step-audio-off').off('click').on('click', function() {
 });
 
 mg$(document).ready(function() {
-	formatAndSendToParentWindow('mgPlayerJSProd_action:set_style_audio_icon', {});
+	formatAndSendToParentWindow('mgPlayerJSTest2_action:set_style_audio_icon', {});
 });
