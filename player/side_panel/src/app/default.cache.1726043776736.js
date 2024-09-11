@@ -11659,6 +11659,8 @@ GmCXt.updateZIndex = function(zIndex, add) {
 GmCXt.blockMcKessonIFrame = function(frame) {
     if (GmCXt.isMcKesson() && frame.name === "dieCommFrame" && frame.id === 'IFrame') {
         return true;
+    } else if (GmCXt.isMcKesson() && frame && frame.src && frame.src.includes('SpinSciSnap__AgentaSnap')) {
+        return true;
     } else {
         return false;
     }
@@ -13075,7 +13077,8 @@ GmCXt.getAccessToken = function() {
 			RefreshToken: GmCXt.user.refreshtoken
 		},
 		data: {
-			force_update: true
+			force_update: true,
+			mg_source_name: GmCXt.conf.appConfig.customer
 		},
 		method: 'GET'
 	};
@@ -15103,25 +15106,6 @@ GmCXt.trackerV1 = {
 				event_end_time: GmCXt.getCurrentTimeInMilSec(),
 			},
 			url: GmCXt.trackerUtil.page_url || GmCXt.urlParts.fullUrl || pTour.tour_url,
-			screen_size: GmCXt.trackerV1.getScreenSize()
-		};
-
-		var payload = GmCXt.trackerV1.setPayLoad(e);
-		GmCXt.trackerV1.sendPayloadEventCall(payload);
-	},
-
-	trackLogout: function(source) {
-
-		if (GmCXt.trackingDisabled()) return;
-
-		var e = {
-			app_code: GmCXt.trackerV1.getAppCode(),
-			eventName: 'mi_logout',
-			objectId: GmCXt.user.user_key,
-			miscellaneous: {
-				source: source
-			},
-			url: GmCXt.urlParts.fullUrl,
 			screen_size: GmCXt.trackerV1.getScreenSize()
 		};
 
@@ -25409,8 +25393,10 @@ GmCXt.userApiKeySignin = function(data) {
 	var myGuideOrgKey = data.myGuideOrgKey;
 	delete data.myGuideOrgKey;
 
+	var serviceName = 'user/sso/login?mg_source_name=' + GmCXt.conf.appConfig.customer;
+
 	var params = {
-		url: 'user/sso/login',
+		url: serviceName,
 		method: 'POST',
 		headers: {
 			'Content-Type': "application/json",
@@ -25956,7 +25942,7 @@ GmCXt.xhr = function(params, doNotAddWebURL, extApi) {
 			var code = result.code;
 			if (result.error === false) {
 
-				if (params.url === 'user/token') {
+				if (params.url && params.url.indexOf('user/token') !== -1) {
 					result = GmCXt.validateDataModel(result.data, GmCXt.model.userToken);
 				}
 				if (params.onSuccess) {
@@ -26820,7 +26806,7 @@ GmCXt.ruleEngine = (function() {
 		var rules = job.rules;
 		var flag = false;
 
-		job.domRuleRequests = 0;
+		job.domRuleRequests = [];
 
 		if (rules) {
 			var groups = getGroupedRules(rules);
@@ -27618,11 +27604,14 @@ GmCXt.ruleEngine = (function() {
 		var groupId = data.groupId;
 
 		if (job && job.cb && job.tour) {
-
-			job.domRuleRequests++;
-			var count = GmCXt.numberOfDomRules(job.rules);
-
+			if(job.domRuleRequests[groupId]) {
+				job.domRuleRequests[groupId]++;
+			} else {
+				job.domRuleRequests[groupId] = 1;
+			}
+			
 			var groupedRules = getGroupedRules(job.rules);
+			var count = GmCXt.numberOfDomRules(groupedRules[groupId]);
 			var isValidGroup = false;
 
 			if (groupedRules.length) {
@@ -27633,7 +27622,7 @@ GmCXt.ruleEngine = (function() {
 			var printlog = "DOM rules checked.\nRule: " + valid + "; Group: " + isValidGroup;
 			GmCXt.log(6, printlog, groupedRules[groupId]);
 
-			if (isValidGroup || job.domRuleRequests === count) {
+			if (isValidGroup || job.domRuleRequests[groupId] === count) {
 				var isValid = isValidGroup || validateAllGroups(groupedRules);
 				sendResponse(isValid, jobId);
 			}
@@ -31140,6 +31129,10 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
             };
 
             $rootScope.getCategoryApi = function(_catid, cb, forceApi, appId) {
+
+                if(!_catid){
+                    return;
+                }
 
                 var params = {
                     category_id: _catid
@@ -36134,11 +36127,11 @@ function commonApi(AuthLogin, storage, $http, $rootScope, mgError, $timeout) {
 		if (user && user.accesstoken) accessToken = user.accesstoken;
 		if (user && user.refreshtoken) refreshToken = user.refreshtoken;
 
-		if (params.serviceName === 'user/signout' || params.serviceName === 'user/token') {
+		if (params.serviceName && ((params.serviceName.indexOf('user/signout') !== -1) || (params.serviceName.indexOf('user/token') !== -1)) ) {
 
 			headers.RefreshToken = refreshToken;
 
-		} else if (params.serviceName === 'user/sso/login') {
+		} else if (params.serviceName && params.serviceName.indexOf('user/sso/login') !== -1 ) {
 
 			headers.Authorization = params.data.myGuideOrgKey;
 			delete params.data.myGuideOrgKey;
@@ -36325,8 +36318,10 @@ function commonApi(AuthLogin, storage, $http, $rootScope, mgError, $timeout) {
 	};
 
 	pub.userApiKeySignin = function(data, successCb, onFail) {
+		var serviceName = 'user/sso/login?mg_source_name=' + GmCXt.conf.appConfig.customer;
+
 		var params = {
-			serviceName: 'user/sso/login',
+			serviceName: serviceName,
 			method: 'POST',
 			data: data,
 			onSuccess: successCb,
@@ -36377,8 +36372,9 @@ function commonApi(AuthLogin, storage, $http, $rootScope, mgError, $timeout) {
 	};
 
 	pub.userSignOut = function(successCb) {
+		var serviceName = 'user/signout?mg_source_name=' + GmCXt.conf.appConfig.customer;
 		var params = {
-			serviceName: 'user/signout',
+			serviceName: serviceName,
 			method: 'POST',
 			serviceType: '',
 			data: {},
@@ -36451,7 +36447,8 @@ function commonApi(AuthLogin, storage, $http, $rootScope, mgError, $timeout) {
 			method: 'GET',
 			serviceType: "",
 			data: {
-				force_update: true
+				force_update: true,
+				mg_source_name: GmCXt.conf.appConfig.customer
 			}
 		};
 
@@ -39631,36 +39628,12 @@ app.service('logoutService', ['$rootScope', 'api', 'modal', '$state', 'Message',
 				$rootScope.hideCurrentPageGuidesIndicator();
 			}
 
-			if (source === "fromOtherTab") {
-				onSuccess();
-			} else {
+			if(source === "logout_button_click"){
 				api.userSignOut(onSuccess);
+			} else{
+				onSuccess();
 			}
 
-		};
-
-		this.tracker = function(s) {
-
-			var m = {
-				action: "mgPlayerJSTest2_action:user_logout",
-			};
-			GmCXt.sendMessageToBackgroundService(m);
-
-			var currentTime = new Date().getTime();
-
-			if (s && s !== "fromOtherTab") {
-				var data = {
-					sessionTime: $rootScope.loginTime ? currentTime - $rootScope.loginTime : null,
-					source: s
-				};
-
-				var org = GmCXt.organization;
-				if (!GmCXt.isEmpty(GmCXt.conf.analyticsPath) && 
-					(org && org.admin_settings.insights.enabled) &&
-					!GmCXt.isAnonymousUser()) {
-					GmCXt.trackerV1.trackLogout(data);
-				}
-			}
 		};
 
 		this.clearSession = function(s) {
@@ -39678,10 +39651,10 @@ app.service('logoutService', ['$rootScope', 'api', 'modal', '$state', 'Message',
 
 				storage.clearIndexedDb(GmCXt.conf.appName + GmCXt.conf.env + 'DB');
 
-				if (s !== "user")
+				if (s !== "user"){
 					restartLoginInterval = true;
-
-				self.tracker(s);
+				}
+				
 			}
 
 			// Read dual auth token, before clearing storage
@@ -43877,7 +43850,7 @@ app.directive('appHeader', ['$rootScope', '$state', 'storage', 'AuthLogin', 'api
 						startSelectionForAutomation();
 						break;
 					case 'logout':
-						$rootScope.logout();
+						$rootScope.logout('logout_button_click');
 						break;
 					case 'segment':
 						$state.go('segment-creation');

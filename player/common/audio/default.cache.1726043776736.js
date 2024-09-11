@@ -5794,6 +5794,8 @@ GmCXt.updateZIndex = function(zIndex, add) {
 GmCXt.blockMcKessonIFrame = function(frame) {
     if (GmCXt.isMcKesson() && frame.name === "dieCommFrame" && frame.id === 'IFrame') {
         return true;
+    } else if (GmCXt.isMcKesson() && frame && frame.src && frame.src.includes('SpinSciSnap__AgentaSnap')) {
+        return true;
     } else {
         return false;
     }
@@ -8179,6 +8181,10 @@ GmCXt.clearDataOnLogout = function(d) {
 	if (GmCXt.creatorInterval) {
 		clearInterval(GmCXt.creatorInterval);
 	}
+	//Triggering login without delay
+	if(d.instantReLogin) {
+		GmCXt.loginUsingAuthKey();
+	}
 
 	// If player and user was logged in before
 	if (GmCXt.inPlayer && d.startInterval) {
@@ -10291,7 +10297,8 @@ GmCXt.getAccessToken = function() {
 			RefreshToken: GmCXt.user.refreshtoken
 		},
 		data: {
-			force_update: true
+			force_update: true,
+			mg_source_name: GmCXt.conf.appConfig.customer
 		},
 		method: 'GET'
 	};
@@ -10862,8 +10869,10 @@ GmCXt.userApiKeySignin = function(data) {
 	var myGuideOrgKey = data.myGuideOrgKey;
 	delete data.myGuideOrgKey;
 
+	var serviceName = 'user/sso/login?mg_source_name=' + GmCXt.conf.appConfig.customer;
+
 	var params = {
-		url: 'user/sso/login',
+		url: serviceName,
 		method: 'POST',
 		headers: {
 			'Content-Type': "application/json",
@@ -11409,7 +11418,7 @@ GmCXt.xhr = function(params, doNotAddWebURL, extApi) {
 			var code = result.code;
 			if (result.error === false) {
 
-				if (params.url === 'user/token') {
+				if (params.url && params.url.indexOf('user/token') !== -1) {
 					result = GmCXt.validateDataModel(result.data, GmCXt.model.userToken);
 				}
 				if (params.onSuccess) {

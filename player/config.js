@@ -3,7 +3,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.4.3";
+GmCXt.conf.version = "2024.4.4";
 GmCXt.conf.env = "Test2";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -101,7 +101,7 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
+	GmCXt.conf.clientJsBaseUrl = "//qa2-cdn.guideme.io/guideme-player/ent/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://qa2-api.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://qa2-cdn.guideme.io/guideme-assests/";
