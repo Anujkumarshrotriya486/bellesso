@@ -12866,19 +12866,19 @@ GmCXt.getAccessToken = function() {
 
 GmCXt.saveToken = function(r) {
 
-	if (r.data && r.data.accesstoken) {
+	if (r && r.accesstoken) {
 
 		var data = r.data;
 
-		GmCXt.user.accesstoken = data.accesstoken;
-		GmCXt.user.refreshtoken = data.refreshtoken;
+		GmCXt.user.accesstoken = r.accesstoken;
+		GmCXt.user.refreshtoken = r.refreshtoken;
 
-		if (GmCXt.isDefined(data.app_access)) {
-			GmCXt.user.app_access = data.app_access;
+		if (GmCXt.isDefined(r.app_access)) {
+			GmCXt.user.app_access = r.app_access;
 		}
 
-		if (GmCXt.isDefined(data.profile)) {
-			GmCXt.user.profile = data.profile;
+		if (GmCXt.isDefined(r.profile)) {
+			GmCXt.user.profile = r.profile;
 		}
 
 		if (!GmCXt.isBackgroundPage) {
@@ -12888,7 +12888,7 @@ GmCXt.saveToken = function(r) {
 			});
 		}
 
-		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', data, senderTabId);
+		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', r, senderTabId);
 	}
 };
 
@@ -43570,7 +43570,7 @@ GmCXt.getStepCreatorIframe = function() {
 };
 
 GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/src/index_1726043776736.html") + "?domainName=" + GmCXt.getPageDomain();
+	var u = GmCXt.getBaseUrl("side_panel/src/index_1726053765755.html") + "?domainName=" + GmCXt.getPageDomain();
 	var aria_hidden = "aria-hidden = 'true' tabindex = '-1'";
 	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel mgPlayerJSTest2_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSTest2_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSTest2_theme-mplayer' : '') + "' " + aria_hidden + ">";
 
@@ -61992,7 +61992,7 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1726043776736.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1726053765755.css');
 })();
 (function() {
 	function load(cssId, path) {
@@ -62008,5 +62008,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1726043776736.css');
+	load('guideme-clientjs-css', 'content_script/worker/css/style_1726053765755.css');
 })();

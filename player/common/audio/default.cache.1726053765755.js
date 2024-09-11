@@ -10307,19 +10307,19 @@ GmCXt.getAccessToken = function() {
 
 GmCXt.saveToken = function(r) {
 
-	if (r.data && r.data.accesstoken) {
+	if (r && r.accesstoken) {
 
 		var data = r.data;
 
-		GmCXt.user.accesstoken = data.accesstoken;
-		GmCXt.user.refreshtoken = data.refreshtoken;
+		GmCXt.user.accesstoken = r.accesstoken;
+		GmCXt.user.refreshtoken = r.refreshtoken;
 
-		if (GmCXt.isDefined(data.app_access)) {
-			GmCXt.user.app_access = data.app_access;
+		if (GmCXt.isDefined(r.app_access)) {
+			GmCXt.user.app_access = r.app_access;
 		}
 
-		if (GmCXt.isDefined(data.profile)) {
-			GmCXt.user.profile = data.profile;
+		if (GmCXt.isDefined(r.profile)) {
+			GmCXt.user.profile = r.profile;
 		}
 
 		if (!GmCXt.isBackgroundPage) {
@@ -10329,7 +10329,7 @@ GmCXt.saveToken = function(r) {
 			});
 		}
 
-		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', data, senderTabId);
+		GmCXt.msgToApp('mgPlayerJSTest2_action:update_access_token', r, senderTabId);
 	}
 };
 
