@@ -28,7 +28,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.4.4";
+GmCXt.conf.version = "2024.4.4.1";
 GmCXt.conf.env = "Test2";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -10464,8 +10464,6 @@ GmCXt.getAccessToken = function() {
 GmCXt.saveToken = function(r) {
 
 	if (r && r.accesstoken) {
-
-		var data = r.data;
 
 		GmCXt.user.accesstoken = r.accesstoken;
 		GmCXt.user.refreshtoken = r.refreshtoken;
@@ -41490,5 +41488,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1726053765755.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1726056086801.css');
 })();

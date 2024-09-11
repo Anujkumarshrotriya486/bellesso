@@ -10309,8 +10309,6 @@ GmCXt.saveToken = function(r) {
 
 	if (r && r.accesstoken) {
 
-		var data = r.data;
-
 		GmCXt.user.accesstoken = r.accesstoken;
 		GmCXt.user.refreshtoken = r.refreshtoken;
 
