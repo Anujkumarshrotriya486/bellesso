@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "//stagecdn.guideme.io/guideme-player/ent/";
+	guideMe.baseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
@@ -22,13 +22,13 @@ function getScript(source, callback) {
 
 function getScriptCB() {
 
-	GmPXtTest.conf.baseUrl = guideMe.baseUrl;
+	GmCXt.conf.baseUrl = guideMe.baseUrl;
 	var a = document.createElement('script');
 
-	if (GmPXtTest.conf.allowedDomains && GmPXtTest.conf.allowedDomains.length && window.location.hostname.length > 0) {
+	if (GmCXt.conf.allowedDomains && GmCXt.conf.allowedDomains.length && window.location.hostname.length > 0) {
 		var foundDomain = false;
-		for (var i = 0; i < GmPXtTest.conf.allowedDomains.length; i++) {
-			if (window.location.hostname.indexOf(GmPXtTest.conf.allowedDomains[i]) >= 0) {
+		for (var i = 0; i < GmCXt.conf.allowedDomains.length; i++) {
+			if (window.location.hostname.indexOf(GmCXt.conf.allowedDomains[i]) >= 0) {
 				foundDomain = true;
 				break;
 			}
@@ -43,9 +43,9 @@ function getScriptCB() {
 
 	function loadGuideMeClientFiles() {
 		if (window.self === window.top) {
-			a.src = GmPXtTest.conf.baseUrl + 'gm_client.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_1726563494049.js';
 		} else {
-			a.src = GmPXtTest.conf.baseUrl + 'gm_client_iframe.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1726563494049.js';
 		}
 		document.head.appendChild(a);
 	}
