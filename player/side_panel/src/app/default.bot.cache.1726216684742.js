@@ -16,7 +16,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		$scope.allBotGuides = [];
 		$scope.ansData = [];
 
-		GmCXt.reduceSidePanel();
+		GmPXtTest.reduceSidePanel();
 
 		$rootScope.toggleChaticon(0);
 
@@ -36,7 +36,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		var currentBSPageIndex = -1;
 		var conversationRespData = [];
 
-		var as = GmCXt.getAppSetting();
+		var as = GmPXtTest.getAppSetting();
 		if (!$rootScope.chatLabels) $rootScope.setDefaultChatLabels();
 		$rootScope.getChatLabels(as.chatLabels);
 
@@ -54,7 +54,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 
 		$scope.onloadchat = function() {
 			$rootScope.botTourPlayList = [];
-			GmCXt.storage().remove(['botTourPlayList']);
+			GmPXtTest.storage().remove(['botTourPlayList']);
 
 			showMsg("", $rootScope.chatLabels.greetingMessage, "animated fadeInLeft", 0)
 				.then(function() {
@@ -75,16 +75,16 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 			function cb(ps) {
 				if (!ts.length) return;
 				currentTour.tour_settings.play_structure = ps;
-				GmCXt.concatLinkGuideSteps(ts, currentTour, nstep.step_id, finalcb);
+				GmPXtTest.concatLinkGuideSteps(ts, currentTour, nstep.step_id, finalcb);
 			}
 
 			var d = {
 				tour_id: nstep.step_settings.tour_id
 			};
-			if (GmCXt.apiPlayer) {
+			if (GmPXtTest.apiPlayer) {
 				d.forceJSONApi = true;
 			}
-			GmCXt.getSteps(d).then(function(tour) {
+			GmPXtTest.getSteps(d).then(function(tour) {
 				if (!tour) {
 					return;
 				}
@@ -93,7 +93,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 					playStructure: currentTour.tour_settings.play_structure
 				};
 				ts = tour.steps;
-				GmCXt.updatePlayStructureLinkGuide(tour, playerInstance, cb);
+				GmPXtTest.updatePlayStructureLinkGuide(tour, playerInstance, cb);
 			});
 		};
 
@@ -111,9 +111,9 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		};
 
 		$scope.showNextBotStep = function(step) {
-			var nextStepId = GmCXt.getTail(step.step_id, currentTour.tour_settings.play_structure, null, currentTour);
+			var nextStepId = GmPXtTest.getTail(step.step_id, currentTour.tour_settings.play_structure, null, currentTour);
 			if (nextStepId) {
-				var nstep = GmCXt.getNextBotStepFromTour(nextStepId, currentTour);
+				var nstep = GmPXtTest.getNextBotStepFromTour(nextStepId, currentTour);
 				if (nstep) {
 					$scope.showBotStepQuestion(currentTour.steps, nstep.step_id);
 				} else {
@@ -138,7 +138,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		$scope.getSurveyQuestion = function(tour) {
 			var data = {};
 			data.conversation = tour.tour_settings.conversation;
-			GmCXt.requestHandler.handleGetBotConvDetail(data, function(res) {
+			GmPXtTest.requestHandler.handleGetBotConvDetail(data, function(res) {
 				surveyQuestionCount = res.data.questions.length;
 				surveyQList = res.data.questions;
 				surveyQuestionIndex++;
@@ -160,7 +160,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 						!surveyBranchNodes.includes((surveyQList[surveyQuestionIndex + 1].pageIndex)))) {
 					surveyQuestionIndex++;
 					$scope.showSurveyQuestion(surveyQList, tour);
-				} else if (GmCXt.isEmpty(surveyBranchNodes)) {
+				} else if (GmPXtTest.isEmpty(surveyBranchNodes)) {
 					surveyQuestionIndex++;
 					$scope.showSurveyQuestion(surveyQList, tour);
 				} else {
@@ -244,12 +244,12 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 						});
 
 
-						showActionButton("mgPlayerJSTest2_multi", "animated fadeInRight", optList, 200)
+						showActionButton("mgPlayerExtChromeTest_multi", "animated fadeInRight", optList, 200)
 							.then(function(o) {
 								var optionStr = "";
 								if (o && o.length) {
 									for (var i = 0; i < o.length; i++) {
-										if (GmCXt.isEmpty(optionStr)) {
+										if (GmPXtTest.isEmpty(optionStr)) {
 											optionStr = o[i].option;
 										} else {
 											optionStr = optionStr + " , " + o[i].option;
@@ -340,7 +340,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 			var optList = [];
 			for (var i = question.options[0]; i <= question.options[1]; i++) {
 				optList.push({
-					id: 'mgPlayerJSTest2_rate-' + i,
+					id: 'mgPlayerExtChromeTest_rate-' + i,
 					text: '&#9733;',
 					value: i,
 					cssClass: "animated fadeInRight uilb-button-opt-range"
@@ -350,17 +350,17 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		};
 
 		$scope.addRateAnswer = function(question, ans) {
-			var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_rating' style='font-size:20px;'>";
+			var html = "<wmgPlayerExtChromeTest_ class='mgPlayerExtChromeTest_rating' style='font-size:20px;'>";
 
 			for (var i = question.options[0]; i <= question.options[1]; i++) {
-				var className = "mgPlayerJSTest2_lbl-btn mgPlayerJSTest2_stars-rate";
+				var className = "mgPlayerExtChromeTest_lbl-btn mgPlayerExtChromeTest_stars-rate";
 				if (i < parseInt(ans) + 1) {
-					html += "<button class='" + className + "' id='mgPlayerJSTest2_rate-" + i + "' aria-label='rate' >&#9733;</button>";
+					html += "<button class='" + className + "' id='mgPlayerExtChromeTest_rate-" + i + "' aria-label='rate' >&#9733;</button>";
 				} else {
-					html += "<button class='" + className + "' id='mgPlayerJSTest2_rate-" + i + "' aria-label='rate' >&#9734;</button>";
+					html += "<button class='" + className + "' id='mgPlayerExtChromeTest_rate-" + i + "' aria-label='rate' >&#9734;</button>";
 				}
 			}
-			html += "</wmgPlayerJSTest2_>";
+			html += "</wmgPlayerExtChromeTest_>";
 
 			return html;
 		};
@@ -391,7 +391,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 								$scope.updateStepInCurrentTour(bstep, res);
 								showHumanMsg(res.branchName).then(function() {
 									if (tailStepId) {
-										var tailStep = GmCXt.getNextBotStepFromTour(tailStepId, currentTour);
+										var tailStep = GmPXtTest.getNextBotStepFromTour(tailStepId, currentTour);
 										if (tailStep) {
 											$scope.showBotStepQuestion(currentTour.steps, tailStep.step_id);
 										} else {
@@ -426,9 +426,10 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 				var stext = txtsearch.value;
 				if (txtsearch.tag && typeof(txtsearch.tag) !== "object" && txtsearch.tag.indexOf("comment_") !== -1 && stext) {
 					var tId = txtsearch.tag.replace("comment_", "");
-					//var s = GmCXt.getStepFromTourData(stepId, currentTour);
+					//var s = GmPXtTest.getStepFromTourData(stepId, currentTour);
 					if (isValidate) {
-						if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(stext)) {
+						var emailRegex = /^(?!\.)(?!.*\.\.)([A-Z0-9_'+\-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,3}$/i;
+						if (emailRegex.test(stext)) {
 							stext = txtsearch.value;
 						} else {
 							stext = $rootScope.labels.emailError;
@@ -460,7 +461,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 					showHumanMsg(stext)
 						.then(function(r) {
 							$scope.updateStepInCurrentTour(step, stext);
-							if (GmCXt.isLastStep(step.step_id, currentTour.tour_settings.play_structure)) {
+							if (GmPXtTest.isLastStep(step.step_id, currentTour.tour_settings.play_structure)) {
 								$scope.endMessage();
 							} else {
 								$scope.showNextBotStep(step);
@@ -545,14 +546,14 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 									category_id: currentTour.category_id
 								};
 
-								if (!GmCXt.checkDefaultLangForTour(res, $scope.lang)) {
+								if (!GmPXtTest.checkDefaultLangForTour(res, $scope.lang)) {
 									params.language = $scope.lang;
 								}
 
 								api.getTour(params, function(t) {
 									currentTour = t;
-									if (!GmCXt.containBranchStep(currentTour)) {
-										currentTour.tour_settings.play_structure = GmCXt.buildGuidePlayStructure(currentTour);
+									if (!GmPXtTest.containBranchStep(currentTour)) {
+										currentTour.tour_settings.play_structure = GmPXtTest.buildGuidePlayStructure(currentTour);
 									}
 									if ($rootScope.isBotGuide(currentTour)) {
 										$scope.getSurveyQuestion(currentTour);
@@ -577,7 +578,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 			} else {
 				botStepId = steps[0].step_id;
 			}
-			botStep = GmCXt.getStepFromTourData(botStepId, currentTour);
+			botStep = GmPXtTest.getStepFromTourData(botStepId, currentTour);
 
 			if (botStep && botStep.step_settings && botStep.step_settings.automation &&
 				botStep.step_settings.automation.enableBot &&
@@ -590,7 +591,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 					$scope.showSelectOption(ques, ss.element.elOptions, botStep);
 				} else if (ss.branch && ss.branch.length > 0) {
 					$scope.showBranchQuestions(ques, ss.branch, botStep);
-				} else if (botStep.step_type !== GmCXt.STEP_TYPE_GUIDE) {
+				} else if (botStep.step_type !== GmPXtTest.STEP_TYPE_GUIDE) {
 					showMsg("", ques, "animated fadeInLeft", 0)
 						.then(function() {
 							uilb.action({
@@ -601,16 +602,16 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 							});
 						});
 				}
-			} else if (botStep.step_type === GmCXt.STEP_TYPE_GUIDE) {
+			} else if (botStep.step_type === GmPXtTest.STEP_TYPE_GUIDE) {
 				$scope.showLinkGuideQuestion(botStep, function(lstep) {
 					$scope.showBotStepQuestion(currentTour.steps, lstep.step_id);
 				});
 			} else if (currentTour.tour_type.includes("onboarding_tour")) {
-				if (!GmCXt.isEmpty(botStep.step_settings.tutorialUploadUrl) &&
+				if (!GmPXtTest.isEmpty(botStep.step_settings.tutorialUploadUrl) &&
 					currentTour.tour_settings.tutorial_tour_type === "upload") {
 					var tutUrl = botStep.step_settings.tutorialUploadUrl;
-					if (tutUrl.indexOf(GmCXt.conf.cdnStorage) !== -1) {
-						tutUrl = botStep.step_settings.tutorialUploadUrl + GmCXt.getCdnSign();
+					if (tutUrl.indexOf(GmPXtTest.conf.cdnStorage) !== -1) {
+						tutUrl = botStep.step_settings.tutorialUploadUrl + GmPXtTest.getCdnSign();
 					}
 					showMsg("", "<a alt='' href='" + tutUrl + "' target='_blank' >" + botStep.step_settings.tutorialUploadUrl + "</a> ", "animated fadeInLeft", 0, true)
 						.then(function() {
@@ -619,26 +620,26 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 
 				} else {
 
-					var tutInlineHtml = "<div class='mgPlayerJSTest2_chat-tg-content-wrapper'>";
+					var tutInlineHtml = "<div class='mgPlayerExtChromeTest_chat-tg-content-wrapper'>";
 
 					var stepText = "";
 
 					if (botStep.step_description) {
-						stepText = GmCXt.replaceVariableWithValue(GmCXt.updateOrgAndAddSignature(botStep.step_description));
+						stepText = GmPXtTest.replaceVariableWithValue(GmPXtTest.updateOrgAndAddSignature(botStep.step_description));
 					}
 
 					if (botStep && botStep.step_video > 0 && botStep.step_video_url) {
-						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-guide-info-wrapper mgPlayerJSTest2_video-info-wrapper'>" +
+						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerExtChromeTest_chat-guide-info-wrapper mgPlayerExtChromeTest_video-info-wrapper'>" +
 							"<video controls autoplay controlsList='nodownload' disablePictureInPicture >" +
-							"<source src='" + botStep.step_video_url + GmCXt.getCdnSign() + "' type='video/mp4'>" +
+							"<source src='" + botStep.step_video_url + GmPXtTest.getCdnSign() + "' type='video/mp4'>" +
 							"</video></div>";
 
 					} else if (botStep && botStep.image_url.indexOf('default') < 0) {
-						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-info-wrapper mgPlayerJSTest2_img-info-wrapper'>" +
-							"<img class='mgPlayerJSTest2_chat-tg-image' src='" + botStep.image_url + GmCXt.getCdnSign() + "' /></div>";
+						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerExtChromeTest_chat-info-wrapper mgPlayerExtChromeTest_img-info-wrapper'>" +
+							"<img class='mgPlayerExtChromeTest_chat-tg-image' src='" + botStep.image_url + GmPXtTest.getCdnSign() + "' /></div>";
 					}
 
-					tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-tg-step-content' > " + stepText + " </div>" +
+					tutInlineHtml = tutInlineHtml + "<div class='mgPlayerExtChromeTest_chat-tg-step-content' > " + stepText + " </div>" +
 						"</div>";
 
 
@@ -647,10 +648,10 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 						$scope.showNextBotStep(botStep);
 					});
 				}
-			} else if (GmCXt.isLastStep(botStep.step_id, currentTour.tour_settings.play_structure)) {
+			} else if (GmPXtTest.isLastStep(botStep.step_id, currentTour.tour_settings.play_structure)) {
 				$scope.endMessage();
 			} else if (botStep) {
-				var nstep = GmCXt.getNextBotStepFromTour(botStep.step_id, currentTour);
+				var nstep = GmPXtTest.getNextBotStepFromTour(botStep.step_id, currentTour);
 				if (nstep) {
 					$scope.showBotStepQuestion(currentTour.steps, nstep.step_id);
 				} else {
@@ -733,15 +734,15 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 							$rootScope.botTourPlayList.push(currentTour);
 							if (!$rootScope.$$phase) $rootScope.$apply();
 							//store bot tour list;
-							GmCXt.storage().set({
+							GmPXtTest.storage().set({
 								"botTourPlayList": $rootScope.botTourPlayList
 							});
 
 							if ($rootScope.isOnboarding(currentTour) &&
 								$rootScope.isUploadTutorial(currentTour)) {
-								GmCXt.trackerV1.trackTutGuide(currentTour, "upload_tutorial_guide_new_tab", "bot");
+								GmPXtTest.trackerV1.trackTutGuide(currentTour, "upload_tutorial_guide_new_tab", "bot");
 							} else if ($rootScope.isOnboarding(currentTour)) {
-								GmCXt.trackerV1.trackTutGuide(currentTour, "create_tutorial_guide", "bot");
+								GmPXtTest.trackerV1.trackTutGuide(currentTour, "create_tutorial_guide", "bot");
 							}
 
 							if ($rootScope.isBotGuide(currentTour)) {
@@ -751,7 +752,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 									conversationCode: currentTour.tour_settings.conversation.conversationCode
 								};
 
-								GmCXt.trackerV1.trackConversationResponse($scope.ansData, idata);
+								GmPXtTest.trackerV1.trackConversationResponse($scope.ansData, idata);
 							}
 
 
@@ -801,9 +802,9 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 			var firstStep;
 
 			if (stepId) {
-				firstStep = GmCXt.getStepFromTourData(stepId, currentTour);
+				firstStep = GmPXtTest.getStepFromTourData(stepId, currentTour);
 			} else {
-				firstStep = GmCXt.getStepFromTourData(ps[0].id, currentTour);
+				firstStep = GmPXtTest.getStepFromTourData(ps[0].id, currentTour);
 			}
 
 
@@ -813,9 +814,9 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 
 			if (firstStep.step_type !== "branch") {
 				for (var i = 0; i < ps.length; i++) {
-					var nextStepId = GmCXt.getTail(seedStepID, ps, null, currentTour);
+					var nextStepId = GmPXtTest.getTail(seedStepID, ps, null, currentTour);
 					if (nextStepId) {
-						stepToPush = GmCXt.getStepFromTourData(nextStepId, currentTour);
+						stepToPush = GmPXtTest.getStepFromTourData(nextStepId, currentTour);
 						if (stepToPush) {
 							seedStepID = stepToPush.step_id;
 							steps.push(stepToPush);
@@ -836,7 +837,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		};
 
 		$scope.getBotGuides = function() {
-			var res = $rootScope.readLocalCT($rootScope.pageUrl, GmCXt.pageTitle);
+			var res = $rootScope.readLocalCT($rootScope.pageUrl, GmPXtTest.pageTitle);
 			if (res && res.length) {
 				$scope.allBotGuides = res;
 				$scope.processBotGuides(res);
@@ -845,7 +846,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 					url: $rootScope.pageUrl
 				};
 				api.getContextualTour(param, function(r) {
-					GmCXt.log(30, "FETCHED tours from API");
+					GmPXtTest.log(30, "FETCHED tours from API");
 					res = $rootScope.processContextualGuide(r, param.url);
 					$scope.allBotGuides = res;
 					$scope.processBotGuides(res);
@@ -877,7 +878,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 				} else if ($rootScope.botTourPlayList) {
 					tl = $rootScope.botTourPlayList;
 				}
-				GmCXt.trackerV1.trackBotInteraction(tl);
+				GmPXtTest.trackerV1.trackBotInteraction(tl);
 			}
 		};
 

@@ -1,78 +1,78 @@
-if (GmCXt === undefined) {
-	var GmCXt = {};
+if (GmPXtTest === undefined) {
+	var GmPXtTest = {};
 }
 
-GmCXt.conf = {};
-GmCXt.conf.version = "2024.4.4.1";
-GmCXt.conf.env = "Test2";
+GmPXtTest.conf = {};
+GmPXtTest.conf.version = "2024.5.0";
+GmPXtTest.conf.env = "Test";
 
-GmCXt.conf.creatorApp = 'mgExt';
-GmCXt.conf.playerApp = 'mgPlayer';
-GmCXt.conf.creatorJS = 'mgCreator';
-GmCXt.conf.appName = "mgPlayer";
+GmPXtTest.conf.creatorApp = 'mgExt';
+GmPXtTest.conf.playerApp = 'mgPlayer';
+GmPXtTest.conf.creatorJS = 'mgCreator';
+GmPXtTest.conf.appName = "mgPlayer";
 
-GmCXt.conf.allowedDomains = [];
-GmCXt.conf.autologin = false;
-GmCXt.conf.appTypeExt = 'Extension';
-GmCXt.conf.appTypeScript = 'JScript';
-GmCXt.conf.appTypeElectron = 'electron';
-GmCXt.conf.Premise = 'Premise';
-GmCXt.conf.runEnv = "browser";
-GmCXt.conf.msgPrefix = "mgPlayerJSTest2_";
+GmPXtTest.conf.allowedDomains = [];
+GmPXtTest.conf.autologin = false;
+GmPXtTest.conf.appTypeExt = 'Extension';
+GmPXtTest.conf.appTypeScript = 'JScript';
+GmPXtTest.conf.appTypeElectron = 'electron';
+GmPXtTest.conf.Premise = 'Premise';
+GmPXtTest.conf.runEnv = "browser";
+GmPXtTest.conf.msgPrefix = "mgPlayerExtChromeTest_";
 
-GmCXt.conf.showWidget = false;
+GmPXtTest.conf.showWidget = false;
 
-GmCXt.conf.playerExtension = GmCXt.conf.playerApp + GmCXt.conf.appTypeExt;
-GmCXt.conf.playerJS = GmCXt.conf.playerApp + GmCXt.conf.appTypeScript;
+GmPXtTest.conf.playerExtension = GmPXtTest.conf.playerApp + GmPXtTest.conf.appTypeExt;
+GmPXtTest.conf.playerJS = GmPXtTest.conf.playerApp + GmPXtTest.conf.appTypeScript;
 
-GmCXt.conf.websiteUrl = "https://myguide.org";
-GmCXt.conf.privacyPolicyUrl = "https://www.edcast.com/corp/privacy-policy/";
-GmCXt.conf.termsURL = "https://www.edcast.com/corp/terms-of-service/";
-GmCXt.conf.feedbackDetails = "mailto:support@csod.com?Subject=MyGuide Feedback";
-GmCXt.conf.adminEmail = "<a href='mailto:admin@edcast.com' target='_top'>admin@edcast.com</a>";
-GmCXt.conf.hideCaptcha = "";
+GmPXtTest.conf.websiteUrl = "https://myguide.org";
+GmPXtTest.conf.privacyPolicyUrl = "https://www.edcast.com/corp/privacy-policy/";
+GmPXtTest.conf.termsURL = "https://www.edcast.com/corp/terms-of-service/";
+GmPXtTest.conf.feedbackDetails = "mailto:support@csod.com?Subject=MyGuide Feedback";
+GmPXtTest.conf.adminEmail = "<a href='mailto:admin@edcast.com' target='_top'>admin@edcast.com</a>";
+GmPXtTest.conf.hideCaptcha = "";
 
 try {
 	chrome.runtime.onMessage.addListener(function() {
 		return true;
 	});
-	GmCXt.conf.appType = GmCXt.conf.appTypeExt;
+	GmPXtTest.conf.appType = GmPXtTest.conf.appTypeExt;
 } catch (e) {
 	try {
 		var uri = safari.extension.baseURI;
 		if (uri !== null) {
-			GmCXt.conf.appType = GmCXt.conf.appTypeExt;
+			GmPXtTest.conf.appType = GmPXtTest.conf.appTypeExt;
 		}
 	} catch (e2) {
-		GmCXt.conf.appType = GmCXt.conf.appTypeScript;
+		GmPXtTest.conf.appType = GmPXtTest.conf.appTypeScript;
 	}
 }
 
 // Default true, guideme icon will be visible on all urls. 
 // If false, guideme icon will only be visible on urls where user have created tours. 
 
-GmCXt.conf.allUrls = true;
+GmPXtTest.conf.allUrls = true;
 
-GmCXt.conf.provider = "playerApi";
+GmPXtTest.conf.provider = "Cdn";
 
-GmCXt.conf.storageUrl = "";
+GmPXtTest.conf.storageUrl = "";
 
-GmCXt.setOnPremise = function() {
+GmPXtTest.setOnPremise = function() {
 
 	function apply(p) {
-		if (p.apiSecrret) GmCXt.conf.apiSecrret = p.apiSecrret;
-		if (p.apiUrl) GmCXt.conf.webServiceUrl = p.apiUrl;
-		if (p.analyticsUrl) GmCXt.conf.analyticsPath = p.analyticsUrl;
-		if (p.cdnUrl) GmCXt.conf.staticContentPath = p.cdnUrl;
-		if (p.webPortal) GmCXt.conf.webPortalUrl = p.webPortal;
-		if (p.analyticsPortal) GmCXt.conf.analyticsPortalUrl = p.analyticsPortal;
-		if (p.assetPath) GmCXt.conf.staticContentPath = p.assetPath;
+		if (p.apiSecrret) GmPXtTest.conf.apiSecrret = p.apiSecrret;
+		if (p.apiUrl) GmPXtTest.conf.webServiceUrl = p.apiUrl;
+		if (p.analyticsUrl) GmPXtTest.conf.analyticsPath = p.analyticsUrl;
+		if (p.cdnUrl) GmPXtTest.conf.staticContentPath = p.cdnUrl;
+		if (p.webPortal) GmPXtTest.conf.webPortalUrl = p.webPortal;
+		if (p.analyticsPortal) GmPXtTest.conf.analyticsPortalUrl = p.analyticsPortal;
+		if (p.assetPath) GmPXtTest.conf.staticContentPath = p.assetPath;
 	}
 
-	if (GmCXt.conf.appName === GmCXt.conf.creatorApp) {
+	if (GmPXtTest.conf.appName === GmPXtTest.conf.creatorApp) {
 
-		if (GmCXt.onPremise) {
-			apply(GmCXt.onPremise);
+		if (GmPXtTest.onPremise) {
+			apply(GmPXtTest.onPremise);
 		} else {
 			chrome.storage.sync.get({
 				onPrem_appKey: '',
@@ -98,39 +98,39 @@ GmCXt.setOnPremise = function() {
 	}
 };
 
-GmCXt.setConfig = function() {
-	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
-	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "//qa2-cdn.guideme.io/guideme-player/ent/";
-	GmCXt.conf.chromeExtensionUrl = "";
-	GmCXt.conf.webServiceUrl = "https://qa2-api.guideme.io/v3/";
-	GmCXt.conf.staticContentPath = "https://qa2-cdn.guideme.io/guideme-assests/";
-	GmCXt.conf.webPortalUrl = "https://qa2-admin.guideme.io/";
-	GmCXt.conf.analyticsPath = "https://qa2-insightsapi.guideme.io/";
-	GmCXt.conf.analyticsPortalUrl = "https://qa2-insights.guideme.io/";
+GmPXtTest.setConfig = function() {
+	GmPXtTest.conf.apiSecrret = "TESTAUTHKEY";
+	GmPXtTest.conf.orgSecrret = "";
+	GmPXtTest.conf.clientJsBaseUrl = "//stagecdn.guideme.io/guideme-player/ent/";
+	GmPXtTest.conf.chromeExtensionUrl = "";
+	GmPXtTest.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
+	GmPXtTest.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
+	GmPXtTest.conf.webPortalUrl = "https://qa-admin.myguide.org/";
+	GmPXtTest.conf.analyticsPath = "https://analytics-qa.guideme.io/";
+	GmPXtTest.conf.analyticsPortalUrl = "https://analytics-qa.myguide.org/";
 
-	GmCXt.conf.cdnStorage = "https://qa2-cdn.guideme.io/";
-	GmCXt.conf.jsonStorageUrl = "https://qa2-mycdn.guideme.io/";
+	GmPXtTest.conf.cdnStorage = "https://stagecdn.guideme.io/";
+	GmPXtTest.conf.jsonStorageUrl = "https://stage-mycdn.guideme.io/";
 	
-	GmCXt.conf.ssoRedirectionUrl = "https://qa2-sso.guideme.io/saml2/sp/sso/";
-	GmCXt.conf.ssoApiUrl = "https://qa2-sso.guideme.io/saml2/sp/session/";
-	GmCXt.conf.ssoConfigUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/objects/";
+	GmPXtTest.conf.ssoRedirectionUrl = "https://qa-sso.guideme.io/saml2/sp/sso/";
+	GmPXtTest.conf.ssoApiUrl = "https://qa-sso.guideme.io/saml2/sp/session/";
+	GmPXtTest.conf.ssoConfigUrl = "https://stagecdn.guideme.io/guideme-auth-qa/objects/";
 
-	GmCXt.conf.paymentEndPoint = "";
+	GmPXtTest.conf.paymentEndPoint = "";
 
-	GmCXt.setOnPremise();
+	GmPXtTest.setOnPremise();
 };
 
-GmCXt.setConfig();
+GmPXtTest.setConfig();
 
 (function() {
-	if (GmCXt.conf.appType === GmCXt.conf.appTypeExt) {
+	if (GmPXtTest.conf.appType === GmPXtTest.conf.appTypeExt) {
 
 		var root = '';
 
-		if (GmCXt.browserApp === 'Safari') {
+		if (GmPXtTest.browserApp === 'Safari') {
 			root = safari.extension.baseURI;
-		} else if (GmCXt.browserApp === 'firefox' ) {
+		} else if (GmPXtTest.browserApp === 'firefox' ) {
 
 			root = chrome.extension.getURL('');
 
@@ -141,7 +141,7 @@ GmCXt.setConfig();
 
 })();
 
-GmCXt.conf.appConfig = {
+GmPXtTest.conf.appConfig = {
 	login: { guideme: 1, forgotPass: 1 },
 	requireLogin: true,
 	tourViewOptions: { showMe:1, testme:1, audio:1 },

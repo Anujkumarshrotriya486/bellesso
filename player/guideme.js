@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "//qa2-cdn.guideme.io/guideme-player/ent/";
+	guideMe.baseUrl = "//stagecdn.guideme.io/guideme-player/ent/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
@@ -22,13 +22,13 @@ function getScript(source, callback) {
 
 function getScriptCB() {
 
-	GmCXt.conf.baseUrl = guideMe.baseUrl;
+	GmPXtTest.conf.baseUrl = guideMe.baseUrl;
 	var a = document.createElement('script');
 
-	if (GmCXt.conf.allowedDomains && GmCXt.conf.allowedDomains.length && window.location.hostname.length > 0) {
+	if (GmPXtTest.conf.allowedDomains && GmPXtTest.conf.allowedDomains.length && window.location.hostname.length > 0) {
 		var foundDomain = false;
-		for (var i = 0; i < GmCXt.conf.allowedDomains.length; i++) {
-			if (window.location.hostname.indexOf(GmCXt.conf.allowedDomains[i]) >= 0) {
+		for (var i = 0; i < GmPXtTest.conf.allowedDomains.length; i++) {
+			if (window.location.hostname.indexOf(GmPXtTest.conf.allowedDomains[i]) >= 0) {
 				foundDomain = true;
 				break;
 			}
@@ -43,9 +43,9 @@ function getScriptCB() {
 
 	function loadGuideMeClientFiles() {
 		if (window.self === window.top) {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_1726056086801.js';
+			a.src = GmPXtTest.conf.baseUrl + 'gm_client.js';
 		} else {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1726056086801.js';
+			a.src = GmPXtTest.conf.baseUrl + 'gm_client_iframe.js';
 		}
 		document.head.appendChild(a);
 	}
