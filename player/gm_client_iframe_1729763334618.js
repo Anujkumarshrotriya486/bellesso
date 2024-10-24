@@ -28,7 +28,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.5.0";
+GmCXt.conf.version = "2024.6.0";
 GmCXt.conf.env = "Test";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -362,6 +362,26 @@ GmCXt.DATE_RANGE = 'Date Range';
 GmCXt.IS_VALID = 'Get Validity';
 GmCXt.VISIBLE = 'Visible';
 GmCXt.NOT_VISIBLE = 'Not Visible';
+
+GmCXt.iframePorts = {};
+GmCXt.iframeEls = {};
+GmCXt.msgChannel = new MessageChannel();
+
+GmCXt.startMsgChannel = function(initiator) {
+    window.top.postMessage(initiator, '*', [GmCXt.msgChannel.port2]);
+};
+
+GmCXt.globalMsgData = {};
+
+GmCXt.getEmbedCode = function() {
+    var embedCode = "if(!window.guideMe)window.guideMe={}; " +
+        "window.guideMe.baseUrl='" + GmCXt.conf.clientJsBaseUrl + "';" +
+        "var a=document.createElement('script');" +
+        "a.src=guideMe.baseUrl+'guideme.js';" +
+        "document.head.appendChild(a);";
+
+    return embedCode;
+};
 
 GmCXt.getHostnameFromUrl = function(url) {
     if (url) {
@@ -1095,11 +1115,11 @@ GmCXt.sendToParentWindow = function(m) {
             delete m.data.fromSidePanel;
         }
     }
-    parent.postMessage(GmCXt.formatMsg(m), "*");
+    GmCXt.msgChannel.port1.postMessage(GmCXt.formatMsg(m));
 };
 
 GmCXt.msgToThisWin = function(m) {
-    window.postMessage(GmCXt.formatMsg(m), "*");
+    GmCXt.msgChannel.port1.postMessage(GmCXt.formatMsg(m));
 };
 
 GmCXt.handleError = function(apiName) {
@@ -3272,10 +3292,7 @@ GmCXt.syncPlayerInst = function(m) {
         m === "mgPlayerJSTest_action:click; on:mgPlayerJSTest_slideshow-close" ||
         m === "mgPlayerJSTest_action:mark_auto_tour_donotshow" ||
         m === "mgPlayerJSTest_action:update_player_instance_app" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_off" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_on" ||
-        m === "mgPlayerJSTest_action:close_guide" ||
-        m === "mgPlayerJSTest_action:set_style_audio_icon_response") {
+        m === "mgPlayerJSTest_action:close_guide") {
         return true;
     } else {
         return false;
@@ -4795,16 +4812,12 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
     GmCXt.beaconsOnScreen = [];
 
     if (!isLogout) {
-        GmCXt.closePowerForm();
+        GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_power_form", {});
     }
 
     GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:forward;remove_active_smarttip_beacon', {
         idList: idList
     });
-};
-
-GmCXt.closePowerForm = function() {
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_power_form", {});
 };
 
 GmCXt.closeAppPanel = function() {
@@ -5384,52 +5397,54 @@ GmCXt.checkGuidesBasedOnSegment = function(tours, cb, from) {
 
     var totalTours = tours.length;
 
-    function checkTourSegment() {
+    function checkTourSegment(s_id) {
         tours.forEach(function(tour) {
 
             GmCXt.log(68, "Check Segments in Tour: " + GmCXt.tourLog(tour));
 
             var isSegmentValid = false;
             var segments = tour.tour_settings.segment_groups;
-            for (var i = 0; i < segments.length; i++) { // For each segmentation added
-                if (GmCXt.validatedSegments[segments[i]]) {
-                    isSegmentValid = true;
-                    break;
+
+            if(GmCXt.inArray(segments, s_id)){
+                for (var i = 0; i < segments.length; i++) { // For each segmentation added
+                    if (GmCXt.validatedSegments[segments[i]]) {
+                        isSegmentValid = true;
+                        break;
+                    }
                 }
-            }
 
-            if (isSegmentValid && !GmCXt.inArray(tour.tour_id, validatedTours)) {
+                if (isSegmentValid && !GmCXt.inArray(tour.tour_id, validatedTours)) {
 
-                validatedTours.push(parseInt(tour.tour_id));
+                    validatedTours.push(parseInt(tour.tour_id));
 
-                toursProcessed++;
+                    toursProcessed++;
 
-                GmCXt.log(68, "VALID Tour segments: " + GmCXt.tourLog(tour));
+                    GmCXt.log(68, "VALID Tour segments: " + GmCXt.tourLog(tour));
 
-            }
-
-            if (segments.length > 0) {
-
-                var segmentSetting = GmCXt.getSegmentSetting(segments[0]);
-
-                switch (segmentSetting) {
-                    case 'show_guides_user_in_segment':
-                        if (isSegmentValid) cb(tour); // Show the guide if user is part of the segment and `activeSegmentSetting` is "show_guides_user_in_segment"
-                        break;
-                    case 'hide_guides_user_in_segment':
-                        if (!isSegmentValid) cb(tour); // Hide the guide if user is part of the segment and `activeSegmentSetting` is "hide_guides_user_in_segment"
-                        break;
-                    case 'show_guides_user_not_in_segment':
-                        if (!isSegmentValid) cb(tour); // Show the guide if user is not part of the segment and `activeSegmentSetting` is "show_guides_user_not_in_segment"
-                        break;
-                    default:
-                        if (isSegmentValid) cb(tour); // Default case
-                        break;
                 }
-            } 
+
+                if (segments.length > 0) {
+
+                    var segmentSetting = GmCXt.getSegmentSetting(segments[0]);
+
+                    switch (segmentSetting) {
+                        case 'show_guides_user_in_segment':
+                            if (isSegmentValid) cb(tour); // Show the guide if user is part of the segment and `activeSegmentSetting` is "show_guides_user_in_segment"
+                            break;
+                        case 'hide_guides_user_in_segment':
+                            if (!isSegmentValid) cb(tour); // Hide the guide if user is part of the segment and `activeSegmentSetting` is "hide_guides_user_in_segment"
+                            break;
+                        case 'show_guides_user_not_in_segment':
+                            if (!isSegmentValid) cb(tour); // Show the guide if user is not part of the segment and `activeSegmentSetting` is "show_guides_user_not_in_segment"
+                            break;
+                        default:
+                            if (isSegmentValid) cb(tour); // Default case
+                            break;
+                    }
+                } 
+            }
         });
     }
-
 
     // segment rules call back 
     function segmentRuleCallBack(r) {
@@ -5442,7 +5457,7 @@ GmCXt.checkGuidesBasedOnSegment = function(tours, cb, from) {
         }
 
         if (toursProcessed !== totalTours) {
-            checkTourSegment();
+            checkTourSegment(r.segmentId);
         }
 
         // if all segment is validated and no tour is processed
@@ -5875,6 +5890,16 @@ GmCXt.replaceVariableInText = function(str) {
     return str;
 };
 
+GmCXt.blockMcKessonIFrame = function(frame) {
+    if (GmCXt.isMcKesson() && frame.name === "dieCommFrame" && frame.id === 'IFrame') {
+        return true;
+    } else if(GmCXt.isMcKesson() && frame && frame.src && frame.src.contains('SpinSciSnap__AgentaSnap')) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 GmCXt.variableRuleExistInGuide = function(rules) {
     for (var k = 0, l = rules.length; k < l; k++) {
         if (rules[k].type === 'Variables') {
@@ -6104,14 +6129,6 @@ GmCXt.workdayAutoClick = function(index) {
         var editIcon = "[data-automation-id='actionImage']";
         var el = mg$(editIcon)[index];
         mg$(el).trigger("click");
-    }
-};
-
-GmCXt.blockAbbvieIframe = function(frame) {
-    if (GmCXt.isAbbvie() && frame.id.includes('emailFrame')) {
-        return true;
-    } else {
-        return false;
     }
 };
 
@@ -6530,6 +6547,53 @@ GmCXt.compareTimes = function(timeStr1, timeStr2) {
         }
     }
 };
+
+GmCXt.changeImageUpload = function(cb) {
+    var fileElement = mg$('#mgPlayerJSTest_upload-image-input');
+
+    if (!fileElement.length) {
+        var fileElement = mg$('<input />');
+        fileElement.attr('type', 'file');
+        fileElement.attr('id', 'mgPlayerJSTest_upload-image-input');
+        fileElement.attr('accept', 'image/png,image/jpeg,image/jpg');
+        fileElement.css('display', 'none');
+        fileElement.appendTo('body');
+    } else {
+        fileElement.val('');
+    }
+
+    fileElement.off('change').on('change', function(e) {
+
+        if (e.target.files[0]) {
+            var fileSize = e.target.files[0].size;
+            if (fileSize > 5240000) {
+                GmCXt.stepReq.data.stepCount = parseInt(GmCXt.stepReq.data.stepCount) - 1;
+                GmCXt.stepReq.data.order = parseInt(GmCXt.stepReq.data.order) - 1;
+                var option = {
+                    title: 'Large Image',
+                    description: 'Please upload image having size less than 5MB',
+                    callback: GmCXt.createNextStep,
+                    type: ''
+                };
+                GmCXt.alert(option).show();
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            fileElement.val('');
+            if(cb) cb(event.target.result); 
+        };
+
+        reader.readAsDataURL(e.target.files[0]);
+    });
+
+    fileElement.click();
+};
 /**
 	* @author Nilesh Pachpande
 	*/
@@ -6643,7 +6707,7 @@ GmCXt.openAppPanel = function(action, source) {
 			var alignment = GmCXt.getWidgetAlignment();
 			mg$(".mgPlayerJSTest_panel .mgPlayerJSTest_app").css(alignment, "0px");
 			mg$(".mgPlayerJSTest_panel").css(alignment, "0px");
-			
+
 			if (GmCXt.isMicroPlayer() || GmCXt.isWBMicroPlayer()) {
 				mg$(".mgPlayerJSTest_panel .mgPlayerJSTest_app").css("right", "50px");
 				mg$(".mgPlayerJSTest_panel").css("right", "50px");
@@ -6655,8 +6719,14 @@ GmCXt.openAppPanel = function(action, source) {
 			}
 
 			GmCXt.removePreviewTop();
-			mg$(".mgPlayerJSTest_panel").attr({'aria-hidden':false, 'tabindex':0});
-			mg$("#mgPlayerJSTest_app").attr({'aria-hidden':false, 'tabindex':0});
+			mg$(".mgPlayerJSTest_panel").attr({
+				'aria-hidden': false,
+				'tabindex': 0
+			});
+			mg$("#mgPlayerJSTest_app").attr({
+				'aria-hidden': false,
+				'tabindex': 0
+			});
 
 		}, GmCXt.t.appPanel);
 
@@ -6823,7 +6893,7 @@ GmCXt.getWidgetVisibility = function(forceShowWidget) {
 
 	} else if (!GmCXt.conf.showWidget) {
 		return false;
-	} 
+	}
 
 	return true;
 };
@@ -6868,9 +6938,9 @@ GmCXt.getDocTitle = function() {
 		var part = parts[i];
 		// Check if the part is a potential email address
 		if (part.indexOf('@') !== -1 && part.indexOf('.') !== -1 && part.charAt(0) !== '.') {
-		newParts.push(''); // Replace with an empty string
+			newParts.push(''); // Replace with an empty string
 		} else {
-		newParts.push(part); // Keep the part as is
+			newParts.push(part); // Keep the part as is
 		}
 	}
 	title = newParts.join(' '); // Join the parts back into a string
@@ -7697,11 +7767,13 @@ GmCXt.reportPresence = function() {
 };
 
 GmCXt.setOnAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_audio_mode_on');
+	GmCXt.sendMsgToAudioFrame('mgPlayerJSTest_action:set_audio_mode_on');
+	GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_audio_mode_on');
 };
 
 GmCXt.setOffAudioMode = function() {
-	GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:set_audio_mode_off');
+	GmCXt.sendMsgToAudioFrame('mgPlayerJSTest_action:set_audio_mode_off');
+	GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_audio_mode_off');
 };
 
 GmCXt.setOnOnBoarAudioMode = function() {
@@ -8317,7 +8389,7 @@ GmCXt.clearDataOnLogout = function(d) {
 		clearInterval(GmCXt.creatorInterval);
 	}
 	//Triggering login without delay
-	if(d.instantReLogin) {
+	if (d.instantReLogin) {
 		GmCXt.loginUsingAuthKey();
 	}
 
@@ -8931,7 +9003,7 @@ GmCXt.updateNotification = function(tours) {
 	GmCXt.storage().get(['toursClosed']).then(function(st) {
 		var userSettings = GmCXt.user.settings || {};
 		userSettings.viewed_guide_notifications = tours;
-		
+
 		if (GmCXt.isAnonymousUser()) {
 			GmCXt.storage().set({
 				'tourIdArray': tours
@@ -9282,7 +9354,6 @@ GmCXt.markAutoLaunchTourDoNotShow = function(tour) {
 GmCXt.checkProceedToPlay = function(step, tour) {
 
 	return new Promise(function(resolve, reject) {
-
 		var stepSetting = step.step_settings;
 		var stepRuleMatched = false,
 			stepRuleExist = false;
@@ -9364,7 +9435,16 @@ GmCXt.checkProceedToPlay = function(step, tour) {
 			step.step_type !== 'video' && step.step_type !== 'image' && step.step_type !== 'guide' && step.step_type !== GmCXt.STEP_TYPE_WEB_INLINE) {
 
 			resolve(false);
+
+		} else if (GmCXt.getHostnameFromUrl(step.step_url) !== GmCXt.urlParts.host && 
+			tour.tour_settings.enableRuleredirect && 
+			step.step_url.replace(GmCXt.getHostnameFromUrl(step.step_url),"") !== 
+			GmCXt.filterUrlScheme(GmCXt.urlParts.fullUrl).replace(GmCXt.urlParts.host,"") && 
+			step.step_type !== 'video' && step.step_type !== 'image' && step.step_type !== 'guide' && 
+			step.step_type !== GmCXt.STEP_TYPE_WEB_INLINE) {
+			resolve(false);
 		} else {
+
 			resolve(true);
 		}
 
@@ -9977,6 +10057,25 @@ GmCXt.startCreatorUpdateInterval = function() {
 	GmCXt.creatorInterval = setInterval(callSync, GmCXt.t.creatorSync);
 };
 
+GmCXt.sendMsgToAudioFrame = function(type, data) {
+	data = data || {};
+	data.config = GmCXt.conf;
+	
+	if (GmCXt.playerI || GmCXt.playerI === null) {
+		data.playerInstance = GmCXt.playerI;
+	}
+
+	var w = mg$(".mgPlayerJSTest_play-step-audio-iframe");	
+	if (w.length) {	
+		var message = {	
+			action: type,	
+			data: data	
+		};	
+		message = GmCXt.formatMsg(message);	
+		w.get(0).contentWindow.postMessage(message, "*");	
+	}
+};
+
 GmCXt.sendMessageToApp = function(type, data) {
 	data = data || {};
 	data.config = GmCXt.conf;
@@ -9994,16 +10093,16 @@ GmCXt.sendMessageToApp = function(type, data) {
 	}
 };
 
-GmCXt.sendMessageToAppIn = function(type, data) {
-	var appWindow = mg$(".mgPlayerJSTest_app");
-	if (appWindow.length) {
-		var message = {
-			action: type,
-			data: data
-		};
-		message = GmCXt.formatMsg(message);
-		appWindow.get(0).contentWindow.postMessage(message, "*");
-	}
+GmCXt.sendMessageToAppIn = function(type, data) {	
+	var appWindow = mg$(".mgPlayerJSTest_app");	
+	if (appWindow.length) {	
+		var message = {	
+			action: type,	
+			data: data	
+		};	
+		message = GmCXt.formatMsg(message);	
+		appWindow.get(0).contentWindow.postMessage(message, "*");	
+	}	
 };
 
 GmCXt.msgToApp = function(action, data, tabId) {
@@ -10015,7 +10114,8 @@ GmCXt.msgToApp = function(action, data, tabId) {
 			action: action,
 			data: data
 		};
-		GmCXt.msgToThisWin(m);
+		// Inside sidePanel iframe
+		window.postMessage(GmCXt.formatMsg(m), "*");
 	} else if (window.top === window.self) {
 		GmCXt.sendMessageToApp(action, data);
 	} else if (GmCXt.isStepFrame) {
@@ -10348,38 +10448,23 @@ GmCXt.callApi = function(data, api) {
 
 	return new Promise(function(resolve, reject) {
 
-		var mid = 'id' + Math.random();
-
-		function sendResponse(m) {
+		var msgId = Math.floor(Math.random() * 100000);
+		function chromeListener(event) {
+			var m = GmCXt.parseJSON(event);
+			m = GmCXt.convertMgdata(m);
 
 			if (m && m.action === 'mgPlayerJSTest_action:call_api_response') {
-
-				if (m.data && m.data.id === mid) {
-					window.removeEventListener('message', winListener);
+				if (m.data && m.data.msgId === msgId) {
 					window.removeEventListener('message', chromeListener);
 					resolve(m.data.items);
 				}
 			}
-		}
-
-		function winListener(event) {
-			var message = GmCXt.parseMsg(event);
-			message = GmCXt.convertMgdata(message);
-
-			sendResponse(message);
-		}
-
-		function chromeListener(event) {
-			var message = GmCXt.parseJSON(event);
-			message = GmCXt.convertMgdata(message);
-
-			sendResponse(message);
 
 			return true;
 		}
 
 		var d = {
-			id: mid,
+			msgId: msgId,
 			option: data,
 			api: api
 		};
@@ -10389,13 +10474,17 @@ GmCXt.callApi = function(data, api) {
 			GmCXt.sendMessageToPanel('mgPlayerJSTest_action:call_api', d, senderTabId);
 
 		} else if (GmCXt.isSidePanelApp) {
-			GmCXt.msgToThisWin({
+			var mm = {
 				action: 'mgPlayerJSTest_action:call_api',
 				data: d
-			});
+			};
+			// Inside sidePanel iframe
+			window.postMessage(GmCXt.formatMsg(mm), "*");
 		} else {
-			window.addEventListener('message', winListener);
+			
 			GmCXt.sendMessageToApp('mgPlayerJSTest_action:call_api', d);
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		}
 	});
 };
@@ -10808,10 +10897,6 @@ GmCXt.getDatafromPanel = function() {
 
 	});
 };
-/**
-	* @author Somi Laad
-	* collection of all tracking and insight common functions
-	*/
 
 //***************************** page tracking ***************************************//
 GmCXt.startPageTracker = function() {
@@ -11843,6 +11928,7 @@ if (GmCXt === undefined) {
 
 GmCXt.sendMessageToAllWindows = function(type, data) {
 	var data = mg$.extend({}, data || {});
+	var iframeIdentifier;
 
 	if (GmCXt.syncPlayerInst(type)) {
 		if (GmCXt.playerI || GmCXt.playerI === null) {
@@ -11940,11 +12026,10 @@ GmCXt.sendMessageToAllWindows = function(type, data) {
 	}
 
 	GmCXt.timeout(function() {
-		GmCXt.sendToIframes(message);
-		GmCXt.sendToFrames(message);
+		GmCXt.sendToIframes(message, iframeIdentifier);
 	}, GmCXt.t.msgToframes);
 
-	GmCXt.msgToThisWin(message);
+	if (!iframeIdentifier) GmCXt.msgToThisWin(message);
 };
 
 GmCXt.inTopWindow = function(s) {
@@ -11968,81 +12053,31 @@ GmCXt.inTopWindow = function(s) {
 	return false;
 };
 
-GmCXt.myGuideFrame = function(f) {
-	return f.name.indexOf('guideme-iframe') !== -1;
-};
+GmCXt.sendToIframes = function(m, targetIframeId) {
 
-GmCXt.isEntIframe = function(fr) {
-	return (fr.className.indexOf(GmCXt.conf.creatorApp) !== -1);
-};
+	for (let iframeId in GmCXt.iframePorts) {
+   		if (GmCXt.iframePorts.hasOwnProperty(iframeId)) {
 
-GmCXt.isPlayerIframe = function(fr) {
-	return (fr.className.indexOf(GmCXt.conf.playerApp) !== -1);
-};
+   			var frame = GmCXt.iframeEls[iframeId];
+   			
+   			if (GmCXt.blockMcKessonIFrame(frame)) continue;
 
-GmCXt.passMessage = function(message, frames) {
-
-	for (var i = 0, len = frames.length; i < len; i++) {
-
-		var frame = frames[i];
-
-		if (GmCXt.blockMcKessonIFrame(frame)) continue;
-
-		if(GmCXt.blockAbbvieIframe(frame)) continue;
-
-		if (frame.clientHeight === 0 || frame.clientWidth === 0) {
-			continue;
-		}
-
-		if (!GmCXt.myGuideFrame(frame)) {
-			if (message.mgdata && message.mgdata.frame && !GmCXt.isEmpty(message.mgdata.frame)) {
-				message.mgdata.frame.iframeTitle = frame.getAttribute("title");
-				message.mgdata.frame.attributes = GmCXt.getIframeAttributes(mg$(frame));
-				message.mgdata.frame.pos = frame.getBoundingClientRect();
+   			if (m.mgdata && m.mgdata.frame && !GmCXt.isEmpty(m.mgdata.frame)) 
+   			{
+				m.mgdata.frame.iframeTitle = frame.getAttribute("title");
+				m.mgdata.frame.attributes = GmCXt.getIframeAttributes(mg$(frame));
+				m.mgdata.frame.pos = frame.getBoundingClientRect();
 			}
 
-			try {
-				frame.contentWindow.postMessage(GmCXt.formatMsg(message), "*");
-			} catch (e) {
-				console.dir(e);
-				console.dir(message);
-			}
-		}
-	}
-};
-
-GmCXt.sendToIframes = function(message) {
-
-	var iframes = window.document.getElementsByTagName('iframe');
-	var framesInShadowDoms = GmCXt.getIframesFromShadowDom();
-
-	GmCXt.passMessage(message, iframes);
-	GmCXt.passMessage(message, framesInShadowDoms);
-};
-
-GmCXt.sendToFrames = function(message) {
-
-	var frameTags = window.document.getElementsByTagName('frame');
-
-	for (var j = 0, len = frameTags.length; j < len; j++) {
-
-		var frame = frameTags[j];
-
-		if (frame.clientHeight === 0 || frame.clientWidth === 0) {
-			continue;
-		}
-
-		if (message.mgdata && message.mgdata.frame && !GmCXt.isEmpty(message.mgdata.frame)) {
-			message.mgdata.frame.iframeTitle = frame.getAttribute("title");
-			message.mgdata.frame.attributes = GmCXt.getIframeAttributes(mg$(frame));
-			message.mgdata.frame.pos = frame.getBoundingClientRect();
-		}
-
-		try {
-			frame.contentWindow.postMessage(GmCXt.formatMsg(message), "*");
-		} catch (e) {
-			console.dir(e);
-			console.dir(message);
+			// Send to target iframe only, if target iframe ID exists; else send to all iframes
+			if (targetIframeId) {
+				if (iframeId === targetIframeId) {
+					GmCXt.iframePorts[iframeId].postMessage(GmCXt.formatMsg(m));
+					break;
+				}
+			} else {
+				GmCXt.iframePorts[iframeId].postMessage(GmCXt.formatMsg(m));	
+   			}
 		}
 	}
 };
@@ -12135,28 +12170,17 @@ GmCXt.getAppStorage = function(keys) {
 			resolve(items);
 		});
 	} else {
-
 		return new Promise(function(resolve, reject) {
-
-			var mid = 'id' + Math.random();
-
-			function listen(event) {
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.data && (mid === message.data.id)) {
-					if (message.action && (message.action === 'mgPlayerJSTest_action:get_local_storage_response')) {
-						window.removeEventListener('message', listen);
-						resolve(message.data.items);
-					}
-				}
-			}
-
-			window.addEventListener('message', listen);
 			var d = {
-				id: mid,
 				keys: keys
 			};
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:get_local_storage', d);
+			var msgId = Math.floor(Math.random() * 100000);
+			d.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:get_local_storage';
+			GmCXt.sendMessageToApp(msg, d);
+
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		});
 	}
 };
@@ -12175,18 +12199,15 @@ GmCXt.setAppStorage = function(data) {
 	} else {
 
 		return new Promise(function(resolve, reject) {
+						
+			var msgId = Math.floor(Math.random() * 100000);
+			data.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:set_local_storage';
+			GmCXt.sendMessageToApp(msg, data);
 
-			function listen(event) {
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:set_local_storage_response')) {
-					window.removeEventListener('message', listen);
-					resolve();
-				}
-			}
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 
-			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_local_storage', data);
 		});
 	}
 };
@@ -12205,19 +12226,14 @@ GmCXt.removeAppStorage = function(keys) {
 	} else {
 
 		return new Promise(function(resolve, reject) {
+			
+			var msgId = Math.floor(Math.random() * 100000);
+			keys.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:remove_local_storage';
+			GmCXt.sendMessageToApp(msg, keys);
 
-			function listen(event) {
-
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:remove_local_storage_response')) {
-					window.removeEventListener('message', listen);
-					resolve();
-				}
-			}
-
-			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:remove_local_storage', keys);
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		});
 	}
 };
@@ -12724,6 +12740,7 @@ GmCXt.creatorLbls.en_US = {
 	deleteCategoryAlert: "To delete this Folder, please delete the Sub Folder(s) first",
 	videoCardPublish: "Uploading your video... Video card will be added to the EdCast channel soon",
 	orgSetUpdateFSlide: "First slide (1280 x 720) px",
+	orgSetUpdateLSlide: "Last slide (1280 x 720) px",
 	orgSetPlaceholdrfslide: "First slide text",
 	orgSetPlaceholdrlslide: "Last slide text",
 	orgSetPlaceholdrRecordAudio: "Record your voice",
@@ -13155,15 +13172,11 @@ GmCXt.creatorLbls.en_US = {
 	createStep: "Create Step",
 	tooltipCreateRules: "Create Rules",
 	surveyTitleCompulsory: "Survey title is mandatory",
-	segmentTitleCompulsory: "Segment title is mandatory",
 	deleteSurvey: "Delete survey",
-	deleteSegment: "Delete segment",
 	stepError: "Step could not be created.",
 	manageSurvey: "Manage surveys",
 	manageSegments: "Manage segments",
 	editSurvey: "Edit survey",
-	editSegment: "Edit segment",
-	searchSegment: "Search for a segment",
 	pubErr: "Guide cannot be published. Please add segmentation details under guide settings.",
 	global: 'Global',
 	lastUpdated: "Last Updated",
@@ -13171,9 +13184,7 @@ GmCXt.creatorLbls.en_US = {
 	maxSurveyTitleChar: "Max 250 characters are allowed",
 	maxSegmentTitleChar: "Max 80 characters are allowed",
 	cnfButton: "Confirm",
-	deleteConfirmSegmentMsg: "Are you sure you want to delete this segment?",
 	errorAppNameReq: "Enter Application Name",
-	segmentErrorMessage: "An error occurred while saving your segment. Please try again.",
 	globalSurveyDeleteMsg: "This survey is marked as Global and only Admin(s) can delete it",
 	segmentationCreatedSuccess: "Segmentation successfully created",
 	segmentationUpdatedSuccess: "Segmentation successfully updated",
@@ -13240,7 +13251,6 @@ GmCXt.creatorLbls.en_US = {
 	editOnImg: "Edit Image",
 	copyGuides: "Copy Guides",
 	validUrlError: "Please enter a valid URL",
-	addSegments: "Add Segment(s)",
 	applySegments: "Apply segments(s) on {NUMBER_OF_GUIDES} Guides",
 	segments: "Segments",
 	addSegmentMsg: "Select one or many segments from the list",
@@ -13426,6 +13436,17 @@ GmCXt.creatorLbls.en_US = {
 	scheduleTimeLabel: "Time scheduled to publish",
 	timeLabel: "Time",
 	invalidTimeLabel: "Invalid time",
+	redirectRulesLabel: "Step Redirect Rules",
+	redirectRulesCBLabel: "Enable redirect rules to be used",
+	redirectRulesMsgLabel: "Redirect Rules are used to take users to the connect URL, or URL path between different environment.",
+	baseURLLabel: "Base URL",
+	redirectURLEnvLabel: "Environments",
+	redirectURLPathLabel: "Define URL or path",
+	redirectRulesPlaceHolder: "Enter Base URL",
+	redirectURLPathPlaceholder: "Enter URL or path",
+	redirectRulesErrorMsg: "Invalid redirect rules",
+	redirectRulesDuplicateErrorMsg: "Duplicate environment",
+	redirectRulesDropdownEnvPH: "Select Environment",
 };
 if (GmCXt === undefined) var GmCXt = {};
 if (GmCXt.creatorLbls === undefined) GmCXt.creatorLbls = {};
@@ -14226,15 +14247,11 @@ GmCXt.creatorLbls.fr_CA = {
     "createStep": "Créer une étape",
     "tooltipCreateRules": "Créer des règles",
     "surveyTitleCompulsory": "Le titre de l’Survey est obligatoire",
-    "segmentTitleCompulsory": "Le titre du segment est obligatoire",
     "deleteSurvey": "Supprimer l’enquête",
-    "deleteSegment": "Supprimer un segment",
     "stepError": "L’étape n’a pas pu être créée.",
     "manageSurvey": "Gérer les enquêtes",
     "manageSegments": "Gérer les segments",
     "editSurvey": "Modifier l’enquête",
-    "editSegment": "Modifier le segment",
-    "searchSegment": "Rechercher un segment",
     "pubErr": "Guide ne peut être publié. Veuillez ajouter les détails de la segmentation dans les paramètres du guide.",
     "global": "Global",
     "lastUpdated": "Date de la dernière mise à jour",
@@ -14242,9 +14259,7 @@ GmCXt.creatorLbls.fr_CA = {
     "maxSurveyTitleChar": "Un maximum de 250 caractères est autorisé",
     "maxSegmentTitleChar": "Un maximum de 80 caractères est autorisé",
     "cnfButton": "Confirmer",
-    "deleteConfirmSegmentMsg": "Etes-vous sûr de vouloir supprimer ce segment?",
     "errorAppNameReq": "Saisissez le nom de l’application",
-    "segmentErrorMessage": "Une erreur s’est produite lors de l’enregistrement de votre segment. Veuillez réessayer.",
     "globalSurveyDeleteMsg": "Cette enquête est marquée comme étant globale et seuls les Admin peuvent la supprimer.",
     "segmentationCreatedSuccess": "La segmentation a été créée avec succès",
     "segmentationUpdatedSuccess": "La segmentation a été mise à jour avec succès",
@@ -14309,7 +14324,6 @@ GmCXt.creatorLbls.fr_CA = {
     "editOnImg": "Modifier l’image",
     "copyGuides": "Copier les Guides",
     "validUrlError": "Saisissez une URL correcte",
-    "addSegments": "Ajouter un ou plusieurs segments",
     "applySegments": "Appliquer un/des segment(s) sur {NUMBER_OF_GUIDES} Guides",
     "segments": "Segments",
     "addSegmentMsg": "Sélectionnez un ou plusieurs segments dans la liste",
@@ -15271,15 +15285,11 @@ GmCXt.creatorLbls.fr_FR = {
     "createStep": "Créer une étape",
     "tooltipCreateRules": "Créer des règles",
     "surveyTitleCompulsory": "Le titre du Survey est obligatoire",
-    "segmentTitleCompulsory": "Le titre du segment est obligatoire",
     "deleteSurvey": "Supprimer le sondage",
-    "deleteSegment": "Supprimer le segment",
     "stepError": "L’étape n’a pas pu être créée.",
     "manageSurvey": "Gérer les sondages",
     "manageSegments": "Gérer les segments",
     "editSurvey": "Modifier le sondage",
-    "editSegment": "Modifier le segment",
-    "searchSegment": "Rechercher un segment",
     "pubErr": "Le Guide ne peut pas être publié. Veuillez ajouter des détails de segmentation sous les paramètres du guide.",
     "global": "Global",
     "lastUpdated": "Date de la dernière mise à jour",
@@ -15287,9 +15297,7 @@ GmCXt.creatorLbls.fr_FR = {
     "maxSurveyTitleChar": "250 caractères maximum sont autorisés",
     "maxSegmentTitleChar": "80 caractères maximum sont autorisés",
     "cnfButton": "Confirmer",
-    "deleteConfirmSegmentMsg": "Voulez-vous vraiment supprimer ce segment ?",
     "errorAppNameReq": "Entrer le nom de l’application",
-    "segmentErrorMessage": "Une erreur s’est produite lors de l’enregistrement de votre segment. Veuillez réessayer.",
     "globalSurveyDeleteMsg": "Ce sondage est désigné comme étant global et seul(s) le ou les Admin(s) peu(ven)t le supprimer",
     "segmentationCreatedSuccess": "La segmentation a bien été créée",
     "segmentationUpdatedSuccess": "La segmentation a bien été mise à jour",
@@ -15354,7 +15362,6 @@ GmCXt.creatorLbls.fr_FR = {
     "editOnImg": "Modifier l’image",
     "copyGuides": "Copier les Guides",
     "validUrlError": "Veuillez saisir une URL correcte.",
-    "addSegments": "Ajouter un ou plusieurs segment(s)",
     "applySegments": "Appliquer le ou les segment(s) à {NUMBER_OF_GUIDES} Guides",
     "segments": "Segments",
     "addSegmentMsg": "Sélectionnez un ou plusieurs segments dans la liste",
@@ -16316,15 +16323,11 @@ GmCXt.creatorLbls.ja_JP = {
     "createStep": "ステップの作成",
     "tooltipCreateRules": "ルールの作成",
     "surveyTitleCompulsory": "アンケートタイトルは必須です",
-    "segmentTitleCompulsory": "セグメント名は必須です",
     "deleteSurvey": "アンケートの削除",
-    "deleteSegment": "セグメントの削除",
     "stepError": "ステップを作成できませんでした。",
     "manageSurvey": "アンケートの管理",
     "manageSegments": "セグメントの管理",
     "editSurvey": "アンケートの編集",
-    "editSegment": "セグメントの編集",
-    "searchSegment": "セグメントの検索",
     "pubErr": "ガイドは公開できません。 セグメンテーション詳細をガイド設定の下に追加してください。",
     "global": "グローバル",
     "lastUpdated": "最終更新日",
@@ -16332,9 +16335,7 @@ GmCXt.creatorLbls.ja_JP = {
     "maxSurveyTitleChar": "最大250文字を使用できます",
     "maxSegmentTitleChar": "最大80文字を使用できます",
     "cnfButton": "確認",
-    "deleteConfirmSegmentMsg": "このセグメントを削除しますか?",
     "errorAppNameReq": "アプリケーションの名前を入力",
-    "segmentErrorMessage": "セグメントの保存中にエラーが発生しました。 再試行してください。",
     "globalSurveyDeleteMsg": "このアンケートはグローバルとマークされているため、管理者のみが削除できます",
     "segmentationCreatedSuccess": "セグメンテーションが正常に作成されました",
     "segmentationUpdatedSuccess": "セグメンテーションが正常に更新されました",
@@ -16399,7 +16400,6 @@ GmCXt.creatorLbls.ja_JP = {
     "editOnImg": "画像の編集",
     "copyGuides": "ガイドをコピー",
     "validUrlError": "有効なURLを入力してください。",
-    "addSegments": "セグメントの追加",
     "applySegments": "セグメントを{NUMBER_OF_Guide}のガイドに適用する",
     "segments": "セグメント",
     "addSegmentMsg": "リストから1つまたは複数のセグメントを選択",
@@ -17369,15 +17369,11 @@ GmCXt.creatorLbls.ko_KR = {
     "createStep": "단계 만들기",
     "tooltipCreateRules": "규칙 만들기",
     "surveyTitleCompulsory": "Survey 제목은 필수입니다.",
-    "segmentTitleCompulsory": "세그먼트 제목은 필수입니다.",
     "deleteSurvey": "설문 조사 삭제",
-    "deleteSegment": "세그먼트 삭제",
     "stepError": "단계를 만들 수 없습니다.",
     "manageSurvey": "설문 조사 관리",
     "manageSegments": "세그먼트 관리",
     "editSurvey": "설문 조사 편집",
-    "editSegment": "세그먼트 편집",
-    "searchSegment": "세그먼트 검색",
     "pubErr": "Guide를 게시할 수 없습니다. 안내서 설정 아래에 세분화 세부 정보를 추가하십시오.",
     "global": "전체",
     "lastUpdated": "마지막 업데이트",
@@ -17385,9 +17381,7 @@ GmCXt.creatorLbls.ko_KR = {
     "maxSurveyTitleChar": "최대 250자가 허용됨",
     "maxSegmentTitleChar": "최대 80자가 허용됨",
     "cnfButton": "확인",
-    "deleteConfirmSegmentMsg": "이 세그먼트를 삭제하시겠습니까?",
     "errorAppNameReq": "응용 프로그램 이름 입력",
-    "segmentErrorMessage": "세그먼트를 저장하는 동안 오류가 발생했습니다. 다시 시도하십시오.",
     "globalSurveyDeleteMsg": "이 설문 조사는 전역으로 표시되어 있으며 Admin만 삭제할 수 있습니다.",
     "segmentationCreatedSuccess": "세그먼트가 성공적으로 생성됨",
     "segmentationUpdatedSuccess": "세그먼트가 성공적으로 업데이트됨",
@@ -17452,7 +17446,6 @@ GmCXt.creatorLbls.ko_KR = {
     "editOnImg": "이미지 편집",
     "copyGuides": "Guides 복사",
     "validUrlError": "올바른 URL을 입력하십시오.",
-    "addSegments": "세그먼트 추가",
     "applySegments": "{NUMBER_OF_GUIDES} Guides에 세그먼트 적용",
     "segments": "세그먼트",
     "addSegmentMsg": "목록에서 하나 이상의 세그먼트 선택",
@@ -24625,6 +24618,35 @@ GmCXt.svgs = {
 	iconExternalLink: '<svg  class="mgPlayerJSTest_width-height-100" viewBox="0 0 24 25" fill="none">'+
 		'<path fill-rule="evenodd" clip-rule="evenodd" d="M19.3521 5.68455C19.3891 5.77155 19.4091 5.91455 19.4091 5.91455H19.3901V10.8506C19.3901 11.2506 19.0761 11.4736 18.6751 11.4736H18.6851C18.2841 11.4736 17.9411 11.2506 17.9411 10.8506V7.76755L11.6751 14.0686C11.3921 14.3526 10.9331 14.3456 10.6921 14.0626V14.0496C10.4501 13.7666 10.3851 13.2816 10.6691 12.9996L16.9531 6.63955H13.8701C13.4701 6.63955 13.1081 6.34155 13.1081 5.94055V5.96655C13.1081 5.56655 13.4701 5.19055 13.8701 5.19055H18.7021H18.6661V5.24055C18.9071 5.24055 19.2421 5.42355 19.3521 5.68455ZM16.1901 12.3766L17.6401 13.8266V18.3996C17.6401 19.1996 17.0101 19.8096 16.2101 19.8096H6.05906C5.25906 19.8096 4.59106 19.1996 4.59106 18.3996V8.25055C4.59106 7.45055 5.25906 6.76055 6.06006 6.76055H10.6321L12.0821 8.21055H6.04206V18.3605H16.1901V12.3766Z" fill="#555555"/>'+
 		'</svg>',
+
+	iconImageStepUploadImage: '<svg version="1.1" id="Capa_1" x="0px" y="0px"' +
+		'viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">' +
+		'<g>' +
+		'<g>' +
+		'<path d="M47.4,24.4c-0.8,0-1.4,0.6-1.4,1.4v12.4c0,3.4-2.7,6.1-6.1,6.1H10c-3.4,0-6.1-2.7-6.1-6.1V25.6c0-0.8-0.6-1.4-1.4-1.4' +
+		's-1.4,0.6-1.4,1.4v12.6c0,4.9,4,8.8,8.8,8.8H40c4.9,0,8.8-4,8.8-8.8V25.8C48.8,25.1,48.2,24.4,47.4,24.4z"/>' +
+		'<path d="M17.3,13.9l6.3-6.3v27.7c0,0.8,0.6,1.4,1.4,1.4s1.4-0.6,1.4-1.4V7.6l6.3,6.3c0.3,0.3,0.6,0.4,1,0.4c0.4,0,0.7-0.1,1-0.4' +
+		'c0.5-0.5,0.5-1.4,0-1.9L26,3.4c-0.3-0.3-0.6-0.4-1-0.4c-0.4,0-0.7,0.1-1,0.4L15.4,12c-0.5,0.5-0.5,1.4,0,1.9' +
+		'C15.9,14.5,16.8,14.5,17.3,13.9z"/>' +
+		'</g>' +
+		'</g>' +
+		'</svg>',
+
+	iconImageStepCaptureScreen: '<svg width="8px" height="8px" viewBox="0 0 8 8" version="1.1"  >' +
+		'<defs></defs>' +
+		'<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">' +
+		'<g id="10-branching-on-guideme--copy" transform="translate(-1218.000000, -320.000000)">' +
+		'<g id="Group-10" transform="translate(1202.000000, 256.000000)">' +
+		'<g id="Group-8" transform="translate(16.000000, 61.000000)">' +
+		'<g id="Group-3" transform="translate(0.000000, 3.000000)">' +
+		'<path d="M0,0.880952381 L0,2.64285714 L0.880952381,2.64285714 L0.880952381,0.880952381 L2.64285714,0.880952381 L2.64285714,0 L0.880952381,0 C0.396428571,0 0,0.396428571 0,0.880952381 L0,0.880952381 Z M0.880952381,5.28571429 L0,5.28571429 L0,7.04761905 C0,7.53214286 0.396428571,7.92857143 0.880952381,7.92857143 L2.64285714,7.92857143 L2.64285714,7.04761905 L0.880952381,7.04761905 L0.880952381,5.28571429 L0.880952381,5.28571429 Z M7.04761905,7.04761905 L5.28571429,7.04761905 L5.28571429,7.92857143 L7.04761905,7.92857143 C7.53214286,7.92857143 7.92857143,7.53214286 7.92857143,7.04761905 L7.92857143,5.28571429 L7.04761905,5.28571429 L7.04761905,7.04761905 L7.04761905,7.04761905 Z M7.04761905,0 L5.28571429,0 L5.28571429,0.880952381 L7.04761905,0.880952381 L7.04761905,2.64285714 L7.92857143,2.64285714 L7.92857143,0.880952381 C7.92857143,0.396428571 7.53214286,0 7.04761905,0 L7.04761905,0 Z" class="shape"></path>' +
+		'<path d="M4,5.42857143 C3.21142857,5.42857143 2.57142857,4.78857143 2.57142857,4 C2.57142857,3.21142857 3.21142857,2.57142857 4,2.57142857 C4.78857143,2.57142857 5.42857143,3.21142857 5.42857143,4 C5.42857143,4.78857143 4.78857143,5.42857143 4,5.42857143 L4,5.42857143 Z" class="shape"></path>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</svg>',
 };
 
 GmCXt.getCreatorAppFeatures = function() {
@@ -24819,6 +24841,14 @@ GmCXt.isSumtotal = function() {
 
 GmCXt.isSbx = function() {
 	if (GmCXt.conf.appConfig.customer === 'sbx') {
+		return true;
+	} else {
+		return false;
+	}
+};
+
+GmCXt.myGuideInternalCustomers = function() {
+	if (GmCXt.conf.appConfig.customer === 'myguide' || GmCXt.conf.appConfig.customer === 'sumtotal' || GmCXt.conf.appConfig.customer === 'galaxy' || GmCXt.conf.appConfig.customer === 'sbx') {
 		return true;
 	} else {
 		return false;
@@ -26775,6 +26805,155 @@ GmCXt.model.tutorial_guide_default = {
 	}
 };
 
+GmCXt.model.notificationTheme_default = {
+	width: {
+		_type: "string",
+		_default: "600"
+	},
+	height: {
+		_type: "string",
+		_default: "300"	
+	},
+	header: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			background: {
+				_type: "string",
+				_default: "#FF240A"			
+			},
+			color: {
+				_type: "string",
+				_default: "#FFFFFF"			
+			},
+			font: {
+				_type: "string",
+				_default: "Lato"			
+			}
+		}
+	},
+	body: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			action_button_background: {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			action_button_border_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			action_button_font: {
+				_type: "string",
+				_default: "Lato"
+			},
+			action_button_text_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			action_button_url: {
+				_type: "string",
+				_default: ""
+			},
+			background_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			desc_color: {
+				_type: "string",
+				_default: "#555555"
+			},
+			desc_font_family: {
+				_type: "string",
+				_default: "Lato"
+			},
+			desc_font_size: {
+				_type: "string",
+				_default: "medium"
+			},
+			fill: {
+				_type: "string",
+				_default: "#707070"
+			},
+			padding_bottom: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_left: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_right: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_top: {
+				_type: "string",
+				_default: "20"
+			},
+			title_color: {
+				_type: "string",
+				_default: "#000000"
+			},
+			title_font_family: {
+				_type: "string",
+				_default: "Lato"
+			},
+			title_font_size: {
+				_type: "string",
+				_default: "medium"
+			}
+		}
+	},
+	footer: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			primaryBtnTextColor: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			primaryBtnTextSize: {
+				_type: "string",
+				_default: "medium"
+			},
+			primaryBtnFont: {
+				_type: "string",
+				_default: "#Lato"
+			},
+			primaryBtnBackground : {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			primaryBtnBorderColor: {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			secondaryBtnTextColor: {
+				_type: "string",
+				_default: "#555555"
+			},
+			secondaryBtnTextSize: {
+				_type: "string",
+				_default: "#medium"
+			},
+			secondaryBtnFont: {
+				_type: "string",
+				_default: "#Lato"
+			},
+			secondaryBtnBackground : {
+				_type: "string",
+				_default: "#E6E6E6"
+			},
+			secondaryBtnBorderColor: {
+				_type: "string",
+				_default: "#555555"
+			}
+		}
+	}
+};
+
 GmCXt.model.organization = {
 	about: {
 		_type: "string",
@@ -27308,6 +27487,11 @@ GmCXt.model.organization = {
 			autoStepDelay: {
 				_type: "number",
 				default: 4
+			},
+			notificationTheme: {
+				_type: "object",
+				_clone: true,
+				_obj: GmCXt.createDeepCopy(GmCXt.model.notificationTheme_default)
 			}
 		}
 	},
@@ -29068,6 +29252,12 @@ GmCXt.model.application = {
 			autoStepDelay: {
 				_type: "number",
 				_inherit: true
+			},
+			notificationTheme: {
+				_type: "object",
+				_clone: true,
+				_inherit: true,
+				_obj: GmCXt.createDeepCopy(GmCXt.model.notificationTheme_default)
 			}
 		},
 		_clone: true
@@ -29187,7 +29377,7 @@ GmCXt.sendMsgUp = function(type, data, toTop) {
 			return;
 		}
 		if (toTop)
-			top.postMessage(GmCXt.formatMsg(message), "*");
+			GmCXt.msgChannel.port1.postMessage(GmCXt.formatMsg(message));
 		else
 			GmCXt.sendToParentWindow(message);
 	}
@@ -29207,34 +29397,33 @@ GmCXt.getIframesFromShadowDom = function() {
 	return false;
 };
 
-GmCXt.passMsgToContentWindow = function(msg, frames) {
-	for (var i = 0, len = frames.length; i < len; i++) {
-		var frame = frames[i];
+GmCXt.sendToContentIframes = function(msg) {
 
-		if (GmCXt.blockMcKessonIFrame(frame)) continue;
+	for (let iframeId in GmCXt.iframePorts) {
+   		if (GmCXt.iframePorts.hasOwnProperty(iframeId)) {
 
-		if(GmCXt.blockAbbvieIframe(frame)) continue;
+   			var frame = GmCXt.iframeEls[iframeId];
 
-		if (msg.data) {
-			msg.data.frame.iframeTitle = frame.getAttribute("title");
-			msg.data.frame.attributes = GmCXt.getIframeAttributes(mg$(frame));
-			msg.data.frame.pos = frame.getBoundingClientRect();
+   			if (GmCXt.blockMcKessonIFrame(frame)) continue;
+   			
+   			if (msg.data) {
+				msg.data.frame.iframeTitle = frame.getAttribute("title");
+				msg.data.frame.attributes = GmCXt.getIframeAttributes(mg$(frame));
+				msg.data.frame.pos = frame.getBoundingClientRect();
 
-			if (msg.mgdata && msg.mgdata.frame && !GmCXt.isEmpty(msg.mgdata.frame)) {
-				msg.data.frame.pos.x += msg.mgdata.frame.pos.left;
-				msg.data.frame.pos.y += msg.mgdata.frame.pos.top;
+				if (msg.mgdata && msg.mgdata.frame && !GmCXt.isEmpty(msg.mgdata.frame)) {
+					msg.data.frame.pos.x += msg.mgdata.frame.pos.left;
+					msg.data.frame.pos.y += msg.mgdata.frame.pos.top;
+				}
 			}
-		}
 
-		frame.contentWindow.postMessage(GmCXt.formatMsg(msg), "*");
+   			GmCXt.iframePorts[iframeId].postMessage(GmCXt.formatMsg(msg));
+   		}
 	}
 };
 
 GmCXt.forwardToContentWindows = function(message) {
-	var iframes = window.document.getElementsByTagName('iframe');
-	var frameTags = window.document.getElementsByTagName('frame');
-	var framesInShadowDoms = GmCXt.getIframesFromShadowDom();
-
+	
 	var msg = mg$.extend(true, {}, message);
 
 	if (msg.data)
@@ -29244,9 +29433,7 @@ GmCXt.forwardToContentWindows = function(message) {
 		return;
 	}
 
-	GmCXt.passMsgToContentWindow(msg, iframes);
-	GmCXt.passMsgToContentWindow(msg, frameTags);
-	GmCXt.passMsgToContentWindow(msg, framesInShadowDoms);
+	GmCXt.sendToContentIframes(msg);	
 };
 
 GmCXt.requestHandler.findElementToCheckDomRule = function(data) {
@@ -29301,54 +29488,25 @@ GmCXt.requestHandler.stopWatcherTestMe = function() {
 	}
 };
 
-GmCXt.requestHandler.bringElementInViewport = function(data) {
-	var id = null;
-
-	if (GmCXt.playerI) {
-		id = GmCXt.playerI.iframeIdentifier;
-	}
-
-	if (id === GmCXt.id) {
-		GmCXt.highlighter.bringElementInViewport(data);
-	}
-};
-
-GmCXt.requestHandler.bringElementInViewportEditStep = function(data) {
-	var id = null;
-	if (GmCXt.stepReq) {
-		id = GmCXt.stepReq.iframeIdentifier;
-	}
-
-	if (data.iframeIdentifier) {
-		id = data.iframeIdentifier;
-	}
-
-	if (id === GmCXt.id) {
-		GmCXt.highlighter.bringElementInViewport(data);
-	}
-};
-
 GmCXt.requestHandler.removeExistingDomElement = function(request) {
 	GmCXt.highlighter.removeActiveEvents();
 };
 
 GmCXt.requestHandler.selectExistingDomElementIframe = function(d) {
 
-	if (d.receiverId === GmCXt.id && !GmCXt.currentIframeId &&
+	if (!GmCXt.currentIframeId &&
 		d.req && d.req.settings &&
 		!d.req.settings.element.meta.inTopWindow) {
 		d.req.frame = d.frame;
 		GmCXt.requestHandler.selectExistingDomElement(d.req);
 	}
 
-	if (d.receiverId === GmCXt.id) {
-		var ruleReqs = d.rules;
-		var totalReqs = ruleReqs.length;
-		for (var i = 0; i < totalReqs; i++) {
-			ruleReqs[i].job.timeout = Date.now() + (ruleReqs[i].job.timeoutVal || GmCXt.t.ruleTimeOut10s);
-			GmCXt.log(6, "QUEUED IN IFRAME rules", ruleReqs[i]);
-			GmCXt.requestHandler.findElementToCheckDomRule(ruleReqs[i]);
-		}
+	var ruleReqs = d.rules;
+	var totalReqs = ruleReqs.length;
+	for (var i = 0; i < totalReqs; i++) {
+		ruleReqs[i].job.timeout = Date.now() + (ruleReqs[i].job.timeoutVal || GmCXt.t.ruleTimeOut10s);
+		GmCXt.log(6, "QUEUED IN IFRAME rules", ruleReqs[i]);
+		GmCXt.requestHandler.findElementToCheckDomRule(ruleReqs[i]);
 	}
 };
 
@@ -29673,27 +29831,26 @@ GmCXt.processIframePlayer = function(event) {
 			break;
 
 		case 'mgPlayerJSTest_action:task:init_new_iframe':
-			GmCXt.forwardToContentWindows(message);
 
-			if (message.data.receiverId === GmCXt.id) {
-				if (!GmCXt.isEmpty(message.data.org)) {
-					GmCXt.updateGlobalOrg(message.data.org);
-				}
-
-				if (message.data.featureTracking) GmCXt.trackerUtil.featureTracking = message.data.featureTracking;
-
-				if (message.data.pageTracking) GmCXt.trackerUtil.pageTracking = message.data.pageTracking;
-
-				if (message.data.sessionInfo) GmCXt.sessionInfo = message.data.sessionInfo;
-
-				if (message.data.domainInApp) GmCXt.domainInApp = message.data.domainInApp;
-
-				if (message.data.activeAppSettings) {
-					GmCXt.activeAppSettings = message.data.activeAppSettings;
-				}
-
-				GmCXt.requestHandler.selectExistingDomElementIframe(messageCopy.data);
+			if (!GmCXt.isEmpty(message.data.org)) {
+				GmCXt.updateGlobalOrg(message.data.org);
 			}
+
+			if (message.data.featureTracking) GmCXt.trackerUtil.featureTracking = message.data.featureTracking;
+
+			if (message.data.pageTracking) GmCXt.trackerUtil.pageTracking = message.data.pageTracking;
+
+			if (message.data.sessionInfo) GmCXt.sessionInfo = message.data.sessionInfo;
+
+			if (message.data.domainInApp) GmCXt.domainInApp = message.data.domainInApp;
+
+			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:update_variables');
+
+			if (message.data.activeAppSettings) {
+				GmCXt.activeAppSettings = message.data.activeAppSettings;
+			}
+
+			GmCXt.requestHandler.selectExistingDomElementIframe(messageCopy.data);
 			break;
 
 		case "mgPlayerJSTest_action:command; task:trigger_step_click":
@@ -29776,11 +29933,8 @@ GmCXt.processIframePlayer = function(event) {
 			break;
 
 		case 'mgPlayerJSTest_action:bring_element_in_viewport':
-			GmCXt.requestHandler.bringElementInViewport(messageCopy.data);
-			break;
-
 		case 'mgPlayerJSTest_action:bring_element_in_viewport_edit_step':
-			GmCXt.requestHandler.bringElementInViewportEditStep(messageCopy.data);
+			GmCXt.highlighter.bringElementInViewport(messageCopy.data);
 			break;
 
 		case 'mgPlayerJSTest_action:start_watcher;testMe':
@@ -36035,10 +36189,10 @@ GmCXt.highlighter = (function() {
 
 		var returnValue = null;
 
-		if (mg$(he).is(":visible"))
+		if (he)
 			returnValue = he;
 		else
-			GmCXt.l.add('Element is hidden.', true);
+			GmCXt.l.add('Element not found', true);
 
 		return GmCXt.l.return(returnValue);
 	}
@@ -38379,6 +38533,10 @@ GmCXt.highlighter = (function() {
 		var opacity = getDuctTapeOpacity(job.req.data.step);
 		var isPreview = job.req.data.isPreview;
 		var d = opt.disableElement || GmCXt.getDiableEleDefaultVal();
+		var zIndex = "";
+		if (!GmCXt.isEmpty(opt.zIndexVal)) {
+			zIndex = opt.zIndexVal;
+		}
 		var id = 'mgPlayerJSTest_smarttip-' + job.req.data.step.step_id;
 		var tourClass = 'mgPlayerJSTest_smarttip-tour-' + job.req.data.step.tour_id;
 
@@ -38387,7 +38545,7 @@ GmCXt.highlighter = (function() {
 
 		var html = "<wmgPlayerJSTest_ jobid='" + job.id + "' id='" + id + "'" +
 			" class='mgPlayerJSTest_duct-tape " + preview + " " + tourClass + " " + posClass + "'" +
-			" style='width:" + w + "px;height:" + h + "px;background:" + d.color + ";opacity:" + opacity + "'>" +
+			" style='width:" + w + "px;height:" + h + "px;background:" + d.color + ";opacity:" + opacity + ";z-index:" + zIndex + "'>" +
 			"</wmgPlayerJSTest_>";
 
 		return html;
@@ -38449,7 +38607,7 @@ GmCXt.highlighter = (function() {
 			mg$(id).show().css(style);
 		} else {
 
-			if (zIndex) style.zIndex = zIndex;
+			if (zIndex && !opt.zIndexVal) style.zIndex = zIndex;
 
 			var ductEl = mg$(getDuctTapeHtml(job, w, h, opt, posClass));
 
@@ -39256,7 +39414,7 @@ GmCXt.highlighter = (function() {
 			"       src='" + img + "' " +
 			"       style='width:" + size.width + "px; height:" + size.height + "px' />" +
 			(options.stickTargetElement ? '' : getTooltipMessageHtml(he, requestData, options)) +
-			(tTheme.tooltipBgColor.length > 0 ? popupFooter : '') +
+			(!os.hideBrandLogo ? popupFooter : '') +
 			"   </wmgPlayerJSTest_>" +
 			"</wmgPlayerJSTest_>";
 
@@ -40011,7 +40169,13 @@ GmCXt.bootScript = function() {
 
 	if (!GmCXt.isMyGuideIframe(GmCXt._location().href) && window.self !== window.top) {
 		if (mg$(window).width() >= 1 || mg$(window).height() >= 1) {
-	        GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:new_iframe_found', GmCXt.id);
+
+			var msg = 'Guide:newIframe-' + GmCXt.id;
+	        if (window.parent !== window.top) {
+	        	window.parent.postMessage(msg, '*', [GmCXt.msgChannel.port2]);
+	    	} else {
+	    		window.top.postMessage(msg, '*', [GmCXt.msgChannel.port2]);
+	    	}
 	    }	
 	}
 
@@ -40025,12 +40189,13 @@ GmCXt.bootScript = function() {
 		GmCXt.highlighter.clearIframeWatch();
 	});
 
-	mg$(window).on('keyup', function(e) {
-
-		if (e.which === 16 && GmCXt.FT.creatorApp) {
-			GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:toggle_capture_and_navigate_tool:inform');
-		}
-	});
+	if (GmCXt.FT.creatorApp) {
+		mg$(window).on('keyup', function(e) {
+			if (e.which === 16) {
+				GmCXt.sendMessageToTheTopWindow('mgPlayerJSTest_action:toggle_capture_and_navigate_tool:inform');
+			}
+		});
+	}
 
 	GmCXt.clickEl = null;
 
@@ -40083,15 +40248,20 @@ GmCXt.bootScript = function() {
 	}
 
 	if (window.self !== window.top) {
-		if (GmCXt.isSidePanelApp) {
-			window.addEventListener('message', GmCXt.listenIframeCreator);
-		} else {
-			if (GmCXt.FT.isPlayer) {
-				window.addEventListener('message', GmCXt.listenIframePlayer, false);
-			} else {
-				window.addEventListener('message', GmCXt.listenIframeCreator);
+
+		GmCXt.msgChannel.port1.onmessage = GmCXt.FT.isPlayer ? GmCXt.listenIframePlayer : GmCXt.listenIframeCreator;
+	
+		// Global window message listener to initialise ports communication
+		window.addEventListener('message', function(e) {
+			if (!e.ports.length) return;
+
+			if (e.data && typeof e.data === 'string' && e.data.indexOf('Guide:newIframe-') !== -1) {
+				var iframeId = e.data.substr(16);
+				GmCXt.iframePorts[iframeId] = e.ports[0];
+				GmCXt.iframePorts[iframeId].onmessage = GmCXt.FT.isPlayer ? GmCXt.listenIframePlayer : GmCXt.listenIframeCreator;
+				GmCXt.iframeEls[iframeId] = e.source;
 			}
-		}
+		});
 	}
 
 	window.addEventListener('error', function(event) {
@@ -41531,5 +41701,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1726562136499.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1729763334618.css');
 })();

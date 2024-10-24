@@ -2,6 +2,11 @@ if (GmCXt === undefined) var GmCXt = {};
 var stepAudio = {};
 var userPrefAudio = false;
 
+// Starts message channel only inside audio iframe
+if (mg$('.mgPlayerJSTest_audio-iframe-icons') > 0) {
+	GmCXt.startMsgChannel('Guide:audioIframe');
+}
+
 function setAudioModeOn() {
 	mg$('.mgPlayerJSTest_play-step-audio-on').show();
 	mg$('.mgPlayerJSTest_play-step-audio-off').hide();
@@ -55,6 +60,7 @@ GmCXt.requestHandler.stopAudioTrack = function(message) {
 	GmCXt.stopAudio();
 };
 
+// This listener is only in Guide iframe
 window.addEventListener('message', function(event) {
 	if (!GmCXt) {
 		GmCXt = event.target.GmCXt;

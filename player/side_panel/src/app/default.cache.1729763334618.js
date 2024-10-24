@@ -5485,28 +5485,17 @@ GmCXt.getAppStorage = function(keys) {
 			resolve(items);
 		});
 	} else {
-
 		return new Promise(function(resolve, reject) {
-
-			var mid = 'id' + Math.random();
-
-			function listen(event) {
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.data && (mid === message.data.id)) {
-					if (message.action && (message.action === 'mgPlayerJSTest_action:get_local_storage_response')) {
-						window.removeEventListener('message', listen);
-						resolve(message.data.items);
-					}
-				}
-			}
-
-			window.addEventListener('message', listen);
 			var d = {
-				id: mid,
 				keys: keys
 			};
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:get_local_storage', d);
+			var msgId = Math.floor(Math.random() * 100000);
+			d.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:get_local_storage';
+			GmCXt.sendMessageToApp(msg, d);
+
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		});
 	}
 };
@@ -5525,18 +5514,15 @@ GmCXt.setAppStorage = function(data) {
 	} else {
 
 		return new Promise(function(resolve, reject) {
+						
+			var msgId = Math.floor(Math.random() * 100000);
+			data.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:set_local_storage';
+			GmCXt.sendMessageToApp(msg, data);
 
-			function listen(event) {
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:set_local_storage_response')) {
-					window.removeEventListener('message', listen);
-					resolve();
-				}
-			}
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 
-			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:set_local_storage', data);
 		});
 	}
 };
@@ -5555,19 +5541,14 @@ GmCXt.removeAppStorage = function(keys) {
 	} else {
 
 		return new Promise(function(resolve, reject) {
+			
+			var msgId = Math.floor(Math.random() * 100000);
+			keys.msgId = msgId;
+			var msg = 'mgPlayerJSTest_action:remove_local_storage';
+			GmCXt.sendMessageToApp(msg, keys);
 
-			function listen(event) {
-
-				var message = GmCXt.parseMsg(event);
-				message = GmCXt.convertMgdata(message);
-				if (message.action && (message.action === 'mgPlayerJSTest_action:remove_local_storage_response')) {
-					window.removeEventListener('message', listen);
-					resolve();
-				}
-			}
-
-			window.addEventListener('message', listen);
-			GmCXt.sendMessageToApp('mgPlayerJSTest_action:remove_local_storage', keys);
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		});
 	}
 };
@@ -5896,6 +5877,14 @@ GmCXt.isSbx = function() {
 	}
 };
 
+GmCXt.myGuideInternalCustomers = function() {
+	if (GmCXt.conf.appConfig.customer === 'myguide' || GmCXt.conf.appConfig.customer === 'sumtotal' || GmCXt.conf.appConfig.customer === 'galaxy' || GmCXt.conf.appConfig.customer === 'sbx') {
+		return true;
+	} else {
+		return false;
+	}
+};
+
 GmCXt.isDesktop = function() {
     if (GmCXt.playerI && GmCXt.playerI.source === GmCXt.sourceDesktop) {
         return true;
@@ -6074,6 +6063,26 @@ GmCXt.DATE_RANGE = 'Date Range';
 GmCXt.IS_VALID = 'Get Validity';
 GmCXt.VISIBLE = 'Visible';
 GmCXt.NOT_VISIBLE = 'Not Visible';
+
+GmCXt.iframePorts = {};
+GmCXt.iframeEls = {};
+GmCXt.msgChannel = new MessageChannel();
+
+GmCXt.startMsgChannel = function(initiator) {
+    window.top.postMessage(initiator, '*', [GmCXt.msgChannel.port2]);
+};
+
+GmCXt.globalMsgData = {};
+
+GmCXt.getEmbedCode = function() {
+    var embedCode = "if(!window.guideMe)window.guideMe={}; " +
+        "window.guideMe.baseUrl='" + GmCXt.conf.clientJsBaseUrl + "';" +
+        "var a=document.createElement('script');" +
+        "a.src=guideMe.baseUrl+'guideme.js';" +
+        "document.head.appendChild(a);";
+
+    return embedCode;
+};
 
 GmCXt.getHostnameFromUrl = function(url) {
     if (url) {
@@ -6807,11 +6816,11 @@ GmCXt.sendToParentWindow = function(m) {
             delete m.data.fromSidePanel;
         }
     }
-    parent.postMessage(GmCXt.formatMsg(m), "*");
+    GmCXt.msgChannel.port1.postMessage(GmCXt.formatMsg(m));
 };
 
 GmCXt.msgToThisWin = function(m) {
-    window.postMessage(GmCXt.formatMsg(m), "*");
+    GmCXt.msgChannel.port1.postMessage(GmCXt.formatMsg(m));
 };
 
 GmCXt.handleError = function(apiName) {
@@ -8984,10 +8993,7 @@ GmCXt.syncPlayerInst = function(m) {
         m === "mgPlayerJSTest_action:click; on:mgPlayerJSTest_slideshow-close" ||
         m === "mgPlayerJSTest_action:mark_auto_tour_donotshow" ||
         m === "mgPlayerJSTest_action:update_player_instance_app" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_off" ||
-        m === "mgPlayerJSTest_action:set_audio_mode_on" ||
-        m === "mgPlayerJSTest_action:close_guide" ||
-        m === "mgPlayerJSTest_action:set_style_audio_icon_response") {
+        m === "mgPlayerJSTest_action:close_guide") {
         return true;
     } else {
         return false;
@@ -10507,16 +10513,12 @@ GmCXt.clearBeaconsAndTooltips = function(isLogout, idList) {
     GmCXt.beaconsOnScreen = [];
 
     if (!isLogout) {
-        GmCXt.closePowerForm();
+        GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_power_form", {});
     }
 
     GmCXt.sendMessageToAllWindows('mgPlayerJSTest_action:forward;remove_active_smarttip_beacon', {
         idList: idList
     });
-};
-
-GmCXt.closePowerForm = function() {
-    GmCXt.sendMessageToApp("mgPlayerJSTest_action:close_power_form", {});
 };
 
 GmCXt.closeAppPanel = function() {
@@ -11096,52 +11098,54 @@ GmCXt.checkGuidesBasedOnSegment = function(tours, cb, from) {
 
     var totalTours = tours.length;
 
-    function checkTourSegment() {
+    function checkTourSegment(s_id) {
         tours.forEach(function(tour) {
 
             GmCXt.log(68, "Check Segments in Tour: " + GmCXt.tourLog(tour));
 
             var isSegmentValid = false;
             var segments = tour.tour_settings.segment_groups;
-            for (var i = 0; i < segments.length; i++) { // For each segmentation added
-                if (GmCXt.validatedSegments[segments[i]]) {
-                    isSegmentValid = true;
-                    break;
+
+            if(GmCXt.inArray(segments, s_id)){
+                for (var i = 0; i < segments.length; i++) { // For each segmentation added
+                    if (GmCXt.validatedSegments[segments[i]]) {
+                        isSegmentValid = true;
+                        break;
+                    }
                 }
-            }
 
-            if (isSegmentValid && !GmCXt.inArray(tour.tour_id, validatedTours)) {
+                if (isSegmentValid && !GmCXt.inArray(tour.tour_id, validatedTours)) {
 
-                validatedTours.push(parseInt(tour.tour_id));
+                    validatedTours.push(parseInt(tour.tour_id));
 
-                toursProcessed++;
+                    toursProcessed++;
 
-                GmCXt.log(68, "VALID Tour segments: " + GmCXt.tourLog(tour));
+                    GmCXt.log(68, "VALID Tour segments: " + GmCXt.tourLog(tour));
 
-            }
-
-            if (segments.length > 0) {
-
-                var segmentSetting = GmCXt.getSegmentSetting(segments[0]);
-
-                switch (segmentSetting) {
-                    case 'show_guides_user_in_segment':
-                        if (isSegmentValid) cb(tour); // Show the guide if user is part of the segment and `activeSegmentSetting` is "show_guides_user_in_segment"
-                        break;
-                    case 'hide_guides_user_in_segment':
-                        if (!isSegmentValid) cb(tour); // Hide the guide if user is part of the segment and `activeSegmentSetting` is "hide_guides_user_in_segment"
-                        break;
-                    case 'show_guides_user_not_in_segment':
-                        if (!isSegmentValid) cb(tour); // Show the guide if user is not part of the segment and `activeSegmentSetting` is "show_guides_user_not_in_segment"
-                        break;
-                    default:
-                        if (isSegmentValid) cb(tour); // Default case
-                        break;
                 }
-            } 
+
+                if (segments.length > 0) {
+
+                    var segmentSetting = GmCXt.getSegmentSetting(segments[0]);
+
+                    switch (segmentSetting) {
+                        case 'show_guides_user_in_segment':
+                            if (isSegmentValid) cb(tour); // Show the guide if user is part of the segment and `activeSegmentSetting` is "show_guides_user_in_segment"
+                            break;
+                        case 'hide_guides_user_in_segment':
+                            if (!isSegmentValid) cb(tour); // Hide the guide if user is part of the segment and `activeSegmentSetting` is "hide_guides_user_in_segment"
+                            break;
+                        case 'show_guides_user_not_in_segment':
+                            if (!isSegmentValid) cb(tour); // Show the guide if user is not part of the segment and `activeSegmentSetting` is "show_guides_user_not_in_segment"
+                            break;
+                        default:
+                            if (isSegmentValid) cb(tour); // Default case
+                            break;
+                    }
+                } 
+            }
         });
     }
-
 
     // segment rules call back 
     function segmentRuleCallBack(r) {
@@ -11154,7 +11158,7 @@ GmCXt.checkGuidesBasedOnSegment = function(tours, cb, from) {
         }
 
         if (toursProcessed !== totalTours) {
-            checkTourSegment();
+            checkTourSegment(r.segmentId);
         }
 
         // if all segment is validated and no tour is processed
@@ -11587,6 +11591,16 @@ GmCXt.replaceVariableInText = function(str) {
     return str;
 };
 
+GmCXt.blockMcKessonIFrame = function(frame) {
+    if (GmCXt.isMcKesson() && frame.name === "dieCommFrame" && frame.id === 'IFrame') {
+        return true;
+    } else if(GmCXt.isMcKesson() && frame && frame.src && frame.src.contains('SpinSciSnap__AgentaSnap')) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 GmCXt.variableRuleExistInGuide = function(rules) {
     for (var k = 0, l = rules.length; k < l; k++) {
         if (rules[k].type === 'Variables') {
@@ -11816,14 +11830,6 @@ GmCXt.workdayAutoClick = function(index) {
         var editIcon = "[data-automation-id='actionImage']";
         var el = mg$(editIcon)[index];
         mg$(el).trigger("click");
-    }
-};
-
-GmCXt.blockAbbvieIframe = function(frame) {
-    if (GmCXt.isAbbvie() && frame.id.includes('emailFrame')) {
-        return true;
-    } else {
-        return false;
     }
 };
 
@@ -12242,6 +12248,53 @@ GmCXt.compareTimes = function(timeStr1, timeStr2) {
         }
     }
 };
+
+GmCXt.changeImageUpload = function(cb) {
+    var fileElement = mg$('#mgPlayerJSTest_upload-image-input');
+
+    if (!fileElement.length) {
+        var fileElement = mg$('<input />');
+        fileElement.attr('type', 'file');
+        fileElement.attr('id', 'mgPlayerJSTest_upload-image-input');
+        fileElement.attr('accept', 'image/png,image/jpeg,image/jpg');
+        fileElement.css('display', 'none');
+        fileElement.appendTo('body');
+    } else {
+        fileElement.val('');
+    }
+
+    fileElement.off('change').on('change', function(e) {
+
+        if (e.target.files[0]) {
+            var fileSize = e.target.files[0].size;
+            if (fileSize > 5240000) {
+                GmCXt.stepReq.data.stepCount = parseInt(GmCXt.stepReq.data.stepCount) - 1;
+                GmCXt.stepReq.data.order = parseInt(GmCXt.stepReq.data.order) - 1;
+                var option = {
+                    title: 'Large Image',
+                    description: 'Please upload image having size less than 5MB',
+                    callback: GmCXt.createNextStep,
+                    type: ''
+                };
+                GmCXt.alert(option).show();
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            fileElement.val('');
+            if(cb) cb(event.target.result); 
+        };
+
+        reader.readAsDataURL(e.target.files[0]);
+    });
+
+    fileElement.click();
+};
 GmCXt.lastUserAction = 0;
 GmCXt.iframeCount = 0;
 GmCXt.prevEnv = [];
@@ -12594,6 +12647,25 @@ GmCXt.startCreatorUpdateInterval = function() {
 	GmCXt.creatorInterval = setInterval(callSync, GmCXt.t.creatorSync);
 };
 
+GmCXt.sendMsgToAudioFrame = function(type, data) {
+	data = data || {};
+	data.config = GmCXt.conf;
+	
+	if (GmCXt.playerI || GmCXt.playerI === null) {
+		data.playerInstance = GmCXt.playerI;
+	}
+
+	var w = mg$(".mgPlayerJSTest_play-step-audio-iframe");	
+	if (w.length) {	
+		var message = {	
+			action: type,	
+			data: data	
+		};	
+		message = GmCXt.formatMsg(message);	
+		w.get(0).contentWindow.postMessage(message, "*");	
+	}
+};
+
 GmCXt.sendMessageToApp = function(type, data) {
 	data = data || {};
 	data.config = GmCXt.conf;
@@ -12611,16 +12683,16 @@ GmCXt.sendMessageToApp = function(type, data) {
 	}
 };
 
-GmCXt.sendMessageToAppIn = function(type, data) {
-	var appWindow = mg$(".mgPlayerJSTest_app");
-	if (appWindow.length) {
-		var message = {
-			action: type,
-			data: data
-		};
-		message = GmCXt.formatMsg(message);
-		appWindow.get(0).contentWindow.postMessage(message, "*");
-	}
+GmCXt.sendMessageToAppIn = function(type, data) {	
+	var appWindow = mg$(".mgPlayerJSTest_app");	
+	if (appWindow.length) {	
+		var message = {	
+			action: type,	
+			data: data	
+		};	
+		message = GmCXt.formatMsg(message);	
+		appWindow.get(0).contentWindow.postMessage(message, "*");	
+	}	
 };
 
 GmCXt.msgToApp = function(action, data, tabId) {
@@ -12632,7 +12704,8 @@ GmCXt.msgToApp = function(action, data, tabId) {
 			action: action,
 			data: data
 		};
-		GmCXt.msgToThisWin(m);
+		// Inside sidePanel iframe
+		window.postMessage(GmCXt.formatMsg(m), "*");
 	} else if (window.top === window.self) {
 		GmCXt.sendMessageToApp(action, data);
 	} else if (GmCXt.isStepFrame) {
@@ -12965,38 +13038,23 @@ GmCXt.callApi = function(data, api) {
 
 	return new Promise(function(resolve, reject) {
 
-		var mid = 'id' + Math.random();
-
-		function sendResponse(m) {
+		var msgId = Math.floor(Math.random() * 100000);
+		function chromeListener(event) {
+			var m = GmCXt.parseJSON(event);
+			m = GmCXt.convertMgdata(m);
 
 			if (m && m.action === 'mgPlayerJSTest_action:call_api_response') {
-
-				if (m.data && m.data.id === mid) {
-					window.removeEventListener('message', winListener);
+				if (m.data && m.data.msgId === msgId) {
 					window.removeEventListener('message', chromeListener);
 					resolve(m.data.items);
 				}
 			}
-		}
-
-		function winListener(event) {
-			var message = GmCXt.parseMsg(event);
-			message = GmCXt.convertMgdata(message);
-
-			sendResponse(message);
-		}
-
-		function chromeListener(event) {
-			var message = GmCXt.parseJSON(event);
-			message = GmCXt.convertMgdata(message);
-
-			sendResponse(message);
 
 			return true;
 		}
 
 		var d = {
-			id: mid,
+			msgId: msgId,
 			option: data,
 			api: api
 		};
@@ -13006,13 +13064,17 @@ GmCXt.callApi = function(data, api) {
 			GmCXt.sendMessageToPanel('mgPlayerJSTest_action:call_api', d, senderTabId);
 
 		} else if (GmCXt.isSidePanelApp) {
-			GmCXt.msgToThisWin({
+			var mm = {
 				action: 'mgPlayerJSTest_action:call_api',
 				data: d
-			});
+			};
+			// Inside sidePanel iframe
+			window.postMessage(GmCXt.formatMsg(mm), "*");
 		} else {
-			window.addEventListener('message', winListener);
+			
 			GmCXt.sendMessageToApp('mgPlayerJSTest_action:call_api', d);
+			GmCXt.globalMsgData[msgId] = {};
+			GmCXt.globalMsgData[msgId].cb = resolve;
 		}
 	});
 };
@@ -13425,10 +13487,6 @@ GmCXt.getDatafromPanel = function() {
 
 	});
 };
-/**
-	* @author Somi Laad
-	* collection of all tracking and insight common functions
-	*/
 
 //***************************** page tracking ***************************************//
 GmCXt.startPageTracker = function() {
@@ -14043,9 +14101,6 @@ GmCXt.AUTOMATION_SUITE_PLAY = 'mi_suite_play';
 GmCXt.lastTrakerSync = 0;
 
 GmCXt.trackerV1 = {
-	setUrl: function(url) {
-		GmCXt.urlParts.fullUrl = url;
-	},
 
 	getScreenSize: function() {
 		var screen = window.screen;
@@ -14423,21 +14478,12 @@ GmCXt.trackerV1 = {
 
 	sendPayloadEventCall: function(payload) {
 		if (!payload) return;
-		if (GmCXt.isClientJs() || GmCXt.isCreatorJS()) {
-			var message = {
-				action: "mgPlayerJSTest_action:payload_event_call",
-				data: payload
-			};
-			GmCXt.sendToParentWindow(message);
-
-
-		} else {
-			var m = {
-				action: "mgPlayerJSTest_action:payload_event_call",
-				data: payload
-			};
-			GmCXt.sendToParentWindow(m);
-		}
+		
+		var m = {
+			action: "mgPlayerJSTest_action:payload_event_call",
+			data: payload
+		};
+		GmCXt.sendToParentWindow(m);
 	},
 
 	trackGuidePlayEvent: function() {
@@ -22229,6 +22275,35 @@ GmCXt.svgs = {
 	iconExternalLink: '<svg  class="mgPlayerJSTest_width-height-100" viewBox="0 0 24 25" fill="none">'+
 		'<path fill-rule="evenodd" clip-rule="evenodd" d="M19.3521 5.68455C19.3891 5.77155 19.4091 5.91455 19.4091 5.91455H19.3901V10.8506C19.3901 11.2506 19.0761 11.4736 18.6751 11.4736H18.6851C18.2841 11.4736 17.9411 11.2506 17.9411 10.8506V7.76755L11.6751 14.0686C11.3921 14.3526 10.9331 14.3456 10.6921 14.0626V14.0496C10.4501 13.7666 10.3851 13.2816 10.6691 12.9996L16.9531 6.63955H13.8701C13.4701 6.63955 13.1081 6.34155 13.1081 5.94055V5.96655C13.1081 5.56655 13.4701 5.19055 13.8701 5.19055H18.7021H18.6661V5.24055C18.9071 5.24055 19.2421 5.42355 19.3521 5.68455ZM16.1901 12.3766L17.6401 13.8266V18.3996C17.6401 19.1996 17.0101 19.8096 16.2101 19.8096H6.05906C5.25906 19.8096 4.59106 19.1996 4.59106 18.3996V8.25055C4.59106 7.45055 5.25906 6.76055 6.06006 6.76055H10.6321L12.0821 8.21055H6.04206V18.3605H16.1901V12.3766Z" fill="#555555"/>'+
 		'</svg>',
+
+	iconImageStepUploadImage: '<svg version="1.1" id="Capa_1" x="0px" y="0px"' +
+		'viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">' +
+		'<g>' +
+		'<g>' +
+		'<path d="M47.4,24.4c-0.8,0-1.4,0.6-1.4,1.4v12.4c0,3.4-2.7,6.1-6.1,6.1H10c-3.4,0-6.1-2.7-6.1-6.1V25.6c0-0.8-0.6-1.4-1.4-1.4' +
+		's-1.4,0.6-1.4,1.4v12.6c0,4.9,4,8.8,8.8,8.8H40c4.9,0,8.8-4,8.8-8.8V25.8C48.8,25.1,48.2,24.4,47.4,24.4z"/>' +
+		'<path d="M17.3,13.9l6.3-6.3v27.7c0,0.8,0.6,1.4,1.4,1.4s1.4-0.6,1.4-1.4V7.6l6.3,6.3c0.3,0.3,0.6,0.4,1,0.4c0.4,0,0.7-0.1,1-0.4' +
+		'c0.5-0.5,0.5-1.4,0-1.9L26,3.4c-0.3-0.3-0.6-0.4-1-0.4c-0.4,0-0.7,0.1-1,0.4L15.4,12c-0.5,0.5-0.5,1.4,0,1.9' +
+		'C15.9,14.5,16.8,14.5,17.3,13.9z"/>' +
+		'</g>' +
+		'</g>' +
+		'</svg>',
+
+	iconImageStepCaptureScreen: '<svg width="8px" height="8px" viewBox="0 0 8 8" version="1.1"  >' +
+		'<defs></defs>' +
+		'<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">' +
+		'<g id="10-branching-on-guideme--copy" transform="translate(-1218.000000, -320.000000)">' +
+		'<g id="Group-10" transform="translate(1202.000000, 256.000000)">' +
+		'<g id="Group-8" transform="translate(16.000000, 61.000000)">' +
+		'<g id="Group-3" transform="translate(0.000000, 3.000000)">' +
+		'<path d="M0,0.880952381 L0,2.64285714 L0.880952381,2.64285714 L0.880952381,0.880952381 L2.64285714,0.880952381 L2.64285714,0 L0.880952381,0 C0.396428571,0 0,0.396428571 0,0.880952381 L0,0.880952381 Z M0.880952381,5.28571429 L0,5.28571429 L0,7.04761905 C0,7.53214286 0.396428571,7.92857143 0.880952381,7.92857143 L2.64285714,7.92857143 L2.64285714,7.04761905 L0.880952381,7.04761905 L0.880952381,5.28571429 L0.880952381,5.28571429 Z M7.04761905,7.04761905 L5.28571429,7.04761905 L5.28571429,7.92857143 L7.04761905,7.92857143 C7.53214286,7.92857143 7.92857143,7.53214286 7.92857143,7.04761905 L7.92857143,5.28571429 L7.04761905,5.28571429 L7.04761905,7.04761905 L7.04761905,7.04761905 Z M7.04761905,0 L5.28571429,0 L5.28571429,0.880952381 L7.04761905,0.880952381 L7.04761905,2.64285714 L7.92857143,2.64285714 L7.92857143,0.880952381 C7.92857143,0.396428571 7.53214286,0 7.04761905,0 L7.04761905,0 Z" class="shape"></path>' +
+		'<path d="M4,5.42857143 C3.21142857,5.42857143 2.57142857,4.78857143 2.57142857,4 C2.57142857,3.21142857 3.21142857,2.57142857 4,2.57142857 C4.78857143,2.57142857 5.42857143,3.21142857 5.42857143,4 C5.42857143,4.78857143 4.78857143,5.42857143 4,5.42857143 L4,5.42857143 Z" class="shape"></path>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</g>' +
+		'</svg>',
 };
 
 GmCXt.model = {};
@@ -23039,6 +23114,155 @@ GmCXt.model.tutorial_guide_default = {
 	}
 };
 
+GmCXt.model.notificationTheme_default = {
+	width: {
+		_type: "string",
+		_default: "600"
+	},
+	height: {
+		_type: "string",
+		_default: "300"	
+	},
+	header: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			background: {
+				_type: "string",
+				_default: "#FF240A"			
+			},
+			color: {
+				_type: "string",
+				_default: "#FFFFFF"			
+			},
+			font: {
+				_type: "string",
+				_default: "Lato"			
+			}
+		}
+	},
+	body: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			action_button_background: {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			action_button_border_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			action_button_font: {
+				_type: "string",
+				_default: "Lato"
+			},
+			action_button_text_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			action_button_url: {
+				_type: "string",
+				_default: ""
+			},
+			background_color: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			desc_color: {
+				_type: "string",
+				_default: "#555555"
+			},
+			desc_font_family: {
+				_type: "string",
+				_default: "Lato"
+			},
+			desc_font_size: {
+				_type: "string",
+				_default: "medium"
+			},
+			fill: {
+				_type: "string",
+				_default: "#707070"
+			},
+			padding_bottom: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_left: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_right: {
+				_type: "string",
+				_default: "20"
+			},
+			padding_top: {
+				_type: "string",
+				_default: "20"
+			},
+			title_color: {
+				_type: "string",
+				_default: "#000000"
+			},
+			title_font_family: {
+				_type: "string",
+				_default: "Lato"
+			},
+			title_font_size: {
+				_type: "string",
+				_default: "medium"
+			}
+		}
+	},
+	footer: {
+		_type: "object",
+		_clone: true,
+		_obj: {
+			primaryBtnTextColor: {
+				_type: "string",
+				_default: "#FFFFFF"
+			},
+			primaryBtnTextSize: {
+				_type: "string",
+				_default: "medium"
+			},
+			primaryBtnFont: {
+				_type: "string",
+				_default: "#Lato"
+			},
+			primaryBtnBackground : {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			primaryBtnBorderColor: {
+				_type: "string",
+				_default: "#005BF0"
+			},
+			secondaryBtnTextColor: {
+				_type: "string",
+				_default: "#555555"
+			},
+			secondaryBtnTextSize: {
+				_type: "string",
+				_default: "#medium"
+			},
+			secondaryBtnFont: {
+				_type: "string",
+				_default: "#Lato"
+			},
+			secondaryBtnBackground : {
+				_type: "string",
+				_default: "#E6E6E6"
+			},
+			secondaryBtnBorderColor: {
+				_type: "string",
+				_default: "#555555"
+			}
+		}
+	}
+};
+
 GmCXt.model.organization = {
 	about: {
 		_type: "string",
@@ -23572,6 +23796,11 @@ GmCXt.model.organization = {
 			autoStepDelay: {
 				_type: "number",
 				default: 4
+			},
+			notificationTheme: {
+				_type: "object",
+				_clone: true,
+				_obj: GmCXt.createDeepCopy(GmCXt.model.notificationTheme_default)
 			}
 		}
 	},
@@ -25332,6 +25561,12 @@ GmCXt.model.application = {
 			autoStepDelay: {
 				_type: "number",
 				_inherit: true
+			},
+			notificationTheme: {
+				_type: "object",
+				_clone: true,
+				_inherit: true,
+				_obj: GmCXt.createDeepCopy(GmCXt.model.notificationTheme_default)
 			}
 		},
 		_clone: true
@@ -25478,18 +25713,6 @@ GmCXt.apiGetClientSecretInsight = function(o) {
 		})
 	};
 	return GmCXt.xhrAnalytics(params, true);
-};
-
-GmCXt.apiTrackEventV3 = function(o) {
-	var params = {
-		url: "v3/push_events/",
-		method: 'POST',
-		headers: {
-			'Content-Type': "application/json"
-		},
-		data: JSON.stringify(o)
-	};
-	return GmCXt.xhrAnalytics(params);
 };
 
 GmCXt.apiTrackEventV1 = function(o) {
@@ -26214,7 +26437,6 @@ GmCXt.apiPlayerProvider = function() {
 	pub.registerClientInsight = GmCXt.apiRegisterClientInsight;
 	pub.getClientSecretInsight = GmCXt.apiGetClientSecretInsight;
 	pub.trackEventV1 = GmCXt.apiTrackEventV1;
-	pub.trackEventV3 = GmCXt.apiTrackEventV3;
 	pub.saveMyBotReport = GmCXt.saveMyBotReport;
 	pub.trackSentiment = GmCXt.apitrackSentiment;
 	pub.trackConversation = GmCXt.apitrackConversation;
@@ -26487,7 +26709,6 @@ GmCXt.guideMeApiProvider = function() {
 	pub.registerClientInsight = GmCXt.apiRegisterClientInsight;
 	pub.getClientSecretInsight = GmCXt.apiGetClientSecretInsight;
 	pub.trackEventV1 = GmCXt.apiTrackEventV1;
-	pub.trackEventV3 = GmCXt.apiTrackEventV3;
 	pub.saveMyBotReport = GmCXt.saveMyBotReport;
 	pub.getOneTimeTokenInsights = GmCXt.getOneTimeTokenInsights;
 	pub.trackSentiment = GmCXt.apitrackSentiment;
@@ -26510,6 +26731,11 @@ if (GmCXt.conf.provider === 'GuideMe') {
 if (GmCXt === undefined) var GmCXt = {};
 var stepAudio = {};
 var userPrefAudio = false;
+
+// Starts message channel only inside audio iframe
+if (mg$('.mgPlayerJSTest_audio-iframe-icons') > 0) {
+	GmCXt.startMsgChannel('Guide:audioIframe');
+}
 
 function setAudioModeOn() {
 	mg$('.mgPlayerJSTest_play-step-audio-on').show();
@@ -26564,6 +26790,7 @@ GmCXt.requestHandler.stopAudioTrack = function(message) {
 	GmCXt.stopAudio();
 };
 
+// This listener is only in Guide iframe
 window.addEventListener('message', function(event) {
 	if (!GmCXt) {
 		GmCXt = event.target.GmCXt;
@@ -27872,6 +28099,7 @@ var checkTime = function(condition, val) {
 	}
 };
 GmCXt.initDebugMode();
+GmCXt.startMsgChannel('Guide:sidePanel');
 
 var moduleArr = ["ui.router", "http-auth-interceptor", "ngSanitize", "LocalForageModule"];
 
@@ -28731,7 +28959,7 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
                 if (GmCXt.user) {
                     initCommon();
                 } else {
-                    if (($rootScope.appConfig.login.SSO || GmCXt.isMyGuide() || GmCXt.isMcKesson()) && $rootScope.isAllowedDomain()) {
+                    if (($rootScope.appConfig.login.SSO || GmCXt.myGuideInternalCustomers() || GmCXt.isMcKesson()) && $rootScope.isAllowedDomain()) {
                         if (GmCXt.urlParts) {
                             $rootScope.signInWithSso();
                         } else {
@@ -29439,7 +29667,7 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
             }
 
             function getSsoIdUrl(url) {
-                if (GmCXt.isMyGuide() || GmCXt.isMcKesson()) {
+                if (!$rootScope.myGuideOrgKey && (GmCXt.myGuideInternalCustomers() || GmCXt.isMcKesson())) {
                     return url + '' + $rootScope.ssoId;
                 } else {
                     return url;
@@ -29460,7 +29688,7 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
 
             $rootScope.signInWithSso = function(target) {
 
-                if (GmCXt.isMyGuide() || GmCXt.isMcKesson()) {
+                if (!$rootScope.myGuideOrgKey && (GmCXt.myGuideInternalCustomers() || GmCXt.isMcKesson())) {
                     $rootScope.getSsoId().then(function(response) {
                         getSsoUser();
                     }).catch(function() {
@@ -33259,6 +33487,8 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
                                     $rootScope.startPoints.unshift(tour.steps[0]);
                                 }
                                 $rootScope.searching_sp = 0;
+
+                                // This listener is only in Guide iframe
                                 window.addEventListener('message', listenTourPlay);
                                 GmCXt.sendToParentWindow({
                                     action: 'mgPlayerJSTest_action:search_start_point',
@@ -33272,6 +33502,7 @@ app.service('appRootScope', ['$rootScope', 'SVGS', '$state',
 
                                 $rootScope.stepFound = false;
 
+                                // This listener is only in Guide iframe
                                 window.addEventListener('message', listenTourPlay);
 
                                 GmCXt.sendToParentWindow({
@@ -37521,30 +37752,6 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 		});
 	};
 
-	this.manageSegments = function(data, successCb, failCb) {
-		var params = {
-			serviceName: 'tour/segments',
-			method: 'PUT',
-			data: data,
-			onFail: failCb,
-			onSuccess: successCb
-		};
-
-		xhr.post(params);
-	};
-
-	this.addSegments = function(data, successCb, failCb) {
-		data.organization_id = xhr.orgId();
-		data.operation = "update";
-		this.manageSegments(data, successCb, failCb);
-	};
-
-	this.deleteSegments = function(data, successCb, failCb) {
-		data.organization_id = xhr.orgId();
-		data.operation = "delete";
-		this.manageSegments(data, successCb, failCb);
-	};
-
 	this.getTourList = function(data, cb, appId) {
 		data.application_id = appId ? appId : xhr.appId();
 
@@ -37571,6 +37778,7 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 
 		if (GmCXt.isDefined(data.search_text) && !GmCXt.isEmpty(data.search_text)) {
 			params.serviceName = 'tour/search';
+			params.method = 'POST';
 		}
 
 		function tourCb(tours, pin_tours) {
@@ -37585,6 +37793,14 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			cb(tours, pin_tours);
 		}
 
+		var onSuccessApi = function(r) {
+			GmCXt.validateApiResp(tourCb,
+				params.serviceName,
+				r.data.data.tours,
+				GmCXt.model.guides,
+				r.data.data.pin_tours);
+		};
+
 		cache.getTourList(data).then(function(tlist) {
 			storage.pinnedToursList.get().then(function(pinTourList) {
 				cb(tlist, pinTourList);
@@ -37592,15 +37808,14 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			
 		}).catch(function() {
 			delete params.data.reloadFlag;
-			xhr.get(params).then(function(r) {
-				GmCXt.validateApiResp(tourCb,
-					params.serviceName,
-					r.data.data.tours,
-					GmCXt.model.guides,
-					r.data.data.pin_tours);
-			}).catch(function() {
-				$rootScope.goBack();
-			});
+			if (params.serviceName === 'tour/search') {
+				params.onSuccess = onSuccessApi;
+				xhr.post(params);
+			} else {
+				xhr.get(params).then(onSuccessApi).catch(function() {
+					$rootScope.goBack();
+				});
+			}
 		});
 
 	};
@@ -37644,6 +37859,9 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 		};
 
 		var onSuccessApi = function(r) {
+			if(successCb) {
+				successCb(r.data.data.tour);
+			}
 			GmCXt.validateApiResp(successApiCb,
 				params.serviceName,
 				r.data.data.tour,
@@ -37658,7 +37876,7 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			onFail: onFail
 		};
 
-		var tour = cache.updateTour(data, successCb);
+		var tour = cache.updateTour(data);
 
 		if (!GmCXt.isEmpty(tour)) {
 			params.onFail = onFail;
@@ -37802,6 +38020,9 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 		};
 
 		var onSuccessApi = function(r) {
+			if(successCb) {
+				successCb(r.data.data.tour);
+			}
 			GmCXt.validateApiResp(successApiCb,
 				params.serviceName,
 				r.data.data.tour,
@@ -37816,7 +38037,7 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			onFail: onFail
 		};
 
-		var tour = cache.updateTour(data, successCb);
+		var tour = cache.updateTour(data);
 
 		if (!GmCXt.isEmpty(tour)) {
 			params.onFail = onFail;
@@ -37843,6 +38064,9 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 		};
 
 		var onSuccessApi = function(r) {
+			if(successCb) {
+				successCb(r.data.data.tour);
+			}
 			GmCXt.validateApiResp(successApiCb,
 				params.serviceName,
 				r.data.data.tour,
@@ -37871,7 +38095,7 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			onFail: onFail
 		};
 
-		var tour = cache.updateTour(data, successCb);
+		var tour = cache.updateTour(data);
 
 		if (!GmCXt.isEmpty(tour)) {
 			params.onFail = onFail;
@@ -38000,7 +38224,7 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			};
 			params.onFail = onFail;
 		} else {
-			tour = cache.updateTourStatus(data, successCb);
+			tour = cache.updateTourStatus(data);
 
 			if (GmCXt.isEmpty(tour)) {
 				params.onSuccess = successCb;
@@ -38051,15 +38275,19 @@ var guideMeAPIProvider = function(AuthLogin, storage, $http, $rootScope, $timeou
 			};
 			params.onFail = onFail;
 		} else {
-			tour = cache.updateTourEnv(data, successCb);
+			tour = cache.updateTourEnv(data);
 
-			if (GmCXt.isEmpty(tour)) {
-				params.onSuccess = function() {
+			params.onSuccess = function() {
+				if(GmCXt.isEmpty(tour)) {
 					successCb();
-				};
-			} else {
+				} else {
+					successCb(tour);
+				}
+			};
+
+			if (!GmCXt.isEmpty(tour)) {
 				params.onFail = onFail;
-			}
+			} 
 		}
 
 		xhr.post(params);
@@ -39163,7 +39391,7 @@ function creatorCache(AuthLogin, storage, $http, $rootScope, $timeout, mgError) 
 				}
 
 				$rootScope.setTour(updatedTour);
-				successCb(updatedTour);
+				//successCb(updatedTour);
 			}
 		}
 
@@ -39269,7 +39497,7 @@ function creatorCache(AuthLogin, storage, $http, $rootScope, $timeout, mgError) 
 		$rootScope.setTour(t);
 	};
 
-	pub.updateTourEnv = function(data, successCb) {
+	pub.updateTourEnv = function(data) {
 
 		var tour;
 
@@ -39280,8 +39508,6 @@ function creatorCache(AuthLogin, storage, $http, $rootScope, $timeout, mgError) 
 
 			if (!GmCXt.isEmpty(updatedTour)) {
 				pub.tourEnv(updatedTour, data);
-
-				successCb(updatedTour);
 			}
 		}
 
@@ -39972,11 +40198,16 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 					}
 				});
 
-				if (showMsg) {
+				if(isPublishedOnTopEnv()){
+					mg$('#publishMsg').text($rootScope.labels.guideIsPubIn + envStr);
+				}
+				else if (showMsg) {
 					mg$('#publishMsg').text(msg + envStr);
 				} else {
 					mg$('#publishMsg').text('');
 				}
+
+
 			}
 
 			function toggleActive() {
@@ -39986,15 +40217,15 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 
 				if (mg$(this).hasClass('mgPlayerJSTest_active-progress')) {
 					mg$(this).removeClass('mgPlayerJSTest_active-progress');
+					mg$(".mgPlayerJSTest_pub-schedule-checkbox-container").hide();
 					if (k === 0) {
 						mg$('.ege-publish').addClass("mgPlayerJSTest_disabled");
+					}else{
+						mg$('.ege-publish').removeClass("mgPlayerJSTest_disabled");
 					}
 					var j = k + 1;
 					while (j < envs.length) {
 						mg$('#' + envs[j]).removeClass('mgPlayerJSTest_active-progress');
-						if (envs[j] === envs[envs.length - 1]) {
-							mg$(".mgPlayerJSTest_pub-schedule-checkbox-container").hide();
-						}
 						j++;
 					}
 
@@ -40011,6 +40242,10 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 					if (envs[k] === envs[envs.length - 1]) {
 						mg$(".mgPlayerJSTest_pub-schedule-checkbox-container").show();
 					}
+				}
+
+				if(isPublishedOnTopEnv()){
+					mg$('.ege-publish').addClass("mgPlayerJSTest_disabled");
 				}
 				updateMessage();
 			}
@@ -40060,8 +40295,6 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 				self.close();
 			});
 		};
-
-
 
 		this.attachPopupActions = function(onOk, onCancel, onPreview) {
 			var self = this;
@@ -40956,6 +41189,10 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 				if (!pageScope.$$phase) pageScope.$apply();
 			}
 
+			if(isPublishedOnTopEnv()){
+				mg$('.ege-publish').addClass("mgPlayerJSTest_disabled");
+			}
+
 			this.addPublishActions(onOk);
 		};
 
@@ -41061,6 +41298,16 @@ app.service('modal', ['$rootScope', 'api', 'storage', '$compile', '$timeout',
 				if (!pageScope.$$phase) pageScope.$apply();
 			}
 		};
+		
+
+		function isPublishedOnTopEnv(){
+			if($rootScope.guideEnvs && mg$('.mgPlayerJSTest_active-progress').length === $rootScope.guideEnvs.length){
+				return true;
+			} 
+			else {
+				return false;
+			} 
+		}
 	}
 ]);
 var app = angular.module("guideme");
@@ -41753,6 +42000,8 @@ GmCXt.storageService = function() {
 					}
 				}
 			};
+
+			// This listener is only in Guide iframe
 			window.addEventListener('message', listen);
 
 			GmCXt.sendToParentWindow(message);
@@ -41815,6 +42064,7 @@ GmCXt.storageService = function() {
 					}
 				};
 
+				// This listener is only in Guide iframe
 				window.addEventListener('message', listen);
 
 				GmCXt.sendToParentWindow(message);
@@ -46208,20 +46458,7 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 			}
 		}
 
-		function winListener(event) {
-
-			var message = GmCXt.parseMsg(event);
-
-			if (!message) return;
-
-			if (!message.action || message.action.indexOf('mgPlayerJSTest_action:') !== 0) {
-				return;
-			}
-			message = GmCXt.convertMgdata(message);
-
-			if (message.data && message.data.config) {
-				GmCXt.conf = message.data.config;
-			}
+		function msgAction(message) {
 
 			switch (message.action) {
 
@@ -46263,10 +46500,6 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 						tourViewPage.closeVideo(message.data);
 					break;
 
-				case 'mgPlayerJSTest_action:set_video_iframe_height':
-					mg$('.video-iframe').css('height', message.data.pageHeight + 13);
-					break;
-
 				case 'mgPlayerJSTest_action:open_side_panel':
 					$rootScope.isSidePanelOpen = true;
 
@@ -46291,6 +46524,10 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 						}
 					}
 
+					break;
+
+				case 'mgPlayerJSTest_action:set_video_iframe_height':
+					mg$('.video-iframe').css('height', message.data.pageHeight + 13);
 					break;
 
 				case 'mgPlayerJSTest_action:clear_current_page':
@@ -46329,6 +46566,7 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 
 						if (GmCXt.isPlayer()) {
 							$rootScope.orgSecrret = d.orgSecKey || GmCXt.conf.orgSecrret;
+							$rootScope.myGuideOrgKey = d.myGuideOrgKey;
 						}
 
 						if (d.isDesktopReq) {
@@ -46354,6 +46592,8 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 
 				case 'mgPlayerJSTest_action:set_local_storage':
 					if (message.data) {
+						var msgId = message.data.msgId;
+						delete message.data.msgId;
 
 						mg$.each(message.data, function(key, value) {
 							key = GmCXt.addStoragePrefix(key);
@@ -46361,7 +46601,11 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 						});
 
 						var m = {
-							action: "mgPlayerJSTest_action:set_local_storage_response"
+							
+							action: "mgPlayerJSTest_action:set_local_storage_response",
+							data: {
+								msgId: msgId,
+							}
 						};
 						GmCXt.sendToParentWindow(m);
 					}
@@ -46387,7 +46631,7 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 						var m = {
 							action: "mgPlayerJSTest_action:get_local_storage_response",
 							data: {
-								id: message.data.id,
+								msgId: message.data.msgId,
 								items: items
 							}
 						};
@@ -46400,6 +46644,8 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 					break;
 
 				case 'mgPlayerJSTest_action:remove_local_storage':
+					var msgId = message.data.msgId;
+					delete message.data.msgId;
 					var keys = message.data;
 
 					for (var i = 0; i < keys.length; i++) {
@@ -46408,7 +46654,10 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 					}
 
 					var m = {
-						action: "mgPlayerJSTest_action:remove_local_storage_response"
+						action: "mgPlayerJSTest_action:remove_local_storage_response",
+						data: {
+							msgId: msgId
+						}
 					};
 					GmCXt.sendToParentWindow(m);
 
@@ -46561,6 +46810,12 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 
 				case 'mgPlayerJSTest_action:clean_tour_player':
 					GmCXt.cleanPlayerI();
+					break;
+
+				case 'mgPlayerJSTest_action:reset_panel_right':
+					mg$('.ege-panel').css({
+						'right': 'initial'
+					});
 					break;
 
 				case 'mgPlayerJSTest_action:logout_user':
@@ -46727,7 +46982,7 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 		}
 
 		function callApi(message) {
-			var messageId = message.data.id;
+			var messageId = message.data.msgId;
 			switch (message.data.api) {
 
 				case 'tour':
@@ -46819,7 +47074,7 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 				var m = {
 					action: "mgPlayerJSTest_action:call_api_response",
 					data: {
-						id: messageId,
+						msgId: messageId,
 						items: result
 					}
 				};
@@ -46836,8 +47091,27 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 			}
 		}
 
+		function winListener(event) {
+	
+			var m = GmCXt.parseMsg(event);
+
+			if (!m) return;
+
+			if (!m.action || m.action.indexOf('mgPlayerJSTest_action:') !== 0) {
+				return;
+			}
+			m = GmCXt.convertMgdata(m);
+
+			if (m.data && m.data.config) {
+				GmCXt.conf = m.data.config;
+			}
+
+			msgAction(m);
+		}
+
 		this.set = function() {
 
+			// This listener is only in Guide iframe
 			window.addEventListener('message', winListener);
 
 			if (GmCXt.isExtension()) {
@@ -46879,29 +47153,26 @@ app.service('comm_player', ['$rootScope', 'api', 'modal', '$state',
 			}
 		}
 
-		GmCXt.requestHandler.handleGetSurveyDetail = function(data, cb) {
+		GmCXt.requestHandler.handleGetSurveyDetail = function(data) {
 			var sendResponse = function(r) {
-				if (cb) {
-					cb(r);
-				} else {
-					var m = {
-						action: "mgPlayerJSTest_action:got_survey_detail",
-						data: r
-					};
-					GmCXt.sendToParentWindow(m);
-				}
+				r.msgId = data.msgId;
+				var m = {
+					action: "mgPlayerJSTest_action:got_survey_detail",
+					data: r
+				};
+				GmCXt.sendToParentWindow(m);
 			};
 
-			var objToSend = {};
-			objToSend.sentiment_code = data.sentiment.sentimentCode;
-			objToSend.user = GmCXt.user;
+			var obj = {};
+			obj.sentiment_code = data.sentiment.sentimentCode;
+			obj.user = GmCXt.user;
 			if (data.isExit) {
-				objToSend.app_code = '';
+				obj.app_code = '';
 			} else {
-				objToSend.app_code = GmCXt.appList['app:' + GmCXt.activeAppId].external_id;
+				obj.app_code = GmCXt.appList['app:' + GmCXt.activeAppId].external_id;
 			}
 
-			GmCXt.api.getSentiment(objToSend)
+			GmCXt.api.getSentiment(obj)
 				.then(sendResponse)
 				.catch(function(result) {
 					sendResponse(false);
@@ -47068,6 +47339,7 @@ app.controller('HomeCtrl', ['$rootScope', '$scope', '$state', 'api', 'AuthLogin'
 
 		function updatePageUrl() {
 
+			// This listener is only in Guide iframe
 			window.addEventListener('message', listen);
 
 			var msg = {
@@ -48005,7 +48277,6 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 		addEvents();
 		mg$("#mgPlayerJSTest_single-guide-play-icon-svg").html(GmCXt.svgs.notification_guide_play);
 		mg$("#mgPlayerJSTest_push-not-play-icon-svg").html(GmCXt.svgs.push_not_single_play);
-		mg$(".mgPlayerJSTest_push-notification-bell").html(GmCXt.svgs.bellIcon);
 		mg$(".mgPlayerJSTest_btn-prev").html(GmCXt.svgs.push_prev);
 		mg$(".mgPlayerJSTest_btn-next").html(GmCXt.svgs.push_prev);
 		mg$("#mgPlayerJSTest_push-not-overlay-close").html(GmCXt.svgs.overlay_tour_popup_close);
@@ -48211,7 +48482,6 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 			"<div class='mgPlayerJSTest_overlay-container'></div>" +
 			"<div class='mgPlayerJSTest_overlay-tours-popup mgPlayerJSTest_overlay-single-tour-popup'>" +
 			"<div class='mgPlayerJSTest_close-button mgPlayerJSTest_icons-hover-effect mgPlayerJSTest_inline-block-vm'>" +
-			"<div class='mgPlayerJSTest_push-notification-bell'></div>" +
 			"<button id='mgPlayerJSTest_push-not-overlay-close' class='mgPlayerJSTest_lbl-btn' aria-label='push notification overlay close' ></button>" +
 			"<div class='mgPlayerJSTest_title-tooltip-wrapper mgPlayerJSTest_position-bottom-left'>" +
 			"<div class='mgPlayerJSTest_tooltip-title'>" + GmCXt.label.close + "</div>" +
@@ -48275,7 +48545,6 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 		var html =
 			"<div class='mgPlayerJSTest_overlay-container'></div>" +
 			"<div class='mgPlayerJSTest_overlay-tours-popup mgPlayerJSTest_push-notification-container mgPlayerJSTest_push-notification-multi-guides'>" +
-			"<div class='mgPlayerJSTest_push-notification-bell'></div>" +
 			previewBtn +
 			"<button id='mgPlayerJSTest_btn-single-notif-prev' class='mgPlayerJSTest_lbl-btn mgPlayerJSTest_btn-prev' aria-label='push notification previous button' ></button>" +
 			"<button id='mgPlayerJSTest_btn-single-notif-next' class='mgPlayerJSTest_lbl-btn mgPlayerJSTest_btn-next' aria-label='push notification next button'></button>" +
@@ -48283,7 +48552,7 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 			"<h3 class='mgPlayerJSTest_push-notification-title mgPlayerJSTest_no-margin mgPlayerJSTest_font-weight-normal'>" + GmCXt.label.notificationHeader + "</h3>" +
 			"<div class='mgPlayerJSTest_push-notification-brand-logo'>" + GmCXt.getPopupLogo() + "</div>" +
 			"</div>" +
-			"<div class='mgPlayerJSTest_push-notification-content-wrapper mgPlayerJSTest_position-relative'>" +
+			"<div class='mgPlayerJSTest_push-notification-content-wrapper mgPlayerJSTest_position-relative mgPlayerJSTest_position-center'>" +
 			tourStr +
 			"<div class='mgPlayerJSTest_multi-push-carousels-wrapper'></div>" +
 			"</div>" +
@@ -48321,7 +48590,6 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 		var html =
 			"<div class='mgPlayerJSTest_overlay-container'></div>" +
 			"<div class='mgPlayerJSTest_overlay-tours-popup mgPlayerJSTest_push-notification-container mgPlayerJSTest_push-notification-video-container'>" +
-			"<div class='mgPlayerJSTest_push-notification-bell'></div>" +
 			previewBtn +
 			"<button id='mgPlayerJSTest_btn-single-vid-notif-prev' class='mgPlayerJSTest_lbl-btn mgPlayerJSTest_btn-prev' aria-label='push notification previous button'></button>" +
 			"<button id='mgPlayerJSTest_btn-single-vid-notif-next' class='mgPlayerJSTest_lbl-btn mgPlayerJSTest_btn-next' aria-label='push notification next button'></button>" +
@@ -48329,7 +48597,7 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 			"<h3 class='mgPlayerJSTest_push-notification-title mgPlayerJSTest_no-margin mgPlayerJSTest_font-weight-normal'>" + GmCXt.label.notificationHeader + "</h3>" +
 			"<div class='mgPlayerJSTest_push-notification-brand-logo mgPlayerJSTest_push-notification-guide-info-overlay' ' tourIndex='" + index + "'>" + GmCXt.getPopupLogo() + "</div>" +
 			"</div>" +
-			"<div class='mgPlayerJSTest_push-notification-content-wrapper mgPlayerJSTest_position-relative mgPlayerJSTest_video-content-wrapper'>" +
+			"<div class='mgPlayerJSTest_push-notification-content-wrapper mgPlayerJSTest_position-relative mgPlayerJSTest_video-content-wrapper mgPlayerJSTest_position-center'>" +
 			"<div class='mgPlayerJSTest_push-notification-guide-info-wrapper mgPlayerJSTest_video-info-wrapper'>" +
 			"<video controls autoplay controlsList='nodownload' disablePictureInPicture poster=" + poster_url + ">" +
 			"<source src='" + src + "' type='video/mp4'>" +
@@ -48866,13 +49134,89 @@ GmCXt.loadGuideNotifications = function(tours, isPreview, taskObj, step, resetMa
 	}
 
 	function bindThemeColor() {
+		var nTheme = GmCXt.getAppSetting('notificationTheme');
 
-		var n = GmCXt.getAppSetting('notifications');
+		if (nTheme) {
+			if (isPreview) {
+				GmCXt.timeout(function() {
+					mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_close-preview-btn svg polygon").each(function() {
+						if (nTheme.body.fill) this.style.setProperty('fill', nTheme.body.fill, 'important');
+					});
+				}, 100);
+			}
 
-		if (n.notifThemeColor) {
-			mg$(".mgPlayerJSTest_push-notification-header").css('background-color', n.notifThemeColor);
+			mg$(".mgPlayerJSTest_push-notification-container").each(function() {
+				if (nTheme.width) this.style.setProperty('width', nTheme.width + 'px', 'important');
+				if (nTheme.height) this.style.setProperty('height', nTheme.height + 'px', 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-header").each(function() {
+				if (nTheme.header.background) this.style.setProperty('background', nTheme.header.background, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-header .mgPlayerJSTest_push-notification-title").each(function() {
+				if (nTheme.header.color) this.style.setProperty('color', nTheme.header.color, 'important');
+				if (nTheme.header.font) this.style.setProperty('font-family', nTheme.header.font, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-content-wrapper").each(function() {
+				if (nTheme.body.padding_top) this.style.setProperty('padding-top', nTheme.body.padding_top + 'px', 'important');
+				if (nTheme.body.padding_right) this.style.setProperty('padding-right', nTheme.body.padding_right + 'px', 'important');
+				if (nTheme.body.padding_bottom) this.style.setProperty('padding-bottom', nTheme.body.padding_bottom + 'px', 'important');
+				if (nTheme.body.padding_left) this.style.setProperty('padding-left', nTheme.body.padding_left + 'px', 'important');
+				if (nTheme.body.background_color) this.style.setProperty('background', nTheme.body.background_color, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-content-wrapper .mgPlayerJSTest_push-notification-guide-info-wrapper .mgPlayerJSTest_push-notification-guide-title").each(function() {
+				if (nTheme.body.title_color) this.style.setProperty('color', nTheme.body.title_color, 'important');
+				if (nTheme.body.title_font_family) this.style.setProperty('font-family', nTheme.body.title_font_family, 'important');
+				if (nTheme.body.title_font_size) this.style.setProperty('font-size', nTheme.body.title_font_size, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-content-wrapper .mgPlayerJSTest_push-notification-video-title").each(function() {
+				if (nTheme.body.title_color) this.style.setProperty('color', nTheme.body.title_color, 'important');
+				if (nTheme.body.title_font_family) this.style.setProperty('font-family', nTheme.body.title_font_family, 'important');
+				if (nTheme.body.title_font_size) this.style.setProperty('font-size', nTheme.body.title_font_size, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-content-wrapper .mgPlayerJSTest_push-notification-guide-info-wrapper .mgPlayerJSTest_single-guide-play-icon .mgPlayerJSTest_push-play-icon").each(function() {
+				if (nTheme.body.fill) this.style.setProperty('background', nTheme.body.fill, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-btn-wrapper .mgPlayerJSTest_btn-dont-show-again").each(function() {
+				if (nTheme.footer.primaryBtnBackground) this.style.setProperty('background', nTheme.footer.primaryBtnBackground, 'important');
+				if (nTheme.footer.primaryBtnBorderColor) this.style.setProperty('border', '2px outset ' + nTheme.footer.primaryBtnBorderColor, 'important');
+				if (nTheme.footer.primaryBtnFont) this.style.setProperty('font-family', nTheme.footer.primaryBtnFont, 'important');
+				if (nTheme.footer.primaryBtnTextColor) this.style.setProperty('color', nTheme.footer.primaryBtnTextColor, 'important');
+				if (nTheme.footer.primaryBtnTextSize) this.style.setProperty('font-size', nTheme.footer.primaryBtnTextSize, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-btn-wrapper .mgPlayerJSTest_btn-watch-later").each(function() {
+				if (nTheme.footer.secondaryBtnBackground) this.style.setProperty('background', nTheme.footer.secondaryBtnBackground, 'important');
+				if (nTheme.footer.secondaryBtnBorderColor) this.style.setProperty('border', '2px outset ' + nTheme.footer.secondaryBtnBorderColor, 'important');
+				if (nTheme.footer.secondaryBtnFont) this.style.setProperty('font-family', nTheme.footer.secondaryBtnFont, 'important');
+				if (nTheme.footer.secondaryBtnTextColor) this.style.setProperty('color', nTheme.footer.secondaryBtnTextColor, 'important');
+				if (nTheme.footer.secondaryBtnTextSize) this.style.setProperty('font-size', nTheme.footer.secondaryBtnTextSize, 'important');
+			});
+
+			mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_push-notification-btn-wrapper .mgPlayerJSTest_btn-watch-close").each(function() {
+				if (nTheme.footer.primaryBtnBackground) this.style.setProperty('background', nTheme.footer.primaryBtnBackground, 'important');
+				if (nTheme.footer.primaryBtnBorderColor) this.style.setProperty('border', '2px outset ' + nTheme.footer.primaryBtnBorderColor, 'important');
+				if (nTheme.footer.primaryBtnFont) this.style.setProperty('font-family', nTheme.footer.primaryBtnFont, 'important');
+				if (nTheme.footer.primaryBtnTextColor) this.style.setProperty('color', nTheme.footer.primaryBtnTextColor, 'important');
+				if (nTheme.footer.primaryBtnTextSize) this.style.setProperty('font-size', nTheme.footer.primaryBtnTextSize, 'important');
+			});
+
+			GmCXt.timeout(function() {
+				mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_btn-next path.st0").each(function() {
+					if (nTheme.body.fill) this.style.setProperty('fill', nTheme.body.fill, 'important');
+				});
+
+				mg$(".mgPlayerJSTest_push-notification-container .mgPlayerJSTest_btn-prev path.st0").each(function() {
+					if (nTheme.body.fill) this.style.setProperty('fill', nTheme.body.fill, 'important');
+				});
+			}, 100);
 		}
-
 	}
 
 	function closeDisplayFrequencyNotif(e) {
@@ -49559,6 +49903,7 @@ if (GmCXt.isWB()) {
 	hide('.mgPlayerJSTest_showMe-play-mode-manual');
 }
 
+// This listener is only in Guide iframe
 window.addEventListener('message', function(event) {
 
 	var message = GmCXt.parseMsg(event);
@@ -49603,10 +49948,6 @@ window.addEventListener('message', function(event) {
 	}
 
 	switch (message.action) {
-
-		case 'mgPlayerJSTest_action:update_debug_mode':
-			GmCXt.debugMode = message.data.debugMode;
-			break;
 
 		case 'mgPlayerJSTest_action:play_slideshow':
 			mg$(window).focus();
@@ -49672,14 +50013,6 @@ window.addEventListener('message', function(event) {
 			GmCXt.reloadFailedImages();
 			break;
 
-		case 'mgPlayerJSTest_action:page_url':
-			if (message.data) {
-				GmCXt.urlParts = message.data.urlParts;
-				GmCXt.elAppName = message.data.elAppName;
-				GmCXt.pageTitle = message.data.title;
-			}
-			break;
-
 		case 'mgPlayerJSTest_action:remove_power_form':
 			if (message.data) {
 				if (mg$('.mgPlayerJSTest_form-injector-wrapper_' + message.data.step_id).length) {
@@ -49687,10 +50020,6 @@ window.addEventListener('message', function(event) {
 					GmCXt.closePowerForm();
 				}
 			}
-			break;
-
-		case 'mgPlayerJSTest_action:clean_tour_player':
-			GmCXt.cleanPlayerI();
 			break;
 
 		case 'mgPlayerJSTest_action:stop_slideshow':
@@ -49702,12 +50031,6 @@ window.addEventListener('message', function(event) {
 			resizeSlideshowWindow('full', true, true);
 			hideSlideShowPlayer();
 			openPowerForm(message.data);
-			break;
-
-		case 'mgPlayerJSTest_action:reset_panel_right':
-			mg$('.ege-panel').css({
-				'right': 'initial'
-			});
 			break;
 
 		case 'mgPlayerJSTest_action:remove_video_player':
@@ -55853,6 +56176,8 @@ app.controller('TourViewCtrl', ['$scope', '$rootScope', '$state', 'api', 'storag
 					window.removeEventListener('message', listen);
 				}
 			}
+
+			// This listener is only in Guide iframe
 			window.addEventListener('message', listen);
 			var message = {
 				action: "mgPlayerJSTest_action:select_element_for_branching"
@@ -57590,6 +57915,5 @@ app.controller('SignInCtrl', ['$scope', '$state', 'api', '$rootScope', 'storage'
 			$scope.setHeight();
 			if (!$scope.$$phase) $scope.$apply();
 		};
-
 	}
 ]);
