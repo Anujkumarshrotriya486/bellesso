@@ -244,7 +244,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 						});
 
 
-						showActionButton("mgPlayerJSTest_multi", "animated fadeInRight", optList, 200)
+						showActionButton("mgPlayerJSTest2_multi", "animated fadeInRight", optList, 200)
 							.then(function(o) {
 								var optionStr = "";
 								if (o && o.length) {
@@ -340,7 +340,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 			var optList = [];
 			for (var i = question.options[0]; i <= question.options[1]; i++) {
 				optList.push({
-					id: 'mgPlayerJSTest_rate-' + i,
+					id: 'mgPlayerJSTest2_rate-' + i,
 					text: '&#9733;',
 					value: i,
 					cssClass: "animated fadeInRight uilb-button-opt-range"
@@ -350,17 +350,17 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 		};
 
 		$scope.addRateAnswer = function(question, ans) {
-			var html = "<wmgPlayerJSTest_ class='mgPlayerJSTest_rating' style='font-size:20px;'>";
+			var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_rating' style='font-size:20px;'>";
 
 			for (var i = question.options[0]; i <= question.options[1]; i++) {
-				var className = "mgPlayerJSTest_lbl-btn mgPlayerJSTest_stars-rate";
+				var className = "mgPlayerJSTest2_lbl-btn mgPlayerJSTest2_stars-rate";
 				if (i < parseInt(ans) + 1) {
-					html += "<button class='" + className + "' id='mgPlayerJSTest_rate-" + i + "' aria-label='rate' >&#9733;</button>";
+					html += "<button class='" + className + "' id='mgPlayerJSTest2_rate-" + i + "' aria-label='rate' >&#9733;</button>";
 				} else {
-					html += "<button class='" + className + "' id='mgPlayerJSTest_rate-" + i + "' aria-label='rate' >&#9734;</button>";
+					html += "<button class='" + className + "' id='mgPlayerJSTest2_rate-" + i + "' aria-label='rate' >&#9734;</button>";
 				}
 			}
-			html += "</wmgPlayerJSTest_>";
+			html += "</wmgPlayerJSTest2_>";
 
 			return html;
 		};
@@ -620,7 +620,7 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 
 				} else {
 
-					var tutInlineHtml = "<div class='mgPlayerJSTest_chat-tg-content-wrapper'>";
+					var tutInlineHtml = "<div class='mgPlayerJSTest2_chat-tg-content-wrapper'>";
 
 					var stepText = "";
 
@@ -629,17 +629,17 @@ app.controller('BotCtrl', ['$scope', '$rootScope', 'api', 'storage', 'modal',
 					}
 
 					if (botStep && botStep.step_video > 0 && botStep.step_video_url) {
-						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest_chat-guide-info-wrapper mgPlayerJSTest_video-info-wrapper'>" +
+						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-guide-info-wrapper mgPlayerJSTest2_video-info-wrapper'>" +
 							"<video controls autoplay controlsList='nodownload' disablePictureInPicture >" +
 							"<source src='" + botStep.step_video_url + GmCXt.getCdnSign() + "' type='video/mp4'>" +
 							"</video></div>";
 
 					} else if (botStep && botStep.image_url.indexOf('default') < 0) {
-						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest_chat-info-wrapper mgPlayerJSTest_img-info-wrapper'>" +
-							"<img class='mgPlayerJSTest_chat-tg-image' src='" + botStep.image_url + GmCXt.getCdnSign() + "' /></div>";
+						tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-info-wrapper mgPlayerJSTest2_img-info-wrapper'>" +
+							"<img class='mgPlayerJSTest2_chat-tg-image' src='" + botStep.image_url + GmCXt.getCdnSign() + "' /></div>";
 					}
 
-					tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest_chat-tg-step-content' > " + stepText + " </div>" +
+					tutInlineHtml = tutInlineHtml + "<div class='mgPlayerJSTest2_chat-tg-step-content' > " + stepText + " </div>" +
 						"</div>";
 
 
