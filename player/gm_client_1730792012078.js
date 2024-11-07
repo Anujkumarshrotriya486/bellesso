@@ -43781,7 +43781,7 @@ GmCXt.getStepCreatorIframe = function() {
 };
 
 GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/src/index_1730791702602.html") + "?domainName=" + GmCXt.getPageDomain();
+	var u = GmCXt.getBaseUrl("side_panel/src/index_1730792012078.html") + "?domainName=" + GmCXt.getPageDomain();
 	var aria_hidden = "aria-hidden = 'true' tabindex = '-1'";
 	var html = "<wmgPlayerJSTest2_ class='mgPlayerJSTest2_panel mgPlayerJSTest2_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSTest2_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSTest2_theme-mplayer' : '') + "' " + aria_hidden + ">";
 
@@ -62196,7 +62196,7 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1730791702602.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1730792012078.css');
 })();
 (function() {
 	function load(cssId, path) {
@@ -62212,5 +62212,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1730791702602.css');
+	load('guideme-clientjs-css', 'content_script/worker/css/style_1730792012078.css');
 })();

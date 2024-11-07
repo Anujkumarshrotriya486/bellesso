@@ -41551,5 +41551,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1730791702602.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1730792012078.css');
 })();
