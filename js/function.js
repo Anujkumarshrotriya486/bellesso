@@ -5,6 +5,6 @@
 // 	});
 // });
 
-window.myGuideOrgKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfa2V5IjoiZmZjZmUzZDU1NzMwMDE0YWUwMTAzNGY2YzlmNzdlMDUifQ.EeUoVvDISjyzJtKK3fmSQT8g2iw1roMulfwgPVYw8Qc";
+window.myGuideOrgKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmdfa2V5IjoiZTMzM2FmMmM1ZGYzYmM3NzMyNjFjMjQ2YjllN2E0MjAifQ.IcNGaXg7uXhP9rUdr199MKj0AdMSunkgFUDA2q4ozVs";
 
 if(!window.guideMe)window.guideMe={}; window.guideMe.baseUrl='https://anujkumarshrotriya486.github.io/bellesso/player/';var a=document.createElement('script');a.src=guideMe.baseUrl+'guideme.js';document.head.appendChild(a);
