@@ -101,7 +101,7 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "//qa2-cdn.guideme.io/guideme-player/ent/";
+	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://qa2-api.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://qa2-cdn.guideme.io/guideme-assests/";
@@ -116,6 +116,7 @@ GmCXt.setConfig = function() {
 	GmCXt.conf.ssoApiUrl = "https://qa2-sso.guideme.io/saml2/sp/session/";
 	GmCXt.conf.ssoConfigUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/"+"objects/";
 	GmCXt.conf.publicTimestampUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/"+"timestamp/";
+
 	GmCXt.conf.paymentEndPoint = "";
 
 	GmCXt.setOnPremise();
