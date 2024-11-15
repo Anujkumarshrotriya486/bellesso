@@ -116,7 +116,6 @@ GmCXt.setConfig = function() {
 	GmCXt.conf.ssoApiUrl = "https://qa2-sso.guideme.io/saml2/sp/session/";
 	GmCXt.conf.ssoConfigUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/"+"objects/";
 	GmCXt.conf.publicTimestampUrl = "https://qa2-cdn.guideme.io/guideme-auth-qa2/"+"timestamp/";
-
 	GmCXt.conf.paymentEndPoint = "";
 
 	GmCXt.setOnPremise();
