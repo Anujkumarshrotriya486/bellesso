@@ -4,7 +4,7 @@ if (GmCXt === undefined) {
 
 GmCXt.conf = {};
 GmCXt.conf.version = "2024.6.0";
-GmCXt.conf.env = "Prod";
+GmCXt.conf.env = "Test";
 
 GmCXt.conf.creatorApp = 'mgExt';
 GmCXt.conf.playerApp = 'mgPlayer';
@@ -18,7 +18,7 @@ GmCXt.conf.appTypeScript = 'JScript';
 GmCXt.conf.appTypeElectron = 'electron';
 GmCXt.conf.Premise = 'Premise';
 GmCXt.conf.runEnv = "browser";
-GmCXt.conf.msgPrefix = "mgPlayerJSProd_";
+GmCXt.conf.msgPrefix = "mgPlayerJSTest_";
 
 GmCXt.conf.showWidget = false;
 
@@ -53,7 +53,7 @@ try {
 
 GmCXt.conf.allUrls = true;
 
-GmCXt.conf.provider = "Cdn";
+GmCXt.conf.provider = "playerApi";
 
 GmCXt.conf.storageUrl = "";
 
@@ -99,24 +99,23 @@ GmCXt.setOnPremise = function() {
 };
 
 GmCXt.setConfig = function() {
-	GmCXt.conf.apiSecrret = "4fb49382-2867-41c0-9ece-fdcaf03b46b8";
+	GmCXt.conf.apiSecrret = "TESTAUTHKEY";
 	GmCXt.conf.orgSecrret = "";
 	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/";
 	GmCXt.conf.chromeExtensionUrl = "";
-	GmCXt.conf.webServiceUrl = "https://api-v3.guideme.io/v3/";
-	GmCXt.conf.staticContentPath = "https://cdn.guideme.io/guideme-assests/";
-	GmCXt.conf.webPortalUrl = "https://admin.myguide.org/";
-	GmCXt.conf.analyticsPath = "https://v3-analytics.guideme.io/";
-	GmCXt.conf.analyticsPortalUrl = "https://analytics.myguide.org/";
+	GmCXt.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
+	GmCXt.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
+	GmCXt.conf.webPortalUrl = "https://qa-admin.myguide.org/";
+	GmCXt.conf.analyticsPath = "https://analytics-qa.guideme.io/";
+	GmCXt.conf.analyticsPortalUrl = "https://analytics-qa.myguide.org/";
 
-	GmCXt.conf.cdnStorage = "https://cdn.guideme.io/";
-	GmCXt.conf.jsonStorageUrl = "https://cdn.guideme.io/";
+	GmCXt.conf.cdnStorage = "https://stagecdn.guideme.io/";
+	GmCXt.conf.jsonStorageUrl = "https://stage-mycdn.guideme.io/";
 	
-	GmCXt.conf.ssoRedirectionUrl = "https://sso.myguide.org/saml2/sp/sso/AEC935D1-160E-43CD-B7EB-D254E704B3E3";
-	GmCXt.conf.ssoApiUrl = "https://sso.myguide.org/saml2/sp/session/AEC935D1-160E-43CD-B7EB-D254E704B3E3";
-	GmCXt.conf.ssoConfigUrl = ""+"objects/";
-	GmCXt.conf.publicTimestampUrl = ""+"timestamp/";
-
+	GmCXt.conf.ssoRedirectionUrl = "https://qa-sso.guideme.io/saml2/sp/sso/6F8F558A-C285-44E9-9319-FEAB826D3A2B";
+	GmCXt.conf.ssoApiUrl = "https://qa-sso.guideme.io/saml2/sp/session/6F8F558A-C285-44E9-9319-FEAB826D3A2B";
+	GmCXt.conf.ssoConfigUrl = "https://stagecdn.guideme.io/guideme-auth-qa/"+"objects/";
+	GmCXt.conf.publicTimestampUrl = "https://stagecdn.guideme.io/guideme-auth-qa/"+"timestamp/";
 	GmCXt.conf.paymentEndPoint = "";
 
 	GmCXt.setOnPremise();
