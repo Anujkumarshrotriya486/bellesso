@@ -3,7 +3,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2024.6.1";
+GmCXt.conf.version = "2024.5.4";
 GmCXt.conf.env = "Prod";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -116,7 +116,6 @@ GmCXt.setConfig = function() {
 	GmCXt.conf.ssoApiUrl = "https://sso.myguide.org/saml2/sp/session/";
 	GmCXt.conf.ssoConfigUrl = "https://cdn.guideme.io/guideme-auth/"+"objects/";
 	GmCXt.conf.publicTimestampUrl = "https://cdn.guideme.io/guideme-auth/"+"timestamp/";
-
 	GmCXt.conf.paymentEndPoint = "";
 
 	GmCXt.setOnPremise();
