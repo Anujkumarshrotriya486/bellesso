@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "//anujkumarshrotriya486.github.io/";
+	guideMe.baseUrl = "///anujkumarshrotriya486.github.io/bellesso/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
@@ -43,9 +43,9 @@ function getScriptCB() {
 
 	function loadGuideMeClientFiles() {
 		if (window.self === window.top) {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_1734411308271.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_1734527803120.js';
 		} else {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1734411308271.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1734527803120.js';
 		}
 		document.head.appendChild(a);
 	}
