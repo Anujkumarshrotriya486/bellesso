@@ -4,7 +4,7 @@ if (GmCXt === undefined) {
 
 GmCXt.conf = {};
 GmCXt.conf.version = "2024.6.3";
-GmCXt.conf.env = "Preview";
+GmCXt.conf.env = "Prod";
 
 GmCXt.conf.creatorApp = 'mgExt';
 GmCXt.conf.playerApp = 'mgPlayer';
@@ -18,7 +18,7 @@ GmCXt.conf.appTypeScript = 'JScript';
 GmCXt.conf.appTypeElectron = 'electron';
 GmCXt.conf.Premise = 'Premise';
 GmCXt.conf.runEnv = "browser";
-GmCXt.conf.msgPrefix = "mgPlayerJSPreview_";
+GmCXt.conf.msgPrefix = "mgPlayerJSProd_";
 
 GmCXt.conf.showWidget = false;
 
@@ -103,19 +103,19 @@ GmCXt.setConfig = function() {
 	GmCXt.conf.orgSecrret = "";
 	GmCXt.conf.clientJsBaseUrl = "//anujkumarshrotriya486.github.io/bellesso/";
 	GmCXt.conf.chromeExtensionUrl = "";
-	GmCXt.conf.webServiceUrl = "https://api-v3.myguidepreview.org/v3/";
-	GmCXt.conf.staticContentPath = "https://cdn.myguidepreview.org/guideme-assests/";
-	GmCXt.conf.webPortalUrl = "https://admin.myguidepreview.org/";
-	GmCXt.conf.analyticsPath = "https://v3-analytics.myguidepreview.org/";
-	GmCXt.conf.analyticsPortalUrl = "https://insights.myguidepreview.org/";
+	GmCXt.conf.webServiceUrl = "https://api-v3.guideme.io/v3/";
+	GmCXt.conf.staticContentPath = "https://cdn.guideme.io/guideme-assests/";
+	GmCXt.conf.webPortalUrl = "https://admin.myguide.org/";
+	GmCXt.conf.analyticsPath = "https://v3-analytics.guideme.io/";
+	GmCXt.conf.analyticsPortalUrl = "https://analytics.myguide.org/";
 
-	GmCXt.conf.cdnStorage = "https://cdn.myguidepreview.org/";
-	GmCXt.conf.jsonStorageUrl = "https://mycdn.myguidepreview.org/";
+	GmCXt.conf.cdnStorage = "https://cdn.guideme.io/";
+	GmCXt.conf.jsonStorageUrl = "https://mycdn.myguide.org/";
 	
-	GmCXt.conf.ssoRedirectionUrl = "https://sso.myguidepreview.org/saml2/sp/sso/";
-	GmCXt.conf.ssoApiUrl = "https://sso.myguidepreview.org/saml2/sp/session/";
-	GmCXt.conf.ssoConfigUrl = "https://cdn.myguidepreview.org/guideme-auth/"+"objects/";
-	GmCXt.conf.publicTimestampUrl = "https://cdn.myguidepreview.org/guideme-auth/"+"timestamp/";
+	GmCXt.conf.ssoRedirectionUrl = "https://sso.myguide.org/saml2/sp/sso/";
+	GmCXt.conf.ssoApiUrl = "https://sso.myguide.org/saml2/sp/session/";
+	GmCXt.conf.ssoConfigUrl = "https://cdn.guideme.io/guideme-auth/"+"objects/";
+	GmCXt.conf.publicTimestampUrl = "https://cdn.guideme.io/guideme-auth/"+"timestamp/";
 
 	GmCXt.conf.paymentEndPoint = "";
 
