@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "https://stagecdn.guideme.io/guideme-player/sumtotal/";
+	guideMe.baseUrl = "//cdn.guideme.io/guideme-player/ent/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
@@ -43,9 +43,9 @@ function getScriptCB() {
 
 	function loadGuideMeClientFiles() {
 		if (window.self === window.top) {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_1735905227714.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_1737617087004.js';
 		} else {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1735905227714.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1737617087004.js';
 		}
 		document.head.appendChild(a);
 	}
