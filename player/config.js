@@ -3,7 +3,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2025.1.1";
+GmCXt.conf.version = "2025.1.3";
 GmCXt.conf.env = "Prod";
 
 GmCXt.conf.creatorApp = 'mgExt';

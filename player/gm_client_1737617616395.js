@@ -3205,7 +3205,7 @@ GmCXt.convertType = function(value) {
 };
 
 GmCXt.isMyGuideIframe = function(url) {
-    if (url.indexOf('side_panel/sidepanel_1737617087004.html') !== -1) {
+    if (url.indexOf('side_panel/sidepanel_1737617616395.html') !== -1) {
         return true;
     } else
         return false;
@@ -37890,7 +37890,7 @@ GmCXt.getStepCreatorIframe = function() {
 };
 
 GmCXt.getSidePanelIframe = function() {
-	var u = GmCXt.getBaseUrl("side_panel/sidepanel_1737617087004.html") + "?domainName=" + GmCXt.getPageDomain();
+	var u = GmCXt.getBaseUrl("side_panel/sidepanel_1737617616395.html") + "?domainName=" + GmCXt.getPageDomain();
 	var aria_hidden = "aria-hidden = 'true' tabindex = '-1'";
 	var html = "<wmgPlayerJSProd_ class='mgPlayerJSProd_panel mgPlayerJSProd_mobile-view " + (GmCXt.isWBMicroPlayer() ? 'mgPlayerJSProd_panel-micro' : '') + (GmCXt.isMicroPlayer() ? 'mgPlayerJSProd_theme-mplayer' : '') + "' " + aria_hidden + ">";
 
@@ -56347,7 +56347,7 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1737617087004.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1737617616395.css');
 })();
 (function() {
 	function load(cssId, path) {
@@ -56363,5 +56363,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientjs-css', 'content_script/worker/css/style_1737617087004.css');
+	load('guideme-clientjs-css', 'content_script/worker/css/style_1737617616395.css');
 })();

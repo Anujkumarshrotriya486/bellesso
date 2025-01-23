@@ -28,7 +28,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2025.1.1";
+GmCXt.conf.version = "2025.1.3";
 GmCXt.conf.env = "Prod";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -126,7 +126,7 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "4fb49382-2867-41c0-9ece-fdcaf03b46b8";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "//cdn.guideme.io/guideme-player/ent/";
+	GmCXt.conf.clientJsBaseUrl = "//anujkumarshrotriya486.github.io/bellesso/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://api-v3.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://cdn.guideme.io/guideme-assests/";
@@ -803,7 +803,7 @@ GmCXt.convertType = function(value) {
 };
 
 GmCXt.isMyGuideIframe = function(url) {
-    if (url.indexOf('side_panel/sidepanel_1737617087004.html') !== -1) {
+    if (url.indexOf('side_panel/sidepanel_1737617616395.html') !== -1) {
         return true;
     } else
         return false;
@@ -35636,5 +35636,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1737617087004.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1737617616395.css');
 })();
