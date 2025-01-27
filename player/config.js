@@ -3,7 +3,7 @@ if (GmCXt === undefined) {
 }
 
 GmCXt.conf = {};
-GmCXt.conf.version = "2025.1.2.uday";
+GmCXt.conf.version = "2025.1.2";
 GmCXt.conf.env = "Prod";
 
 GmCXt.conf.creatorApp = 'mgExt';
@@ -101,7 +101,7 @@ GmCXt.setOnPremise = function() {
 GmCXt.setConfig = function() {
 	GmCXt.conf.apiSecrret = "4fb49382-2867-41c0-9ece-fdcaf03b46b8";
 	GmCXt.conf.orgSecrret = "";
-	GmCXt.conf.clientJsBaseUrl = "https://anujkumarshrotriya486.github.io/bellesso/player/";
+	GmCXt.conf.clientJsBaseUrl = "//anujkumarshrotriya486.github.io/bellesso/player/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://api-v3.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://cdn.guideme.io/guideme-assests/";

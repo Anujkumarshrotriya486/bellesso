@@ -17375,6 +17375,14 @@ wmgPlayerJSProd_.mgPlayerJSProd_popup-button-wrapper .mgPlayerJSProd_never-show-
   width: 20px;
   height: 20px;
 }
+#mgPlayerJSProd_slideshow-focus-button .mgPlayerJSProd_title-tooltip-wrapper {
+  max-width: 100%;
+}
+#mgPlayerJSProd_slideshow-focus-button:hover .mgPlayerJSProd_title-tooltip-wrapper {
+  bottom: 7px;
+  right: 75px;
+  display: block !important;
+}
 
 /* Copyright 2014 Mozilla Foundation
  *
