@@ -7,7 +7,7 @@ GmCXt.msgChannel = new MessageChannel();
 GmCXt.startMsgChannel = function(initiator) {
 	window.top.postMessage(initiator, '*', [GmCXt.msgChannel.port2]);
 };
-if (document.querySelectorAll('.mgPlayerJSProd_audio-iframe-icons').length > 0) {
+if (document.querySelectorAll('.mgPlayerJSTest2_audio-iframe-icons').length > 0) {
 	GmCXt.startMsgChannel('Guide:audioIframe');
 }
 
@@ -34,42 +34,42 @@ function modifyElements(elements, operation, className) {
 }
 
 function setAudioModeOn() {
-	if (document.getElementsByClassName('mgPlayerJSProd_play-step-audio-on') &&
-		document.getElementsByClassName('mgPlayerJSProd_play-step-audio-on').length) {
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio-on'), 'show');
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio-off'), 'hide');
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio'), 'addClass', 'playing-audio');
+	if (document.getElementsByClassName('mgPlayerJSTest2_play-step-audio-on') &&
+		document.getElementsByClassName('mgPlayerJSTest2_play-step-audio-on').length) {
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-on'), 'show');
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-off'), 'hide');
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio'), 'addClass', 'playing-audio');
 
 		if (userPrefAudio) {
 
-			var action = "mgPlayerJSProd_action:set_audio_storage";
+			var action = "mgPlayerJSTest2_action:set_audio_storage";
 			var data = {
 				'stepAudioRunningStatus': true
 			};
 			formatAndSendToParentWindow(action, data);
 		}
 	} else {
-		formatAndSendToParentWindow("mgPlayerJSProd_action:set_audio_mode_on", {});
+		formatAndSendToParentWindow("mgPlayerJSTest2_action:set_audio_mode_on", {});
 	}
 }
 
 function setAudioModeOff() {
-	if (document.getElementsByClassName('mgPlayerJSProd_play-step-audio-off') &&
-		document.getElementsByClassName('mgPlayerJSProd_play-step-audio-off').length) {
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio-on'), 'hide');
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio-off'), 'show');
-		modifyElements(document.querySelectorAll('.mgPlayerJSProd_play-step-audio'), 'removeClass', 'playing-audio');
+	if (document.getElementsByClassName('mgPlayerJSTest2_play-step-audio-off') &&
+		document.getElementsByClassName('mgPlayerJSTest2_play-step-audio-off').length) {
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-on'), 'hide');
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-off'), 'show');
+		modifyElements(document.querySelectorAll('.mgPlayerJSTest2_play-step-audio'), 'removeClass', 'playing-audio');
 
 		if (userPrefAudio) {
 
-			var action = "mgPlayerJSProd_action:set_audio_storage";
+			var action = "mgPlayerJSTest2_action:set_audio_storage";
 			var data = {
 				'stepAudioRunningStatus': false
 			};
 			formatAndSendToParentWindow(action, data);
 		}
 	} else {
-		formatAndSendToParentWindow("mgPlayerJSProd_action:set_audio_mode_off", {});
+		formatAndSendToParentWindow("mgPlayerJSTest2_action:set_audio_mode_off", {});
 	}
 }
 
@@ -133,21 +133,21 @@ function convertMgdata(m) {
 };
 
 function syncPlayerInst(m) {
-	if (m === "mgPlayerJSProd_action:started;task:select_existing_dom_element" ||
-		m === "mgPlayerJSProd_action:started;task:select_existing_dom_element:target_frame_only" ||
-		m === "mgPlayerJSProd_action:started;task:select_dom_element_tooltips" ||
-		m === "mgPlayerJSProd_action:task:init_new_iframe" ||
-		m === "mgPlayerJSProd_action:update_player_instance" ||
-		m === "mgPlayerJSProd_action:play_slideshow" ||
-		m === "mgPlayerJSProd_action:play_video_step" ||
-		m === "mgPlayerJSProd_action:play_image_step" ||
-		m === "mgPlayerJSProd_action:click; on:mgPlayerJSProd_slideshow-close" ||
-		m === "mgPlayerJSProd_action:mark_auto_tour_donotshow" ||
-		m === "mgPlayerJSProd_action:update_player_instance_app" ||
-		m === "mgPlayerJSProd_action:set_audio_mode_off" ||
-		m === "mgPlayerJSProd_action:set_audio_mode_on" ||
-		m === "mgPlayerJSProd_action:close_guide" ||
-		m === "mgPlayerJSProd_action:set_style_audio_icon_response") {
+	if (m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element" ||
+		m === "mgPlayerJSTest2_action:started;task:select_existing_dom_element:target_frame_only" ||
+		m === "mgPlayerJSTest2_action:started;task:select_dom_element_tooltips" ||
+		m === "mgPlayerJSTest2_action:task:init_new_iframe" ||
+		m === "mgPlayerJSTest2_action:update_player_instance" ||
+		m === "mgPlayerJSTest2_action:play_slideshow" ||
+		m === "mgPlayerJSTest2_action:play_video_step" ||
+		m === "mgPlayerJSTest2_action:play_image_step" ||
+		m === "mgPlayerJSTest2_action:click; on:mgPlayerJSTest2_slideshow-close" ||
+		m === "mgPlayerJSTest2_action:mark_auto_tour_donotshow" ||
+		m === "mgPlayerJSTest2_action:update_player_instance_app" ||
+		m === "mgPlayerJSTest2_action:set_audio_mode_off" ||
+		m === "mgPlayerJSTest2_action:set_audio_mode_on" ||
+		m === "mgPlayerJSTest2_action:close_guide" ||
+		m === "mgPlayerJSTest2_action:set_style_audio_icon_response") {
 		return true;
 	} else {
 		return false;
@@ -163,7 +163,7 @@ window.addEventListener('message', function(event) {
 	var message = parseMsg(event);
 
 	if (!message) return;
-	if (!message.action || message.action.indexOf('mgPlayerJSProd_action:') !== 0) return;
+	if (!message.action || message.action.indexOf('mgPlayerJSTest2_action:') !== 0) return;
 	message = convertMgdata(message);
 
 	if (message.data) {
@@ -174,7 +174,7 @@ window.addEventListener('message', function(event) {
 
 		if (message.data.user && Object.keys(message.data.user).length) {
 			GmCXt.user = message.data.user;
-			formatAndSendToParentWindow('mgPlayerJSProd_action:save_user_info', message.data.user);
+			formatAndSendToParentWindow('mgPlayerJSTest2_action:save_user_info', message.data.user);
 		}
 
 		if (syncPlayerInst(message.action)) {
@@ -186,24 +186,24 @@ window.addEventListener('message', function(event) {
 
 	switch (message.action) {
 
-		case 'mgPlayerJSProd_action:set_audio_mode_on':
+		case 'mgPlayerJSTest2_action:set_audio_mode_on':
 			setAudioModeOn();
 			break;
 
-		case 'mgPlayerJSProd_action:set_audio_mode_off':
+		case 'mgPlayerJSTest2_action:set_audio_mode_off':
 			setAudioModeOff();
 			break;
 
-		case 'mgPlayerJSProd_action:stop_audio':
+		case 'mgPlayerJSTest2_action:stop_audio':
 			GmCXt.requestHandler.stopAudioTrack();
 			break;
 
-		case 'mgPlayerJSProd_action:set_style_audio_icon_response':
+		case 'mgPlayerJSTest2_action:set_style_audio_icon_response':
 			document.documentElement.insertAdjacentHTML('beforeend', message.data.data);
-			document.querySelectorAll('.mgPlayerJSProd_audio-iframe-icons').forEach(element => {
+			document.querySelectorAll('.mgPlayerJSTest2_audio-iframe-icons').forEach(element => {
 				element.removeAttribute('style');
 			});
-			formatAndSendToParentWindow('mgPlayerJSProd_action:hide_pop_audio_ctrl', {});
+			formatAndSendToParentWindow('mgPlayerJSTest2_action:hide_pop_audio_ctrl', {});
 			break;
 	}
 
@@ -255,7 +255,7 @@ GmCXt.playStepAudio = function(message) {
 
 		GmCXt.audioObject = new Audio(audioTrack);
 
-		var action = "mgPlayerJSProd_action:start_step_completion_timeout";
+		var action = "mgPlayerJSTest2_action:start_step_completion_timeout";
 		var data = {
 			step: stepObj
 		};
@@ -327,15 +327,15 @@ function formatAndSendToParentWindow(action, data) {
 			m.data.fromSidePanel = GmCXt.isSidePanelApp;
 		}
 
-		if (m.action !== "mgPlayerJSProd_action:update_custom_labels" &&
-			m.action !== "mgPlayerJSProd_action:set_lang_content_script" &&
-			m.action !== "mgPlayerJSProd_action:update:player_mode" &&
-			m.action !== "mgPlayerJSProd_action:save_user_info" &&
-			m.action !== "mgPlayerJSProd_action:payload_event_call") {
+		if (m.action !== "mgPlayerJSTest2_action:update_custom_labels" &&
+			m.action !== "mgPlayerJSTest2_action:set_lang_content_script" &&
+			m.action !== "mgPlayerJSTest2_action:update:player_mode" &&
+			m.action !== "mgPlayerJSTest2_action:save_user_info" &&
+			m.action !== "mgPlayerJSTest2_action:payload_event_call") {
 			m.data.user = GmCXt.user;
 		}
 
-		if (m.action === "mgPlayerJSProd_action:payload_event_call") {
+		if (m.action === "mgPlayerJSTest2_action:payload_event_call") {
 			delete m.data.fromSidePanel;
 		}
 	}
@@ -355,8 +355,8 @@ function formatAndSendToParentWindow(action, data) {
 }
 
 
-// Select all elements with the class 'mgPlayerJSProd_play-step-audio-on'
-document.querySelectorAll('.mgPlayerJSProd_play-step-audio-on').forEach(element => {
+// Select all elements with the class 'mgPlayerJSTest2_play-step-audio-on'
+document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-on').forEach(element => {
 	// Remove all click event listeners (if any) by setting up the event listener again
 	element.removeEventListener('click', audioOnBtnClick);
 	// Add a new click event listener
@@ -366,8 +366,8 @@ document.querySelectorAll('.mgPlayerJSProd_play-step-audio-on').forEach(element 
 });
 
 
-// Select all elements with the class 'mgPlayerJSProd_play-step-audio-off'
-document.querySelectorAll('.mgPlayerJSProd_play-step-audio-off').forEach(element => {
+// Select all elements with the class 'mgPlayerJSTest2_play-step-audio-off'
+document.querySelectorAll('.mgPlayerJSTest2_play-step-audio-off').forEach(element => {
 	// Remove all click event listeners (if any) by setting up the event listener again
 	element.removeEventListener('click', audioOffBtnClick);
 	// Add a new click event listener
@@ -380,7 +380,7 @@ document.querySelectorAll('.mgPlayerJSProd_play-step-audio-off').forEach(element
 function audioOnBtnClick() {
 	userPrefAudio = true;
 	GmCXt.stopAudio();
-	formatAndSendToParentWindow('mgPlayerJSProd_action:stop_audio', {});
+	formatAndSendToParentWindow('mgPlayerJSTest2_action:stop_audio', {});
 	setAudioModeOff();
 }
 
@@ -398,5 +398,5 @@ function audioOffBtnClick() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	formatAndSendToParentWindow('mgPlayerJSProd_action:set_style_audio_icon', {});
+	formatAndSendToParentWindow('mgPlayerJSTest2_action:set_style_audio_icon', {});
 });
