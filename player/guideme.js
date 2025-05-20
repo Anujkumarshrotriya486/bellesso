@@ -3,7 +3,7 @@ if (typeof guideMe === 'undefined') {
 	guideMe = {};
 }
 if (!guideMe.baseUrl) {
-	guideMe.baseUrl = "https://stagecdn.guideme.io/guideme-player/galaxy/";
+	guideMe.baseUrl = "https://stagecdn.guideme.io/guideme-player/sbx/";
 }
 configPath = guideMe.baseUrl + 'config.js';
 var playerExtImgUrl = "";
@@ -43,9 +43,9 @@ function getScriptCB() {
 
 	function loadGuideMeClientFiles() {
 		if (window.self === window.top) {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_1747723392158.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_1747736336120.js';
 		} else {
-			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1747723392158.js';
+			a.src = GmCXt.conf.baseUrl + 'gm_client_iframe_1747736336120.js';
 		}
 		document.head.appendChild(a);
 	}

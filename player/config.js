@@ -52,7 +52,7 @@ try {
 GmCXt.conf.allUrls = true;
 
 GmCXt.setConfig = function() {
-	GmCXt.conf.clientJsBaseUrl = "https://stagecdn.guideme.io/guideme-player/galaxy/";
+	GmCXt.conf.clientJsBaseUrl = "https://stagecdn.guideme.io/guideme-player/sbx/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
@@ -92,7 +92,7 @@ GmCXt.setConfig();
 GmCXt.conf.appConfig = {
 	login: {guideme: 1},
 	testme: 1,
-	customer: 'galaxy',
+	customer: 'sbx',
 	desktopCommunication: false,
-	iframeInjection: false
+	iframeInjection: true
 };

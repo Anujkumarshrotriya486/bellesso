@@ -77,7 +77,7 @@ try {
 GmCXt.conf.allUrls = true;
 
 GmCXt.setConfig = function() {
-	GmCXt.conf.clientJsBaseUrl = "https://stagecdn.guideme.io/guideme-player/galaxy/";
+	GmCXt.conf.clientJsBaseUrl = "https://stagecdn.guideme.io/guideme-player/sbx/";
 	GmCXt.conf.chromeExtensionUrl = "";
 	GmCXt.conf.webServiceUrl = "https://qa-api.guideme.io/v3/";
 	GmCXt.conf.staticContentPath = "https://stagecdn.guideme.io/guideme-assests/";
@@ -117,9 +117,9 @@ GmCXt.setConfig();
 GmCXt.conf.appConfig = {
 	login: {guideme: 1},
 	testme: 1,
-	customer: 'galaxy',
+	customer: 'sbx',
 	desktopCommunication: false,
-	iframeInjection: false
+	iframeInjection: true
 };
 /*! jQuery v3.7.1 | (c) OpenJS Foundation and other contributors | jquery.org/license */
 var hostJquery;
@@ -968,7 +968,7 @@ GmCXt.convertType = function(value) {
 };
 
 GmCXt.isMyGuideIframe = function(url) {
-    if (url.indexOf('side_panel/sidepanel_1747723392158.html') !== -1) {
+    if (url.indexOf('side_panel/sidepanel_1747736336120.html') !== -1) {
         return true;
     } else
         return false;
@@ -35974,5 +35974,5 @@ GmCXt.injectGuideMeInIframes = function(windowInstance) {
 		}
 	}
 
-	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1747723392158.css');
+	load('guideme-clientframe-css', 'content_script/dom_selector/css/style_1747736336120.css');
 })();
